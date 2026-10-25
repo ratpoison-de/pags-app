@@ -21,7 +21,11 @@ Danach werden ihre Einträge automatisch gespeichert und stehen auf jedem Gerät
 
 Technik: [Supabase](https://supabase.com) (Auth per Magic Link + Postgres mit Row Level Security). Die Tabelle steht in `supabase/schema.sql`.
 
-### Einrichtung (einmalig, ca. 10 Minuten)
+### Einrichtung
+
+Eingerichtet im Supabase-Projekt **pags-lernplaner** (EU, Frankfurt), Tabelle `public.pags_alltag`. Offen ist nur Schritt 3 (Anmelde-Adressen).
+
+Für ein neues Projekt:
 
 1. Auf supabase.com ein kostenloses Konto und ein **neues Projekt** anlegen, Region **Central EU (Frankfurt)**.
 2. Im Projekt **SQL Editor** öffnen, den Inhalt von `supabase/schema.sql` einfügen und ausführen.
