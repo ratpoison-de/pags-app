@@ -2,6 +2,8 @@
 
 Info-App der **Pater-Alois-Grimm-Schule (PAGS) Külsheim** im Design von [pags-kuelsheim.de](https://pags-kuelsheim.de).
 
+Entwickelt von **Thorsten von Plotho-Kettner** (t.von.plotho-kettner@pagskuelsheim.de).
+
 | Seite | Zweck |
 |---|---|
 | `index.html` | Startseite mit beiden Einstiegen |

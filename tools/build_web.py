@@ -85,6 +85,7 @@ cut("        (restore ? '<div class=\"notice\">", "        '<h2>' + TABS", "")
 cut("        '<footer class=\"meta\">'", "        '<div class=\"sitefoot\">", """        '<footer class="meta">' + (msg ? '<span role="status"><b>' + esc(msg) + '</b></span>' : '') +
         vKonto() +
         '<span>Schuldaten aus <a href="' + esc(S.quelle) + '" target="_blank" rel="noopener">pags-kuelsheim.de</a>, Stand ' + fmtShort(S.stand) + S.stand.slice(0, 4) + '.</span>' +
+        '<span>App entwickelt von Thorsten von Plotho-Kettner.</span>' +
 """)
 cut("      (dirty() ? '<div class=\"savebar\">", "      '<nav class=\"tabs\"", "")
 rep("""    if (!restore) { try { if (dirty()) localStorage.setItem(LS_KEY, JSON.stringify(S)); else localStorage.removeItem(LS_KEY); } catch (e) {} }\n""", "")
