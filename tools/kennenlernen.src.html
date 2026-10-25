@@ -1,0 +1,588 @@
+<title>PAGS kennenlernen</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: Aufbau wie pags-kuelsheim.de – weißer Kopf mit Logo und rotem Menü, Bühnenbild, Teaser-Raster mit Seitenleiste, Kapitel-Bänder, dunkler Footer */
+:root{
+  --red:#A81010; --red-dark:#860000; --red-meta:#801A1A; --red-light:#EB3B3B;
+  --bg:#FFFFFF; --bg-alt:#FCFCFC; --line:#E1E1E1; --text:#444444; --head:#666666; --soft:#F6F2F2;
+  --foot:#222222; --foot-text:#DDDDDD; --socket:#333333; --socket-text:#EEEEEE;
+  --f:"Open Sans",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(84px + env(safe-area-inset-top,0px))}
+body{background:var(--bg);color:var(--text);font-family:var(--f);font-size:16px;line-height:1.65}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:1130px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-weight:400;color:var(--head);text-transform:uppercase;letter-spacing:1px;line-height:1.25;text-wrap:balance;margin:0}
+p{margin:10px 0;max-width:70ch}
+ul,ol{margin:10px 0;padding-left:20px;max-width:70ch}
+li{margin:4px 0}
+li::marker{color:var(--red)}
+b,strong{font-weight:600;color:#333}
+.mono{font-variant-numeric:tabular-nums;font-weight:600;color:#333;white-space:nowrap}
+
+/* Topbar + Kopf */
+.topbar{font-size:12px;color:#666}
+.topbar .wrap{display:flex;justify-content:flex-end;gap:18px;padding-block:6px 0}
+.topbar a{color:#666}
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+header.site > .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:84px}
+.logo{display:block;flex:none}
+.logo img{display:block;height:64px;width:auto}
+nav.main{display:flex;align-items:stretch;align-self:stretch}
+nav.main a{display:flex;align-items:center;padding:0 11px;font-size:15px;font-weight:400;color:var(--red);border-bottom:2px solid transparent;white-space:nowrap}
+nav.main a:hover{text-decoration:none;border-bottom-color:var(--red)}
+nav.main a.on{border-bottom-color:var(--red)}
+.burger{display:none;background:none;border:0;padding:10px;cursor:pointer;color:#333}
+.burger span{display:block;width:30px;height:3px;background:currentColor;margin:6px 0;border-radius:2px}
+.drawer{max-height:calc(100vh - 90px);overflow-y:auto;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 8px 16px rgba(0,0,0,.08)}
+.drawer .wrap{padding-block:6px 14px;display:grid;gap:0}
+.drawer a{padding:9px 0;border-bottom:1px solid var(--line);font-size:16px}
+.drawer a.sub{padding-left:16px;font-size:15px;color:#666}
+@media (max-width:980px){nav.main{display:none}.burger{display:block}.logo img{height:54px}header.site > .wrap{min-height:72px}html{scroll-padding-top:calc(74px + env(safe-area-inset-top,0px))}}
+
+/* Bühne */
+.stage{position:relative;background:#2b2b2b}
+.stage img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;object-position:center}
+.stage .cta{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);background:var(--red);color:#fff;border-radius:6px;padding:10px 28px;font-size:clamp(17px,2.6vw,30px);white-space:nowrap}
+.stage .cta:hover{background:var(--red-dark);text-decoration:none}
+
+/* Intro */
+.intro{text-align:center;padding-block:44px 10px}
+.intro .sub{font-size:clamp(20px,3vw,26px);color:var(--head);text-transform:none;letter-spacing:0;margin:0 0 6px}
+.intro h1{font-size:clamp(28px,5vw,42px)}
+.kurz{display:grid;grid-template-columns:1fr 2fr;gap:24px 40px;align-items:center;padding-block:30px 20px}
+.kurz h2{font-size:22px}
+.kurz blockquote{margin:0;font-size:15px;line-height:1.7;color:#555}
+.kurz blockquote p{max-width:none;margin:0}
+@media (max-width:760px){.kurz{grid-template-columns:1fr}}
+
+/* Teaser + Seitenleiste */
+.home{display:grid;grid-template-columns:2fr 1fr;gap:28px 36px;padding-block:24px 50px}
+.teasers{display:grid;grid-template-columns:1fr 1fr;gap:32px 28px;min-width:0}
+.teaser{min-width:0}
+.teaser img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.teaser h3{font-size:18px;margin:14px 0 6px;display:flex;align-items:center;gap:8px}
+.teaser h3 a{color:var(--head)}
+.teaser p{font-size:14px;line-height:1.7;color:#666;margin:0}
+.side{display:grid;gap:12px;align-content:start;min-width:0}
+.btn-red{display:block;text-align:center;background:var(--red);color:#fff;border:1px solid var(--red-dark);border-radius:3px;padding:9px 12px;font-size:16px}
+.btn-red:hover{background:var(--red-dark);text-decoration:none}
+.side h3{font-size:18px;margin-top:18px;display:flex;align-items:center;gap:8px}
+.side h3 svg{flex:none}
+.side ul{font-size:14px;padding-left:18px;margin:6px 0}
+.side p{font-size:14px;color:#666;margin:6px 0}
+.side img{max-width:240px;margin-top:8px}
+@media (max-width:900px){.home{grid-template-columns:1fr}}
+@media (max-width:560px){.teasers{grid-template-columns:1fr}}
+
+/* Kapitel */
+.band{background:var(--bg-alt);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.band .wrap{padding-block:26px;display:grid;gap:4px}
+.band .crumb{font-size:12px;color:var(--red);letter-spacing:.06em;text-transform:uppercase}
+.band h2{font-size:clamp(26px,4vw,34px)}
+.chapter .wrap{padding-block:16px 40px}
+.subnav{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;margin:6px 0 4px}
+article{padding-block:22px;border-bottom:1px solid var(--line);min-width:0}
+article:last-child{border-bottom:0}
+article h3{font-size:22px;margin-bottom:6px}
+article h4{font-size:15px;font-weight:600;margin:20px 0 4px;color:#555}
+.note{font-size:14px;color:#777}
+.box{background:var(--soft);border-left:3px solid var(--red);padding:12px 16px;margin:14px 0;max-width:70ch}
+.box h4{margin-top:0}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+
+.glossar{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 28px;margin:12px 0;max-width:900px}
+.glossar div{padding:8px 0;border-bottom:1px solid var(--line)}
+.glossar dt{font-weight:600;color:#333}
+.glossar dd{margin:0;font-size:14px;color:#666}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:12px 0}
+.card{border:1px solid var(--line);border-top:3px solid var(--red);padding:12px 14px;min-width:0}
+.card .tag{font-size:12px;color:var(--red-meta);text-transform:uppercase;letter-spacing:.05em}
+.card h4{margin:2px 0 4px;font-size:16px;color:#333;font-weight:600;text-transform:none;letter-spacing:0}
+.card p{margin:0;font-size:14px;color:#666;line-height:1.55}
+
+.tbl{overflow-x:auto;margin:12px 0;max-width:800px}
+table{border-collapse:collapse;width:100%;min-width:320px;font-size:15px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:#333;background:var(--bg-alt);border-bottom:2px solid var(--red)}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px;max-width:70ch}
+.chips span{font-size:14px;padding:3px 10px;border:1px solid var(--line);border-radius:3px;background:var(--bg-alt)}
+.steps{list-style:none;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:28px 1fr;gap:10px;margin:8px 0}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600}
+.ampel{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0;max-width:900px}
+.ampel>div{border:1px solid var(--line);border-top:5px solid var(--sig);padding:10px 12px;min-width:0}
+.ampel b{display:block}
+.ampel p{margin:4px 0 0;font-size:14px;line-height:1.5;color:#666}
+.a-gruen{--sig:#3C9A5F}.a-gelb{--sig:#E2B23A}.a-rot{--sig:var(--red)}
+.copy{font:inherit;font-size:12px;border:1px solid var(--line);background:#fff;color:#444;border-radius:3px;padding:1px 7px;cursor:pointer;margin-left:6px}
+.copy:hover{border-color:var(--red);color:var(--red)}
+.kontakt{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 28px;margin:10px 0;max-width:1000px}
+.kontakt div{padding:10px 0;border-bottom:1px solid var(--line)}
+.kontakt b{display:block}
+.kontakt span{display:block;font-size:14px;color:#666}
+
+/* Footer */
+footer.site{background:var(--foot);color:var(--foot-text);font-size:14px}
+footer.site .wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;padding-block:44px}
+footer.site h4{color:#fff;font-size:16px;text-transform:none;letter-spacing:0;display:inline-block;border-bottom:2px solid var(--red);padding-bottom:2px;margin-bottom:14px}
+footer.site p{margin:0;line-height:1.7}
+footer.site a{color:#fff}
+.socket{background:var(--socket);color:var(--socket-text);font-size:12px}
+.socket .wrap{display:flex;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;padding-block:14px}
+.socket a{color:#fff}
+.socket nav{display:flex;gap:14px;flex-wrap:wrap}
+@media (max-width:760px){footer.site .wrap{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<div class="topbar"><div class="wrap"><a href="https://pags-kuelsheim.de/barrierefreiheit/leichte-sprache/" target="_blank" rel="noopener">Leichte Sprache</a><a href="https://pags-kuelsheim.de/barrierefreiheit/gebaerdensprache/" target="_blank" rel="noopener">Gebärdensprache</a></div></div>
+
+<header class="site" id="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="PAGS Gemeinschaftsschule Külsheim – nach oben"><img src="{{LOGO}}" alt="PAGS Gemeinschaftsschule Külsheim" width="128" height="64"></a>
+    <nav class="main" aria-label="Hauptmenü">
+      <a href="#top" class="on">Home</a>
+      <a href="#schulinfos">Schulinfos</a>
+      <a href="#starten">Starten!</a>
+      <a href="#grundschule">Grundschule</a>
+      <a href="#sekundarstufe">Sekundarstufe</a>
+      <a href="#smv">SMV</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+    <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Menü öffnen"><span></span><span></span><span></span></button>
+  </div>
+  <div class="drawer" id="drawer" hidden>
+    <div class="wrap">
+      <a href="#top">Home</a>
+      <a href="#schulinfos">Schulinfos</a>
+      <a class="sub" href="#gemeinschaftsschule">Gemeinschaftsschule</a>
+      <a class="sub" href="#schulwegeplan">Schulwegeplan</a>
+      <a class="sub" href="#ssd">Schulsanitätsdienst</a>
+      <a class="sub" href="#schutzkonzept">Schutzkonzept</a>
+      <a class="sub" href="#foerderverein">Förderverein</a>
+      <a class="sub" href="#partnerstaedte">Partnerstädte</a>
+      <a class="sub" href="#historisches">Historisches</a>
+      <a href="#starten">Starten!</a>
+      <a class="sub" href="#lg1">… in Lerngruppe 1</a>
+      <a class="sub" href="#lg5">… in Lerngruppe 5</a>
+      <a href="#grundschule">Grundschule</a>
+      <a href="#sekundarstufe">Sekundarstufe</a>
+      <a class="sub" href="#ganztag">Ganztagsschule</a>
+      <a class="sub" href="#ipads">iPads</a>
+      <a class="sub" href="#faecher">Wahlpflicht- und Profilfächer</a>
+      <a class="sub" href="#tip">TIP-Angebote</a>
+      <a href="#smv">SMV</a>
+      <a href="#kontakt">Ansprechpartner &amp; Kontakt</a>
+    </div>
+  </div>
+</header>
+
+<section class="stage" aria-label="Für unsere Zukunft">
+  <img src="{{HERO}}" alt="Kind an der Tafel mit Kreidezeichnung und der Überschrift „Für unsere Zukunft!“" width="1400" height="622">
+  <a class="cta" href="#kurz">Mehr erfahren…</a>
+</section>
+
+<div class="wrap">
+  <div class="intro">
+    <p class="sub">Die Gemeinschaftsschule in Külsheim</p>
+    <h1>Pater-Alois-Grimm-Schule (PAGS)</h1>
+  </div>
+
+  <div class="kurz" id="kurz">
+    <h2>Kurz und einfach gesagt</h2>
+    <blockquote><p>„Wir, die Pater-Alois-Grimm-Schule (PAGS), sind eine Gemeinschaftsschule im nördlichen Baden-Württemberg. Bei uns können alle Schülerinnen und Schüler in unterschiedlichen Niveaustufen arbeiten. Wir sind eine Ganztagsschule mit Mensabetrieb und einem vielseitigen und Interessen orientierten Ganztagsprogramm. Neben dem Erreichen schulischer Leistungen steht bei uns die Beziehung zu unseren Schülerinnen und Schülern an erster Stelle.“</p></blockquote>
+  </div>
+
+  <div class="home">
+    <div class="teasers">
+      <div class="teaser">
+        <a href="#grundschule"><img src="{{T_GS}}" alt="Erstklässler mit Schultüten auf der Steintreppe zum Schlossplatz Külsheim" width="640" height="360"></a>
+        <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.8" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg><a href="#grundschule">Grundschule</a></h3>
+        <p>Die zweizügige Grundschule (Klasse 1–4) besuchen Kinder aus der Kernstadt und der Umgebung. Viele Zusatzangebote und Projekte geben ihr ein eigenes Profil. <a href="#grundschule">Mehr Infos</a></p>
+      </div>
+      <div class="teaser">
+        <a href="#sekundarstufe"><img src="{{T_SEK}}" alt="Unterricht in einem modernen Klassenzimmer mit Whiteboard" width="640" height="360"></a>
+        <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg><a href="#sekundarstufe">Sekundarstufe</a></h3>
+        <p>Seit 2009/10 lernt die Sekundarstufe nach dem Modell der Schweizer Lernhäuser. Das „Haus des Lernens“ war in Baden-Württemberg eine völlig neue Art des Unterrichtens. <a href="#sekundarstufe">Mehr Infos</a></p>
+      </div>
+      <div class="teaser">
+        <a href="#gemeinschaftsschule"><img src="{{T_GMS}}" alt="Schülerinnen und Schüler lernen gemeinsam an Computern im Lernatelier" width="640" height="360"></a>
+        <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c.5-3.5 3-5.5 6-5.5s5.5 2 6 5.5M14.5 14.6c.8-.4 1.6-.6 2.5-.6 2.3 0 4 1.6 4.5 4.5"/></svg><a href="#gemeinschaftsschule">Gemeinschaftsschule</a></h3>
+        <p>Eine der 42 Starterschulen, die 2012/13 in Baden-Württemberg als Gemeinschaftsschule begonnen haben. Wir bieten die Standards von Haupt-, Realschule und Gymnasium. <a href="#gemeinschaftsschule">Mehr Infos</a></p>
+      </div>
+      <div class="teaser">
+        <a href="#ganztag"><img src="{{T_GTS}}" alt="Mensa mit der Wandaufschrift „Guten Appetit“" width="640" height="360"></a>
+        <h3><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><a href="#ganztag">Ganztagsschule</a></h3>
+        <p>Unterricht bis zur 5. oder 6. Stunde, danach 50 Minuten Mittagspause mit Mensa. Dazu erweiterte Bildungsangebote, Übungs- und Förderstunden. <a href="#ganztag">Mehr Infos</a></p>
+      </div>
+    </div>
+
+    <aside class="side" aria-label="Schnellzugriff">
+      <a class="btn-red" href="https://pags-kuelsheim.de/allgemeine-schulinfos/schul-und-hausordnung/" target="_blank" rel="noopener">PAGS .:. Schulordnung</a>
+      <a class="btn-red" href="https://pagskuelsheim.de/iserv/" target="_blank" rel="noopener">LOGIN iSERV</a>
+      <h3><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#666"/><path d="M12 10.5v6M12 7.2v.1" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>Hilfreiche Links</h3>
+      <ul>
+        <li><a href="https://pags-kuelsheim.de/wp-content/uploads/2024/05/Anmeldung-Schule.pdf" target="_blank" rel="noopener">Anmeldeformular PAGS (PDF)</a></li>
+        <li><a href="https://pags-kuelsheim.de/wp-content/uploads/2025/11/Anmeldung-Ferienbetreuung-OsternPfingstenSommer-2026_Formular-PDF.pdf" target="_blank" rel="noopener">Anmeldung Ferienbetreuung Ostern–Pfingsten–Sommer 2026</a></li>
+        <li><a href="https://www.vrn.de/mam/tickets/tarif/dokumente/2025/jugendbw-2025-bf.pdf" target="_blank" rel="noopener">JugendTicketBW (PDF)</a></li>
+        <li><a href="https://pags-kuelsheim.de/wp-content/uploads/2022/04/Sch%C3%BClerbef%C3%B6rderung-K%C3%B6nigheim-Schweinberg-Hardheim....pdf" target="_blank" rel="noopener">Antrag Stadtfahrkarte (PDF)</a></li>
+        <li><a href="https://pags-kuelsheim.de/wp-content/uploads/2026/07/Ferienkalender-2026-2027.pdf" target="_blank" rel="noopener">Ferienkalender Schuljahr 2026/27 (PDF)</a></li>
+        <li><a href="https://www.ukbw.de/fileadmin/user_upload/Mediathek/Infoblaetter/UKBW_Infoblatt_Schuelerinnen_und_Schueler_2022.pdf" target="_blank" rel="noopener">Infoblatt zum Unfallschutz der UKBW</a></li>
+        <li><a href="https://pags-kuelsheim.de/wp-content/uploads/2026/10/WebUntis-Eltern-Anleitung.pdf" target="_blank" rel="noopener">WebUntis-Anleitung für Eltern</a></li>
+      </ul>
+      <h3><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#666"/><path d="M12 10.5v6M12 7.2v.1" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>Aktuelle Termine</h3>
+      <p>Die aktuellen Termine der PAGS sind über das schuleigene iServ-System für Eltern, Erziehungsberechtigte und Lernpartner einsehbar.</p>
+      <a href="#ssd"><img src="{{SSD}}" alt="Schulsanitätsdienst PAGS Külsheim – Teamarbeit ist unsere Stärke" width="320" height="137"></a>
+    </aside>
+  </div>
+</div>
+
+<!-- ===================== SCHULINFOS ===================== -->
+<section id="schulinfos" class="chapter">
+  <div class="band"><div class="wrap"><span class="crumb">PAGS .:. Schulinfos</span><h2>Schulinfos</h2>
+    <nav class="subnav" aria-label="Schulinfos"><a href="#gemeinschaftsschule">Gemeinschaftsschule</a><a href="#schulwegeplan">Schulwegeplan</a><a href="#ssd">Schulsanitätsdienst</a><a href="#schutzkonzept">Schutzkonzept</a><a href="#foerderverein">Förderverein</a><a href="#partnerstaedte">Partnerstädte</a><a href="#historisches">Historisches</a></nav>
+  </div></div>
+  <div class="wrap">
+
+  <article id="gemeinschaftsschule">
+    <h3>Die Gemeinschaftsschule</h3>
+    <p>Die PAGS ist seit dem Schuljahr 2012/13 Gemeinschaftsschule. Sie war eine der 42 „Starterschulen“ in Baden-Württemberg und hatte zu diesem Zeitpunkt schon mehrere Jahre Erfahrung mit individuellem Lernen im „Haus des Lernens“.</p>
+    <p>Die Gemeinschaftsschule ist leistungsorientiert und nimmt Kinder mit sehr unterschiedlichen Begabungen auf: Kinder, denen Lernen schwerfällt, ebenso wie sehr leistungsstarke Kinder und Kinder mit Behinderung. Angeboten werden die Bildungsstandards von Haupt-, Realschule und Gymnasium.</p>
+    <h4>Ziele</h4>
+    <ul>
+      <li>Viel individuelles und gutes gemeinsames Lernen, damit Kinder Freude am Lernen entwickeln.</li>
+      <li>Jedes Kind bekommt die Unterstützung, die es braucht, und erreicht den bestmöglichen Abschluss.</li>
+      <li>Unterschiede zwischen Menschen gelten im Schulalltag als Bereicherung.</li>
+      <li>Der Bildungserfolg soll möglichst wenig von der Herkunft abhängen.</li>
+    </ul>
+    <h4>Der PAGS-Wortschatz</h4>
+    <dl class="glossar">
+      <div><dt>Lernpartner</dt><dd>Die Schülerinnen und Schüler.</dd></div>
+      <div><dt>Lernbegleiter</dt><dd>Die Lehrerinnen und Lehrer.</dd></div>
+      <div><dt>Lerngruppe (LG)</dt><dd>Die Klasse, z. B. LG 5 = Klasse 5.</dd></div>
+      <div><dt>Lernplan</dt><dd>Wochenziele mit passendem Material zum selbstständigen Arbeiten.</dd></div>
+      <div><dt>Input</dt><dd>Kurze Erklärphase durch den Lernbegleiter.</dd></div>
+      <div><dt>Lernatelier</dt><dd>Raum für gemeinsames, ruhiges Arbeiten am Lernplan.</dd></div>
+      <div><dt>Lerntagebuch</dt><dd>Wöchentlicher Austausch zwischen Kind, Eltern und Schule.</dd></div>
+      <div><dt>TIP</dt><dd>Themen-Interesse-Projekte im Ganztag.</dd></div>
+    </dl>
+    <h4>Abschlüsse und Anschlüsse</h4>
+    <div class="tbl"><table>
+      <thead><tr><th>Nach</th><th>Möglicher Abschluss</th></tr></thead>
+      <tbody>
+        <tr><td class="num">Klasse 9</td><td>Hauptschulabschluss</td></tr>
+        <tr><td class="num">Klasse 10</td><td>Hauptschulabschluss oder Realschulabschluss (Mittlere Reife)</td></tr>
+        <tr><td class="num">Klasse 10, E-Niveau</td><td>Wer in allen Fächern auf erweitertem Niveau abschließt, kann in die gymnasiale Oberstufe versetzt werden.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Wer nach Klasse 9 den Hauptschulabschluss hat, kann Klasse 9 erneut besuchen, um danach in Klasse 10 den Realschulabschluss oder die Versetzung in die Oberstufe anzustreben.</p>
+    <h4>Berufliche Orientierung</h4>
+    <ul>
+      <li>ab Klasse 5: Berufswegeplanung</li>
+      <li>ab Klasse 7: flexible Praktikumsphasen</li>
+      <li>in allen Klassen: individuelles Arbeiten und Differenzierung</li>
+    </ul>
+    <p class="note"><a href="https://pags-kuelsheim.de/allgemeine-schulinfos/wp-content/uploads/2020/01/2021_Die-Gemeinschaftsschule-LERNEN-AUF-DREI-NIVEAUSTUFEN.pdf" target="_blank" rel="noopener">Die Gemeinschaftsschule – Lernen auf drei Niveaustufen (PDF)</a></p>
+  </article>
+
+  <article id="schulwegeplan">
+    <h3>Schulwegeplan</h3>
+    <p>Der Schul- und Radwegeplan zeigt empfohlene Wege, gesicherte Querungen, Bushaltestellen, Gefahrenstellen und Tempo-30/50-Bereiche. Da es in Külsheim keine eigenen Radwege gibt, sind Rad- und Schulwege identisch.</p>
+    <h4>Hier besonders aufpassen</h4>
+    <ul>
+      <li><b>Römerbadweg, Bushaltestelle:</b> schnelle Autos, Kurve, Elterntaxis, teils Baustellenverkehr</li>
+      <li><b>Kirchbergweg am Schulgelände:</b> zugeparkte Gehwege, keine gesicherte Querung</li>
+      <li><b>Kreuzung Uissigheimer Str. / Kirchbergweg / Lehnfeldweg:</b> unübersichtlich, viele haltende Autos</li>
+      <li><b>Hauptstraße (Überweg Steinbacher Weg / Bronnbacher Straße):</b> hohes Tempo, schlechte Sicht, kein Zebrastreifen</li>
+      <li><b>Pater-Grimm-Straße, Bushaltestelle:</b> Wartehäuschen verdeckt die Sicht</li>
+    </ul>
+    <p>Querungsinseln und Zebrastreifen nutzen, Blickkontakt suchen, genug Zeit einplanen. Auf dem Rad defensiv fahren und Helm tragen. An den Haltestellen helfen Schülerlotsinnen und -lotsen.</p>
+    <p><a href="https://pags-kuelsheim.de/wp-content/uploads/2026/07/2026045_ST_entw_03_A3.pdf" target="_blank" rel="noopener">Schulwegeplan 2026 öffnen (PDF)</a></p>
+  </article>
+
+  <article id="ssd">
+    <h3>Schulsanitätsdienst</h3>
+    <p>Seit 2005 leisten Schulsanitäterinnen und -sanitäter an jedem Schultag Erste Hilfe. Geleitet wird der Dienst von Susanne Beckert und Robert Stempien, Partner ist das DRK Tauberbischofsheim. Der DRK-Landesverband hat ihn zum zweiten Mal in Folge als „Ausgezeichneten Schulsanitätsdienst“ zertifiziert.</p>
+    <p>Die Ausbildung läuft über einen TIP-Block, der sich einmal pro Woche trifft. Über das Programm „Löwen retten Leben“ üben alle Lerngruppen 5 bis 10 einmal im Jahr die Wiederbelebung.</p>
+  </article>
+
+  <article id="schutzkonzept">
+    <h3>Schutzkonzept</h3>
+    <p>Gemeinsam mit Schülern, Lehrkräften und Eltern hat die PAGS ein Schutzkonzept erarbeitet. Es soll allen Schutz und Sicherheit geben, besonders vor sexualisierter Gewalt. Ein Ampelsystem zeigt, welches Verhalten von Erwachsenen in Ordnung ist und welches nicht:</p>
+    <div class="ampel">
+      <div class="a-gruen"><b>Grün</b><p>Pädagogisch richtig, auch wenn es nicht gefällt, z. B. Regeln durchsetzen oder schimpfen. Kinder haben das Recht auf Erklärung und eine eigene Meinung.</p></div>
+      <div class="a-gelb"><b>Gelb</b><p>Pädagogisch kritisch, z. B. herumkommandieren, beleidigen, nicht ausreden lassen oder weitermachen, wenn ein Kind „Stopp“ sagt. Kinder dürfen sich wehren und Klärung einfordern.</p></div>
+      <div class="a-rot"><b>Rot</b><p>Immer falsch und strafbar, z. B. Gewalt, sexuelle Übergriffe, Fotos von Kindern veröffentlichen, Bedrohung, Diskriminierung oder Wegschauen bei Kindern in Not.</p></div>
+    </div>
+    <p>Ansprechpersonen an der Schule sind die Vertrauenslehrer Thorsten von Plotho-Kettner und Dominik Petz (per E-Mail Termin vereinbaren) sowie Schulsozialarbeiterin Antje Kaiser, täglich 8–17 Uhr im Mensagebäude. Außerhalb der Schule helfen unter anderem die Nummer gegen Kummer (<span class="mono">0800 111 0333</span>, anonym und kostenlos) und die Kontaktstelle gegen sexuelle Gewalt der Caritas Tauberbischofsheim.</p>
+    <p class="note"><a href="https://pags-kuelsheim.de/pags-schutzkonzept/infos-fuer-schueler-innen/" target="_blank" rel="noopener">Infos für Schüler/innen</a> · <a href="https://pags-kuelsheim.de/pags-schutzkonzept/infos-fuer-eltern/" target="_blank" rel="noopener">Infos für Eltern</a></p>
+  </article>
+
+  <article id="foerderverein">
+    <h3>PAGS .:. Förderverein</h3>
+    <p>Gegründet am 15.03.1995. Der Förderverein unterstützt Lehr- und Lernmittel, die der Schulträger nicht beschafft, Schulverschönerung, Austauschprojekte mit Frankreich und Ungarn sowie die Berufsfindung.</p>
+    <p>Mitglied werden kann jede und jeder, der Jahresbeitrag beträgt <span class="mono">5 €</span>. Vorsitzende ist Claudia Thum, Stellvertreterin Daniela Hüllen, Schatzmeisterin Michaela Klein, Schriftführerin Lydia Goldschmitt.</p>
+    <p><a href="https://pags-kuelsheim.de/wp-content/uploads/2025/09/Antrag-Foerderverein.pdf" target="_blank" rel="noopener">Beitrittserklärung (PDF)</a> · <a href="https://pags-kuelsheim.de/wp-content/uploads/2025/09/FoeV-PAGS_Flyer.pdf" target="_blank" rel="noopener">Flyer (PDF)</a></p>
+  </article>
+
+  <article id="partnerstaedte">
+    <h3>Partnerstädte</h3>
+    <div class="cards">
+      <div class="card"><span class="tag">Ungarn · seit 1990</span><h4>Pécsvárad</h4><p>Kleinstadt 20 km östlich von Pécs. Schulpartnerschaft seit 19. Mai 1992, jeden September Austausch mit rund 20 Teilnehmenden.</p></div>
+      <div class="card"><span class="tag">Frankreich · seit 1996</span><h4>Moret-sur-Loing</h4><p>Mittelalterliches Städtchen bei Paris. Regelmäßige gegenseitige Besuche mit etwa 10 bis 12 Jugendlichen.</p></div>
+    </div>
+  </article>
+
+  <article id="historisches">
+    <h3>Historisches: Wer war Pater Alois Grimm?</h3>
+    <p><span class="mono">24.10.1886 – 11.09.1944</span></p>
+    <p>Alois Grimm wuchs als Sohn eines Landwirts in Külsheim auf. Auf Drängen des Ortskaplans besuchte er das Gymnasium in Tauberbischofsheim und trat nach einem glänzenden Abitur gegen den Willen seines Vaters in den Jesuitenorden ein. 1920 wurde er zum Priester geweiht und unterrichtete Latein, Griechisch, Deutsch und Geschichte, unter anderem in Feldkirch und St. Blasien.</p>
+    <p>Mit mutigen Predigten und seiner Jugendarbeit geriet er ins Visier der Nationalsozialisten. 1943 stellte ihm ein Spitzel der Gestapo eine Falle, im Oktober wurde er verhaftet. Der Volksgerichtshof in Berlin verurteilte ihn zum Tod, am 11. September 1944 wurde er hingerichtet.</p>
+    <p>1984, zu seinem 40. Todestag, beschloss der Gemeinderat einstimmig, die Grund- und Hauptschule nach ihm zu benennen. Seit 1967 trägt die Straße an seinem Geburtshaus seinen Namen.</p>
+  </article>
+  </div>
+</section>
+
+<!-- ===================== STARTEN ===================== -->
+<section id="starten" class="chapter">
+  <div class="band"><div class="wrap"><span class="crumb">Starten!</span><h2>Starten an der PAGS</h2>
+    <nav class="subnav" aria-label="Starten"><a href="#lg1">… in Lerngruppe 1</a><a href="#lg5">… in Lerngruppe 5</a></nav>
+  </div></div>
+  <div class="wrap">
+  <article id="lg1">
+    <h3>Starten in Lerngruppe 1</h3>
+    <p>Schulpflichtig ist, wer bis zum 30. Juni sechs Jahre alt wird. Auch Kinder, die im Vorjahr zurückgestellt wurden, müssen neu angemeldet werden. Familien im Einzugsgebiet bekommen automatisch eine Einladung. Wer keine Unterlagen erhält, meldet sich im Sekretariat unter <span class="mono">09345 / 333</span>.</p>
+    <p>Die Anmeldung findet an einem Nachmittag im März in der Mensa statt, zuletzt am Montag, 2. März 2026, von 14:30 bis 16:30 Uhr. Mitzubringen sind:</p>
+    <ul>
+      <li><a href="https://pags-kuelsheim.de/wp-content/uploads/2024/05/Anmeldung-Schule.pdf" target="_blank" rel="noopener">Anmeldeformular</a> mit Unterschrift aller Erziehungsberechtigten</li>
+      <li>Nachweis über Masernschutz (Original zur Einsicht)</li>
+      <li>Kopie der Geburtsurkunde</li>
+      <li>Bescheinigung des Gesundheitsamts über die Einschulungsuntersuchung (falls vorhanden)</li>
+      <li>bei Bedarf: Antrag auf das Deutschlandticket JugendBW (ohne Lichtbild)</li>
+    </ul>
+    <p>Eine Zurückstellung kann jederzeit unabhängig vom Anmeldetermin im Sekretariat beantragt werden.</p>
+    <div class="box">
+      <h4>Vom Kindergarten in die Schule</h4>
+      <p>Ansprechpartnerin für die Kooperation Kindergarten–Grundschule ist Laura Engert: <span class="mono">laura.engert@pagskuelsheim.de</span><button class="copy" type="button" data-copy="laura.engert@pagskuelsheim.de">kopieren</button></p>
+      <p class="note">Die Grundschul-Seite der Website nennt dafür noch Joshua Stephan.</p>
+    </div>
+  </article>
+
+  <article id="lg5">
+    <h3>Starten in Lerngruppe 5</h3>
+    <p>Die Anmeldung findet im landesweiten Zeitraum nach der Grundschulempfehlung statt. Rufen Sie vorher gern im Sekretariat an, werktags 8–13 Uhr unter <span class="mono">09345 / 333</span>. Das Sekretariat finden Sie im 1. OG des Mensagebäudes.</p>
+    <h4>Das bringen Sie mit</h4>
+    <ul>
+      <li>ausgefülltes <a href="https://pags-kuelsheim.de/wp-content/uploads/2024/05/Anmeldung-Schule.pdf" target="_blank" rel="noopener">Anmeldeformular (PDF)</a></li>
+      <li>Kopie der Geburtsurkunde</li>
+      <li>Blatt 3 und 4 der Grundschulempfehlung (im Original)</li>
+      <li>Nachweis der Masernimpfung im Original</li>
+      <li>bei Bedarf: Antrag auf das Deutschlandticket Jugend BW mit aktuellem Passbild</li>
+    </ul>
+    <h4>Aufnahmekriterien</h4>
+    <p>Wegen begrenzter Plätze gilt diese mit Schulamt und Stadt vereinbarte Reihenfolge:</p>
+    <ol class="steps">
+      <li>Kinder, die im Stadtgebiet Külsheim wohnen</li>
+      <li>Kinder, deren Geschwister schon die PAGS besuchen</li>
+      <li>Kinder aus Kommunen ohne eigene Gemeinschaftsschule</li>
+      <li>Gibt es mehr Anmeldungen als Plätze, entscheidet das Los.</li>
+    </ol>
+    <p class="note">Eine Anmeldung ist noch keine Aufnahme. Die Aufnahme bestätigt das Schulamt nach den Prognosegesprächen. Die Anmeldetermine für 2027 stehen noch nicht auf der Schulwebsite.</p>
+  </article>
+  </div>
+</section>
+
+<!-- ===================== GRUNDSCHULE ===================== -->
+<section id="grundschule" class="chapter">
+  <div class="band"><div class="wrap"><span class="crumb">PAGS .:. Grundschule</span><h2>Grundschule</h2></div></div>
+  <div class="wrap">
+  <article>
+    <h3>Allgemeines</h3>
+    <p>Unsere PAGS ist bunt: Egal welche Herkunft, Veranlagung oder Fähigkeiten ein Kind hat, jedes ist einzigartig. In der zweizügigen Grundschule lernen die Klassen 1 bis 4 von- und miteinander. Neben gemeinsamen Unterrichtsphasen arbeiten schon die Jüngsten mit Lernplänen, die auf das einzelne Kind abgestimmt sind. Über das Lerntagebuch stehen Eltern und Schule jede Woche im Austausch.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Was</th><th>Wann</th><th>Hinweis</th></tr></thead>
+      <tbody>
+        <tr><td>Türen öffnen</td><td class="num">7:40</td><td>Gemeinsamer Start in den Tag</td></tr>
+        <tr><td>Unterricht (verlässliche Grundschule)</td><td class="num">4–6 Std.</td><td>am Vormittag</td></tr>
+        <tr><td>Hausaufgabenbetreuung (Modul 1)</td><td class="num">Mo–Do bis 14:30</td><td>Pause, Essen, Hausaufgaben; Fr bis max. 13:00 ohne Hausaufgaben</td></tr>
+        <tr><td>Nachmittagsbetreuung (Modul 2)</td><td class="num">Mo–Do bis 16:00</td><td>flexible Zeiten, Spiel- und Bastelangebote</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Die Hausaufgabenbetreuung gibt es seit 2008, mit rund zehn qualifizierten Betreuerinnen und Betreuern.</li>
+      <li>Alle Betreuungen kosten Gebühren. Anmeldung und Gebühren laufen über die <a href="https://www.kuelsheim.de/rathaus-service/stadt-service/staedtische-formulare" target="_blank" rel="noopener">Stadt Külsheim</a>. Gibt es mehr Anmeldungen als Plätze, entscheidet eine Prioritätenliste.</li>
+      <li>Auch ein Teil der Ferien ist mit einer kostenpflichtigen Betreuung abgedeckt.</li>
+    </ul>
+  </article>
+  </div>
+</section>
+
+<!-- ===================== SEKUNDARSTUFE ===================== -->
+<section id="sekundarstufe" class="chapter">
+  <div class="band"><div class="wrap"><span class="crumb">Sekundarstufe</span><h2>Sekundarstufe – Haus des Lernens</h2>
+    <nav class="subnav" aria-label="Sekundarstufe"><a href="#ganztag">Ganztagsschule</a><a href="#ipads">iPads</a><a href="#faecher">Wahlpflicht- und Profilfächer</a><a href="#tip">TIP-Angebote</a></nav>
+  </div></div>
+  <div class="wrap">
+  <article>
+    <h3>Grundsätzliches</h3>
+    <p>Seit 2009/10 arbeitet die Sekundarstufe nach dem Vorbild der Schweizer Lernhäuser. Herzstück ist der Lernplan: Er enthält die Wochenziele, das passende Material und Inputs, mit denen die Lernpartner selbstständig weiterkommen.</p>
+    <p>Ziel ist eigenverantwortliches Lernen. Die Schule orientiert sich an einem Gedanken von Antoine de Saint-Exupéry: Man soll junge Menschen bis zu dem Punkt begleiten, an dem sie selbst denken, lernen und arbeiten können. Dafür gibt es Lerntagebuch und Lernverträge, strukturiertes Material mit Wochenlernzielen, Lernateliers und Lernbegleiter.</p>
+    <div class="box">
+      <h4>Unterrichtszeiten LG 5–10</h4>
+      <p><span class="mono">Mo–Do 07:55–15:20</span> · <span class="mono">Fr 07:55–13:00</span></p>
+      <p class="note">Ab 7:45 Uhr ist das Klassenzimmer offen („offenes Ankommen“).</p>
+    </div>
+  </article>
+
+  <article id="ganztag">
+    <h3>Ganztagsschule</h3>
+    <p>Alle Klassen werden als Ganztagsschule geführt. Der Vormittag endet je nach Stundenplan nach der 5. oder 6. Stunde, danach folgt eine 50-minütige Mittagspause. Zum Ganztag gehören erweiterte Bildungsangebote sowie Übungs- und Förderstunden.</p>
+    <div class="box">
+      <h4>Hausaufgaben?</h4>
+      <p>Hausaufgaben im üblichen Sinn gibt es an der PAGS nicht. Zu Hause bleibt trotzdem etwas zu tun: Versäumtes nachholen, vertiefen und sich auf Tests und Arbeiten vorbereiten.</p>
+    </div>
+    <h4>Mittagessen in der Mensa</h4>
+    <div class="tbl"><table>
+      <thead><tr><th>Was</th><th>Wann</th></tr></thead>
+      <tbody>
+        <tr><td>Bestellen über <a href="https://login.mampf1a.de/kuelsheim/" target="_blank" rel="noopener">Mampf</a></td><td>schon in der Vorwoche oder am selben Tag bis <span class="mono">10:00</span></td></tr>
+        <tr><td>Essensausgabe, 1. Schicht</td><td class="num">12:15</td></tr>
+        <tr><td>Essensausgabe, 2. Schicht</td><td class="num">13:00</td></tr>
+      </tbody>
+    </table></div>
+    <p>Täglich gibt es mehrere Menüs, Snacks und vegetarische Gerichte. Stilles Wasser und Mineralwasser sind in der Mensa kostenlos.</p>
+  </article>
+
+  <article id="ipads">
+    <h3>iPads ab Lerngruppe 7</h3>
+    <p>Seit 2021/22 ist das iPad ab Klasse 7 verbindliches Lernmittel. In der Schule sind beide Geräte identisch eingerichtet, alle haben also dieselben Lernbedingungen.</p>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>Mietkauf</th><th>Leihgerät</th></tr></thead>
+      <tbody>
+        <tr><td>Kosten</td><td class="num">12 € / Monat, 40 Raten</td><td class="num">0 €</td></tr>
+        <tr><td>Gerät</td><td>iPad 9. Gen., 64 GB</td><td>iPad 8. Gen., 32 GB</td></tr>
+        <tr><td>Gehört später</td><td>der Familie (Restbetrag jederzeit ablösbar)</td><td>der Schule, Rückgabe bei Schulende</td></tr>
+        <tr><td>Privat nutzbar</td><td>ja, im Heimmodus nach 15:30, am Wochenende und in den Ferien</td><td>nein</td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>Stift sowie Hülle mit Tastatur und Versicherung sind dabei. Die Abbuchung läuft über die Stadt Külsheim.</li>
+      <li>Jedes Gerät hat einen Jugendschutzfilter. Über die App „Jamf Parent“ legen Eltern Apps und Nutzungszeiten für die Freizeit fest.</li>
+      <li>Schäden auf dem Schulweg und in der Schule sind über die Stadt versichert, zu Hause greift die Haftpflichtversicherung.</li>
+      <li>Ansprechpartner für Support: Herr Krämer und Herr Nowotny.</li>
+    </ul>
+  </article>
+
+  <article id="faecher">
+    <h3>Wahlpflicht- und Profilfächer</h3>
+    <h4>Wahlpflichtfach: ein weiteres Hauptfach</h4>
+    <div class="cards">
+      <div class="card"><span class="tag">ab LG 6</span><h4>Französisch</h4><p>Sprache, Alltag, Land und Leute. Voraussetzung für das Profilfach Spanisch.</p></div>
+      <div class="card"><span class="tag">ab LG 7</span><h4>Technik</h4><p>Werkstücke planen und bauen, mit Werkzeugen, Maschinen und Werkstoffen.</p></div>
+      <div class="card"><span class="tag">ab LG 7</span><h4>AES</h4><p>Alltagskultur, Ernährung, Soziales: gesund kochen, klug einkaufen, textiles Gestalten.</p></div>
+    </div>
+    <h4>Profilfach ab LG 8 (Wahl im 2. Halbjahr von LG 7)</h4>
+    <div class="cards">
+      <div class="card"><span class="tag">seit 2019/20</span><h4>IMP</h4><p>Informatik, Mathematik, Physik in Projekten. Laut Schule die einzige Gemeinschaftsschule der Region mit diesem Fach.</p></div>
+      <div class="card"><span class="tag">Profil</span><h4>NwT</h4><p>Naturwissenschaft und Technik: experimentieren, Maschinen und LEGO-Roboter programmieren.</p></div>
+      <div class="card"><span class="tag">Profil</span><h4>Bildende Kunst</h4><p>Grafik, Malerei, Plastik, Architektur, Medien und Aktion, im Atelier und in Projekten.</p></div>
+      <div class="card"><span class="tag">nur mit Französisch</span><h4>Spanisch</h4><p>Spanien und Lateinamerika: Sprache, Kultur und Geschichte.</p></div>
+    </div>
+    <p class="note">Ob ein Fach zustande kommt, hängt von den Mindestschülerzahlen des jeweiligen Schuljahres ab.</p>
+  </article>
+
+  <article id="tip">
+    <h3>TIP-Angebote</h3>
+    <p>In den Jahrgangsstufen 4 bis 8 wählen die Lernpartner jedes Halbjahr Themen-Interesse-Projekte nach ihren Interessen. Die Gruppen sind jahrgangsgemischt und werden von Lernbegleitern, der Schulsozialarbeit, Vereinen, Eltern und Jugendbegleitern geleitet. Kinder sollen gerne in die Schule gehen!</p>
+    <div class="chips" aria-label="Beispiele für TIP-Angebote">
+      <span>Häkeln</span><span>Kulinarische Reise</span><span>Upcycling</span><span>Typisch Mädchen</span><span>Schulgelände</span><span>Schulgarten</span><span>Pop</span><span>Kunst</span><span>Basketball</span><span>Modelleisenbahn</span><span>Futsal</span><span>iPad-Checker</span><span>Schulsanitäter</span><span>Mountainbike</span><span>Töpfern</span><span>Lego Mindstorms</span><span>Klettern</span><span>Spiel-io-thek</span><span>Schülerband</span>
+    </div>
+    <p class="note">Beispiele von der Schulwebsite. Das Angebot wechselt jedes Halbjahr.</p>
+  </article>
+  </div>
+</section>
+
+<!-- ===================== SMV ===================== -->
+<section id="smv" class="chapter">
+  <div class="band"><div class="wrap"><span class="crumb">SMV</span><h2>Schüler mit Verantwortung</h2></div></div>
+  <div class="wrap">
+  <article>
+    <p>Die SMV ist an der PAGS kein Muss, sondern eine Chance: Die gewählten Lerngruppenvertreter gestalten das Schulleben mit, bringen eigene Projekte ein und suchen bei Problemen nach Lösungen, etwa mit Fußballturnier, Wintersporttag, Elterncafé-Tag oder dem Wettbewerb Soziales Engagement.</p>
+    <p>Schülersprecherin ist Elisa Stemmler, ihr Stellvertreter Henry Kraft. Das SMV-Team der Lernbegleiter bilden Thorsten von Plotho-Kettner und Dominik Petz.</p>
+  </article>
+  </div>
+</section>
+
+<!-- ===================== KONTAKT ===================== -->
+<section id="kontakt" class="chapter">
+  <div class="band"><div class="wrap"><span class="crumb">PAGS .:. Ansprechpartner</span><h2>Ansprechpartner</h2></div></div>
+  <div class="wrap">
+  <article>
+    <div class="kontakt">
+      <div><b>Schulleitung</b><span>Michael Regner</span></div>
+      <div><b>Sekretariat</b><span>Frau Haag und Frau Schreck · Tel. <span class="mono">09345 / 333</span><button class="copy" type="button" data-copy="09345333">kopieren</button></span></div>
+      <div><b>Öffnungszeiten Sekretariat</b><span>Mo, Di 7:00–13:00 und 14:00–15:30 · Mi, Fr 7:00–12:15 · Do 7:00–13:00</span></div>
+      <div><b>Elternbeirat</b><span>Lydia Goldschmitt (Vorsitzende), Jessica Würzberger (Stellvertreterin)</span></div>
+      <div><b>Schulsozialarbeit</b><span>Antje Kaiser · Tel. <span class="mono">09345 / 92 92 59</span></span></div>
+      <div><b>Beratungslehrerin</b><span>Nadine Hammerich · über das Sekretariat</span></div>
+      <div><b>Vertrauenslehrer</b><span>Thorsten von Plotho-Kettner, Dominik Petz</span></div>
+      <div><b>Schulpsychologische Beratungsstelle TBB</b><span>Tel. <span class="mono">09341 / 89 544 0</span> · Mo–Do 9–15, Fr 9–13 Uhr</span></div>
+    </div>
+    <p class="note">E-Mail-Adressen aller Lernbegleiter stehen auf der <a href="https://pags-kuelsheim.de/allgemeine-schulinfos/ansprechpartner/" target="_blank" rel="noopener">Ansprechpartner-Seite</a> der Schulwebsite.</p>
+  </article>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div><h4>KONTAKT</h4><p>Pater-Alois-Grimm-Schule<br>Kirchbergweg 11<br>97900 Külsheim</p></div>
+    <div><h4>Telefon / Fax / E-Mail</h4><p>Tel. 09345 / 333<br>Fax. 09345 / 8303<br><a href="https://pags-kuelsheim.de/allgemeine-schulinfos/ansprechpartner/" target="_blank" rel="noopener">Ansprechpartner und E-Mail-Adressen</a></p></div>
+    <div><h4>PAGS Mensa - Essenbestellung</h4><p><a href="https://login.mampf1a.de/kuelsheim/" target="_blank" rel="noopener">Login Mensaprogramm Mampf</a></p></div>
+  </div>
+</footer>
+<div class="socket"><div class="wrap">
+  <span>Zusammengestellt aus pags-kuelsheim.de · Stand Oktober 2026</span>
+  <nav aria-label="Rechtliches"><a href="https://pags-kuelsheim.de/barrierefreiheit/" target="_blank" rel="noopener">Barrierefreiheit</a><a href="https://pags-kuelsheim.de/datenschutz/" target="_blank" rel="noopener">Datenschutz</a><a href="https://pags-kuelsheim.de/impressum/" target="_blank" rel="noopener">Impressum</a></nav>
+</div></div>
+
+<script>
+(function () {
+  var burger = document.getElementById('burger'), drawer = document.getElementById('drawer');
+  function setOpen(o) { drawer.hidden = !o; burger.setAttribute('aria-expanded', o ? 'true' : 'false'); burger.setAttribute('aria-label', o ? 'Menü schließen' : 'Menü öffnen'); }
+  burger.addEventListener('click', function () { setOpen(drawer.hidden); });
+  drawer.addEventListener('click', function (e) {
+    var a = e.target.closest('a'); if (!a) return;
+    var id = a.getAttribute('href').slice(1), el = document.getElementById(id);
+    e.preventDefault(); setOpen(false);
+    requestAnimationFrame(function () { if (el) el.scrollIntoView({ block: 'start' }); try { history.replaceState(null, '', '#' + id); } catch (x) {} });
+  });
+
+  // aktiven Menüpunkt beim Scrollen markieren
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.main a'));
+  var ids = ['schulinfos', 'starten', 'grundschule', 'sekundarstufe', 'smv', 'kontakt'];
+  function mark() {
+    var cur = 'top', y = window.scrollY + 120;
+    ids.forEach(function (id) { var el = document.getElementById(id); if (el && el.offsetTop <= y) cur = id; });
+    links.forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + cur); });
+  }
+  window.addEventListener('scroll', mark, { passive: true }); mark();
+
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.copy'); if (!b) return;
+    var t = b.getAttribute('data-copy');
+    var done = function () { var o = b.textContent; b.textContent = 'kopiert'; setTimeout(function () { b.textContent = o; }, 1400); };
+    var sel = function () { var el = b.previousElementSibling; if (!el) return; var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); };
+    try { navigator.clipboard.writeText(t).then(done, sel); } catch (err) { sel(); }
+  });
+})();
+</script>

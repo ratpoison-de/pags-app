@@ -1,0 +1,538 @@
+<title data-keep>PAGS Alltag</title>
+<meta data-keep name="claude:viewport-fit-sides" content="cover">
+<link data-keep rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap">
+<style data-keep>
+/* Layout: PAGS-Website-Look als Taschen-App – weißer Kopf mit Logo, rote Akzente, graue Versal-Überschriften, Tab-Leiste unten, dunkler Footer */
+:root{
+  --red:#A81010; --red-dark:#860000; --red-meta:#801A1A; --red-soft:#F7EDED;
+  --bg:#F7F7F7; --surface:#FFFFFF; --alt:#FCFCFC; --line:#E1E1E1; --text:#444444; --head:#666666; --muted:#777777;
+  --board:#333333; --board-ink:#FFFFFF; --foot:#222222; --foot-text:#DDDDDD;
+  --ok:#3C9A5F; --warn:#C98A12;
+  --f:"Open Sans",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--f);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--surface)}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:12}
+.top .wrap{padding-block:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;margin:0;font-weight:400;font-size:15px;color:var(--head);text-transform:uppercase;letter-spacing:1px}
+.brand-logo{display:block;width:104px;height:52px;background:url("{{LOGO}}") left center/contain no-repeat}
+.brand .sep{width:1px;height:34px;background:var(--line)}
+.today{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+main .wrap{padding-block:14px 150px;display:grid;gap:14px}
+h2{font-weight:400;font-size:24px;color:var(--head);text-transform:uppercase;letter-spacing:1px;margin:8px 0 0}
+h3{font-size:14px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--head);margin:0}
+p{margin:0}
+.mono{font-variant-numeric:tabular-nums;font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:14px 16px;display:grid;gap:8px;min-width:0}
+.board{background:var(--board);color:var(--board-ink);border:0;border-top:4px solid var(--red)}
+.board h3{color:#ccc}
+.status{display:flex;align-items:center;gap:10px;font-weight:600;font-size:21px;line-height:1.25}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;background:#E57373}
+.dot.on{background:#6FCF97}.dot.off{background:#E57373}
+.rows{display:grid;gap:6px}
+.row{display:flex;justify-content:space-between;gap:4px 12px;flex-wrap:wrap}
+.board .row{border-top:1px solid #4a4a4a;padding-top:6px}
+.chalk{background:var(--red);color:#fff;padding:0 7px;border-radius:3px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.quick a{display:grid;gap:2px;text-align:center;text-decoration:none;color:#fff;background:var(--red);border:1px solid var(--red-dark);border-radius:3px;padding:10px 8px;min-width:0}
+.quick a b{font-size:15px;font-weight:600}
+.quick a span{font-size:12px;opacity:.85}
+.quick a:hover{background:var(--red-dark)}
+@media (max-width:380px){.quick{grid-template-columns:1fr 1fr}}
+.pill{display:inline-block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:1px 8px;border-radius:3px;background:var(--red-soft);color:var(--red-meta);white-space:nowrap}
+.pill.ferien{background:#FBEAEA;color:var(--red)}
+.pill.frei{background:#FFF4DE;color:#7A5300}
+.list{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.list li{display:grid;grid-template-columns:82px 1fr auto;gap:10px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list .when{font-size:13px;line-height:1.35;font-variant-numeric:tabular-nums;font-weight:600;color:#333}
+.list .what{min-width:0;display:grid;gap:2px}
+.list .what b{font-weight:600;color:#333}
+.list .what span{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.list li.past{opacity:.55}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:3px;padding:3px 8px;font-size:13px;cursor:pointer}
+.icon-btn:hover{border-color:var(--red);color:var(--red)}
+.contact{display:grid;gap:3px;padding:12px 0;border-top:1px solid var(--line)}
+.contact:first-of-type{border-top:0}
+.contact .who{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.contact .who b{font-size:16px;font-weight:600;color:#333}
+.contact .line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:15px}
+.contact .line .mono{font-size:14px;overflow-wrap:anywhere}
+.copy{border:1px solid var(--line);background:var(--surface);border-radius:3px;padding:1px 7px;font-size:12px;cursor:pointer}
+.copy:hover{border-color:var(--red);color:var(--red)}
+.names{display:flex;flex-wrap:wrap;gap:6px}
+.names span{font-size:14px;padding:2px 9px;border-radius:3px;background:var(--alt);border:1px solid var(--line)}
+input[type=search],input[type=text],input[type=date],input[type=time],input[type=url],textarea{width:100%;border:1px solid var(--line);background:var(--alt);border-radius:3px;padding:9px 11px;min-width:0}
+textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus{border-color:var(--red);outline:none;background:#fff}
+form.add{display:grid;gap:8px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{font-size:13px;color:var(--muted);display:grid;gap:3px}
+.btn{border:1px solid var(--red-dark);border-radius:3px;padding:8px 14px;font-weight:600;cursor:pointer;background:var(--red);color:#fff}
+.btn:hover{background:var(--red-dark)}
+.btn.ghost{background:transparent;color:var(--red);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--red);background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+.empty{font-size:14px;color:var(--muted);padding:6px 0}
+ul.plain{margin:0;padding-left:18px;display:grid;gap:5px}
+ul.plain li::marker{color:var(--red)}
+.linkgroup{display:grid;gap:6px}
+.linkgroup a{overflow-wrap:anywhere}
+.lrow{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.notice{border-left:3px solid var(--red);padding:10px 12px;background:var(--red-soft);font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.savebar{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:15;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.savebar .in{max-width:728px;margin:0 auto 8px;background:var(--board);color:#fff;border-top:3px solid var(--red);border-radius:3px;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.savebar .in span{font-size:14px}
+.savebar .btn.ghost{color:#fff;border-color:#666}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:16;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabs button{background:none;border:0;border-top:2px solid transparent;padding:8px 2px 11px;font-size:12.5px;color:var(--head);cursor:pointer;display:grid;justify-items:center;gap:3px}
+.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected=true]{color:var(--red);border-top-color:var(--red)}
+footer.meta{font-size:13px;color:var(--muted);display:grid;gap:8px;padding-top:6px}
+.sitefoot{background:var(--foot);color:var(--foot-text);font-size:13px;border-radius:3px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.sitefoot b{display:inline-block;color:#fff;font-weight:400;border-bottom:2px solid var(--red);margin-bottom:6px}
+.sitefoot a{color:#fff}
+</style>
+
+<div id="app"></div>
+
+<script type="application/json" id="pags-data">{"stand": "2026-10-23", "quelle": "https://pags-kuelsheim.de/", "sekretariat": {"namen": "Frau Haag und Frau Schreck", "tel": "09345 / 333", "fax": "09345 / 8303", "adresse": "Kirchbergweg 11, 97900 Külsheim", "ort": "1. OG im Mensagebäude", "zeiten": {"1": [["07:00", "13:00"], ["14:00", "15:30"]], "2": [["07:00", "13:00"], ["14:00", "15:30"]], "3": [["07:00", "12:15"]], "4": [["07:00", "13:00"]], "5": [["07:00", "12:15"]]}}, "unterricht": {"sek": {"1": ["07:55", "15:20"], "2": ["07:55", "15:20"], "3": ["07:55", "15:20"], "4": ["07:55", "15:20"], "5": ["07:55", "13:00"]}, "gsTueren": "07:40", "sekAnkommen": "07:45", "gsBetreuung": "Hausaufgabenbetreuung Mo–Do bis 14:30, Fr bis 13:00; Nachmittagsbetreuung Mo–Do bis 16:00"}, "kontakte": [{"gruppe": "Schule", "name": "Sekretariat", "person": "Frau Haag, Frau Schreck", "tel": "09345 / 333", "info": "Fax 09345 / 8303 · Anrufbeantworter immer an"}, {"gruppe": "Schule", "name": "Schulleitung", "person": "Michael Regner", "tel": "09345 / 333", "info": "über das Sekretariat"}, {"gruppe": "Beratung & Hilfe", "name": "Schulsozialarbeit", "person": "Antje Kaiser", "tel": "09345 / 92 92 59", "mail": "antje.kaiser@pagskuelsheim.de", "info": "täglich 8–17 Uhr, Büro im Mensagebäude"}, {"gruppe": "Beratung & Hilfe", "name": "Beratungslehrerin", "person": "Nadine Hammerich", "tel": "09345 / 333"}, {"gruppe": "Beratung & Hilfe", "name": "Vertrauenslehrer", "person": "Thorsten von Plotho-Kettner, Dominik Petz", "mail": "t.von.plotho-kettner@pagskuelsheim.de", "mail2": "dominik.petz@pagskuelsheim.de", "tel": "01567 83 87 852", "info": "Per E-Mail Termin vereinbaren · Telefonnummer nur für dringende Fälle"}, {"gruppe": "Externe Hilfe", "name": "Schulpsychologische Beratungsstelle TBB", "tel": "09341 / 89 544 0", "mail": "poststelle.spbs-tbb@zsl-rs-gd.kv.bwl.de", "info": "Mo–Do 9–15, Fr 9–13 Uhr · kostenfrei, Schweigepflicht"}, {"gruppe": "Externe Hilfe", "name": "Kontaktstelle gegen sexuelle Gewalt (Caritas TBB)", "person": "Frau Brunner", "tel": "09341 / 9220 1024", "mail": "j.brunner@caritas-tbb.de", "info": "auch anonyme Online-Beratung"}, {"gruppe": "Externe Hilfe", "name": "Nummer gegen Kummer (Kinder- und Jugendtelefon)", "tel": "0800 111 0333", "info": "Mo–Sa 14–20 Uhr · anonym und kostenlos"}, {"gruppe": "Externe Hilfe", "name": "Hilfe-Telefon Sexueller Missbrauch", "tel": "0800 22 55 530", "info": "anonym und kostenlos · hilfe-portal-missbrauch.de"}, {"gruppe": "Externe Hilfe", "name": "Jugendamt Tauberbischofsheim", "tel": "09341 / 825480", "info": "vertraulich, für Kinder, Jugendliche und Eltern"}, {"gruppe": "Organisation", "name": "iPad-Support", "person": "Herr Krämer, Herr Nowotny", "info": "Fragen, Hilfe, Defekte"}, {"gruppe": "Organisation", "name": "Schulsanitätsdienst", "person": "Susanne Beckert, Robert Stempien", "info": "Alarmierung über das Sekretariat"}, {"gruppe": "Organisation", "name": "Übergang Kita → Grundschule", "person": "Laura Engert (Kooperation KiGa–GS)", "mail": "laura.engert@pagskuelsheim.de", "info": "Laut Grundschul-Seite auch: Joshua Stephan, joshua.stephan@pagskuelsheim.de"}, {"gruppe": "Organisation", "name": "Stadt Külsheim (Schulträger, Betreuung)", "tel": "09345 / 673-0", "info": "Anmeldung und Gebühren der Betreuung, iPad-Mietkauf"}, {"gruppe": "Gremien", "name": "Elternbeirat", "person": "Lydia Goldschmitt (Vors.), Jessica Würzberger (Stv.)"}, {"gruppe": "Gremien", "name": "SMV", "person": "Elisa Stemmler (Schülersprecherin), Henry Kraft (Stv.)"}, {"gruppe": "Gremien", "name": "Förderverein", "person": "Claudia Thum (1. Vors.)", "mail": "Foerderverein-pags@gmx.de", "info": "Jahresbeitrag 5 €"}], "lernbegleiter": ["Herr Akbuluto", "Frau Albrecht", "Frau Attenhauser", "Frau Bechtold", "Frau Beckert", "Herr Benisch", "Frau Bitsch", "Herr Braml", "Herr Christ", "Herr Dietrich", "Herr Droege", "Frau Engert", "Frau Ferschel", "Herr Fiederling", "Frau Gärtner", "Frau Gehrlein", "Frau Graf", "Frau Grimm", "Frau Grünhaupt", "Frau Hammerich", "Frau Hock", "Frau Hofmann", "Herr Ivonin", "Frau Joas", "Frau Kappes", "Frau Keller-Steinbach", "Frau Kilb", "Frau Kirchgeßner", "Herr Klein", "Herr Krämer", "Herr Krebs", "Herr Müller C.", "Herr Münkel", "Herr Nowotny", "Frau Olma", "Herr Petz", "Herr Regner", "Frau Ries", "Frau Schäfer", "Frau Schaible", "Herr Schotschneider", "Herr Seraphin", "Herr Sommer", "Herr Stempien", "Herr Stephan", "Frau Tülek", "Herr von Plotho-Kettner", "Frau Wagler", "Frau Waltz", "Frau Zimmermann"], "ferien": [{"von": "2026-10-26", "bis": "2026-10-30", "titel": "Herbstferien", "art": "ferien"}, {"von": "2026-12-23", "bis": "2027-01-08", "titel": "Weihnachtsferien", "art": "ferien"}, {"von": "2027-02-08", "bis": "2027-02-12", "titel": "Fasnetsferien (bewegliche Ferientage / unterrichtsfrei)", "art": "frei"}, {"von": "2027-03-24", "bis": "2027-03-24", "titel": "Beweglicher Ferientag / unterrichtsfrei", "art": "frei"}, {"von": "2027-03-25", "bis": "2027-04-02", "titel": "Osterferien", "art": "ferien"}, {"von": "2027-05-07", "bis": "2027-05-07", "titel": "Brückentag (unterrichtsfrei)", "art": "frei"}, {"von": "2027-05-17", "bis": "2027-05-28", "titel": "Pfingstferien", "art": "ferien"}, {"von": "2027-07-29", "bis": "2027-09-11", "titel": "Sommerferien", "art": "ferien"}], "ferienHinweis": "Laut Ferienkalender 2026/27 der PAGS, inkl. Feiertage innerhalb der Ferien.", "termine": [], "notizen": [], "links": [{"gruppe": "Plattformen", "titel": "iServ (Login)", "url": "https://pagskuelsheim.de/iserv/", "info": "Termine, Mail, Dateien"}, {"gruppe": "Plattformen", "titel": "Mensa-Bestellung (Mampf)", "url": "https://login.mampf1a.de/kuelsheim/"}, {"gruppe": "Infos", "titel": "Schutzkonzept: Infos für Schüler/innen", "url": "https://pags-kuelsheim.de/pags-schutzkonzept/infos-fuer-schueler-innen/"}, {"gruppe": "Infos", "titel": "Schutzkonzept: Infos für Eltern", "url": "https://pags-kuelsheim.de/pags-schutzkonzept/infos-fuer-eltern/"}, {"gruppe": "Plattformen", "titel": "WebUntis-Anleitung für Eltern (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2026/10/WebUntis-Eltern-Anleitung.pdf"}, {"gruppe": "Kalender", "titel": "Ferienkalender 2026/27 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2026/07/Ferienkalender-2026-2027.pdf"}, {"gruppe": "Kalender", "titel": "Ferienkalender 2025/26 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2025/02/ferienkalender-2025-2026.pdf"}, {"gruppe": "Formulare", "titel": "Anmeldeformular PAGS (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2024/05/Anmeldung-Schule.pdf"}, {"gruppe": "Formulare", "titel": "Ferienbetreuung Ostern/Pfingsten/Sommer 2026 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2025/11/Anmeldung-Ferienbetreuung-OsternPfingstenSommer-2026_Formular-PDF.pdf"}, {"gruppe": "Formulare", "titel": "Antrag Stadtfahrkarte (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2022/04/Sch%C3%BClerbef%C3%B6rderung-K%C3%B6nigheim-Schweinberg-Hardheim....pdf"}, {"gruppe": "Formulare", "titel": "JugendTicketBW (PDF)", "url": "https://www.vrn.de/mam/tickets/tarif/dokumente/2025/jugendbw-2025-bf.pdf"}, {"gruppe": "Formulare", "titel": "Beitritt Förderverein (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2025/09/Antrag-Foerderverein.pdf"}, {"gruppe": "Formulare", "titel": "Städtische Formulare (Betreuung)", "url": "https://www.kuelsheim.de/rathaus-service/stadt-service/staedtische-formulare"}, {"gruppe": "Infos", "titel": "Schulordnung", "url": "https://pags-kuelsheim.de/allgemeine-schulinfos/schul-und-hausordnung/"}, {"gruppe": "Infos", "titel": "Schulwegeplan 2026 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2026/07/2026045_ST_entw_03_A3.pdf"}, {"gruppe": "Infos", "titel": "Unfallschutz UKBW (PDF)", "url": "https://www.ukbw.de/fileadmin/user_upload/Mediathek/Infoblaetter/UKBW_Infoblatt_Schuelerinnen_und_Schueler_2022.pdf"}, {"gruppe": "Infos", "titel": "Schutzkonzept", "url": "https://pags-kuelsheim.de/pags-schutzkonzept/"}, {"gruppe": "Infos", "titel": "Schulwebsite", "url": "https://pags-kuelsheim.de/"}, {"gruppe": "Externe Hilfe", "titel": "Hilfe-Portal Sexueller Missbrauch", "url": "https://www.hilfe-portal-missbrauch.de/startseite"}, {"gruppe": "Externe Hilfe", "titel": "Kontaktstelle gegen sexuelle Gewalt (Caritas)", "url": "https://www.caritas-tbb.de/hilfe-beratung/menschen-in-notlagen/kontaktstelle-gegen-sexuelle-gewalt/"}], "mensa": {"bestellschluss": "10:00", "schichten": ["12:15", "13:00"], "info": "Bestellen in der Vorwoche oder am selben Tag bis 10:00 Uhr über Mampf. Wasser in der Mensa kostenlos."}}</script>
+
+<script id="pags-app">
+(function () {
+  var ORIGINAL = JSON.parse(document.getElementById('pags-data').textContent);
+  var S = JSON.parse(JSON.stringify(ORIGINAL));
+  var TABS = [
+    ['heute', 'Heute', '<path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/>'],
+    ['kontakte', 'Kontakte', '<path d="M4 5h16v14H4z"/><circle cx="10" cy="11" r="2.5"/><path d="M6.5 16.5c.8-1.6 2-2.4 3.5-2.4s2.7.8 3.5 2.4M15 9h3M15 12h3"/>'],
+    ['termine', 'Termine', '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'],
+    ['regeln', 'Regeln', '<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>'],
+    ['links', 'Links', '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>']
+  ];
+  var tab = 'heute';
+  var query = '';
+  var msg = '';
+  var busy = false;
+  var readOnly = false;
+  var art = null, dl = null, fileHandle = null;
+  var LS_KEY = 'pags-alltag-entwurf';
+  var FRAMED = (function () { try { return window.top !== window.self; } catch (e) { return true; } })();
+  var restore = null;
+
+  try { var h = (location.hash || '').slice(1); if (TABS.some(function (t) { return t[0] === h; })) tab = h; } catch (e) {}
+  try {
+    var p = localStorage.getItem(LS_KEY);
+    if (p) { if (p === JSON.stringify(ORIGINAL)) localStorage.removeItem(LS_KEY); else restore = JSON.parse(p); }
+  } catch (e) {}
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function dirty() { return JSON.stringify(S) !== JSON.stringify(ORIGINAL); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  // Zeit in Külsheim (Europe/Berlin), unabhängig vom Gerät
+  function now() {
+    var parts = {};
+    try {
+      new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', weekday: 'short' })
+        .formatToParts(new Date()).forEach(function (x) { parts[x.type] = x.value; });
+    } catch (e) {
+      var d = new Date();
+      parts = { year: d.getFullYear(), month: String(d.getMonth() + 1).padStart(2, '0'), day: String(d.getDate()).padStart(2, '0'), hour: String(d.getHours()).padStart(2, '0'), minute: String(d.getMinutes()).padStart(2, '0'), weekday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] };
+    }
+    var wd = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[parts.weekday];
+    return { iso: parts.year + '-' + parts.month + '-' + parts.day, wd: wd, hm: parts.hour + ':' + parts.minute };
+  }
+  var WD = ['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+  var WDK = ['', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  var MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  function parseISO(s) { var a = s.split('-'); return new Date(Date.UTC(+a[0], +a[1] - 1, +a[2])); }
+  function wdOf(s) { var d = parseISO(s).getUTCDay(); return d === 0 ? 7 : d; }
+  function fmtShort(s) { var a = s.split('-'); return WDK[wdOf(s)] + ' ' + a[2] + '.' + a[1] + '.'; }
+  function fmtLong(s) { var a = s.split('-'); return WD[wdOf(s)] + ', ' + (+a[2]) + '. ' + MON[+a[1] - 1] + ' ' + a[0]; }
+  function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+  function fmtRange(v, b) { return v === b ? fmtShort(v) : fmtShort(v) + '–' + fmtShort(b); }
+
+  function ferienHeute(iso) { return S.ferien.filter(function (f) { return f.von <= iso && iso <= f.bis; })[0]; }
+  function naechsteFerien(iso) { return S.ferien.filter(function (f) { return f.von > iso; }).sort(function (a, b) { return a.von < b.von ? -1 : 1; })[0]; }
+
+  function sekStatus(n) {
+    var z = S.sekretariat.zeiten;
+    var frei = ferienHeute(n.iso);
+    var heute = (!frei && z[n.wd]) || [];
+    for (var i = 0; i < heute.length; i++) {
+      if (n.hm >= heute[i][0] && n.hm < heute[i][1]) return { open: true, text: 'Sekretariat geöffnet', sub: 'bis ' + heute[i][1] + ' Uhr' };
+    }
+    // nächste Öffnung suchen
+    for (var k = 0; k < 14; k++) {
+      var d = new Date(parseISO(n.iso).getTime() + k * 86400000);
+      var iso = d.toISOString().slice(0, 10), wd = wdOf(iso);
+      if (ferienHeute(iso)) continue;
+      var sl = z[wd] || [];
+      for (var j = 0; j < sl.length; j++) {
+        if (k > 0 || sl[j][0] > n.hm) {
+          var tag = k === 0 ? 'heute' : k === 1 ? 'morgen' : fmtShort(iso);
+          return { open: false, text: 'Sekretariat geschlossen', sub: 'wieder ' + tag + ' ab ' + sl[j][0] + ' Uhr' };
+        }
+      }
+    }
+    return { open: false, text: 'Sekretariat geschlossen', sub: '' };
+  }
+
+  function copyBtn(v) { return '<button class="copy" data-copy="' + esc(v) + '" type="button">kopieren</button>'; }
+
+  function vHeute() {
+    var n = now();
+    var st = sekStatus(n);
+    var fh = ferienHeute(n.iso);
+    var nf = naechsteFerien(n.iso);
+    var u = S.unterricht.sek[n.wd];
+    var unterricht = fh ? '<b>' + esc(fh.titel) + '</b> bis ' + fmtShort(fh.bis)
+      : u ? 'LG 5–10: <span class="mono">' + u[0] + '–' + u[1] + '</span> · Grundschule: Türen ab <span class="mono">' + S.unterricht.gsTueren + '</span>'
+      : 'Heute kein Unterricht';
+    var nfText = '';
+    if (nf) {
+      var dd = daysBetween(n.iso, nf.von);
+      nfText = '<div class="row"><span>' + esc(nf.titel) + '</span><span class="mono chalk">' + (dd === 1 ? 'morgen' : 'in ' + dd + ' Tagen') + ' · ' + fmtShort(nf.von) + '</span></div>';
+    }
+    var kommend = alleTermine().filter(function (t) { return t.bis >= n.iso; }).slice(0, 4);
+    var notes = S.notizen.slice().reverse();
+    var quick = S.links.filter(function (l) { return l.gruppe === 'Plattformen'; }).slice(0, 3);
+    return '' +
+      '<section class="panel board" aria-live="polite">' +
+        '<h3>' + esc(fmtLong(n.iso)) + ' · <span class="mono">' + n.hm + '</span></h3>' +
+        '<div class="status"><span class="dot ' + (st.open ? 'on' : 'off') + '"></span>' + st.text + '</div>' +
+        (st.sub ? '<p class="small">' + esc(st.sub) + ' · Tel. <span class="mono">' + esc(S.sekretariat.tel) + '</span></p>' : '') +
+        '<div class="rows small" style="margin-top:6px">' +
+          '<div class="row"><span>Unterricht heute</span><span>' + unterricht + '</span></div>' +
+          (!fh && u && S.mensa ? '<div class="row"><span>Mensa</span><span>' + (n.hm < S.mensa.bestellschluss ? 'bestellen bis <span class="mono">' + S.mensa.bestellschluss + '</span> · ' : '') + 'Ausgabe <span class="mono">' + S.mensa.schichten.join(' / ') + '</span></span></div>' : '') +
+          nfText +
+        '</div>' +
+      '</section>' +
+      '<div class="quick">' + quick.map(function (l) { return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener"><b>' + esc(l.titel.replace(/ \(.*\)$/, '')) + '</b><span>' + esc(l.info || 'öffnen') + '</span></a>'; }).join('') + '</div>' +
+      '<div class="grid2">' +
+        '<section class="panel">' +
+          '<h3>Krankmeldung</h3>' +
+          '<p>Bis möglichst <b class="mono">7:45 Uhr</b> anrufen: <span class="mono">' + esc(S.sekretariat.tel) + '</span> ' + copyBtn(S.sekretariat.tel.replace(/\D/g, '')) + '</p>' +
+          '<p class="small muted">Der Anrufbeantworter ist immer an. Die schriftliche Entschuldigung folgt innerhalb von drei Tagen. Ab mehr als zehn Unterrichtstagen kann ein ärztliches Attest verlangt werden.</p>' +
+        '</section>' +
+        '<section class="panel">' +
+          '<h3>Nächste Termine</h3>' +
+          (kommend.length ? '<ul class="list">' + kommend.map(terminLi(n.iso, false)).join('') + '</ul>' : '<p class="empty">Keine Termine eingetragen.</p>') +
+          '<button class="btn ghost" data-go="termine" type="button">Alle Termine</button>' +
+        '</section>' +
+      '</div>' +
+      '<section class="panel">' +
+        '<h3>Notizen</h3>' +
+        (notes.length ? '<ul class="list">' + notes.map(function (x) {
+          return '<li><span class="when">' + fmtShort(x.datum) + '</span><span class="what"><span style="color:var(--ink);font-size:15px;white-space:pre-wrap">' + esc(x.text) + '</span></span><button class="icon-btn" data-del-note="' + esc(x.id) + '" type="button" aria-label="Notiz löschen">✕</button></li>';
+        }).join('') + '</ul>' : '<p class="empty">Noch keine Notizen. Hier ist Platz für Hinweise, die man täglich braucht, etwa Raumänderungen oder Absprachen.</p>') +
+        '<form class="add" data-form="notiz"><label for="n-text">Neue Notiz<textarea id="n-text" name="text" required placeholder="z. B. Elternabend 9a: Raum B 1.04"></textarea></label><div><button class="btn" type="submit">Notiz hinzufügen</button></div></form>' +
+      '</section>';
+  }
+
+  function alleTermine() {
+    var a = S.ferien.map(function (f) { return { von: f.von, bis: f.bis, titel: f.titel, art: f.art, fest: true }; });
+    S.termine.forEach(function (t) { a.push({ von: t.datum, bis: t.datum, titel: t.titel, notiz: t.notiz, zeit: t.zeit, art: 'eigen', id: t.id }); });
+    return a.sort(function (x, y) { return x.von === y.von ? ((x.zeit || '') < (y.zeit || '') ? -1 : 1) : (x.von < y.von ? -1 : 1); });
+  }
+  function terminLi(iso, withDelete) {
+    return function (t) {
+      var pill = t.art === 'ferien' ? '<span class="pill ferien">Ferien</span>' : t.art === 'frei' ? '<span class="pill frei">frei</span>' : '<span class="pill">Termin</span>';
+      return '<li class="' + (t.bis < iso ? 'past' : '') + '"><span class="when">' + fmtRange(t.von, t.bis).replace('–', '–<br>') + (t.zeit ? '<br>' + esc(t.zeit) : '') + '</span>' +
+        '<span class="what"><b>' + esc(t.titel) + '</b>' + (t.notiz ? '<span>' + esc(t.notiz) + '</span>' : '') + '<span>' + pill + '</span></span>' +
+        (withDelete && t.id ? '<button class="icon-btn" data-del-termin="' + esc(t.id) + '" type="button" aria-label="Termin löschen">✕</button>' : '<span></span>') + '</li>';
+    };
+  }
+
+  function vTermine() {
+    var n = now();
+    var all = alleTermine();
+    var past = all.filter(function (t) { return t.bis < n.iso; });
+    var next = all.filter(function (t) { return t.bis >= n.iso; });
+    return '' +
+      '<section class="panel">' +
+        '<h3>Termin eintragen</h3>' +
+        '<form class="add" data-form="termin">' +
+          '<div class="f2"><label for="t-datum">Datum<input id="t-datum" name="datum" type="date" required value="' + n.iso + '"></label>' +
+          '<label for="t-zeit">Uhrzeit (optional)<input id="t-zeit" name="zeit" type="time"></label></div>' +
+          '<label for="t-titel">Was<input id="t-titel" name="titel" type="text" required placeholder="z. B. Elternsprechtag"></label>' +
+          '<label for="t-notiz">Notiz (optional)<input id="t-notiz" name="notiz" type="text" placeholder="Raum, Mitbringen, Ansprechpartner"></label>' +
+          '<div><button class="btn" type="submit">Hinzufügen</button></div>' +
+        '</form>' +
+      '</section>' +
+      '<section class="panel">' +
+        '<h3>Kommend</h3>' +
+        (next.length ? '<ul class="list">' + next.map(terminLi(n.iso, true)).join('') + '</ul>' : '<p class="empty">Keine kommenden Termine.</p>') +
+        '<p class="small muted">' + esc(S.ferienHinweis) + ' Die aktuellen Schultermine stehen in iServ.</p>' +
+      '</section>' +
+      (past.length ? '<details class="panel"><summary class="small" style="cursor:pointer">Vergangene Termine (' + past.length + ')</summary><ul class="list">' + past.reverse().map(terminLi(n.iso, true)).join('') + '</ul></details>' : '');
+  }
+
+  function vKontakte() {
+    var q = query.trim().toLowerCase();
+    var match = function (c) { return !q || JSON.stringify(c).toLowerCase().indexOf(q) >= 0; };
+    var groups = {};
+    S.kontakte.filter(match).forEach(function (c) { (groups[c.gruppe] = groups[c.gruppe] || []).push(c); });
+    var lb = S.lernbegleiter.filter(function (x) { return !q || x.toLowerCase().indexOf(q) >= 0; });
+    var html = '<label for="k-suche" class="small">Suchen<input id="k-suche" type="search" placeholder="Name, Funktion oder Stichwort" value="' + esc(query) + '"></label>';
+    html += '<section class="panel"><h3>Sekretariat · Öffnungszeiten</h3><div class="rows small">' +
+      [1, 2, 3, 4, 5].map(function (d) { return '<div class="row"><span>' + WD[d] + '</span><span class="mono">' + S.sekretariat.zeiten[d].map(function (s) { return s[0] + '–' + s[1]; }).join(' · ') + '</span></div>'; }).join('') +
+      '</div><p class="small muted">' + esc(S.sekretariat.adresse) + ' · ' + esc(S.sekretariat.ort) + '</p></section>';
+    Object.keys(groups).forEach(function (g) {
+      html += '<section class="panel"><h3>' + esc(g) + '</h3><div>' + groups[g].map(function (c) {
+        return '<div class="contact"><div class="who"><b>' + esc(c.name) + '</b>' + (c.person ? '<span class="muted small">' + esc(c.person) + '</span>' : '') + '</div>' +
+          (c.tel ? '<div class="line">Tel. <span class="mono">' + esc(c.tel) + '</span>' + copyBtn(c.tel.replace(/[^\d]/g, '')) + '</div>' : '') +
+          (c.mail ? '<div class="line"><span class="mono">' + esc(c.mail) + '</span>' + copyBtn(c.mail) + '</div>' : '') +
+          (c.mail2 ? '<div class="line"><span class="mono">' + esc(c.mail2) + '</span>' + copyBtn(c.mail2) + '</div>' : '') +
+          (c.info ? '<div class="small muted">' + esc(c.info) + '</div>' : '') + '</div>';
+      }).join('') + '</div></section>';
+    });
+    html += '<section class="panel"><h3>Lernbegleiter (' + lb.length + ')</h3>' +
+      (lb.length ? '<div class="names">' + lb.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' : '<p class="empty">Kein Treffer.</p>') +
+      '<p class="small muted">E-Mail-Adressen der Lernbegleiter finden Sie in iServ oder auf der <a href="https://pags-kuelsheim.de/allgemeine-schulinfos/ansprechpartner/" target="_blank" rel="noopener">Ansprechpartner-Seite</a>.</p></section>';
+    return html;
+  }
+
+  function vRegeln() {
+    return '' +
+      '<section class="panel"><h3>Ablauf des Tages</h3><ul class="plain">' +
+        '<li>Unterrichtsbeginn <b class="mono">07:55</b>. Offenes Klassenzimmer ab 7:40 (Grundschule) bzw. 7:45 (LG 5–10).</li>' +
+        '<li>Ist der Lernbegleiter 10 Minuten nach Stundenbeginn nicht da, melden die Klassensprecher das im Sekretariat.</li>' +
+        '<li>In den großen Pausen gehen alle auf den Pausenhof. Toiletten: LG 5–10 im Haus B, Grundschule im Haus A.</li>' +
+        '<li>Das Schulgelände darf während der Schulzeit nur mit Bescheinigung verlassen werden.</li>' +
+        '<li>Fußball nur auf dem Pausenhof vor Haus A und auf der Wiese unterhalb von Haus C.</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Geräte und Sachen</h3><ul class="plain">' +
+        '<li>Handys, Lautsprecher und andere Geräte sind während der Schulzeit aus und nicht sichtbar. Sonst können sie bis Unterrichtsende eingezogen werden. Ausnahme: Climber-Räume.</li>' +
+        '<li>Fahrräder, Roller und Inliner auf dem Schulgelände schieben bzw. tragen und am vorgesehenen Platz abstellen.</li>' +
+        '<li>Sportunterricht: Sportkleidung und Hallenschuhe, keine Straßenschuhe in der Turnhalle.</li>' +
+        '<li>iPads geladen mitbringen.</li>' +
+        '<li>Für Garderobe, Geld und Wertsachen ist jede und jeder selbst verantwortlich.</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Verboten</h3><ul class="plain">' +
+        '<li>Alkohol und Energy Drinks, auch auf Ausflügen und Abschlussfahrten</li>' +
+        '<li>Rauchen auf dem gesamten Schulgelände und bei allen Schulveranstaltungen</li>' +
+        '<li>Drogen und Waffen</li>' +
+        '<li>Pornografische, gewaltverherrlichende oder rassistische Inhalte aufrufen oder versenden</li>' +
+        '<li>Auf Treppengeländern rutschen, Schuleigentum beschädigen</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Fehlen</h3><ul class="plain">' +
+        '<li>Vorher bekannt (Klinik, Behörde): rechtzeitig mit Grund und Dauer melden.</li>' +
+        '<li>Kurzfristig: bis möglichst 7:45 Uhr anrufen, schriftlich innerhalb von drei Tagen nachreichen.</li>' +
+        '<li>Ab mehr als zehn Unterrichtstagen kann die Klassenleitung ein Attest verlangen.</li>' +
+        '<li>Wird ein Kind während des Tages heimgeschickt, informiert die Schule vorher die Eltern über die Kontaktdaten im Lerntagebuch.</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Maßnahmen nach § 90 SchG</h3><ul class="plain small">' +
+        '<li>Lernbegleiter: Nachsitzen bis zu 2 Stunden</li>' +
+        '<li>Schulleitung: Nachsitzen bis zu 4 Stunden, Wechsel in eine Parallelklasse, Androhung des zeitweiligen Ausschlusses</li>' +
+        '<li>Klassenkonferenz: Ausschluss bis zu 4 Wochen, Androhung des Ausschlusses, Ausschluss aus der Schule</li>' +
+      '</ul><p class="small"><a href="https://pags-kuelsheim.de/allgemeine-schulinfos/schul-und-hausordnung/" target="_blank" rel="noopener">Vollständige Schulordnung</a></p></section>';
+  }
+
+  function vLinks() {
+    var groups = {};
+    S.links.forEach(function (l) { (groups[l.gruppe] = groups[l.gruppe] || []).push(l); });
+    var html = '';
+    Object.keys(groups).forEach(function (g) {
+      html += '<section class="panel"><h3>' + esc(g) + '</h3><div class="linkgroup">' + groups[g].map(function (l) {
+        return '<div class="lrow"><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.titel) + '</a>' + (l.id ? '<button class="icon-btn" data-del-link="' + esc(l.id) + '" type="button" aria-label="Link löschen">✕</button>' : '') + '</div>';
+      }).join('') + '</div></section>';
+    });
+    html += '<section class="panel"><h3>Eigenen Link hinzufügen</h3><form class="add" data-form="link">' +
+      '<label for="l-titel">Titel<input id="l-titel" name="titel" type="text" required placeholder="z. B. Moodle-Kurs 9a"></label>' +
+      '<label for="l-url">Adresse<input id="l-url" name="url" type="url" required placeholder="https://"></label>' +
+      '<div><button class="btn" type="submit">Hinzufügen</button></div></form></section>';
+    return html;
+  }
+
+  function render() {
+    var views = { heute: vHeute, kontakte: vKontakte, termine: vTermine, regeln: vRegeln, links: vLinks };
+    var n = now();
+    var app = document.getElementById('app');
+    var focusId = document.activeElement && document.activeElement.id;
+    var caret = focusId === 'k-suche' ? document.activeElement.selectionStart : null;
+    app.innerHTML =
+      '<header class="top"><div class="wrap"><h1 class="brand"><span class="brand-logo" role="img" aria-label="PAGS Gemeinschaftsschule Külsheim"></span><span class="sep" aria-hidden="true"></span>Alltag</h1><span class="today">' + fmtShort(n.iso) + ' ' + n.hm + '</span></div></header>' +
+      '<main><div class="wrap">' +
+        (restore ? '<div class="notice"><span>Ihre letzten Änderungen wurden nicht gespeichert.</span><span style="display:flex;gap:8px"><button class="btn" data-restore="1" type="button">Wiederherstellen</button><button class="btn ghost" data-restore="0" type="button">Verwerfen</button></span></div>' : '') +
+        '<h2>' + TABS.filter(function (t) { return t[0] === tab; })[0][1] + '</h2>' +
+        views[tab]() +
+        '<footer class="meta">' + (msg ? '<span role="status"><b>' + esc(msg) + '</b></span>' : '') +
+        '<span>Daten aus <a href="' + esc(S.quelle) + '" target="_blank" rel="noopener">pags-kuelsheim.de</a>, Stand ' + fmtShort(S.stand) + S.stand.slice(0, 4) + '. Eigene Termine, Notizen und Links werden mit „Speichern“ in dieser Seite gesichert.</span>' +
+        (canDownload() ? '<span style="display:flex;gap:8px;flex-wrap:wrap">' + (art ? '' : '<button class="btn ghost" data-save="1" type="button">In Datei speichern</button>') + '<button class="btn ghost" data-download="1" type="button">Kopie herunterladen</button></span>' : '') +
+        '<div class="sitefoot"><div><b>KONTAKT</b><br>Pater-Alois-Grimm-Schule<br>Kirchbergweg 11, 97900 Külsheim</div><div><b>Telefon / Fax</b><br>Tel. 09345 / 333<br>Fax 09345 / 8303</div><div><b>PAGS Mensa</b><br><a href="https://login.mampf1a.de/kuelsheim/" target="_blank" rel="noopener">Login Mensaprogramm Mampf</a></div></div>' +
+        '</footer>' +
+      '</div></main>' +
+      (dirty() ? '<div class="savebar"><div class="in"><span>' + (readOnly && !canDownload() ? 'Nur Lesezugriff: Änderungen gelten nur in diesem Browser.' : 'Änderungen noch nicht gespeichert') + '</span><span style="display:flex;gap:8px">' +
+        '<button class="btn ghost" data-discard="1" type="button">Verwerfen</button>' +
+        (canSave() ? '<button class="btn" data-save="1" type="button"' + (busy ? ' disabled' : '') + '>' + (busy ? 'Speichert…' : 'Speichern') + '</button>' : (canDownload() ? '<button class="btn" data-download="1" type="button">Als Datei sichern</button>' : '')) +
+        '</span></div></div>' : '') +
+      '<nav class="tabs" aria-label="Bereiche"><div class="in" role="tablist">' + TABS.map(function (t) {
+        return '<button role="tab" type="button" data-tab="' + t[0] + '" aria-selected="' + (t[0] === tab) + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + t[2] + '</svg>' + t[1] + '</button>';
+      }).join('') + '</div></nav>';
+    if (focusId === 'k-suche') { var el = document.getElementById('k-suche'); if (el) { el.focus(); try { el.setSelectionRange(caret, caret); } catch (e) {} } }
+    if (!restore) { try { if (dirty()) localStorage.setItem(LS_KEY, JSON.stringify(S)); else localStorage.removeItem(LS_KEY); } catch (e) {} }
+  }
+
+  function canSave() { return !!art || !FRAMED; }
+  function canDownload() { return !!dl || !FRAMED; }
+
+  // forArtifact: Form, die das Artefakt erwartet; sonst eine normale, eigenständige HTML-Datei
+  function buildDoc(forArtifact) {
+    var keep = Array.prototype.map.call(document.querySelectorAll('[data-keep]'), function (el) { return el.outerHTML; }).join('\n');
+    var json = JSON.stringify(S).replace(/</g, '\\u003c');
+    var closeTag = '</' + 'script>';
+    var app = '<div id="app"></div>\n\n<script type="application/json" id="pags-data">' + json + closeTag + '\n\n<script id="pags-app">' + document.getElementById('pags-app').textContent + closeTag;
+    if (forArtifact) {
+      var hs = document.head && document.head.querySelector('style:not([data-keep]):not(#base-reset)');
+      var reset = hs ? hs.textContent : ':root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}';
+      return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>' + reset + '</style></head><body>' + keep + '\n\n' + app + '</body></html>';
+    }
+    var base = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}';
+    return '<!doctype html>\n<html lang="de">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<style id="base-reset">' + base + '</style>\n' + keep + '\n</head>\n<body>\n' + app + '\n</body>\n</html>\n';
+  }
+
+  function markSaved(text) {
+    ORIGINAL = JSON.parse(JSON.stringify(S));
+    try { localStorage.removeItem(LS_KEY); } catch (e) {}
+    busy = false; msg = text; render();
+  }
+
+  function downloadLocal(name) {
+    var url = URL.createObjectURL(new Blob([buildDoc(false)], { type: 'text/html' }));
+    var a = document.createElement('a'); a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  function saveArtifact() {
+    busy = true; msg = ''; render();
+    art.publish(buildDoc(true)).then(function () {
+      busy = false; msg = 'Gespeichert.';
+    }, function (err) {
+      busy = false;
+      var c = err && err.code;
+      if (c === 'conflict') { msg = 'Jemand anderes hat gerade gespeichert. Die Seite lädt neu.'; }
+      else if (['not_writer', 'not_granted', 'not_declared', 'consent_required', 'capability_disabled', 'capability_removed'].indexOf(c) >= 0) {
+        art = null; readOnly = true; msg = 'Diese Ansicht darf die Seite nicht ändern.' + (dl ? ' Sie können eine Kopie als Datei sichern.' : '');
+      }
+      else if (c === 'rate_limited') { msg = 'Zu viele Speichervorgänge. Bitte in einer Minute erneut speichern.'; }
+      else if (c === 'too_large') { msg = 'Die Seite ist zu groß zum Speichern. Bitte alte Einträge löschen.'; }
+      else { msg = 'Speichern hat nicht geklappt. Bitte gleich noch einmal versuchen.'; }
+      render();
+    });
+  }
+
+  // Lokal: Chrome/Edge schreiben direkt in die Datei (beim ersten Mal diese Datei auswählen), andere Browser laden eine neue Datei herunter
+  function saveLocal() {
+    if (window.showSaveFilePicker) {
+      busy = true; msg = ''; render();
+      var get = fileHandle ? Promise.resolve(fileHandle) : window.showSaveFilePicker({
+        suggestedName: decodeURIComponent(location.pathname.split('/').pop() || '') || 'pags-alltag.html',
+        types: [{ description: 'HTML-Seite', accept: { 'text/html': ['.html', '.htm'] } }]
+      });
+      get.then(function (h) {
+        fileHandle = h;
+        return h.createWritable().then(function (w) { return w.write(buildDoc(false)).then(function () { return w.close(); }); }).then(function () { markSaved('Gespeichert in „' + h.name + '“.'); });
+      }).catch(function (err) {
+        busy = false;
+        if (err && err.name === 'AbortError') msg = 'Speichern abgebrochen. Die Änderungen bleiben als Entwurf in diesem Browser.';
+        else { fileHandle = null; msg = 'Direktes Speichern ging nicht. Nutzen Sie „Kopie herunterladen“ und ersetzen Sie damit die alte Datei.'; }
+        render();
+      });
+    } else {
+      downloadLocal('pags-alltag.html');
+      markSaved('Neue Datei „pags-alltag.html“ heruntergeladen. Ersetzen Sie damit die alte Datei.');
+    }
+  }
+
+  function save() {
+    if (busy) return;
+    if (art) saveArtifact();
+    else if (!FRAMED) saveLocal();
+  }
+
+  function download() {
+    var n = now(), name = 'pags-alltag-' + n.iso + '.html';
+    if (dl) {
+      dl.save({ filename: name, data: new Blob([buildDoc(false)], { type: 'text/html' }) }).then(function () { msg = 'Kopie gesichert.'; render(); },
+        function (err) { if (!(err && (err.code === 'cancelled' || err.code === 'declined'))) { msg = 'Die Datei konnte nicht gesichert werden.'; render(); } });
+    } else if (!FRAMED) {
+      downloadLocal(name); msg = 'Kopie mit Stand ' + fmtShort(n.iso) + ' heruntergeladen.'; render();
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    var d = t.dataset;
+    if (d.tab) { tab = d.tab; msg = ''; try { history.replaceState(null, '', '#' + tab); } catch (x) {} render(); window.scrollTo(0, 0); return; }
+    if (d.go) { tab = d.go; render(); window.scrollTo(0, 0); return; }
+    if (d.copy) {
+      var ok = function () { var o = t.textContent; t.textContent = 'kopiert'; setTimeout(function () { t.textContent = o; }, 1400); };
+      try { navigator.clipboard.writeText(d.copy).then(ok, function () { sel(t); }); } catch (x) { sel(t); }
+      return;
+    }
+    if (d.delTermin) { S.termine = S.termine.filter(function (x) { return x.id !== d.delTermin; }); render(); return; }
+    if (d.delNote) { S.notizen = S.notizen.filter(function (x) { return x.id !== d.delNote; }); render(); return; }
+    if (d.delLink) { S.links = S.links.filter(function (x) { return x.id !== d.delLink; }); render(); return; }
+    if (d.discard) { S = JSON.parse(JSON.stringify(ORIGINAL)); msg = ''; try { localStorage.removeItem(LS_KEY); } catch (x) {} render(); return; }
+    if (d.save) { save(); return; }
+    if (d.download) { download(); return; }
+    if (d.restore) {
+      if (d.restore === '1' && restore) { S = restore; }
+      restore = null;
+      try { localStorage.removeItem(LS_KEY); } catch (x) {}
+      render(); return;
+    }
+  });
+  function sel(b) {
+    var el = b.previousElementSibling; if (!el) return;
+    var r = document.createRange(); r.selectNodeContents(el);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  document.addEventListener('submit', function (e) {
+    var f = e.target; if (!f.dataset.form) return;
+    e.preventDefault();
+    var v = {}; Array.prototype.forEach.call(f.elements, function (el) { if (el.name) v[el.name] = el.value.trim(); });
+    if (f.dataset.form === 'termin') {
+      if (!v.datum || !v.titel) return;
+      S.termine.push({ id: uid(), datum: v.datum, zeit: v.zeit || '', titel: v.titel, notiz: v.notiz || '' });
+    } else if (f.dataset.form === 'notiz') {
+      if (!v.text) return;
+      S.notizen.push({ id: uid(), datum: now().iso, text: v.text });
+    } else if (f.dataset.form === 'link') {
+      if (!v.titel || !/^https?:\/\//i.test(v.url)) { msg = 'Bitte eine Adresse angeben, die mit https:// beginnt.'; render(); return; }
+      S.links.push({ id: uid(), gruppe: 'Eigene Links', titel: v.titel, url: v.url });
+    }
+    msg = ''; render();
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'k-suche') { query = e.target.value; render(); }
+  });
+
+  document.addEventListener('keydown', function (e) { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); } });
+
+  render();
+  setInterval(function () { if (!document.activeElement || document.activeElement === document.body) render(); }, 60000);
+
+  (function initCaps(tries) {
+    if (window.claude && window.claude.use) {
+      window.claude.use('artifact').then(function (a) { art = a; if (!a && FRAMED) readOnly = true; render(); }, function () { if (FRAMED) readOnly = true; render(); });
+      window.claude.use('downloads').then(function (x) { dl = x; render(); }, function () {});
+    } else if (FRAMED && tries < 20) {
+      setTimeout(function () { initCaps(tries + 1); }, 250);
+    } else if (FRAMED) { readOnly = true; render(); }
+  })(0);
+})();
+</script>

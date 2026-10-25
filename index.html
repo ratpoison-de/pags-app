@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PAGS-App</title>
+<meta name="description" content="Info-App der Pater-Alois-Grimm-Schule Külsheim: Schule kennenlernen und Alltagsbegleiter.">
+<meta name="theme-color" content="#A81010">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap">
+<style>
+/* Layout: Startseite im Stil von pags-kuelsheim.de – Logo-Kopf, Tafelbild, zwei Einstiege, dunkler Footer */
+:root{--red:#A81010;--red-dark:#860000;--line:#E1E1E1;--text:#444;--head:#666;--foot:#222;--foot-text:#DDD;color-scheme:light}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--text);font:16px/1.6 "Open Sans",Helvetica,Arial,sans-serif;padding-top:env(safe-area-inset-top,0px)}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+header img{height:60px;width:auto;display:block}
+header a.ext{font-size:14px}
+.stage{background:#2b2b2b}
+.stage img{display:block;width:100%;height:auto;max-height:420px;object-fit:cover}
+h1,h2{font-weight:400;color:var(--head);text-transform:uppercase;letter-spacing:1px;margin:0;text-wrap:balance}
+.intro{text-align:center;padding-block:36px 8px}
+.intro p{margin:0 0 4px;font-size:22px;color:var(--head)}
+.intro h1{font-size:clamp(26px,5vw,40px)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px;padding-block:32px 52px}
+.tile{display:grid;gap:10px;color:var(--text);text-decoration:none;min-width:0}
+.tile:hover{text-decoration:none}
+.tile img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block}
+.tile h2{font-size:22px;color:var(--head)}
+.tile p{margin:0;font-size:15px;color:#666}
+.tile span.btn{justify-self:start;background:var(--red);color:#fff;border:1px solid var(--red-dark);border-radius:3px;padding:8px 16px;font-size:15px}
+.tile:hover span.btn{background:var(--red-dark)}
+footer{background:var(--foot);color:var(--foot-text);font-size:14px}
+footer .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;padding-block:36px}
+footer h3{color:#fff;font-weight:400;font-size:16px;display:inline-block;border-bottom:2px solid var(--red);margin:0 0 10px}
+footer p{margin:0}
+footer a{color:#fff}
+.socket{background:#333;color:#eee;font-size:12px}
+.socket .wrap{padding-block:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.socket a{color:#fff}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a href="./" aria-label="PAGS-App Startseite"><img src="img/logo.png" alt="PAGS Gemeinschaftsschule Külsheim" width="120" height="60"></a>
+  <a class="ext" href="https://pags-kuelsheim.de/" target="_blank" rel="noopener">pags-kuelsheim.de</a>
+</div></header>
+
+<div class="stage"><img src="img/tafel.jpg" alt="Kind an der Tafel mit Kreidezeichnung und der Überschrift „Für unsere Zukunft!“" width="1400" height="622"></div>
+
+<main class="wrap">
+  <div class="intro">
+    <p>Die Gemeinschaftsschule in Külsheim</p>
+    <h1>Die PAGS-App</h1>
+  </div>
+  <div class="tiles">
+    <a class="tile" href="kennenlernen.html">
+      <img src="img/teaser-grundschule.jpg" alt="Erstklässler mit Schultüten auf der Steintreppe zum Schlossplatz Külsheim" width="640" height="360">
+      <h2>PAGS kennenlernen</h2>
+      <p>Für neue Familien: Konzept, Grundschule und Sekundarstufe, Abschlüsse, Fächer, Ganztag, Anmeldung und Ansprechpartner.</p>
+      <span class="btn">Schule kennenlernen</span>
+    </a>
+    <a class="tile" href="alltag.html#heute">
+      <img src="img/teaser-sekundarstufe.jpg" alt="Unterricht in einem modernen Klassenzimmer mit Whiteboard" width="640" height="360">
+      <h2>PAGS Alltag</h2>
+      <p>Für jeden Tag: Sekretariat, Krankmeldung, Mensa, Ferien, Kontakte. Eigene Termine, Notizen und Links mit persönlichem Login auf allen Geräten.</p>
+      <span class="btn">Alltag öffnen</span>
+    </a>
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <div><h3>KONTAKT</h3><p>Pater-Alois-Grimm-Schule<br>Kirchbergweg 11<br>97900 Külsheim</p></div>
+  <div><h3>Telefon / Fax / E-Mail</h3><p>Tel. 09345 / 333<br>Fax. 09345 / 8303<br><a href="https://pags-kuelsheim.de/allgemeine-schulinfos/ansprechpartner/" target="_blank" rel="noopener">Ansprechpartner und E-Mail-Adressen</a></p></div>
+  <div><h3>PAGS Mensa - Essenbestellung</h3><p><a href="https://login.mampf1a.de/kuelsheim/" target="_blank" rel="noopener">Login Mensaprogramm Mampf</a></p></div>
+</div></footer>
+<div class="socket"><div class="wrap">
+  <span>Inhalte aus pags-kuelsheim.de · Stand Oktober 2026</span>
+  <span><a href="https://pags-kuelsheim.de/impressum/" target="_blank" rel="noopener">Impressum der Schule</a> · <a href="https://pags-kuelsheim.de/datenschutz/" target="_blank" rel="noopener">Datenschutz der Schule</a></span>
+</div></div>
+</body>
+</html>

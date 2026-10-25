@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style id="base-reset">:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title data-keep>PAGS Alltag</title>
+<meta name="theme-color" content="#A81010">
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link data-keep rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap">
+<style data-keep>
+/* Layout: PAGS-Website-Look als Taschen-App – weißer Kopf mit Logo, rote Akzente, graue Versal-Überschriften, Tab-Leiste unten, dunkler Footer */
+:root{
+  --red:#A81010; --red-dark:#860000; --red-meta:#801A1A; --red-soft:#F7EDED;
+  --bg:#F7F7F7; --surface:#FFFFFF; --alt:#FCFCFC; --line:#E1E1E1; --text:#444444; --head:#666666; --muted:#777777;
+  --board:#333333; --board-ink:#FFFFFF; --foot:#222222; --foot-text:#DDDDDD;
+  --ok:#3C9A5F; --warn:#C98A12;
+  --f:"Open Sans",Helvetica,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--f);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:20;background:var(--surface)}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:12}
+.top .wrap{padding-block:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;margin:0;font-weight:400;font-size:15px;color:var(--head);text-transform:uppercase;letter-spacing:1px}
+.brand-logo{display:block;width:104px;height:52px;background:url("data:image/png;base64,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") left center/contain no-repeat}
+.brand .sep{width:1px;height:34px;background:var(--line)}
+.today{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+main .wrap{padding-block:14px 150px;display:grid;gap:14px}
+h2{font-weight:400;font-size:24px;color:var(--head);text-transform:uppercase;letter-spacing:1px;margin:8px 0 0}
+h3{font-size:14px;font-weight:400;letter-spacing:1px;text-transform:uppercase;color:var(--head);margin:0}
+p{margin:0}
+.mono{font-variant-numeric:tabular-nums;font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:14px 16px;display:grid;gap:8px;min-width:0}
+.board{background:var(--board);color:var(--board-ink);border:0;border-top:4px solid var(--red)}
+.board h3{color:#ccc}
+.status{display:flex;align-items:center;gap:10px;font-weight:600;font-size:21px;line-height:1.25}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;background:#E57373}
+.dot.on{background:#6FCF97}.dot.off{background:#E57373}
+.rows{display:grid;gap:6px}
+.row{display:flex;justify-content:space-between;gap:4px 12px;flex-wrap:wrap}
+.board .row{border-top:1px solid #4a4a4a;padding-top:6px}
+.chalk{background:var(--red);color:#fff;padding:0 7px;border-radius:3px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.quick a{display:grid;gap:2px;text-align:center;text-decoration:none;color:#fff;background:var(--red);border:1px solid var(--red-dark);border-radius:3px;padding:10px 8px;min-width:0}
+.quick a b{font-size:15px;font-weight:600}
+.quick a span{font-size:12px;opacity:.85}
+.quick a:hover{background:var(--red-dark)}
+@media (max-width:380px){.quick{grid-template-columns:1fr 1fr}}
+.pill{display:inline-block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:1px 8px;border-radius:3px;background:var(--red-soft);color:var(--red-meta);white-space:nowrap}
+.pill.ferien{background:#FBEAEA;color:var(--red)}
+.pill.frei{background:#FFF4DE;color:#7A5300}
+.list{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.list li{display:grid;grid-template-columns:82px 1fr auto;gap:10px;align-items:start;padding:10px 0;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list .when{font-size:13px;line-height:1.35;font-variant-numeric:tabular-nums;font-weight:600;color:#333}
+.list .what{min-width:0;display:grid;gap:2px}
+.list .what b{font-weight:600;color:#333}
+.list .what span{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.list li.past{opacity:.55}
+.icon-btn{border:1px solid var(--line);background:var(--surface);border-radius:3px;padding:3px 8px;font-size:13px;cursor:pointer}
+.icon-btn:hover{border-color:var(--red);color:var(--red)}
+.contact{display:grid;gap:3px;padding:12px 0;border-top:1px solid var(--line)}
+.contact:first-of-type{border-top:0}
+.contact .who{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.contact .who b{font-size:16px;font-weight:600;color:#333}
+.contact .line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:15px}
+.contact .line .mono{font-size:14px;overflow-wrap:anywhere}
+.copy{border:1px solid var(--line);background:var(--surface);border-radius:3px;padding:1px 7px;font-size:12px;cursor:pointer}
+.copy:hover{border-color:var(--red);color:var(--red)}
+.names{display:flex;flex-wrap:wrap;gap:6px}
+.names span{font-size:14px;padding:2px 9px;border-radius:3px;background:var(--alt);border:1px solid var(--line)}
+input[type=search],input[type=text],input[type=date],input[type=time],input[type=url],textarea{width:100%;border:1px solid var(--line);background:var(--alt);border-radius:3px;padding:9px 11px;min-width:0}
+textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus{border-color:var(--red);outline:none;background:#fff}
+form.add{display:grid;gap:8px}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{font-size:13px;color:var(--muted);display:grid;gap:3px}
+.btn{border:1px solid var(--red-dark);border-radius:3px;padding:8px 14px;font-weight:600;cursor:pointer;background:var(--red);color:#fff}
+.btn:hover{background:var(--red-dark)}
+.btn.ghost{background:transparent;color:var(--red);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--red);background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+.empty{font-size:14px;color:var(--muted);padding:6px 0}
+ul.plain{margin:0;padding-left:18px;display:grid;gap:5px}
+ul.plain li::marker{color:var(--red)}
+.linkgroup{display:grid;gap:6px}
+.linkgroup a{overflow-wrap:anywhere}
+.lrow{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.notice{border-left:3px solid var(--red);padding:10px 12px;background:var(--red-soft);font-size:14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.savebar{position:fixed;left:0;right:0;bottom:calc(62px + env(safe-area-inset-bottom,0px));z-index:15;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.savebar .in{max-width:728px;margin:0 auto 8px;background:var(--board);color:#fff;border-top:3px solid var(--red);border-radius:3px;padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 6px 20px rgba(0,0,0,.2)}
+.savebar .in span{font-size:14px}
+.savebar .btn.ghost{color:#fff;border-color:#666}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:16;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tabs .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabs button{background:none;border:0;border-top:2px solid transparent;padding:8px 2px 11px;font-size:12.5px;color:var(--head);cursor:pointer;display:grid;justify-items:center;gap:3px}
+.tabs button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs button[aria-selected=true]{color:var(--red);border-top-color:var(--red)}
+footer.meta{font-size:13px;color:var(--muted);display:grid;gap:8px;padding-top:6px}
+.acct{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:3px;padding:4px 9px;font-size:13px;color:var(--head);cursor:pointer}
+.acct:hover{border-color:var(--red);color:var(--red)}
+.acct i{width:8px;height:8px;border-radius:50%;background:#bbb;display:inline-block}
+.acct i.ok{background:var(--ok)}.acct i.busy{background:var(--warn)}.acct i.err{background:var(--red)}
+.konto{border-top:3px solid var(--red)}
+.konto .row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.konto input[type=email]{flex:1 1 220px;width:auto;border:1px solid var(--line);background:var(--alt);border-radius:3px;padding:9px 11px;min-width:0}
+.konto input[type=email]:focus{border-color:var(--red);outline:none;background:#fff}
+.konto .hint{font-size:13px;color:var(--muted)}
+.btn.danger{background:#fff;color:var(--red);border-color:var(--red)}
+.btn.danger:hover{background:var(--red-soft)}
+@media (max-width:440px){.top .today{display:none}}
+.sitefoot{background:var(--foot);color:var(--foot-text);font-size:13px;border-radius:3px;padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.sitefoot b{display:inline-block;color:#fff;font-weight:400;border-bottom:2px solid var(--red);margin-bottom:6px}
+.sitefoot a{color:#fff}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script type="application/json" id="pags-data">{"stand": "2026-10-23", "quelle": "https://pags-kuelsheim.de/", "sekretariat": {"namen": "Frau Haag und Frau Schreck", "tel": "09345 / 333", "fax": "09345 / 8303", "adresse": "Kirchbergweg 11, 97900 Külsheim", "ort": "1. OG im Mensagebäude", "zeiten": {"1": [["07:00", "13:00"], ["14:00", "15:30"]], "2": [["07:00", "13:00"], ["14:00", "15:30"]], "3": [["07:00", "12:15"]], "4": [["07:00", "13:00"]], "5": [["07:00", "12:15"]]}}, "unterricht": {"sek": {"1": ["07:55", "15:20"], "2": ["07:55", "15:20"], "3": ["07:55", "15:20"], "4": ["07:55", "15:20"], "5": ["07:55", "13:00"]}, "gsTueren": "07:40", "sekAnkommen": "07:45", "gsBetreuung": "Hausaufgabenbetreuung Mo–Do bis 14:30, Fr bis 13:00; Nachmittagsbetreuung Mo–Do bis 16:00"}, "kontakte": [{"gruppe": "Schule", "name": "Sekretariat", "person": "Frau Haag, Frau Schreck", "tel": "09345 / 333", "info": "Fax 09345 / 8303 · Anrufbeantworter immer an"}, {"gruppe": "Schule", "name": "Schulleitung", "person": "Michael Regner", "tel": "09345 / 333", "info": "über das Sekretariat"}, {"gruppe": "Beratung & Hilfe", "name": "Schulsozialarbeit", "person": "Antje Kaiser", "tel": "09345 / 92 92 59", "mail": "antje.kaiser@pagskuelsheim.de", "info": "täglich 8–17 Uhr, Büro im Mensagebäude"}, {"gruppe": "Beratung & Hilfe", "name": "Beratungslehrerin", "person": "Nadine Hammerich", "tel": "09345 / 333"}, {"gruppe": "Beratung & Hilfe", "name": "Vertrauenslehrer", "person": "Thorsten von Plotho-Kettner, Dominik Petz", "mail": "t.von.plotho-kettner@pagskuelsheim.de", "mail2": "dominik.petz@pagskuelsheim.de", "tel": "01567 83 87 852", "info": "Per E-Mail Termin vereinbaren · Telefonnummer nur für dringende Fälle"}, {"gruppe": "Externe Hilfe", "name": "Schulpsychologische Beratungsstelle TBB", "tel": "09341 / 89 544 0", "mail": "poststelle.spbs-tbb@zsl-rs-gd.kv.bwl.de", "info": "Mo–Do 9–15, Fr 9–13 Uhr · kostenfrei, Schweigepflicht"}, {"gruppe": "Externe Hilfe", "name": "Kontaktstelle gegen sexuelle Gewalt (Caritas TBB)", "person": "Frau Brunner", "tel": "09341 / 9220 1024", "mail": "j.brunner@caritas-tbb.de", "info": "auch anonyme Online-Beratung"}, {"gruppe": "Externe Hilfe", "name": "Nummer gegen Kummer (Kinder- und Jugendtelefon)", "tel": "0800 111 0333", "info": "Mo–Sa 14–20 Uhr · anonym und kostenlos"}, {"gruppe": "Externe Hilfe", "name": "Hilfe-Telefon Sexueller Missbrauch", "tel": "0800 22 55 530", "info": "anonym und kostenlos · hilfe-portal-missbrauch.de"}, {"gruppe": "Externe Hilfe", "name": "Jugendamt Tauberbischofsheim", "tel": "09341 / 825480", "info": "vertraulich, für Kinder, Jugendliche und Eltern"}, {"gruppe": "Organisation", "name": "iPad-Support", "person": "Herr Krämer, Herr Nowotny", "info": "Fragen, Hilfe, Defekte"}, {"gruppe": "Organisation", "name": "Schulsanitätsdienst", "person": "Susanne Beckert, Robert Stempien", "info": "Alarmierung über das Sekretariat"}, {"gruppe": "Organisation", "name": "Übergang Kita → Grundschule", "person": "Laura Engert (Kooperation KiGa–GS)", "mail": "laura.engert@pagskuelsheim.de", "info": "Laut Grundschul-Seite auch: Joshua Stephan, joshua.stephan@pagskuelsheim.de"}, {"gruppe": "Organisation", "name": "Stadt Külsheim (Schulträger, Betreuung)", "tel": "09345 / 673-0", "info": "Anmeldung und Gebühren der Betreuung, iPad-Mietkauf"}, {"gruppe": "Gremien", "name": "Elternbeirat", "person": "Lydia Goldschmitt (Vors.), Jessica Würzberger (Stv.)"}, {"gruppe": "Gremien", "name": "SMV", "person": "Elisa Stemmler (Schülersprecherin), Henry Kraft (Stv.)"}, {"gruppe": "Gremien", "name": "Förderverein", "person": "Claudia Thum (1. Vors.)", "mail": "Foerderverein-pags@gmx.de", "info": "Jahresbeitrag 5 €"}], "lernbegleiter": ["Herr Akbuluto", "Frau Albrecht", "Frau Attenhauser", "Frau Bechtold", "Frau Beckert", "Herr Benisch", "Frau Bitsch", "Herr Braml", "Herr Christ", "Herr Dietrich", "Herr Droege", "Frau Engert", "Frau Ferschel", "Herr Fiederling", "Frau Gärtner", "Frau Gehrlein", "Frau Graf", "Frau Grimm", "Frau Grünhaupt", "Frau Hammerich", "Frau Hock", "Frau Hofmann", "Herr Ivonin", "Frau Joas", "Frau Kappes", "Frau Keller-Steinbach", "Frau Kilb", "Frau Kirchgeßner", "Herr Klein", "Herr Krämer", "Herr Krebs", "Herr Müller C.", "Herr Münkel", "Herr Nowotny", "Frau Olma", "Herr Petz", "Herr Regner", "Frau Ries", "Frau Schäfer", "Frau Schaible", "Herr Schotschneider", "Herr Seraphin", "Herr Sommer", "Herr Stempien", "Herr Stephan", "Frau Tülek", "Herr von Plotho-Kettner", "Frau Wagler", "Frau Waltz", "Frau Zimmermann"], "ferien": [{"von": "2026-10-26", "bis": "2026-10-30", "titel": "Herbstferien", "art": "ferien"}, {"von": "2026-12-23", "bis": "2027-01-08", "titel": "Weihnachtsferien", "art": "ferien"}, {"von": "2027-02-08", "bis": "2027-02-12", "titel": "Fasnetsferien (bewegliche Ferientage / unterrichtsfrei)", "art": "frei"}, {"von": "2027-03-24", "bis": "2027-03-24", "titel": "Beweglicher Ferientag / unterrichtsfrei", "art": "frei"}, {"von": "2027-03-25", "bis": "2027-04-02", "titel": "Osterferien", "art": "ferien"}, {"von": "2027-05-07", "bis": "2027-05-07", "titel": "Brückentag (unterrichtsfrei)", "art": "frei"}, {"von": "2027-05-17", "bis": "2027-05-28", "titel": "Pfingstferien", "art": "ferien"}, {"von": "2027-07-29", "bis": "2027-09-11", "titel": "Sommerferien", "art": "ferien"}], "ferienHinweis": "Laut Ferienkalender 2026/27 der PAGS, inkl. Feiertage innerhalb der Ferien.", "termine": [], "notizen": [], "links": [{"gruppe": "Plattformen", "titel": "iServ (Login)", "url": "https://pagskuelsheim.de/iserv/", "info": "Termine, Mail, Dateien"}, {"gruppe": "Plattformen", "titel": "Mensa-Bestellung (Mampf)", "url": "https://login.mampf1a.de/kuelsheim/"}, {"gruppe": "Infos", "titel": "Schutzkonzept: Infos für Schüler/innen", "url": "https://pags-kuelsheim.de/pags-schutzkonzept/infos-fuer-schueler-innen/"}, {"gruppe": "Infos", "titel": "Schutzkonzept: Infos für Eltern", "url": "https://pags-kuelsheim.de/pags-schutzkonzept/infos-fuer-eltern/"}, {"gruppe": "Plattformen", "titel": "WebUntis-Anleitung für Eltern (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2026/10/WebUntis-Eltern-Anleitung.pdf"}, {"gruppe": "Kalender", "titel": "Ferienkalender 2026/27 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2026/07/Ferienkalender-2026-2027.pdf"}, {"gruppe": "Kalender", "titel": "Ferienkalender 2025/26 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2025/02/ferienkalender-2025-2026.pdf"}, {"gruppe": "Formulare", "titel": "Anmeldeformular PAGS (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2024/05/Anmeldung-Schule.pdf"}, {"gruppe": "Formulare", "titel": "Ferienbetreuung Ostern/Pfingsten/Sommer 2026 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2025/11/Anmeldung-Ferienbetreuung-OsternPfingstenSommer-2026_Formular-PDF.pdf"}, {"gruppe": "Formulare", "titel": "Antrag Stadtfahrkarte (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2022/04/Sch%C3%BClerbef%C3%B6rderung-K%C3%B6nigheim-Schweinberg-Hardheim....pdf"}, {"gruppe": "Formulare", "titel": "JugendTicketBW (PDF)", "url": "https://www.vrn.de/mam/tickets/tarif/dokumente/2025/jugendbw-2025-bf.pdf"}, {"gruppe": "Formulare", "titel": "Beitritt Förderverein (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2025/09/Antrag-Foerderverein.pdf"}, {"gruppe": "Formulare", "titel": "Städtische Formulare (Betreuung)", "url": "https://www.kuelsheim.de/rathaus-service/stadt-service/staedtische-formulare"}, {"gruppe": "Infos", "titel": "Schulordnung", "url": "https://pags-kuelsheim.de/allgemeine-schulinfos/schul-und-hausordnung/"}, {"gruppe": "Infos", "titel": "Schulwegeplan 2026 (PDF)", "url": "https://pags-kuelsheim.de/wp-content/uploads/2026/07/2026045_ST_entw_03_A3.pdf"}, {"gruppe": "Infos", "titel": "Unfallschutz UKBW (PDF)", "url": "https://www.ukbw.de/fileadmin/user_upload/Mediathek/Infoblaetter/UKBW_Infoblatt_Schuelerinnen_und_Schueler_2022.pdf"}, {"gruppe": "Infos", "titel": "Schutzkonzept", "url": "https://pags-kuelsheim.de/pags-schutzkonzept/"}, {"gruppe": "Infos", "titel": "Schulwebsite", "url": "https://pags-kuelsheim.de/"}, {"gruppe": "Externe Hilfe", "titel": "Hilfe-Portal Sexueller Missbrauch", "url": "https://www.hilfe-portal-missbrauch.de/startseite"}, {"gruppe": "Externe Hilfe", "titel": "Kontaktstelle gegen sexuelle Gewalt (Caritas)", "url": "https://www.caritas-tbb.de/hilfe-beratung/menschen-in-notlagen/kontaktstelle-gegen-sexuelle-gewalt/"}], "mensa": {"bestellschluss": "10:00", "schichten": ["12:15", "13:00"], "info": "Bestellen in der Vorwoche oder am selben Tag bis 10:00 Uhr über Mampf. Wasser in der Mensa kostenlos."}}</script>
+
+<script id="pags-app">
+(function () {
+  var ORIGINAL = JSON.parse(document.getElementById('pags-data').textContent);
+  var S = JSON.parse(JSON.stringify(ORIGINAL));
+  var TABS = [
+    ['heute', 'Heute', '<path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/>'],
+    ['kontakte', 'Kontakte', '<path d="M4 5h16v14H4z"/><circle cx="10" cy="11" r="2.5"/><path d="M6.5 16.5c.8-1.6 2-2.4 3.5-2.4s2.7.8 3.5 2.4M15 9h3M15 12h3"/>'],
+    ['termine', 'Termine', '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'],
+    ['regeln', 'Regeln', '<path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/>'],
+    ['links', 'Links', '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>']
+  ];
+  var tab = 'heute';
+  var query = '';
+  var msg = '';
+  var busy = false;
+  var readOnly = false;
+  var art = null, dl = null, fileHandle = null;
+  var LS_ANON = 'pags-alltag-daten';
+  var CFG = window.PAGS_CONFIG || {};
+  var sb = null, user = null, sync = 'lokal', pending = false, pushTimer = null, confirmDelete = false, loginSent = '';
+  var BASE_LINKS = ORIGINAL.links.filter(function (l) { return !l.id; });
+
+  try { var h = (location.hash || '').slice(1); if (TABS.some(function (t) { return t[0] === h; })) tab = h; } catch (e) {}
+  function personal() { return { termine: S.termine, notizen: S.notizen, links: S.links.filter(function (l) { return !!l.id; }) }; }
+  function applyPersonal(p) {
+    p = p || {};
+    S.termine = Array.isArray(p.termine) ? p.termine : [];
+    S.notizen = Array.isArray(p.notizen) ? p.notizen : [];
+    S.links = BASE_LINKS.concat(Array.isArray(p.links) ? p.links : []);
+  }
+  function isEmpty(p) { return !p || !((p.termine || []).length || (p.notizen || []).length || (p.links || []).length); }
+  function mergeById(a, b) {
+    var seen = {}, out = [];
+    (a || []).concat(b || []).forEach(function (x) { if (x && x.id && !seen[x.id]) { seen[x.id] = 1; out.push(x); } });
+    return out;
+  }
+  function merge(a, b) { return { termine: mergeById(a.termine, b.termine), notizen: mergeById(a.notizen, b.notizen), links: mergeById(a.links, b.links) }; }
+  function cacheKey() { return user ? LS_ANON + ':' + user.id : LS_ANON; }
+  function readLocal(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
+  function writeLocal() { try { localStorage.setItem(cacheKey(), JSON.stringify(personal())); } catch (e) {} }
+  applyPersonal(readLocal(LS_ANON));
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  // Zeit in Külsheim (Europe/Berlin), unabhängig vom Gerät
+  function now() {
+    var parts = {};
+    try {
+      new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', weekday: 'short' })
+        .formatToParts(new Date()).forEach(function (x) { parts[x.type] = x.value; });
+    } catch (e) {
+      var d = new Date();
+      parts = { year: d.getFullYear(), month: String(d.getMonth() + 1).padStart(2, '0'), day: String(d.getDate()).padStart(2, '0'), hour: String(d.getHours()).padStart(2, '0'), minute: String(d.getMinutes()).padStart(2, '0'), weekday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] };
+    }
+    var wd = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[parts.weekday];
+    return { iso: parts.year + '-' + parts.month + '-' + parts.day, wd: wd, hm: parts.hour + ':' + parts.minute };
+  }
+  var WD = ['', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+  var WDK = ['', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  var MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  function parseISO(s) { var a = s.split('-'); return new Date(Date.UTC(+a[0], +a[1] - 1, +a[2])); }
+  function wdOf(s) { var d = parseISO(s).getUTCDay(); return d === 0 ? 7 : d; }
+  function fmtShort(s) { var a = s.split('-'); return WDK[wdOf(s)] + ' ' + a[2] + '.' + a[1] + '.'; }
+  function fmtLong(s) { var a = s.split('-'); return WD[wdOf(s)] + ', ' + (+a[2]) + '. ' + MON[+a[1] - 1] + ' ' + a[0]; }
+  function daysBetween(a, b) { return Math.round((parseISO(b) - parseISO(a)) / 86400000); }
+  function fmtRange(v, b) { return v === b ? fmtShort(v) : fmtShort(v) + '–' + fmtShort(b); }
+
+  function ferienHeute(iso) { return S.ferien.filter(function (f) { return f.von <= iso && iso <= f.bis; })[0]; }
+  function naechsteFerien(iso) { return S.ferien.filter(function (f) { return f.von > iso; }).sort(function (a, b) { return a.von < b.von ? -1 : 1; })[0]; }
+
+  function sekStatus(n) {
+    var z = S.sekretariat.zeiten;
+    var frei = ferienHeute(n.iso);
+    var heute = (!frei && z[n.wd]) || [];
+    for (var i = 0; i < heute.length; i++) {
+      if (n.hm >= heute[i][0] && n.hm < heute[i][1]) return { open: true, text: 'Sekretariat geöffnet', sub: 'bis ' + heute[i][1] + ' Uhr' };
+    }
+    // nächste Öffnung suchen
+    for (var k = 0; k < 14; k++) {
+      var d = new Date(parseISO(n.iso).getTime() + k * 86400000);
+      var iso = d.toISOString().slice(0, 10), wd = wdOf(iso);
+      if (ferienHeute(iso)) continue;
+      var sl = z[wd] || [];
+      for (var j = 0; j < sl.length; j++) {
+        if (k > 0 || sl[j][0] > n.hm) {
+          var tag = k === 0 ? 'heute' : k === 1 ? 'morgen' : fmtShort(iso);
+          return { open: false, text: 'Sekretariat geschlossen', sub: 'wieder ' + tag + ' ab ' + sl[j][0] + ' Uhr' };
+        }
+      }
+    }
+    return { open: false, text: 'Sekretariat geschlossen', sub: '' };
+  }
+
+  function copyBtn(v) { return '<button class="copy" data-copy="' + esc(v) + '" type="button">kopieren</button>'; }
+
+  function vHeute() {
+    var n = now();
+    var st = sekStatus(n);
+    var fh = ferienHeute(n.iso);
+    var nf = naechsteFerien(n.iso);
+    var u = S.unterricht.sek[n.wd];
+    var unterricht = fh ? '<b>' + esc(fh.titel) + '</b> bis ' + fmtShort(fh.bis)
+      : u ? 'LG 5–10: <span class="mono">' + u[0] + '–' + u[1] + '</span> · Grundschule: Türen ab <span class="mono">' + S.unterricht.gsTueren + '</span>'
+      : 'Heute kein Unterricht';
+    var nfText = '';
+    if (nf) {
+      var dd = daysBetween(n.iso, nf.von);
+      nfText = '<div class="row"><span>' + esc(nf.titel) + '</span><span class="mono chalk">' + (dd === 1 ? 'morgen' : 'in ' + dd + ' Tagen') + ' · ' + fmtShort(nf.von) + '</span></div>';
+    }
+    var kommend = alleTermine().filter(function (t) { return t.bis >= n.iso; }).slice(0, 4);
+    var notes = S.notizen.slice().reverse();
+    var quick = S.links.filter(function (l) { return l.gruppe === 'Plattformen'; }).slice(0, 3);
+    return '' +
+      '<section class="panel board" aria-live="polite">' +
+        '<h3>' + esc(fmtLong(n.iso)) + ' · <span class="mono">' + n.hm + '</span></h3>' +
+        '<div class="status"><span class="dot ' + (st.open ? 'on' : 'off') + '"></span>' + st.text + '</div>' +
+        (st.sub ? '<p class="small">' + esc(st.sub) + ' · Tel. <span class="mono">' + esc(S.sekretariat.tel) + '</span></p>' : '') +
+        '<div class="rows small" style="margin-top:6px">' +
+          '<div class="row"><span>Unterricht heute</span><span>' + unterricht + '</span></div>' +
+          (!fh && u && S.mensa ? '<div class="row"><span>Mensa</span><span>' + (n.hm < S.mensa.bestellschluss ? 'bestellen bis <span class="mono">' + S.mensa.bestellschluss + '</span> · ' : '') + 'Ausgabe <span class="mono">' + S.mensa.schichten.join(' / ') + '</span></span></div>' : '') +
+          nfText +
+        '</div>' +
+      '</section>' +
+      '<div class="quick">' + quick.map(function (l) { return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener"><b>' + esc(l.titel.replace(/ \(.*\)$/, '')) + '</b><span>' + esc(l.info || 'öffnen') + '</span></a>'; }).join('') + '</div>' +
+      '<div class="grid2">' +
+        '<section class="panel">' +
+          '<h3>Krankmeldung</h3>' +
+          '<p>Bis möglichst <b class="mono">7:45 Uhr</b> anrufen: <span class="mono">' + esc(S.sekretariat.tel) + '</span> ' + copyBtn(S.sekretariat.tel.replace(/\D/g, '')) + '</p>' +
+          '<p class="small muted">Der Anrufbeantworter ist immer an. Die schriftliche Entschuldigung folgt innerhalb von drei Tagen. Ab mehr als zehn Unterrichtstagen kann ein ärztliches Attest verlangt werden.</p>' +
+        '</section>' +
+        '<section class="panel">' +
+          '<h3>Nächste Termine</h3>' +
+          (kommend.length ? '<ul class="list">' + kommend.map(terminLi(n.iso, false)).join('') + '</ul>' : '<p class="empty">Keine Termine eingetragen.</p>') +
+          '<button class="btn ghost" data-go="termine" type="button">Alle Termine</button>' +
+        '</section>' +
+      '</div>' +
+      '<section class="panel">' +
+        '<h3>Notizen</h3>' +
+        (notes.length ? '<ul class="list">' + notes.map(function (x) {
+          return '<li><span class="when">' + fmtShort(x.datum) + '</span><span class="what"><span style="color:var(--ink);font-size:15px;white-space:pre-wrap">' + esc(x.text) + '</span></span><button class="icon-btn" data-del-note="' + esc(x.id) + '" type="button" aria-label="Notiz löschen">✕</button></li>';
+        }).join('') + '</ul>' : '<p class="empty">Noch keine Notizen. Hier ist Platz für Hinweise, die man täglich braucht, etwa Raumänderungen oder Absprachen.</p>') +
+        '<form class="add" data-form="notiz"><label for="n-text">Neue Notiz<textarea id="n-text" name="text" required placeholder="z. B. Elternabend 9a: Raum B 1.04"></textarea></label><div><button class="btn" type="submit">Notiz hinzufügen</button></div></form>' +
+      '</section>';
+  }
+
+  function alleTermine() {
+    var a = S.ferien.map(function (f) { return { von: f.von, bis: f.bis, titel: f.titel, art: f.art, fest: true }; });
+    S.termine.forEach(function (t) { a.push({ von: t.datum, bis: t.datum, titel: t.titel, notiz: t.notiz, zeit: t.zeit, art: 'eigen', id: t.id }); });
+    return a.sort(function (x, y) { return x.von === y.von ? ((x.zeit || '') < (y.zeit || '') ? -1 : 1) : (x.von < y.von ? -1 : 1); });
+  }
+  function terminLi(iso, withDelete) {
+    return function (t) {
+      var pill = t.art === 'ferien' ? '<span class="pill ferien">Ferien</span>' : t.art === 'frei' ? '<span class="pill frei">frei</span>' : '<span class="pill">Termin</span>';
+      return '<li class="' + (t.bis < iso ? 'past' : '') + '"><span class="when">' + fmtRange(t.von, t.bis).replace('–', '–<br>') + (t.zeit ? '<br>' + esc(t.zeit) : '') + '</span>' +
+        '<span class="what"><b>' + esc(t.titel) + '</b>' + (t.notiz ? '<span>' + esc(t.notiz) + '</span>' : '') + '<span>' + pill + '</span></span>' +
+        (withDelete && t.id ? '<button class="icon-btn" data-del-termin="' + esc(t.id) + '" type="button" aria-label="Termin löschen">✕</button>' : '<span></span>') + '</li>';
+    };
+  }
+
+  function vTermine() {
+    var n = now();
+    var all = alleTermine();
+    var past = all.filter(function (t) { return t.bis < n.iso; });
+    var next = all.filter(function (t) { return t.bis >= n.iso; });
+    return '' +
+      '<section class="panel">' +
+        '<h3>Termin eintragen</h3>' +
+        '<form class="add" data-form="termin">' +
+          '<div class="f2"><label for="t-datum">Datum<input id="t-datum" name="datum" type="date" required value="' + n.iso + '"></label>' +
+          '<label for="t-zeit">Uhrzeit (optional)<input id="t-zeit" name="zeit" type="time"></label></div>' +
+          '<label for="t-titel">Was<input id="t-titel" name="titel" type="text" required placeholder="z. B. Elternsprechtag"></label>' +
+          '<label for="t-notiz">Notiz (optional)<input id="t-notiz" name="notiz" type="text" placeholder="Raum, Mitbringen, Ansprechpartner"></label>' +
+          '<div><button class="btn" type="submit">Hinzufügen</button></div>' +
+        '</form>' +
+      '</section>' +
+      '<section class="panel">' +
+        '<h3>Kommend</h3>' +
+        (next.length ? '<ul class="list">' + next.map(terminLi(n.iso, true)).join('') + '</ul>' : '<p class="empty">Keine kommenden Termine.</p>') +
+        '<p class="small muted">' + esc(S.ferienHinweis) + ' Die aktuellen Schultermine stehen in iServ.</p>' +
+      '</section>' +
+      (past.length ? '<details class="panel"><summary class="small" style="cursor:pointer">Vergangene Termine (' + past.length + ')</summary><ul class="list">' + past.reverse().map(terminLi(n.iso, true)).join('') + '</ul></details>' : '');
+  }
+
+  function vKontakte() {
+    var q = query.trim().toLowerCase();
+    var match = function (c) { return !q || JSON.stringify(c).toLowerCase().indexOf(q) >= 0; };
+    var groups = {};
+    S.kontakte.filter(match).forEach(function (c) { (groups[c.gruppe] = groups[c.gruppe] || []).push(c); });
+    var lb = S.lernbegleiter.filter(function (x) { return !q || x.toLowerCase().indexOf(q) >= 0; });
+    var html = '<label for="k-suche" class="small">Suchen<input id="k-suche" type="search" placeholder="Name, Funktion oder Stichwort" value="' + esc(query) + '"></label>';
+    html += '<section class="panel"><h3>Sekretariat · Öffnungszeiten</h3><div class="rows small">' +
+      [1, 2, 3, 4, 5].map(function (d) { return '<div class="row"><span>' + WD[d] + '</span><span class="mono">' + S.sekretariat.zeiten[d].map(function (s) { return s[0] + '–' + s[1]; }).join(' · ') + '</span></div>'; }).join('') +
+      '</div><p class="small muted">' + esc(S.sekretariat.adresse) + ' · ' + esc(S.sekretariat.ort) + '</p></section>';
+    Object.keys(groups).forEach(function (g) {
+      html += '<section class="panel"><h3>' + esc(g) + '</h3><div>' + groups[g].map(function (c) {
+        return '<div class="contact"><div class="who"><b>' + esc(c.name) + '</b>' + (c.person ? '<span class="muted small">' + esc(c.person) + '</span>' : '') + '</div>' +
+          (c.tel ? '<div class="line">Tel. <span class="mono">' + esc(c.tel) + '</span>' + copyBtn(c.tel.replace(/[^\d]/g, '')) + '</div>' : '') +
+          (c.mail ? '<div class="line"><span class="mono">' + esc(c.mail) + '</span>' + copyBtn(c.mail) + '</div>' : '') +
+          (c.mail2 ? '<div class="line"><span class="mono">' + esc(c.mail2) + '</span>' + copyBtn(c.mail2) + '</div>' : '') +
+          (c.info ? '<div class="small muted">' + esc(c.info) + '</div>' : '') + '</div>';
+      }).join('') + '</div></section>';
+    });
+    html += '<section class="panel"><h3>Lernbegleiter (' + lb.length + ')</h3>' +
+      (lb.length ? '<div class="names">' + lb.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' : '<p class="empty">Kein Treffer.</p>') +
+      '<p class="small muted">E-Mail-Adressen der Lernbegleiter finden Sie in iServ oder auf der <a href="https://pags-kuelsheim.de/allgemeine-schulinfos/ansprechpartner/" target="_blank" rel="noopener">Ansprechpartner-Seite</a>.</p></section>';
+    return html;
+  }
+
+  function vRegeln() {
+    return '' +
+      '<section class="panel"><h3>Ablauf des Tages</h3><ul class="plain">' +
+        '<li>Unterrichtsbeginn <b class="mono">07:55</b>. Offenes Klassenzimmer ab 7:40 (Grundschule) bzw. 7:45 (LG 5–10).</li>' +
+        '<li>Ist der Lernbegleiter 10 Minuten nach Stundenbeginn nicht da, melden die Klassensprecher das im Sekretariat.</li>' +
+        '<li>In den großen Pausen gehen alle auf den Pausenhof. Toiletten: LG 5–10 im Haus B, Grundschule im Haus A.</li>' +
+        '<li>Das Schulgelände darf während der Schulzeit nur mit Bescheinigung verlassen werden.</li>' +
+        '<li>Fußball nur auf dem Pausenhof vor Haus A und auf der Wiese unterhalb von Haus C.</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Geräte und Sachen</h3><ul class="plain">' +
+        '<li>Handys, Lautsprecher und andere Geräte sind während der Schulzeit aus und nicht sichtbar. Sonst können sie bis Unterrichtsende eingezogen werden. Ausnahme: Climber-Räume.</li>' +
+        '<li>Fahrräder, Roller und Inliner auf dem Schulgelände schieben bzw. tragen und am vorgesehenen Platz abstellen.</li>' +
+        '<li>Sportunterricht: Sportkleidung und Hallenschuhe, keine Straßenschuhe in der Turnhalle.</li>' +
+        '<li>iPads geladen mitbringen.</li>' +
+        '<li>Für Garderobe, Geld und Wertsachen ist jede und jeder selbst verantwortlich.</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Verboten</h3><ul class="plain">' +
+        '<li>Alkohol und Energy Drinks, auch auf Ausflügen und Abschlussfahrten</li>' +
+        '<li>Rauchen auf dem gesamten Schulgelände und bei allen Schulveranstaltungen</li>' +
+        '<li>Drogen und Waffen</li>' +
+        '<li>Pornografische, gewaltverherrlichende oder rassistische Inhalte aufrufen oder versenden</li>' +
+        '<li>Auf Treppengeländern rutschen, Schuleigentum beschädigen</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Fehlen</h3><ul class="plain">' +
+        '<li>Vorher bekannt (Klinik, Behörde): rechtzeitig mit Grund und Dauer melden.</li>' +
+        '<li>Kurzfristig: bis möglichst 7:45 Uhr anrufen, schriftlich innerhalb von drei Tagen nachreichen.</li>' +
+        '<li>Ab mehr als zehn Unterrichtstagen kann die Klassenleitung ein Attest verlangen.</li>' +
+        '<li>Wird ein Kind während des Tages heimgeschickt, informiert die Schule vorher die Eltern über die Kontaktdaten im Lerntagebuch.</li>' +
+      '</ul></section>' +
+      '<section class="panel"><h3>Maßnahmen nach § 90 SchG</h3><ul class="plain small">' +
+        '<li>Lernbegleiter: Nachsitzen bis zu 2 Stunden</li>' +
+        '<li>Schulleitung: Nachsitzen bis zu 4 Stunden, Wechsel in eine Parallelklasse, Androhung des zeitweiligen Ausschlusses</li>' +
+        '<li>Klassenkonferenz: Ausschluss bis zu 4 Wochen, Androhung des Ausschlusses, Ausschluss aus der Schule</li>' +
+      '</ul><p class="small"><a href="https://pags-kuelsheim.de/allgemeine-schulinfos/schul-und-hausordnung/" target="_blank" rel="noopener">Vollständige Schulordnung</a></p></section>';
+  }
+
+  function vLinks() {
+    var groups = {};
+    S.links.forEach(function (l) { (groups[l.gruppe] = groups[l.gruppe] || []).push(l); });
+    var html = '';
+    Object.keys(groups).forEach(function (g) {
+      html += '<section class="panel"><h3>' + esc(g) + '</h3><div class="linkgroup">' + groups[g].map(function (l) {
+        return '<div class="lrow"><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.titel) + '</a>' + (l.id ? '<button class="icon-btn" data-del-link="' + esc(l.id) + '" type="button" aria-label="Link löschen">✕</button>' : '') + '</div>';
+      }).join('') + '</div></section>';
+    });
+    html += '<section class="panel"><h3>Eigenen Link hinzufügen</h3><form class="add" data-form="link">' +
+      '<label for="l-titel">Titel<input id="l-titel" name="titel" type="text" required placeholder="z. B. Moodle-Kurs 9a"></label>' +
+      '<label for="l-url">Adresse<input id="l-url" name="url" type="url" required placeholder="https://"></label>' +
+      '<div><button class="btn" type="submit">Hinzufügen</button></div></form></section>';
+    return html;
+  }
+
+  function render() {
+    var views = { heute: vHeute, kontakte: vKontakte, termine: vTermine, regeln: vRegeln, links: vLinks };
+    var n = now();
+    var app = document.getElementById('app');
+    var focusId = document.activeElement && document.activeElement.id;
+    var caret = focusId === 'k-suche' ? document.activeElement.selectionStart : null;
+    app.innerHTML =
+      '<header class="top"><div class="wrap"><h1 class="brand"><span class="brand-logo" role="img" aria-label="PAGS Gemeinschaftsschule Külsheim"></span><span class="sep" aria-hidden="true"></span>Alltag</h1><span style="display:flex;align-items:center;gap:10px"><span class="today">' + fmtShort(n.iso) + ' ' + n.hm + '</span>' + acctChip() + '</span></div></header>' +
+      '<main><div class="wrap">' +
+        '<h2>' + TABS.filter(function (t) { return t[0] === tab; })[0][1] + '</h2>' +
+        views[tab]() +
+        '<footer class="meta">' + (msg ? '<span role="status"><b>' + esc(msg) + '</b></span>' : '') +
+        vKonto() +
+        '<span>Schuldaten aus <a href="' + esc(S.quelle) + '" target="_blank" rel="noopener">pags-kuelsheim.de</a>, Stand ' + fmtShort(S.stand) + S.stand.slice(0, 4) + '.</span>' +
+        '<div class="sitefoot"><div><b>KONTAKT</b><br>Pater-Alois-Grimm-Schule<br>Kirchbergweg 11, 97900 Külsheim</div><div><b>Telefon / Fax</b><br>Tel. 09345 / 333<br>Fax 09345 / 8303</div><div><b>PAGS Mensa</b><br><a href="https://login.mampf1a.de/kuelsheim/" target="_blank" rel="noopener">Login Mensaprogramm Mampf</a></div></div>' +
+        '</footer>' +
+      '</div></main>' +
+      '<nav class="tabs" aria-label="Bereiche"><div class="in" role="tablist">' + TABS.map(function (t) {
+        return '<button role="tab" type="button" data-tab="' + t[0] + '" aria-selected="' + (t[0] === tab) + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + t[2] + '</svg>' + t[1] + '</button>';
+      }).join('') + '</div></nav>';
+    if (focusId === 'k-suche') { var el = document.getElementById('k-suche'); if (el) { el.focus(); try { el.setSelectionRange(caret, caret); } catch (e) {} } }
+  }
+
+  // ---------- Konto & automatische Synchronisierung (Supabase) ----------
+  var STATUS = {
+    lokal: ['', 'Nur auf diesem Gerät'],
+    laden: ['busy', 'Lädt …'],
+    speichert: ['busy', 'Speichert …'],
+    gespeichert: ['ok', 'Gespeichert'],
+    offline: ['err', 'Offline – wird nachgeholt'],
+    fehler: ['err', 'Nicht gespeichert']
+  };
+  function acctChip() {
+    var st = STATUS[sync] || STATUS.lokal;
+    var label = user ? st[1] : (sb ? 'Anmelden' : 'Nur auf diesem Gerät');
+    return '<button class="acct" type="button" data-konto="1" title="Konto und Speicherung"><i class="' + (user ? st[0] : '') + '"></i>' + esc(label) + '</button>';
+  }
+  function vKonto() {
+    var h = '<section class="panel konto" id="konto"><h3>Meine Daten</h3>';
+    if (!sb) {
+      h += '<p class="small">Ihre Termine, Notizen und Links werden in diesem Browser auf diesem Gerät gespeichert.' +
+        (CFG.supabaseUrl ? ' Die Anmeldung ist gerade nicht erreichbar.' : ' Die Anmeldung für alle Geräte ist noch nicht eingerichtet.') + '</p>';
+    } else if (!user) {
+      h += '<p class="small">Melden Sie sich mit Ihrer E-Mail-Adresse an. Dann werden Ihre Termine, Notizen und Links automatisch gespeichert und stehen auf jedem Gerät bereit. Ein Passwort brauchen Sie nicht: Sie bekommen einen Anmeldelink per E-Mail.</p>' +
+        (loginSent ? '<p class="small"><b>Link verschickt an ' + esc(loginSent) + '.</b> Öffnen Sie die E-Mail auf diesem Gerät und tippen Sie auf den Link.</p>' : '') +
+        '<form data-form="login" class="row2"><label for="login-mail" class="sr" style="position:absolute;left:-9999px">E-Mail-Adresse</label><input id="login-mail" name="email" type="email" required autocomplete="email" placeholder="name@beispiel.de"><button class="btn" type="submit">Anmeldelink senden</button></form>' +
+        '<p class="hint">Bis zur Anmeldung bleiben Ihre Einträge auf diesem Gerät. Bei der ersten Anmeldung werden sie in Ihr Konto übernommen.</p>';
+    } else {
+      var st = STATUS[sync] || STATUS.lokal;
+      h += '<p class="small">Angemeldet als <b>' + esc(user.email || 'Nutzer') + '</b>. Änderungen werden automatisch gespeichert. Nur Sie sehen Ihre Einträge.</p>' +
+        '<p class="small">Status: <b>' + esc(st[1]) + '</b></p>' +
+        (confirmDelete
+          ? '<p class="small"><b>Alle Ihre gespeicherten Termine, Notizen und Links endgültig löschen?</b></p><div class="row2"><button class="btn danger" type="button" data-delete-data="2">Ja, endgültig löschen</button><button class="btn ghost" type="button" data-delete-data="0">Abbrechen</button></div>'
+          : '<div class="row2"><button class="btn ghost" type="button" data-logout="1">Abmelden</button><button class="btn ghost" type="button" data-delete-data="1">Meine Daten löschen</button></div>');
+    }
+    h += '<p class="hint">Gespeichert wird nur, was Sie hier selbst eintragen, und Ihre E-Mail-Adresse für die Anmeldung. ' +
+      'Speicherort: ' + (sb ? 'Datenbank des Dienstes Supabase' + (CFG.region ? ' (' + esc(CFG.region) + ')' : '') : 'nur dieser Browser') + '.</p></section>';
+    return h;
+  }
+
+  function setSync(v) {
+    sync = v; var c = document.querySelector('.acct'); if (c) c.outerHTML = acctChip();
+    var ae = document.activeElement; if (!(ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))) render();
+  }
+
+  // nach jeder Änderung: anzeigen, lokal sichern, bei Anmeldung verzögert hochladen
+  function changed() {
+    render(); writeLocal();
+    if (user) { pending = true; clearTimeout(pushTimer); pushTimer = setTimeout(push, 700); setSync('speichert'); }
+  }
+
+  function push() {
+    if (!sb || !user) return;
+    if (!navigator.onLine) { setSync('offline'); return; }
+    setSync('speichert');
+    var payload = personal();
+    sb.from('pags_alltag').upsert({ user_id: user.id, data: payload, updated_at: new Date().toISOString() }, { onConflict: 'user_id' }).then(function (r) {
+      if (r.error) { pending = true; setSync(navigator.onLine ? 'fehler' : 'offline'); return; }
+      if (JSON.stringify(payload) === JSON.stringify(personal())) pending = false;
+      setSync(pending ? 'speichert' : 'gespeichert');
+      if (pending) { clearTimeout(pushTimer); pushTimer = setTimeout(push, 700); }
+    }, function () { pending = true; setSync('offline'); });
+  }
+
+  // Daten vom Server holen; beim ersten Anmelden die Einträge dieses Geräts übernehmen
+  function pull(firstLogin) {
+    if (!sb || !user || pending) return;
+    setSync('laden');
+    sb.from('pags_alltag').select('data, updated_at').eq('user_id', user.id).maybeSingle().then(function (r) {
+      if (r.error) { setSync(navigator.onLine ? 'fehler' : 'offline'); return; }
+      var remote = (r.data && r.data.data) || null;
+      var anon = firstLogin ? readLocal(LS_ANON) : null;
+      if (anon && !isEmpty(anon)) {
+        applyPersonal(remote ? merge(remote, anon) : anon);
+        try { localStorage.removeItem(LS_ANON); } catch (e) {}
+        msg = 'Ihre Einträge von diesem Gerät wurden in Ihr Konto übernommen.';
+        changed(); return;
+      }
+      if (remote) applyPersonal(remote);
+      else if (!r.data && !isEmpty(personal())) { changed(); return; }
+      writeLocal(); sync = 'gespeichert'; render();
+    }, function () { setSync('offline'); });
+  }
+
+  function onSession(session, event) {
+    var before = user && user.id;
+    user = session ? session.user : null;
+    if (user && user.id !== before) {
+      applyPersonal(readLocal(cacheKey()) || readLocal(LS_ANON));
+      loginSent = '';
+      if (event === 'SIGNED_IN' && /access_token|code=/.test(location.href)) { try { history.replaceState(null, '', location.pathname + '#heute'); } catch (e) {} }
+      render(); pull(true);
+    } else if (!user && before) {
+      applyPersonal(readLocal(LS_ANON)); sync = 'lokal'; render();
+    }
+  }
+
+  function initSync() {
+    if (!CFG.supabaseUrl || !CFG.supabaseAnonKey || !window.supabase || !window.supabase.createClient) { render(); return; }
+    try {
+      sb = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' } });
+    } catch (e) { sb = null; render(); return; }
+    sb.auth.onAuthStateChange(function (event, session) { setTimeout(function () { onSession(session, event); }, 0); });
+    sb.auth.getSession().then(function (r) { onSession(r.data && r.data.session, 'INITIAL'); render(); });
+    window.addEventListener('online', function () { if (pending) push(); else pull(false); });
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && user && !pending) pull(false); });
+    setInterval(function () { if (user && pending) push(); }, 30000);
+  }
+
+  function login(email) {
+    if (!sb) return;
+    msg = '';
+    sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin + location.pathname } }).then(function (r) {
+      if (r.error) { msg = /rate|seconds/i.test(r.error.message || '') ? 'Bitte warten Sie kurz, bevor Sie einen neuen Link anfordern.' : 'Der Anmeldelink konnte nicht verschickt werden. Bitte prüfen Sie die Adresse.'; }
+      else loginSent = email;
+      render();
+    });
+  }
+  function logout() {
+    if (!sb) return;
+    try { localStorage.removeItem(cacheKey()); } catch (e) {}
+    sb.auth.signOut().then(function () { user = null; applyPersonal(readLocal(LS_ANON)); sync = 'lokal'; msg = 'Sie sind abgemeldet. Ihre Einträge bleiben in Ihrem Konto gespeichert.'; render(); });
+  }
+  function deleteData() {
+    if (!sb || !user) return;
+    sb.from('pags_alltag').delete().eq('user_id', user.id).then(function (r) {
+      confirmDelete = false;
+      if (r.error) { msg = 'Löschen hat nicht geklappt. Bitte später noch einmal versuchen.'; render(); return; }
+      pending = false; applyPersonal({}); try { localStorage.removeItem(cacheKey()); } catch (e) {}
+      msg = 'Ihre gespeicherten Daten wurden gelöscht.'; sync = 'gespeichert'; render();
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    var d = t.dataset;
+    if (d.tab) { tab = d.tab; msg = ''; try { history.replaceState(null, '', '#' + tab); } catch (x) {} render(); window.scrollTo(0, 0); return; }
+    if (d.go) { tab = d.go; render(); window.scrollTo(0, 0); return; }
+    if (d.copy) {
+      var ok = function () { var o = t.textContent; t.textContent = 'kopiert'; setTimeout(function () { t.textContent = o; }, 1400); };
+      try { navigator.clipboard.writeText(d.copy).then(ok, function () { sel(t); }); } catch (x) { sel(t); }
+      return;
+    }
+    if (d.delTermin) { S.termine = S.termine.filter(function (x) { return x.id !== d.delTermin; }); changed(); return; }
+    if (d.delNote) { S.notizen = S.notizen.filter(function (x) { return x.id !== d.delNote; }); changed(); return; }
+    if (d.delLink) { S.links = S.links.filter(function (x) { return x.id !== d.delLink; }); changed(); return; }
+    if (d.konto) { var k = document.getElementById('konto'); if (k) k.scrollIntoView({ block: 'center' }); var m = document.getElementById('login-mail'); if (m) m.focus(); return; }
+    if (d.logout) { logout(); return; }
+    if (d.deleteData) { if (d.deleteData === '2') deleteData(); else { confirmDelete = d.deleteData === '1'; render(); } return; }
+  });
+  function sel(b) {
+    var el = b.previousElementSibling; if (!el) return;
+    var r = document.createRange(); r.selectNodeContents(el);
+    var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }
+  document.addEventListener('submit', function (e) {
+    var f = e.target; if (!f.dataset.form) return;
+    e.preventDefault();
+    var v = {}; Array.prototype.forEach.call(f.elements, function (el) { if (el.name) v[el.name] = el.value.trim(); });
+    if (f.dataset.form === 'login') { if (v.email) login(v.email); return; }
+    if (f.dataset.form === 'termin') {
+      if (!v.datum || !v.titel) return;
+      S.termine.push({ id: uid(), datum: v.datum, zeit: v.zeit || '', titel: v.titel, notiz: v.notiz || '' });
+    } else if (f.dataset.form === 'notiz') {
+      if (!v.text) return;
+      S.notizen.push({ id: uid(), datum: now().iso, text: v.text });
+    } else if (f.dataset.form === 'link') {
+      if (!v.titel || !/^https?:\/\//i.test(v.url)) { msg = 'Bitte eine Adresse angeben, die mit https:// beginnt.'; render(); return; }
+      S.links.push({ id: uid(), gruppe: 'Eigene Links', titel: v.titel, url: v.url });
+    }
+    msg = ''; changed();
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'k-suche') { query = e.target.value; render(); }
+  });
+
+  render();
+  setInterval(function () { if (!document.activeElement || document.activeElement === document.body) render(); }, 60000);
+
+  initSync();
+})();
+</script>
+
+</body>
+</html>
