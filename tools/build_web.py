@@ -247,7 +247,7 @@ cut("  (function initCaps(tries) {", "})();\n</script>", "  initSync();\n")
 for bad in ['buildDoc', 'saveLocal', 'claude.use', 'LS_KEY', 'restore', 'dirty()', 'data-save', 'FRAMED', 'canDownload']:
     assert bad not in s.split('<script id="pags-app">')[1], bad
 s = s.replace('<script type="application/json" id="pags-data">',
-              '<script src="config.js"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script type="application/json" id="pags-data">')
+              '<script src="config.js?v=2"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script type="application/json" id="pags-data">')
 
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, 'alltag.html'), 'w').write(s)
