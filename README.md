@@ -51,8 +51,8 @@ Bevor die App an Eltern oder Schülerinnen und Schüler weitergegeben wird, soll
 Die Schuldaten (Kontakte, Ferien, Links) stehen in `alltag.html` im Block `<script type="application/json" id="pags-data">`.
 Stand der Inhalte: Oktober 2026, übernommen von pags-kuelsheim.de.
 
-## Deutsch: Die Stilmittel-Burg
+## Deutsch: DECODE – Operation Rhetorik
 
-`deutsch/stilmittel.html` – Grafikadventure für Klasse 9: 30 rhetorische Stilmittel in fünf Räumen entdecken, an den Toren Rätsel lösen, Graf Grau besiegen, Urkunde drucken, Trainingsplatz zum Weiterüben. Spielstand bleibt im Browser des Geräts.
+`deutsch/stilmittel.html` – Agenten-Adventure für Klasse 9 (14–16 J.): Die KI VOXA manipuliert mit Sprache. In fünf Zonen (Werbeagentur, Social Media, Talkshow, Newsroom, Rede-Labor) werden 30 Stilmittel in realistischen Texten gescannt, Firewalls (6 Fragen, mind. 4 richtig) geknackt und VOXA im Endkampf mit Zeitlimit besiegt. XP, Ränge, Combos, Blitzrunde (60 s) mit Rekord, druckbare Decoder-Lizenz. Spielstand bleibt im Browser des Geräts.
 Link: `https://ratpoison-de.github.io/pags-app/deutsch/stilmittel.html` · QR-Code: `deutsch/stilmittel-qr.png`
-Inhalte nach der Übersicht „Rhetorische Mittel“ von lehrerfreund.de.
+Definitionen nach der Übersicht „Rhetorische Mittel“ von lehrerfreund.de.

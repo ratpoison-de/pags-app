@@ -3,208 +3,255 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Die Stilmittel-Burg</title>
-<meta name="description" content="Grafikadventure für Deutsch Klasse 9: 30 rhetorische Stilmittel entdecken, verstehen und üben – PAGS Külsheim.">
-<meta name="theme-color" content="#121833">
+<title>DECODE – Operation Rhetorik</title>
+<meta name="description" content="Agenten-Adventure für Deutsch Klasse 9: 30 rhetorische Stilmittel in Werbung, Social Media, Talkshows und Reden entschlüsseln – PAGS Külsheim.">
+<meta name="theme-color" content="#07080d">
 <link rel="icon" href="../icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --night:#121833; --night2:#1d2550; --night3:#2a3470;
-  --paper:#fffaf0; --paper2:#f6eedc; --pink:#2a2233; --muted:#6d6478; --line:#e6dcc6;
-  --gold:#f2b84b; --gold2:#c98a1b; --ink:#f4efe6; --ink2:#bfc3e0;
-  --ok:#23864f; --ok-soft:#dcf3e5; --bad:#c6392e; --bad-soft:#fde4e0; --tip:#fff1c9;
-  --r:18px;
-  --head:"Fraunces", Georgia, "Times New Roman", serif;
+  --bg:#07080d; --bg2:#0e1018; --card:#11141f; --card2:#171b29; --line:#262b3f;
+  --ink:#eef1ff; --ink2:#9aa1c4; --mute:#6b7196;
+  --pink:#ff2e88; --cy:#19e3ff; --lime:#b6ff3b; --yel:#ffd23f; --red:#ff4b3e; --vio:#b06bff;
+  --r:16px;
+  --head:"Space Grotesk",Arial,"Liberation Sans",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;
-  background:radial-gradient(1200px 600px at 50% -10%,#2b3577 0%,var(--night) 60%) fixed,var(--night)}
-button{font:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.wrap{max-width:1000px;margin:0 auto;padding:12px 16px 32px}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;background:var(--bg)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(900px 500px at 15% -10%,rgba(255,46,136,.18),transparent 60%),radial-gradient(900px 500px at 100% 0%,rgba(25,227,255,.14),transparent 60%),
+  linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px) 0 0/100% 4px}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--cy);outline-offset:3px}
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:12px 16px 32px}
 .screen{display:none}
-.screen.on{display:block;animation:fade .35s ease}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-h1,h2,h3{font-family:var(--head);line-height:1.15}
+.screen.on{display:block;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h1,h2,h3{font-family:var(--head);line-height:1.1;letter-spacing:-.01em}
+.mono{font-family:var(--mono)}
 
-/* Top bar */
+/* Topbar */
 .top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .top[hidden]{display:none}
-.brand{font-family:var(--head);font-weight:800;font-size:1.15rem;margin-right:auto;display:flex;align-items:center;gap:8px}
-.brand svg{width:30px;height:30px}
-.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
-  border-radius:99px;padding:6px 12px;font-weight:bold;font-size:.92rem;white-space:nowrap}
-.ibtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:var(--ink);border-radius:12px;
-  min-width:44px;height:44px;padding:0 12px;font-weight:bold;display:inline-flex;align-items:center;gap:6px}
-.ibtn:hover{background:rgba(255,255,255,.18)}
-.ibtn .t{display:inline}
-@media (max-width:560px){.ibtn .t{display:none}.brand span{display:none}.ibtn{min-width:40px;height:40px;padding:0 8px}.chip{padding:5px 9px;font-size:.85rem}.top{gap:6px}}
+.brand{font:700 1.1rem/1 var(--head);letter-spacing:.12em;margin-right:auto;display:flex;align-items:center;gap:8px}
+.brand b{color:var(--pink)}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 11px;
+  font:700 .82rem/1 var(--mono);white-space:nowrap}
+.chip .k{color:var(--mute);font-weight:500}
+.chip.xp{border-color:rgba(182,255,59,.35)}
+.chip.xp .v{color:var(--lime)}
+.ibtn{background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:42px;height:38px;padding:0 12px;
+  font:700 .82rem/1 var(--mono);display:inline-flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.06em}
+.ibtn:hover{border-color:var(--cy);color:var(--cy)}
+@media (max-width:600px){.ibtn .t,.brand span,.chip .k{display:none}.top{gap:6px}.chip{padding:7px 8px}}
 
 /* Buttons */
-.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:bold;min-height:46px;background:#ece3cf;color:var(--pink)}
-.btn.primary{background:linear-gradient(180deg,#ffd47a,var(--gold));color:#3a2408;box-shadow:0 4px 0 var(--gold2)}
-.btn.primary:active{transform:translateY(2px);box-shadow:0 2px 0 var(--gold2)}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid rgba(255,255,255,.35)}
-.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn{border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-height:46px;font:700 .95rem/1 var(--head);background:var(--card2);letter-spacing:.02em}
+.btn:hover{border-color:var(--ink2)}
+.btn.go{background:var(--lime);color:#0b1200;border-color:var(--lime);box-shadow:0 0 24px rgba(182,255,59,.35)}
+.btn.go:hover{filter:brightness(1.08)}
+.btn.pink{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 0 24px rgba(255,46,136,.35)}
+.btn.ghost{background:transparent}
 
 /* Title */
-.title{position:relative;border-radius:24px;overflow:hidden;min-height:560px;display:flex;align-items:flex-end}
-.title .bg{position:absolute;inset:0}
-.title .bg svg{width:100%;height:100%}
-.title .inner{position:relative;width:100%;padding:28px;background:linear-gradient(180deg,transparent,rgba(10,13,32,.92) 38%)}
-.title h1{font-size:clamp(2.2rem,7vw,3.8rem);margin:0 0 4px;color:#fff;letter-spacing:-.01em}
-.title h1 em{font-style:normal;color:var(--gold)}
-.title p.sub{margin:0 0 18px;color:var(--ink2);font-size:1.05rem}
-.title .lumi-big{position:absolute;right:6%;top:8%;width:clamp(110px,22vw,190px);animation:float 3.5s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-12px) rotate(-3deg)}}
-.namebox{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.namebox input{flex:1 1 220px;min-height:48px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);
-  color:#fff;padding:0 14px;font:inherit;font-size:1.05rem}
-.namebox input::placeholder{color:#aab0d4}
-.smalllinks{margin-top:14px;font-size:.88rem;color:var(--ink2)}
+.hero{position:relative;border-radius:24px;overflow:hidden;min-height:600px;border:1px solid var(--line);display:flex;align-items:flex-end}
+.hero .bg{position:absolute;inset:0}.hero .bg svg{width:100%;height:100%}
+.hero .inner{position:relative;width:100%;padding:28px;background:linear-gradient(180deg,transparent,rgba(7,8,13,.9) 35%)}
+.tag{display:inline-block;font:700 .72rem/1 var(--mono);letter-spacing:.18em;color:var(--cy);border:1px solid rgba(25,227,255,.4);padding:6px 10px;border-radius:6px;margin-bottom:14px}
+.glitch{position:relative;font:700 clamp(3.2rem,12vw,7rem)/.9 var(--head);letter-spacing:.06em;margin:0;color:#fff}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0}
+.glitch::before{color:var(--pink);transform:translate(3px,0);mix-blend-mode:screen;clip-path:inset(0 0 55% 0);animation:g1 3s infinite steps(1)}
+.glitch::after{color:var(--cy);transform:translate(-3px,0);mix-blend-mode:screen;clip-path:inset(55% 0 0 0);animation:g2 3s infinite steps(1)}
+@keyframes g1{0%,88%{transform:translate(3px,0)}90%{transform:translate(-6px,-2px)}94%{transform:translate(8px,1px)}}
+@keyframes g2{0%,86%{transform:translate(-3px,0)}89%{transform:translate(7px,2px)}93%{transform:translate(-8px,0)}}
+.hero h2{font:700 clamp(1.1rem,3vw,1.5rem)/1.2 var(--head);margin:10px 0 6px;color:var(--pink);letter-spacing:.08em;text-transform:uppercase}
+.hero p.sub{margin:0 0 20px;color:var(--ink2);max-width:640px}
+.namebox{display:flex;gap:10px;flex-wrap:wrap}
+.namebox label{flex:1 1 240px;display:flex;align-items:center;gap:8px;background:rgba(17,20,31,.9);border:1px solid var(--line);border-radius:12px;padding:0 14px}
+.namebox label span{font:700 .78rem var(--mono);color:var(--cy);letter-spacing:.1em}
+.namebox input{flex:1;min-height:48px;border:0;background:transparent;color:#fff;font:600 1.05rem var(--head);outline:none;min-width:0}
+.smalllinks{margin-top:14px;font:.8rem var(--mono);color:var(--mute)}
 .smalllinks button{background:none;border:0;color:var(--ink2);text-decoration:underline;padding:4px}
 
 /* Map */
-.mapscroll{border-radius:24px;overflow-x:auto;-webkit-overflow-scrolling:touch}
-@media (max-width:640px){.map{min-width:620px}}
-.map{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:1000/620;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.mapscroll{border-radius:22px;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line)}
+.map{position:relative;aspect-ratio:1000/600}
+@media (max-width:640px){.map{min-width:640px}}
 .map svg{position:absolute;inset:0;width:100%;height:100%}
-.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;color:#fff;padding:0}
-.node .dot{width:clamp(48px,8.5vw,74px);height:clamp(48px,8.5vw,74px);border-radius:50%;display:grid;place-items:center;font-size:clamp(22px,4vw,34px);
-  background:radial-gradient(circle at 35% 30%,#4a56a8,#232b63);border:3px solid var(--gold);box-shadow:0 0 0 6px rgba(242,184,75,.18),0 8px 20px rgba(0,0,0,.45)}
-.node.open .dot{animation:pulse 1.8s ease-in-out infinite}
-.node.locked .dot{filter:grayscale(1);border-color:#7a7f99;box-shadow:none;opacity:.8}
-.node.done .dot{background:radial-gradient(circle at 35% 30%,#ffe29a,#e7a93b);border-color:#fff}
-.node .lab{font-weight:bold;font-size:clamp(.68rem,1.7vw,.9rem);background:rgba(10,13,32,.78);padding:3px 9px;border-radius:99px;white-space:nowrap}
-.node .st{font-size:.8rem;letter-spacing:1px;min-height:1em}
-@keyframes pulse{50%{box-shadow:0 0 0 12px rgba(242,184,75,.05),0 8px 20px rgba(0,0,0,.45)}}
+.node{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0}
+.node .dot{width:clamp(54px,7.5vw,72px);aspect-ratio:1;display:grid;place-items:center;clip-path:polygon(25% 3%,75% 3%,100% 50%,75% 97%,25% 97%,0 50%);
+  background:var(--cy);font:700 1.05rem var(--mono);position:relative}
+.node .dot::before{content:"";position:absolute;inset:3px;clip-path:inherit;background:#0b0e18}
+.node .dot span{position:relative}
+.node.open .dot{animation:np 1.6s infinite}
+@keyframes np{50%{filter:drop-shadow(0 0 12px var(--cy)) brightness(1.3)}}
+.node.done .dot{background:var(--lime);color:var(--lime)}
+.node.open .dot{color:var(--cy)}
+.node.locked .dot{background:#2d3350;color:#555c80}
+.node.boss .dot{background:var(--pink);color:var(--pink)}
+.node.boss.locked .dot{background:#3a2233;color:#7a4a63}
+.node .lab{font:700 .72rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;background:rgba(7,8,13,.85);border:1px solid var(--line);padding:5px 8px;border-radius:6px;white-space:nowrap}
+.node .st{font:700 .7rem/1 var(--mono);color:var(--ink2);min-height:1em}
 .under{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
-.under p{margin:0;color:var(--ink2);flex:1 1 260px}
+.under p{margin:0;color:var(--ink2);flex:1 1 260px;font-family:var(--mono);font-size:.88rem}
 
 /* Room */
-.roomhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:2px 0 10px;flex-wrap:wrap}
-.roomhead h2{margin:0;font-size:clamp(1.4rem,4vw,2rem)}
-.roomhead small{display:block;color:var(--gold);font-weight:bold;letter-spacing:.06em;text-transform:uppercase;font-size:.78rem}
-.scene{position:relative;aspect-ratio:16/10;border-radius:22px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.45);background:#000}
+.roomhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:0 0 10px;flex-wrap:wrap}
+.roomhead h2{margin:2px 0 0;font-size:clamp(1.6rem,4.5vw,2.4rem);letter-spacing:.04em}
+.roomhead small{font:700 .74rem var(--mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase}
+.scene{position:relative;aspect-ratio:16/10;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#000}
 .scene>svg{position:absolute;inset:0;width:100%;height:100%;transition:filter 1.2s ease}
-.hot{position:absolute;transform:translate(-50%,-50%);width:clamp(46px,8.4vw,80px);height:clamp(46px,8.4vw,80px);border-radius:50%;
-  border:2px solid rgba(255,226,150,.9);background:radial-gradient(circle,rgba(255,240,200,.35),rgba(255,240,200,.05) 70%);
-  font-size:clamp(22px,4.4vw,42px);display:grid;place-items:center;padding:0;animation:glow 2.2s ease-in-out infinite;transition:transform .15s}
-.hot:hover{transform:translate(-50%,-50%) scale(1.1)}
-.hot.found{animation:none;border-color:transparent;background:none;opacity:.9}
-.hot.found::after{content:"✓";position:absolute;right:-2px;bottom:-2px;width:22px;height:22px;border-radius:50%;background:var(--ok);color:#fff;font-size:13px;display:grid;place-items:center;font-weight:bold}
-@keyframes glow{50%{box-shadow:0 0 22px 6px rgba(255,214,120,.55)}}
-.door{display:flex;align-items:center;gap:8px;border:0;border-radius:14px;padding:10px 16px;min-height:46px;font-weight:bold;
-  background:rgba(10,13,32,.8);color:#fff;border:2px solid rgba(255,255,255,.25)}
-.door.ready{background:linear-gradient(180deg,#ffd47a,var(--gold));color:#3a2408;border-color:#fff;animation:glow 1.6s infinite}
-.roomfoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;color:var(--ink2);align-items:center}
-.crys{display:flex;gap:6px}
-.crys i{width:16px;height:22px;clip-path:polygon(50% 0,100% 35%,80% 100%,20% 100%,0 35%);background:rgba(255,255,255,.18)}
-.crys i.on{background:linear-gradient(160deg,#c9f6ff,#7b5cff)}
-.boss-figure{position:absolute;left:50%;top:58%;width:20%;transform:translate(-50%,-50%);transition:transform .3s,opacity 1s}
-.boss-figure.hit{animation:shake .4s}
-@keyframes shake{20%{transform:translate(-53%,-50%) rotate(-4deg)}60%{transform:translate(-47%,-50%) rotate(4deg)}}
-.hp{position:absolute;left:4%;right:4%;top:4%;background:rgba(10,13,32,.8);border-radius:99px;padding:6px 12px;display:flex;align-items:center;gap:10px;font-weight:bold;font-size:.9rem}
-.hp .bar{flex:1;height:12px;border-radius:99px;background:rgba(255,255,255,.15);overflow:hidden}
-.hp .bar span{display:block;height:100%;background:linear-gradient(90deg,#9aa0b5,#5d6278);transition:width .5s}
+.scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px) 0 0/100% 3px}
+.hot{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:7px;padding:8px 12px 8px 10px;min-height:34px;border-radius:99px;
+  background:rgba(7,8,13,.82);border:1.5px solid var(--cy);color:#e9fbff;font:700 clamp(.6rem,1.5vw,.8rem)/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+  box-shadow:0 0 16px rgba(25,227,255,.45);white-space:nowrap;z-index:2;transition:transform .15s}
+.hot:hover{transform:translate(-50%,-50%) scale(1.07)}
+.hot .ring{width:9px;height:9px;border-radius:50%;background:var(--cy);animation:ping 1.5s infinite;flex:0 0 9px}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(25,227,255,.8)}100%{box-shadow:0 0 0 12px rgba(25,227,255,0)}}
+.hot.found{border-color:var(--lime);color:var(--lime);box-shadow:0 0 10px rgba(182,255,59,.3)}
+.hot.found .ring{background:var(--lime);animation:none}
+.status{position:absolute;left:14px;top:12px;font:700 .7rem var(--mono);letter-spacing:.14em;background:rgba(7,8,13,.8);border:1px solid var(--line);padding:6px 9px;border-radius:6px;z-index:2}
+.status b{color:var(--red)}
+@media (max-width:600px){.scene{aspect-ratio:4/3}.status{display:none}.hot{padding:6px 8px 6px 7px;gap:5px;font-size:.56rem;letter-spacing:.02em;min-height:30px}.hot .ring{width:7px;height:7px;flex-basis:7px}}
+@media (max-width:420px){.brand{display:none}.top{justify-content:flex-end}}.status b.on{color:var(--lime)}
+.roomfoot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.roomfoot>span:first-child{color:var(--ink2);font:.85rem var(--mono)}
+.bars{display:flex;gap:5px}
+.bars i{width:22px;height:8px;border-radius:2px;background:#232842}
+.bars i.on{background:var(--lime);box-shadow:0 0 8px rgba(182,255,59,.6)}
+.door.ready{animation:np 1.4s infinite}
+
+/* Boss */
+.hud{position:absolute;left:3%;right:3%;top:5%;display:flex;gap:10px;align-items:center;z-index:2;font:700 .78rem var(--mono);flex-wrap:wrap}
+.hud .hpw{flex:1 1 200px;display:flex;align-items:center;gap:8px;background:rgba(7,8,13,.85);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.hud .bar{flex:1;height:10px;border-radius:2px;background:#2a1020;overflow:hidden}
+.hud .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--red));transition:width .5s;box-shadow:0 0 10px var(--pink)}
+.hud .lives{background:rgba(7,8,13,.85);border:1px solid var(--line);border-radius:8px;padding:6px 10px;letter-spacing:.1em}
+.timer{height:6px;border-radius:3px;background:#1c2033;overflow:hidden;margin:0 0 12px}
+.timer span{display:block;height:100%;background:var(--yel);width:100%;transform-origin:left}
+.voxa-hit{animation:vh .45s}
+@keyframes vh{30%{filter:hue-rotate(90deg) brightness(1.8);transform:translateX(-6px)}60%{transform:translateX(6px)}}
 
 /* Sheet */
-.ov{position:fixed;inset:0;background:rgba(6,8,20,.6);backdrop-filter:blur(3px);z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.ov{position:fixed;inset:0;background:rgba(3,4,8,.72);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:12px}
 .ov[hidden]{display:none}
 @media (min-width:700px){.ov{align-items:center}}
-.sheet{width:100%;max-width:680px;max-height:88vh;overflow:auto;background:var(--paper);color:var(--pink);border-radius:22px;padding:20px;
-  box-shadow:0 30px 80px rgba(0,0,0,.5);animation:up .3s ease;position:relative}
+.sheet{width:100%;max-width:660px;max-height:88vh;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);animation:up .28s ease;position:relative}
 .sheet.wide{max-width:900px}
-@keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
-.x{position:absolute;right:12px;top:12px;width:40px;height:40px;border-radius:50%;border:0;background:#efe5cf;color:var(--pink);font-size:1.2rem;font-weight:bold}
-.talk{display:flex;gap:14px;align-items:flex-start}
-.portrait{flex:0 0 84px;height:84px;border-radius:20px;background:radial-gradient(circle at 40% 30%,#3b468f,#1b2252);display:grid;place-items:center;padding:6px}
-.portrait.grau{background:radial-gradient(circle at 40% 30%,#6a6a73,#2c2c33)}
-.portrait svg{width:100%;height:100%}
-.who{font-family:var(--head);font-weight:800;font-size:1.1rem;color:var(--gold2)}
-.talk p{margin:4px 0 0;font-size:1.08rem}
+@keyframes up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.x{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card2);font-weight:bold}
+.msg{display:flex;gap:12px;align-items:flex-start}
+.ava{flex:0 0 48px;height:48px;border-radius:12px;display:grid;place-items:center;font:700 1.2rem var(--mono);background:#0b0e18;border:1.5px solid var(--cy);color:var(--cy);box-shadow:0 0 14px rgba(25,227,255,.35)}
+.ava.vx{border-color:var(--pink);color:var(--pink);box-shadow:0 0 14px rgba(255,46,136,.45)}
+.who{font:700 .74rem var(--mono);letter-spacing:.14em;color:var(--cy)}
+.who.vx{color:var(--pink)}
+.bubble{margin-top:6px;background:var(--card2);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:12px 14px;font-size:1.05rem}
+.typing{display:inline-flex;gap:4px}.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink2);animation:ty 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes ty{50%{opacity:.2}}
 .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
-.cardtop{display:flex;gap:14px;align-items:center;margin-right:40px}
-.cardtop .big{font-size:52px;line-height:1;width:76px;height:76px;border-radius:20px;background:var(--paper2);display:grid;place-items:center;flex:0 0 76px}
-.kicker{font-size:.78rem;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.cardtop h2{margin:2px 0 0;font-size:1.7rem}
-.def{font-size:1.08rem;margin:14px 0}
-.exbox{background:var(--paper2);border-left:5px solid var(--gold);border-radius:12px;padding:10px 14px;margin:10px 0}
-.exbox p{margin:4px 0;font-style:italic}
-.lbl{font-size:.74rem;font-weight:bold;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-style:normal}
-.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:560px){.duo{grid-template-columns:1fr}}
-.mini{background:#eef3ff;border-radius:12px;padding:10px 12px}
-.mini.tip{background:var(--tip)}
+.kicker{font:700 .72rem var(--mono);letter-spacing:.14em;color:var(--mute);text-transform:uppercase}
+.cardtop{margin-right:44px}
+.cardtop h2{margin:4px 0 0;font-size:2rem;color:var(--lime)}
+.fund{margin:14px 0;border:1px solid rgba(25,227,255,.35);background:rgba(25,227,255,.06);border-radius:12px;padding:12px 14px}
+.fund .src{font:700 .7rem var(--mono);letter-spacing:.14em;color:var(--cy);text-transform:uppercase}
+.fund p{margin:6px 0 0;font:600 1.15rem/1.35 var(--head)}
+.def{font-size:1.05rem;margin:12px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.mini{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.95rem}
+.mini .kicker{margin-bottom:4px}
+.mini.ex{grid-column:1/-1}
+.mini.ex p{margin:2px 0;font-style:italic}
+.mini.tip{border-color:rgba(255,210,63,.35)}.mini.tip .kicker{color:var(--yel)}
 
 /* Quiz */
-.qwrap{max-width:760px;margin:0 auto}
+.qwrap{max-width:780px;margin:0 auto}
 .qhead{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-.qhead h2{margin:0;font-size:1.4rem;flex:1}
-.dots{display:flex;gap:6px}
-.dots i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.2)}
-.dots i.cur{background:var(--gold)}
-.dots i.ok{background:#4cc27f}.dots i.no{background:#e2685d}
-.qcard{background:var(--paper);color:var(--pink);border-radius:22px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
-.qprompt{font-weight:bold;font-size:1.12rem;margin-bottom:10px}
-.quote{margin:0 0 14px;background:var(--paper2);border-radius:14px;padding:14px 16px;font-family:var(--head);font-size:1.25rem;line-height:1.35;border-left:6px solid var(--gold)}
+.qhead h2{margin:0;font-size:1.35rem;flex:1;letter-spacing:.03em}
+.dots{display:flex;gap:5px}
+.dots i{width:18px;height:6px;border-radius:2px;background:#232842}
+.dots i.cur{background:var(--cy)}.dots i.ok{background:var(--lime)}.dots i.no{background:var(--red)}
+.combo{font:700 .8rem var(--mono);color:var(--yel)}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;position:relative}
+.qtype{font:700 .7rem var(--mono);letter-spacing:.14em;color:var(--pink);text-transform:uppercase;margin-bottom:6px}
+.qprompt{font:700 1.15rem/1.3 var(--head);margin-bottom:12px}
+.qprompt u{text-decoration:none;color:var(--cy)}
+.quote{margin:0 0 14px;background:#0b0e18;border-left:3px solid var(--cy);border-radius:4px 12px 12px 4px;padding:14px 16px;font:600 1.25rem/1.35 var(--head)}
 .quote::before{content:"„"}.quote::after{content:"“"}
 .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .opts.long{grid-template-columns:1fr}
 @media (max-width:560px){.opts{grid-template-columns:1fr}}
-.opt{text-align:left;border:2px solid var(--line);background:#fff;color:var(--pink);border-radius:14px;padding:12px 14px;min-height:52px;font-weight:bold;transition:transform .1s,border-color .1s}
-.opt:hover:not([disabled]){border-color:var(--gold);transform:translateY(-1px)}
-.opts.long .opt{font-weight:normal;font-style:italic}
-.opt.right{background:var(--ok-soft);border-color:var(--ok);color:#174a2d}
-.opt.wrong{background:var(--bad-soft);border-color:var(--bad);color:#6b1e17}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:13px 14px;min-height:52px;font-weight:700;display:flex;gap:10px;align-items:center;transition:border-color .1s,transform .1s}
+.opt .key{flex:0 0 26px;height:26px;border-radius:6px;display:grid;place-items:center;background:#0b0e18;font:700 .78rem var(--mono);color:var(--ink2)}
+.opt:hover:not([disabled]){border-color:var(--cy);transform:translateY(-1px)}
+.opts.long .opt{font-weight:normal}
+.opt.right{border-color:var(--lime);background:rgba(182,255,59,.1)}.opt.right .key{background:var(--lime);color:#0b1200}
+.opt.wrong{border-color:var(--red);background:rgba(255,75,62,.12)}.opt.wrong .key{background:var(--red);color:#fff}
 .opt[disabled]{cursor:default}
-.fb{margin-top:14px;border-radius:14px;padding:12px 14px}
-.fb.ok{background:var(--ok-soft)}.fb.no{background:var(--bad-soft)}
-.fb h3{margin:0 0 4px;font-size:1.1rem}
+.fb{margin-top:14px;border-radius:12px;padding:12px 14px;border:1px solid}
+.fb.ok{border-color:rgba(182,255,59,.5);background:rgba(182,255,59,.06)}
+.fb.no{border-color:rgba(255,75,62,.5);background:rgba(255,75,62,.07)}
+.fb h3{margin:0 0 4px;font-size:1.1rem}.fb.ok h3{color:var(--lime)}.fb.no h3{color:var(--red)}
 .fb p{margin:4px 0}
+.fb small{color:var(--ink2)}
 .match{display:grid;grid-template-columns:1.4fr 1fr;gap:10px}
 @media (max-width:560px){.match{grid-template-columns:1fr}}
 .match .col{display:flex;flex-direction:column;gap:8px}
-.mq,.mn{border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;text-align:left;color:var(--pink);min-height:48px}
-.mq{font-style:italic}
-.mn{font-weight:bold}
-.mq.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(242,184,75,.35)}
-.mq.c0,.mn.c0{background:#e3f0ff;border-color:#4a7fd1}
-.mq.c1,.mn.c1{background:#ffe9d6;border-color:#d9822b}
-.mq.c2,.mn.c2{background:#e9e1ff;border-color:#7b5cff}
-.mn.shake{animation:shake2 .35s}
-@keyframes shake2{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.mhint{font-size:.9rem;color:var(--muted);margin:0 0 10px}
+.mq,.mn{border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:11px 12px;text-align:left;min-height:48px}
+.mq{font-style:italic}.mn{font-weight:700;font-family:var(--head)}
+.mq.sel{border-color:var(--cy);box-shadow:0 0 0 2px rgba(25,227,255,.35)}
+.c0{border-color:var(--cy)!important;background:rgba(25,227,255,.1)!important}
+.c1{border-color:var(--pink)!important;background:rgba(255,46,136,.1)!important}
+.c2{border-color:var(--yel)!important;background:rgba(255,210,63,.1)!important}
+.mn.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.mhint{font:.85rem var(--mono);color:var(--mute);margin:0 0 10px}
 
 /* Lexikon */
-.lexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:8px 0 16px}
-.lex{border:2px solid var(--line);border-radius:14px;background:#fff;padding:10px;text-align:left;color:var(--pink);display:flex;gap:8px;align-items:center;min-height:56px}
-.lex b{display:block;line-height:1.2}
-.lex .e{font-size:26px}
-.lex.locked{background:#efe8d8;color:#9a8f80;cursor:default}
-.lexroom{font-family:var(--head);margin:14px 0 2px;font-size:1.1rem}
+.lexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin:8px 0 14px}
+.lex{border:1px solid var(--line);border-radius:10px;background:var(--card2);padding:10px 12px;text-align:left;font:700 .95rem var(--head)}
+.lex small{display:block;font:500 .68rem var(--mono);color:var(--mute);letter-spacing:.08em;margin-bottom:2px}
+.lex:hover{border-color:var(--lime)}
+.lex.locked{opacity:.5;cursor:default;font-family:var(--mono)}
+.lexroom{font:700 .8rem var(--mono);letter-spacing:.14em;color:var(--pink);margin:16px 0 0;text-transform:uppercase}
 
-/* Certificate */
-.cert{background:var(--paper);color:var(--pink);border-radius:24px;padding:28px;text-align:center;border:8px double var(--gold);max-width:720px;margin:0 auto}
-.cert h2{font-size:clamp(1.8rem,5vw,2.6rem);margin:6px 0}
-.cert .nm{font-family:var(--head);font-size:clamp(1.6rem,5vw,2.4rem);color:var(--gold2);margin:10px 0}
-.cert .stars{font-size:1.6rem;letter-spacing:4px}
-.cert small{color:var(--muted)}
-footer{margin-top:26px;color:#8f95bb;font-size:.82rem;text-align:center}
-footer a{color:#aab0d4}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--paper);color:var(--pink);font-weight:bold;padding:10px 16px;border-radius:99px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:80;animation:up .25s}
-.fly{position:fixed;z-index:90;font-size:40px;pointer-events:none;transition:all .8s cubic-bezier(.5,-0.3,.6,1)}
+/* Training */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.modes{grid-template-columns:1fr}}
+.mode{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.mode:hover{border-color:var(--cy)}
+.mode h3{margin:0 0 6px;font-size:1.3rem}
+.mode p{margin:0;color:var(--ink2)}
+.mode .kicker{color:var(--yel)}
+.bigscore{font:700 4rem/1 var(--head);color:var(--lime);text-align:center;margin:10px 0}
+
+/* Lizenz */
+.lic{max-width:680px;margin:0 auto;border-radius:22px;padding:26px;background:linear-gradient(135deg,#141829,#0b0d16);border:1px solid var(--line);position:relative;overflow:hidden}
+.lic::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(25,227,255,.08) 45%,rgba(255,46,136,.08) 55%,transparent 70%);pointer-events:none}
+.lic .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.lic h2{margin:6px 0 0;font-size:clamp(1.8rem,5vw,2.6rem);letter-spacing:.06em}
+.lic .nm{font:700 clamp(1.6rem,5vw,2.3rem)/1.1 var(--head);color:var(--lime);margin:18px 0 6px}
+.lic dl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.lic dt{font:700 .68rem var(--mono);letter-spacing:.12em;color:var(--mute);text-transform:uppercase}
+.lic dd{margin:2px 0 0;font:700 1.15rem var(--head)}
+.lic small{color:var(--ink2);font-family:var(--mono)}
+.stamp{font:700 .8rem var(--mono);letter-spacing:.14em;color:var(--lime);border:2px solid var(--lime);padding:8px 10px;border-radius:8px;transform:rotate(-6deg)}
+footer{margin-top:26px;color:var(--mute);font:.75rem/1.6 var(--mono);text-align:center}
+footer a{color:var(--ink2)}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);font:700 .85rem var(--mono);padding:11px 16px;border-radius:10px;z-index:80;animation:up .25s}
+.xpfly{position:fixed;z-index:90;font:700 1.1rem var(--mono);color:var(--lime);pointer-events:none;text-shadow:0 0 10px rgba(182,255,59,.8);animation:xpf 1s ease-out forwards}
+@keyframes xpf{to{transform:translateY(-50px);opacity:0}}
 @media print{
-  body{background:#fff}
+  body{background:#fff;color:#000}body::before{display:none}
   .top,footer,.no-print,.ov{display:none!important}
-  .screen{display:none!important}
-  #scr-end{display:block!important}
-  .cert{box-shadow:none}
+  .screen{display:none!important}#scr-end{display:block!important}
+  .lic{background:#fff;border:2px solid #000;color:#000}.lic .nm,.stamp{color:#000;border-color:#000}.lic dt,.lic small{color:#333}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -212,658 +259,630 @@ footer a{color:#aab0d4}
 <body>
 <div class="wrap">
   <div class="top no-print" id="topbar" hidden>
-    <div class="brand"><svg viewBox="0 0 120 120" aria-hidden="true" id="brandlumi"></svg><span>Die Stilmittel-Burg</span></div>
-    <span class="chip" title="Gefundene Wortkristalle">💎 <span id="cCount">0</span>/30</span>
-    <span class="chip" title="Gesammelte Sterne">⭐ <span id="sCount">0</span></span>
-    <button class="ibtn" id="bMap" aria-label="Zur Karte">🗺️<span class="t">Karte</span></button>
-    <button class="ibtn" id="bLex" aria-label="Lexikon öffnen">📖<span class="t">Lexikon</span></button>
-    <button class="ibtn" id="bSnd" aria-label="Ton an oder aus">🔊</button>
+    <div class="brand">DE<b>//</b>CODE <span class="mono" style="font-size:.7rem;color:var(--mute);letter-spacing:.1em">OPERATION RHETORIK</span></div>
+    <span class="chip xp" title="Erfahrungspunkte und Rang"><span class="k">XP</span><span class="v" id="xpV">0</span><span class="k" id="rkV">ROOKIE</span></span>
+    <span class="chip" title="Entschlüsselte Stilmittel"><span class="k">DATA</span><span id="cCount">0</span>/30</span>
+    <button class="ibtn" id="bMap" aria-label="Zur Karte">⌖<span class="t">Map</span></button>
+    <button class="ibtn" id="bLex" aria-label="Datenbank öffnen">▤<span class="t">Datenbank</span></button>
+    <button class="ibtn" id="bSnd" aria-label="Ton an oder aus">♪</button>
   </div>
 
-  <!-- Titel -->
   <section class="screen" id="scr-title">
-    <div class="title">
+    <div class="hero">
       <div class="bg" id="titlebg"></div>
-      <svg class="lumi-big" viewBox="0 0 120 120" id="titlelumi" aria-hidden="true"></svg>
       <div class="inner">
-        <h1>Die <em>Stilmittel</em>-Burg</h1>
-        <p class="sub">Ein Sprach-Abenteuer für Klasse 9 – entdecke 30 rhetorische Stilmittel, löse Rätsel und befreie die Burg von Graf Grau.</p>
+        <span class="tag">● EINGEHENDE NACHRICHT // VERSCHLÜSSELT</span>
+        <h1 class="glitch" data-t="DECODE">DECODE</h1>
+        <h2>Operation Rhetorik</h2>
+        <p class="sub">Eine KI namens VOXA manipuliert mit Sprache – in Werbung, Posts, Talkshows und Reden. Lerne ihre Tricks kennen: 30 Stilmittel, fünf Zonen, ein Endgegner.</p>
         <div class="namebox">
-          <input id="nameIn" maxlength="24" placeholder="Wie heißt du?" autocomplete="off" aria-label="Dein Vorname">
-          <button class="btn primary" id="bStart">Abenteuer starten ›</button>
+          <label><span>CODENAME</span><input id="nameIn" maxlength="20" placeholder="Dein Name" autocomplete="off" aria-label="Dein Codename"></label>
+          <button class="btn go" id="bStart">Mission starten →</button>
         </div>
         <div class="smalllinks" id="resetRow" hidden>Spielstand gefunden. <button id="bReset">Neu beginnen</button></div>
       </div>
     </div>
   </section>
 
-  <!-- Karte -->
   <section class="screen" id="scr-map">
     <div class="mapscroll"><div class="map" id="map"></div></div>
     <div class="under">
-      <p id="mapHint">Wähle einen Raum. Jeder gelöste Raum öffnet den nächsten.</p>
-      <button class="btn ghost" id="bTrain">🎯 Trainingsplatz</button>
-      <button class="btn ghost" id="bCert" hidden>📜 Urkunde</button>
+      <p id="mapHint"></p>
+      <button class="btn" id="bTrain">⚡ Training</button>
+      <button class="btn" id="bCert" hidden>▣ Lizenz</button>
     </div>
   </section>
 
-  <!-- Raum -->
   <section class="screen" id="scr-room">
     <div class="roomhead">
       <div><small id="roomSub"></small><h2 id="roomName"></h2></div>
-      <div class="crys" id="roomCrys" aria-label="Gefundene Kristalle in diesem Raum"></div>
+      <div class="bars" id="roomBars" aria-label="Gefundene Stilmittel in dieser Zone"></div>
     </div>
     <div class="scene" id="scene"></div>
-    <div class="roomfoot"><span id="roomHint">Tippe auf die leuchtenden Gegenstände.</span><span style="display:flex;gap:8px;flex-wrap:wrap"><span id="doorSlot"></span><button class="btn ghost" id="bBack">‹ Zur Karte</button></span></div>
+    <div class="roomfoot"><span id="roomHint"></span><span style="display:flex;gap:8px;flex-wrap:wrap"><span id="doorSlot"></span><button class="btn ghost" id="bBack">← Map</button></span></div>
   </section>
 
-  <!-- Quiz -->
   <section class="screen" id="scr-quiz">
     <div class="qwrap">
-      <div class="qhead"><h2 id="qTitle"></h2><div class="dots" id="qDots"></div></div>
+      <div class="qhead"><h2 id="qTitle"></h2><span class="combo" id="qCombo"></span><div class="dots" id="qDots"></div></div>
       <div id="qHost"></div>
     </div>
   </section>
 
-  <!-- Endgegner -->
   <section class="screen" id="scr-boss">
-    <div class="scene" id="bossScene" style="margin-bottom:14px;aspect-ratio:16/8"></div>
-    <div class="qwrap"><div id="bossHost"></div></div>
+    <div class="scene" id="bossScene" style="aspect-ratio:16/7;margin-bottom:14px"></div>
+    <div class="qwrap"><div class="timer" id="bossTimer"><span></span></div><div id="bossHost"></div></div>
   </section>
 
-  <!-- Training -->
   <section class="screen" id="scr-train">
-    <div class="qwrap">
-      <div class="qhead"><h2>🎯 Trainingsplatz</h2><span class="chip" id="trStat"></span></div>
-      <div id="trHost"></div>
-      <div class="actions"><button class="btn ghost" id="bTrBack">‹ Zur Karte</button></div>
-    </div>
+    <div class="qwrap" id="trWrap"></div>
   </section>
 
-  <!-- Urkunde -->
   <section class="screen" id="scr-end">
-    <div class="cert" id="cert"></div>
+    <div class="lic" id="lic"></div>
     <div class="actions no-print" style="justify-content:center">
-      <button class="btn primary" onclick="window.print()">🖨️ Drucken</button>
-      <button class="btn ghost" id="bEndMap">Zur Karte</button>
+      <button class="btn go" onclick="window.print()">Drucken</button>
+      <button class="btn" id="bEndMap">Zur Map</button>
     </div>
   </section>
 
   <footer>Entwickelt von Thorsten von Plotho-Kettner · Pater-Alois-Grimm-Schule Külsheim<br>
-  Inhalte nach der „Übersicht über die wichtigsten rhetorischen Mittel“ von <a href="https://www.lehrerfreund.de/medien/_assets_bilder/der_lehrerfreund/deutschunterricht/textanalyse/rhetorische-mittel/Uebersicht_Stilmittel.pdf" target="_blank" rel="noopener">lehrerfreund.de</a></footer>
+  Definitionen nach der „Übersicht über die wichtigsten rhetorischen Mittel“ von <a href="https://www.lehrerfreund.de/medien/_assets_bilder/der_lehrerfreund/deutschunterricht/textanalyse/rhetorische-mittel/Uebersicht_Stilmittel.pdf" target="_blank" rel="noopener">lehrerfreund.de</a></footer>
 </div>
 
 <div class="ov" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 
 <script>
-/* ===================== Daten ===================== */
+/* ===================== Zonen ===================== */
 const ROOMS=[
- {name:'Klanghalle',sub:'Klang & Wiederholung',icon:'🎵',pal:['#4a3d86','#2f2660','#1c1640','#3a2a4f','#f2b84b','#ffd98a'],
-  hello:'Hier in der Klanghalle ist es totenstill. Früher klang und hallte hier alles! Sechs Stilmittel des Klangs und der Wiederholung haben sich versteckt.'},
- {name:'Bildergalerie',sub:'Sprachbilder',icon:'🖼️',pal:['#1f5a5a','#163f45','#0d2a30','#4a3426','#f2b84b','#bff3e6'],
-  hello:'Die Gemälde sind farblos geworden. Sprachbilder machen Texte anschaulich – finde sie, dann leuchten die Bilder wieder!'},
- {name:'Spiegelsaal',sub:'Gegensätze & Widersprüche',icon:'🪞',pal:['#2b4a7c','#1d3358','#121f3a','#38405a','#f2b84b','#d7e8ff'],
-  hello:'Im Spiegelsaal ist alles verdreht und gespiegelt. Hier wohnen die Stilmittel der Gegensätze.'},
- {name:'Sturmturm',sub:'Übertreiben, Steigern, Beschönigen',icon:'⚡',pal:['#4b4f63','#33364a','#1f2130','#2c2e3a','#f2b84b','#fff1a8'],
-  hello:'Im Sturmturm wird übertrieben, gesteigert und beschönigt – und manches wird doppelt gesagt.'},
- {name:'Satzwerkstatt',sub:'Satzbau',icon:'⚙️',pal:['#6a4428','#4a2f1c','#2e1d12','#3d2a1d','#f2b84b','#ffd08a'],
-  hello:'In der Satzwerkstatt werden Sätze gebaut, umgestellt und auseinandergenommen. Auch eine besondere Frage ist hier versteckt.'},
- {name:'Thronsaal',sub:'Endgegner',icon:'👑',pal:['#4a1f3a','#2f1428','#1a0b17','#2a1424','#f2b84b','#ff9ab5']}
+ {code:'01',name:'ADLAB',sub:'Werbeagentur · Klang & Wiederholung',a:'#ff2e88',b:'#19e3ff',bg:['#1a0b2e','#07060f'],
+  brief:'Zone 01: <b>ADLAB</b>, VOXAs Werbeagentur. Hier entstehen Slogans, die sich in deinen Kopf brennen. Ihr Trick: Klang und Wiederholung. Scanne Plakate, Screens und Jingles.'},
+ {code:'02',name:'FEED',sub:'Social-Media-Zentrale · Sprachbilder',a:'#b06bff',b:'#19e3ff',bg:['#0e0b2a','#05050d'],
+  brief:'Zone 02: <b>FEED</b>. Von hier aus flutet VOXA deine Timeline. Posts wirken, weil sie Bilder im Kopf erzeugen. Finde die Sprachbilder.'},
+ {code:'03',name:'ARENA',sub:'Talkshow-Studio · Gegensätze & Widersprüche',a:'#ffd23f',b:'#ff2e88',bg:['#1f0d14','#08050a'],
+  brief:'Zone 03: <b>ARENA</b>. In dieser Talkshow wird gestritten, gespottet und verdreht. Achte auf Gegensätze, Widersprüche – und auf das, was nicht so gemeint ist.'},
+ {code:'04',name:'HEADLINE',sub:'Newsroom · Übertreiben, Steigern, Beschönigen',a:'#ff4b3e',b:'#19e3ff',bg:['#0a1424','#04070d'],
+  brief:'Zone 04: <b>HEADLINE</b>. Clickbait, Eilmeldungen, Pressemitteilungen. Hier wird übertrieben, gesteigert und schöngeredet. Lass dich nicht täuschen.'},
+ {code:'05',name:'CORE',sub:'Rede-Labor · Satzbau',a:'#b6ff3b',b:'#19e3ff',bg:['#06140f','#020806'],
+  brief:'Zone 05: <b>CORE</b>. Hier schreibt VOXA ihre Reden. Wie Sätze gebaut sind, verändert, wie sie wirken. Scanne Chats, Manuskripte und Terminals.'},
+ {code:'VX',name:'VOXA',sub:'Endgegner',a:'#ff2e88',b:'#ff4b3e',bg:['#1a0610','#050104']}
 ];
 
+/* ===================== Stilmittel =====================
+   fund = Fundstück in der Szene, ex = Übungssätze. [Satz,[weitere enthaltene Stilmittel]] */
 const SM=[
-/* Raum 0 – Klanghalle */
-{id:'alliteration',n:'Alliteration',r:0,o:'🔔',on:'Glocke',p:[17,60],
- d:'Aufeinanderfolgende Wörter beginnen mit dem gleichen Anfangslaut.',
- pdf:'Milch macht müde Männer munter.',
- w:'Klingt einprägsam und rhythmisch – darum beliebt in Werbung, Überschriften und Sprichwörtern.',
- tip:'Alle Wörter starten gleich: A-A-Alliteration.',
- ex:['Bei Bello bleibt’s beim Besten.','Wir wollen weiter wachsen.','Mit Kind und Kegel ging es los.']},
-{id:'anapher',n:'Anapher',r:0,o:'🎺',on:'Trompete',p:[33,36],
- d:'Ein Wort oder eine Wortgruppe wird am Anfang aufeinanderfolgender Sätze, Satzteile oder Verse wiederholt.',
- pdf:'Schön ist das Glück, schön die Liebe.',
- w:'Betont das wiederholte Wort, wirkt eindringlich und gliedert den Text.',
- tip:'„Ana“ wie Anfang: Die Wiederholung steht vorne.',
- ex:[['Ich will Frieden. Ich will Freiheit. Ich will Gerechtigkeit.',['parallelismus','repetitio','klimax']],
-     ['Jeder Tag ist neu, jeder Morgen bringt Hoffnung.',['parallelismus','repetitio']],
-     ['Nie wieder Streit! Nie wieder Tränen!',['parallelismus','repetitio','ellipse']]]},
-{id:'epipher',n:'Epipher',r:0,o:'🥁',on:'Trommel',p:[64,42],
- d:'Ein Wort oder eine Wortgruppe wird am Ende aufeinanderfolgender Sätze, Satzteile oder Verse wiederholt.',
- pdf:'Deine Augen sind wie Sterne, wie funkelnd leuchtende Sterne!',
- w:'Das wiederholte Schlusswort bleibt im Ohr und wird stark betont.',
- tip:'Epipher – das E steht für Ende.',
+/* 01 ADLAB */
+{id:'alliteration',n:'Alliteration',r:0,on:'Plakat',p:[24,30],
+ fund:'Frisch. Fruchtig. Fantastisch. – FIZZ Lemon',
+ d:'Aufeinanderfolgende Wörter beginnen mit dem gleichen Anfangslaut.',pdf:'Milch macht müde Männer munter.',
+ w:'Klingt rhythmisch und bleibt hängen – deshalb lieben Werbung, Markennamen und Schlagzeilen sie.',
+ tip:'Achte auf den Anlaut: gleicher Klang am Wortanfang, mehrmals hintereinander.',
+ ex:['Bock auf Burger? Beiß rein!','Sport, Spaß und Spannung – das ist unser Sommercamp.','Starke Sounds für stille Stunden.']},
+{id:'anapher',n:'Anapher',r:0,on:'Neonschild',p:[50,18],
+ fund:'Mehr Speed. Mehr Style. Mehr du.',
+ d:'Ein Wort oder eine Wortgruppe wird am Anfang aufeinanderfolgender Sätze, Satzteile oder Verse wiederholt.',pdf:'Schön ist das Glück, schön die Liebe.',
+ w:'Hämmert das wiederholte Wort ein, wirkt eindringlich und gibt Reden und Slogans einen Takt.',
+ tip:'Griech. „ana“ = hinauf/wieder – die Wiederholung steht am Anfang.',
+ ex:[['Wir wollen Respekt. Wir wollen Mitsprache. Wir wollen gehört werden.',['parallelismus','repetitio','klimax']],
+     ['Jeder Post hinterlässt Spuren, jeder Klick verrät etwas über dich.',['parallelismus','repetitio']],
+     ['Kein Handy beim Essen, kein Handy im Bett!',['parallelismus','repetitio','ellipse']]]},
+{id:'epipher',n:'Epipher',r:0,on:'Banner',p:[80,34],
+ fund:'Lernen mit Spaß, Pause mit Spaß, Prüfung mit Spaß – StudyBuddy.',
+ d:'Ein Wort oder eine Wortgruppe wird am Ende aufeinanderfolgender Sätze, Satzteile oder Verse wiederholt.',pdf:'Deine Augen sind wie Sterne, wie funkelnd leuchtende Sterne!',
+ w:'Das Schlusswort bekommt den Nachdruck und bleibt als Letztes im Ohr.',
+ tip:'Anapher vorne, Epipher hinten – E wie Ende.',
  ex:[['Sie hat gelacht, er hat gelacht, die ganze Klasse hat gelacht.',['parallelismus','repetitio','klimax']],
-     ['Das Spiel war vorbei, der Sommer war vorbei.',['parallelismus','repetitio']],
-     ['Ich brauche Ruhe, du brauchst Ruhe, wir alle brauchen Ruhe.',['parallelismus','repetitio']]]},
-{id:'repetitio',n:'Repetitio',r:0,o:'📯',on:'Horn',p:[82,58],
- d:'Ein Wort oder eine Wortgruppe wird (meist direkt hintereinander) wiederholt.',
- pdf:'„Ach! Ach! Wo bist du?“',
- w:'Verstärkt die Aussage und zeigt starke Gefühle wie Angst, Wut oder Freude.',
- tip:'Wie die Repeat-Taste: noch mal, noch mal!',
- ex:[['Nein, nein, nein – das glaube ich nicht!',['anapher']],['Lauf, lauf, so schnell du kannst!',['anapher']],['Hilfe! Hilfe! Ist da jemand?',['ellipse','anapher']]]},
-{id:'onomatopoesie',n:'Onomatopoesie',r:0,o:'🐝',on:'Biene',p:[30,80],
- d:'Lautmalerei: Wörter ahmen Geräusche oder Klänge nach.',
- pdf:'zischen; schnattern; „zosch, tschack“',
- w:'Macht Geräusche hörbar und die Szene lebendig.',
- tip:'Das Wort klingt wie das Geräusch selbst.',
- ex:['Die Bienen summen und brummen im Garten.','„Kikeriki!“, kräht der Hahn.',['Im Kamin knistert und knackt das Feuer.',['alliteration']]]},
-{id:'parallelismus',n:'Parallelismus',r:0,o:'🎻',on:'Geige',p:[62,78],
- d:'Aufeinanderfolgende Sätze oder Satzteile sind gleich gebaut (gleiche Satzstruktur).',
- pdf:'Reden ist Silber, Schweigen ist Gold.',
- w:'Ordnet Gedanken, erzeugt Rhythmus und macht Aussagen einprägsam.',
- tip:'Parallel wie Bahngleise: gleicher Bau nebeneinander.',
- ex:['Die Kinder lachen, die Eltern staunen.','Der Himmel ist blau, die Wiese ist grün.','Die Sonne scheint, der Wind weht.']},
+     ['Nach der Schule wartet Stress, am Wochenende wartet Stress.',['parallelismus','repetitio']],
+     ['Du brauchst Ruhe, ich brauche Ruhe, wir alle brauchen Ruhe.',['parallelismus','repetitio']]]},
+{id:'repetitio',n:'Repetitio',r:0,on:'Durchsage',p:[16,70],
+ fund:'Durchsage: „Sale, Sale, Sale! Nur heute!“',
+ d:'Ein Wort oder eine Wortgruppe wird (meist direkt hintereinander) wiederholt.',pdf:'„Ach! Ach! Wo bist du?“',
+ w:'Verstärkt die Aussage und transportiert Emotionen wie Wut, Angst oder Begeisterung.',
+ tip:'Lat. „repetere“ = wiederholen – wie die Repeat-Taste.',
+ ex:[['Nein, nein, nein – das glaube ich einfach nicht!',['anapher']],['Lauf, lauf, lauf – der Bus fährt gleich!',['anapher']],['Tor! Tor! Tor! Wir führen!',['anapher','ellipse']]]},
+{id:'onomatopoesie',n:'Onomatopoesie',r:0,on:'Automat',p:[46,74],
+ fund:'Dosen-Spot: „Zisch – und der Durst ist weg.“',
+ d:'Lautmalerei: Wörter ahmen Geräusche oder Klänge nach.',pdf:'zischen; schnattern; „zosch, tschack“',
+ w:'Macht Geräusche hörbar – die Szene wirkt lebendig und direkt.',
+ tip:'Das Wort klingt wie das, was es bezeichnet.',
+ ex:['Die Bässe wummern aus den Boxen.','Es knallt, scheppert und klirrt – dann ist es still.',['Im Kamin knistert und knackt das Feuer.',['alliteration']]]},
+{id:'parallelismus',n:'Parallelismus',r:0,on:'Screen',p:[82,70],
+ fund:'Akkus halten länger, Bildschirme strahlen heller.',
+ d:'Aufeinanderfolgende Sätze oder Satzteile sind gleich gebaut (gleiche Satzstruktur).',pdf:'Reden ist Silber, Schweigen ist Gold.',
+ w:'Ordnet Gedanken, erzeugt Rhythmus und macht Aussagen leicht merkbar.',
+ tip:'Gleicher Bauplan, andere Wörter – wie zwei parallele Gleise.',
+ ex:[['Fans singen, Spieler kämpfen.',['parataxe']],['Die Sonne brennt, der Asphalt glüht.',['parataxe']],['Alex spielt Gitarre, Lena singt die Songs.',['parataxe']]]},
 
-/* Raum 1 – Galerie */
-{id:'metapher',n:'Metapher',r:1,o:'🖼️',on:'Gemälde',p:[28,34],
- d:'Ein Wort wird in einen anderen Bedeutungsbereich übertragen – ein bildhafter Vergleich ohne „wie“.',
- pdf:'Jakob ist der Einstein in dieser Klasse.',
- w:'Macht Texte bildhaft und anschaulich und regt die Fantasie an.',
- tip:'Metapher = Vergleich ohne „wie“.',
- ex:['Mein Zimmer ist ein Schlachtfeld.','Sie hat ein Herz aus Gold.','Das Leben ist eine Achterbahn.']},
-{id:'vergleich',n:'Vergleich',r:1,o:'🦁',on:'Löwenstatue',p:[80,62],
- d:'Zwei Dinge werden durch ein Vergleichswort („wie“, „als“, „als ob“) verknüpft; das Gemeinsame wird hervorgehoben.',
- pdf:'Achill ist stark wie ein Löwe.',
- w:'Veranschaulicht eine Eigenschaft durch ein bekanntes Bild.',
+/* 02 FEED */
+{id:'metapher',n:'Metapher',r:1,on:'Story',p:[20,26],
+ fund:'Story von @lina.lifts: „Dieses Gym ist mein zweites Zuhause.“',
+ d:'Ein Wort wird in einen anderen Bedeutungsbereich übertragen – ein bildhafter Vergleich ohne „wie“.',pdf:'Jakob ist der Einstein in dieser Klasse.',
+ w:'Erzeugt starke Bilder im Kopf und transportiert Gefühle schneller als jede Erklärung.',
+ tip:'Metapher = Vergleich ohne „wie“: „Er ist ein Fels“ statt „stark wie ein Fels“.',
+ ex:['Mein Zimmer ist ein Schlachtfeld.','Die Klassenfahrt war eine einzige Achterbahnfahrt.','Er ist das Gehirn der Gruppe.']},
+{id:'vergleich',n:'Vergleich',r:1,on:'Reel',p:[50,20],
+ fund:'Caption: „Nach dem Training schlafe ich wie ein Stein.“',
+ d:'Zwei Dinge werden durch ein Vergleichswort („wie“, „als“, „als ob“) verknüpft; das Gemeinsame wird hervorgehoben.',pdf:'Achill ist stark wie ein Löwe.',
+ w:'Macht eine Eigenschaft anschaulich, indem es sie mit etwas Bekanntem verbindet.',
  tip:'Erkennbar am Vergleichswort „wie“ oder „als ob“.',
- ex:['Er schläft wie ein Murmeltier.','Sie rennt, als ob der Teufel hinter ihr her wäre.','Das Wasser war kalt wie Eis.']},
-{id:'personifikation',n:'Personifikation',r:1,o:'🌞',on:'Sonnenbild',p:[50,26],
- d:'Dingen, Tieren oder Begriffen werden menschliche Eigenschaften oder Handlungen zugeschrieben.',
- pdf:'Mutter Natur; Vater Staat; Die Sonne lacht.',
- w:'Macht Unbelebtes lebendig: Es handelt, fühlt oder spricht.',
- tip:'Persona = Person: Etwas wird vermenschlicht.',
- ex:[['Der Wind heult ums Haus.',['metapher','onomatopoesie']],['Mein Handy hat mich heute im Stich gelassen.',['metapher']],['Die Bäume flüstern im Wald.',['metapher']]]},
-{id:'symbol',n:'Symbol',r:1,o:'🕊️',on:'Taube',p:[38,72],
- d:'Ein Sinnbild: Ein Gegenstand oder eine Farbe steht für etwas Allgemeines.',
- pdf:'Taube = Frieden; Ring = Ewigkeit; Schwarz = Tod',
- w:'Verweist über sich hinaus auf eine tiefere, allgemeine Bedeutung.',
- tip:'Ein Bild steht für eine Idee: Herz = Liebe.',
- ex:['Am Ende des Films fliegt eine weiße Taube über die Stadt – der Krieg ist vorbei.','Das rote Herz auf der Karte steht für ihre Liebe.','Bei der Trauerfeier trugen alle Schwarz.']},
-{id:'metonymie',n:'Metonymie',r:1,o:'🥛',on:'Glas',p:[63,44],
- d:'Ein Begriff wird durch einen anderen ersetzt, der eng mit ihm zusammenhängt (z. B. Ort für Menschen, Gefäß für Inhalt, Autor für Werk).',
- pdf:'Trinken wir noch ein Glas.',
- w:'Verkürzt den Ausdruck und macht ihn lebendiger.',
- tip:'„Ganz Külsheim feiert“ = die Menschen in Külsheim feiern.',
- ex:['Ganz Külsheim feierte das Fest.','Er liest gerade Goethe.','Das ganze Stadion jubelte.']},
-{id:'neologismus',n:'Neologismus',r:1,o:'💡',on:'Glühbirne',p:[87,30],
- d:'Eine Wortneuschöpfung: ein neu erfundenes Wort.',
- pdf:'Wutbürger; Cyberkrieg',
- w:'Wirkt modern, originell oder witzig und benennt etwas Neues.',
- tip:'Neo = neu, Logos = Wort.',
- ex:['Er ist ein richtiger Smombie: Er starrt beim Laufen nur aufs Handy.','Unser Lehrer nennt das Chaos im Klassenzimmer „Rucksackexplosion“.','Die Firma wirbt mit „Knusperglück-Momenten“.']},
+ ex:['Er spielt Fußball wie ein Profi.','Sie rennt, als ginge es um ihr Leben.','Das Wasser im See war kalt wie Eis.']},
+{id:'personifikation',n:'Personifikation',r:1,on:'Push',p:[80,26],
+ fund:'Push: „Dein Handy vermisst dich – schau mal wieder rein!“',
+ d:'Dingen, Tieren oder Begriffen werden menschliche Eigenschaften oder Handlungen zugeschrieben.',pdf:'Mutter Natur; Vater Staat; Die Sonne lacht.',
+ w:'Lässt Dinge handeln und fühlen – so wirken sie nahbar oder bedrohlich.',
+ tip:'Persona = Person: Etwas Nicht-Menschliches wird vermenschlicht.',
+ ex:[['Der Wind heult ums Haus.',['metapher','onomatopoesie']],['Mein Laptop hat heute komplett gestreikt.',['metapher']],['Die Stadt schläft noch.',['metapher']]]},
+{id:'symbol',n:'Symbol',r:1,on:'Kommentare',p:[22,66],
+ fund:'Unter dem Trauer-Post: lauter schwarze Herzen.',
+ d:'Ein Sinnbild: Ein Gegenstand oder eine Farbe steht für etwas Allgemeines.',pdf:'Taube = Frieden; Ring = Ewigkeit; Schwarz = Tod',
+ w:'Verweist über sich hinaus auf eine tiefere Bedeutung, die viele sofort verstehen.',
+ tip:'Ein konkretes Ding steht für eine abstrakte Idee: Herz = Liebe.',
+ ex:['Am Ende des Films fliegt eine weiße Taube über die zerstörte Stadt.','Bei der Beerdigung trugen alle Schwarz.','Im letzten Bild des Videos geht die Sonne auf – ein Neuanfang.']},
+{id:'metonymie',n:'Metonymie',r:1,on:'Trending',p:[50,76],
+ fund:'Trending: „Ganz Deutschland feiert den Last-Minute-Sieg!“',
+ d:'Ein Begriff wird durch einen anderen ersetzt, der eng mit ihm zusammenhängt (z. B. Ort für Menschen, Gefäß für Inhalt, Autor für Werk).',pdf:'Trinken wir noch ein Glas.',
+ w:'Verkürzt und verdichtet – und lässt eine Aussage größer wirken (alle statt einige).',
+ tip:'„Ganz Deutschland feiert“ = die Menschen in Deutschland feiern.',
+ ex:['Die ganze Schule spricht über das neue Pausenkonzept.','Er liest gerade Goethe.','Das ganze Stadion buhte den Schiri aus.']},
+{id:'neologismus',n:'Neologismus',r:1,on:'Hashtag',p:[82,66],
+ fund:'#Doomscrolling – stundenlang schlechte News scrollen.',
+ d:'Eine Wortneuschöpfung: ein neu erfundenes Wort.',pdf:'Wutbürger; Cyberkrieg',
+ w:'Wirkt modern und originell, benennt Neues – und macht Trends sichtbar.',
+ tip:'Griech. „neos“ = neu, „logos“ = Wort.',
+ ex:['Er ist ein richtiger Smombie: Er starrt beim Laufen nur aufs Handy.','Wir haben das Wochenende komplett verchillt.','Bei uns herrscht gerade Klausurenpanikmodus.']},
 
-/* Raum 2 – Spiegelsaal */
-{id:'antithese',n:'Antithese',r:2,o:'⚖️',on:'Waage',p:[20,58],
- d:'Gegensätzliche Begriffe oder Gedanken werden einander gegenübergestellt.',
- pdf:'Gut ist mein Gedanke, böse mein Wille.',
- w:'Macht Unterschiede und Spannungen deutlich.',
- tip:'Anti = gegen: Gegensatz trifft Gegensatz.',
- ex:[['Der eine lacht, der andere weint.',['parallelismus']],'Arm und Reich, Jung und Alt kamen zum Fest.',['Gestern noch auf stolzen Rossen, heute durch die Brust geschossen.',['parallelismus','ellipse']]]},
-{id:'oxymoron',n:'Oxymoron',r:2,o:'🧊',on:'Eiskristall',p:[38,30],
- d:'Zwei Begriffe mit gegensätzlicher Bedeutung werden in einem Ausdruck verbunden.',
- pdf:'Hassliebe; geliebter Feind',
- w:'Überrascht, wirkt widersprüchlich und regt zum Nachdenken an.',
- tip:'Zwei Gegensätze in EINEM Ausdruck: bittersüß.',
- ex:['Im Raum herrschte ein lautes Schweigen.','Das war ein bittersüßer Abschied.','Sie spürte eine eisige Hitze im Gesicht.']},
-{id:'paradoxon',n:'Paradoxon',r:2,o:'♾️',on:'Endlosschleife',p:[50,62],
- d:'Eine Aussage, die in sich widersprüchlich erscheint, aber auf den zweiten Blick einen Sinn ergibt.',
- pdf:'Weniger ist mehr.',
- w:'Verblüfft, regt zum Nachdenken an und deckt eine tiefere Wahrheit auf.',
- tip:'Ein ganzer Satz, der unmöglich klingt – und doch stimmt.',
- ex:['Ich weiß, dass ich nichts weiß.','Das Einzige, was bleibt, ist die Veränderung.','Je mehr ich lerne, desto mehr merke ich, wie wenig ich weiß.']},
-{id:'chiasmus',n:'Chiasmus',r:2,o:'✖️',on:'Kreuz-Spiegel',p:[66,30],
- d:'Zwei ähnliche Satzglieder oder Wörter werden spiegelbildlich über Kreuz angeordnet (A-B / B-A).',
- pdf:'Ich singe am Morgen, am Abend schweige ich.',
- w:'Hebt Gegensätze oder Zusammenhänge kunstvoll hervor.',
- tip:'Wie ein X: Die Wörter tauschen über Kreuz den Platz.',
+/* 03 ARENA */
+{id:'antithese',n:'Antithese',r:2,on:'Moderatorin',p:[34,62],
+ fund:'Moderatorin: „Die einen fordern Freiheit, die anderen Sicherheit.“',
+ d:'Gegensätzliche Begriffe oder Gedanken werden einander gegenübergestellt.',pdf:'Gut ist mein Gedanke, böse mein Wille.',
+ w:'Spitzt Positionen zu und macht Spannungen und Unterschiede deutlich.',
+ tip:'Anti = gegen: These trifft Gegenthese.',
+ ex:[['Der eine lacht, der andere weint.',['parallelismus']],'Arm und Reich, Jung und Alt sitzen heute im Publikum.',['Auf dem Platz Gegner, nach dem Spiel Freunde.',['ellipse','parallelismus']]]},
+{id:'oxymoron',n:'Oxymoron',r:2,on:'Gast',p:[66,62],
+ fund:'Gast: „Es war ein bittersüßer Moment für mich.“',
+ d:'Zwei Begriffe mit gegensätzlicher Bedeutung werden in einem Ausdruck verbunden.',pdf:'Hassliebe; geliebter Feind',
+ w:'Verblüfft, wirkt widersprüchlich und zeigt gemischte Gefühle.',
+ tip:'Zwei Gegensätze in EINEM Ausdruck (oft Adjektiv + Nomen).',
+ ex:['Im Raum herrschte ein lautes Schweigen.','Das ist ein offenes Geheimnis.','Sie spürte eine eisige Hitze im Gesicht.']},
+{id:'paradoxon',n:'Paradoxon',r:2,on:'Prompter',p:[50,24],
+ fund:'Teleprompter: „Weniger ist manchmal mehr.“',
+ d:'Eine Aussage, die in sich widersprüchlich erscheint, auf den zweiten Blick aber einen Sinn ergibt.',pdf:'Weniger ist mehr.',
+ w:'Irritiert, regt zum Nachdenken an und deckt eine tiefere Wahrheit auf.',
+ tip:'Oxymoron = ein Ausdruck. Paradoxon = eine ganze Aussage, die unmöglich klingt.',
+ ex:['Ich weiß, dass ich nichts weiß.','Je mehr ich lerne, desto mehr merke ich, wie wenig ich weiß.','Das Einzige, was sich nie ändert, ist die Veränderung.']},
+{id:'chiasmus',n:'Chiasmus',r:2,on:'Kamera',p:[13,36],
+ fund:'Experte: „Wir leben nicht, um zu arbeiten – wir arbeiten, um zu leben.“',
+ d:'Zwei ähnliche Satzglieder oder Wörter werden spiegelbildlich über Kreuz angeordnet (A-B / B-A).',pdf:'Ich singe am Morgen, am Abend schweige ich.',
+ w:'Wirkt kunstvoll und pointiert – und hebt Gegensätze besonders hervor.',
+ tip:'Benannt nach dem griech. Buchstaben X (Chi): Die Glieder tauschen über Kreuz.',
  ex:[['Die Kunst ist lang, und kurz ist unser Leben.',['antithese','inversion']],['Wir essen, um zu leben, und leben nicht, um zu essen.',['antithese']],['Laut war die Musik, die Stimmen waren leise.',['antithese','inversion']]]},
-{id:'ironie',n:'Ironie',r:2,o:'🎭',on:'Maske',p:[84,60],
- d:'Man sagt das Gegenteil von dem, was man meint – erkennbar an der Situation oder am Tonfall.',
- pdf:'Auf diese Klassenarbeit haben Sie sicher zwei Wochen gelernt.',
- w:'Wirkt spöttisch, kritisch oder witzig.',
+{id:'ironie',n:'Ironie',r:2,on:'Publikum',p:[50,88],
+ fund:'Zwischenruf, als das Mikro zum dritten Mal ausfällt: „Super Technik habt ihr hier!“',
+ d:'Man sagt das Gegenteil von dem, was man meint – erkennbar an der Situation oder am Tonfall.',pdf:'Auf diese Klassenarbeit haben Sie sicher zwei Wochen gelernt.',
+ w:'Wirkt spöttisch, kritisch oder witzig – und funktioniert nur, wenn man die Situation kennt.',
  tip:'Gesagt: super – gemeint: furchtbar.',
- ex:['Na toll, jetzt regnet es auch noch – das wird ja ein super Wandertag!','Zu jemandem, der 20 Minuten zu spät kommt: „Du bist ja heute wieder pünktlich!“','Mitten im Chaos: „Das hast du ja wirklich ordentlich aufgeräumt!“']},
-{id:'litotes',n:'Litotes',r:2,o:'🤏',on:'kleine Hand',p:[32,82],
- d:'Etwas wird durch die Verneinung des Gegenteils ausgedrückt.',
- pdf:'Das war nicht schlecht.',
- w:'Wirkt zurückhaltend, ist aber oft verstärkend gemeint („nicht schlecht“ = gut).',
- tip:'nicht + Gegenteil: „nicht übel“ = gut.',
- ex:['Sie ist nicht gerade klein.','Das Essen war nicht übel.','Er ist in der Stadt kein Unbekannter.']},
+ ex:['Beim Wolkenbruch auf dem Wandertag: „Na toll, perfektes Wetter!“','Zu jemandem, der 20 Minuten zu spät kommt: „Wow, heute mal überpünktlich!“','Nach der Fünf in Mathe: „Läuft bei mir!“']},
+{id:'litotes',n:'Litotes',r:2,on:'Einspieler',p:[86,36],
+ fund:'Gast: „Ich bin in der Szene kein Unbekannter.“',
+ d:'Etwas wird durch die Verneinung des Gegenteils ausgedrückt.',pdf:'Das war nicht schlecht.',
+ w:'Klingt bescheiden und zurückhaltend, meint aber oft das Gegenteil verstärkt.',
+ tip:'„nicht“ + Gegenteil: „nicht übel“ = ziemlich gut.',
+ ex:['Das neue Album ist echt nicht übel.','Sie ist nicht gerade klein.','Der Test war nicht ganz einfach.']},
 
-/* Raum 3 – Sturmturm */
-{id:'hyperbel',n:'Hyperbel',r:3,o:'🌊',on:'Welle',p:[20,44],
- d:'Eine starke Übertreibung.',
- pdf:'ein Meer von Tränen',
- w:'Verstärkt die Aussage, dramatisiert oder wirkt witzig.',
- tip:'Hyper = über: maßlos übertrieben.',
+/* 04 HEADLINE */
+{id:'hyperbel',n:'Hyperbel',r:3,on:'Schlagzeile',p:[50,20],
+ fund:'Clickbait: „Dieses Video hat das ganze Internet zerstört!“',
+ d:'Eine starke Übertreibung.',pdf:'ein Meer von Tränen',
+ w:'Dramatisiert, erzeugt Aufmerksamkeit – typisch für Clickbait und Alltagssprache.',
+ tip:'Griech. „hyper“ = über: maßlos übertrieben.',
  ex:['Ich habe dir das schon tausendmal gesagt!','Ich sterbe vor Hunger.','Mein Rucksack wiegt eine Tonne.']},
-{id:'klimax',n:'Klimax',r:3,o:'🪜',on:'Leiter',p:[84,38],
- d:'Eine Steigerung: Wörter oder Satzteile werden vom Schwächeren zum Stärkeren angeordnet.',
- pdf:'Ich kam, sah und siegte.',
- w:'Baut Spannung auf und führt zu einem Höhepunkt.',
- tip:'Klimax heißt Leiter: Stufe für Stufe nach oben.',
- ex:['Erst war er nervös, dann ängstlich, schließlich in Panik.',['Sie wartete eine Stunde, einen Tag, eine ganze Woche.',['ellipse']],['Das ist gut, das ist großartig, das ist sensationell!',['anapher','parallelismus','repetitio']]]},
-{id:'euphemismus',n:'Euphemismus',r:3,o:'🌸',on:'Blume',p:[34,74],
- d:'Eine Beschönigung: Etwas Unangenehmes wird mit einem harmloseren Wort ausgedrückt.',
- pdf:'„preisgünstig“ statt „billig“',
- w:'Mildert und schont Gefühle – oder verschleiert die Wahrheit.',
- tip:'Eu = gut: Es wird schöner gesagt, als es ist.',
- ex:['Mein Uropa ist letztes Jahr friedlich eingeschlafen.','Die Firma hat 200 Mitarbeiter freigesetzt.','Er ist etwas vollschlank.']},
-{id:'correctio',n:'Correctio',r:3,o:'📝',on:'Notizblock',p:[57,28],
- d:'Ein zu schwacher oder unpassender Ausdruck wird berichtigt und durch einen treffenderen ersetzt.',
- pdf:'Diese Äpfel haben einen guten, nein, den besten Geschmack.',
- w:'Steigert die Aussage und wirkt spontan und lebendig.',
- tip:'Erkennbar an „nein“, „besser gesagt“, „vielmehr“.',
- ex:['Das war ein guter, nein, ein großartiger Auftritt!',['Er ging – besser gesagt: er rannte – aus dem Raum.',['parenthese']],['Sie ist nett, ach was, sie ist die netteste Person der Welt.',['hyperbel']]]},
-{id:'pleonasmus',n:'Pleonasmus',r:3,o:'🐴',on:'Schimmel',p:[66,72],
- d:'Eine Eigenschaft, die im Wort schon enthalten ist, wird noch einmal genannt.',
- pdf:'der weiße Schimmel; der nasse Regen',
+{id:'klimax',n:'Klimax',r:3,on:'Live-Ticker',p:[50,58],
+ fund:'Ticker: „Erst ein Fehler, dann eine Krise, jetzt ein Skandal!“',
+ d:'Eine Steigerung: Wörter oder Satzteile werden vom Schwächeren zum Stärkeren angeordnet.',pdf:'Ich kam, sah und siegte.',
+ w:'Baut Spannung auf und steuert auf einen Höhepunkt zu.',
+ tip:'Griech. „klimax“ = Leiter: Stufe für Stufe nach oben.',
+ ex:['Erst war er nervös, dann ängstlich, schließlich in Panik.',['Sie wartete eine Stunde, einen Tag, eine ganze Woche.',['ellipse']],['Das ist gut, das ist großartig, das ist legendär!',['anapher','parallelismus','repetitio']]]},
+{id:'euphemismus',n:'Euphemismus',r:3,on:'Pressetext',p:[16,74],
+ fund:'Firmen-PM: „Wir passen unsere Personalstruktur an.“ (= Leute werden entlassen)',
+ d:'Eine Beschönigung: Etwas Unangenehmes wird mit einem harmloseren Wort ausgedrückt.',pdf:'„preisgünstig“ statt „billig“',
+ w:'Mildert ab, schont Gefühle – oder verschleiert bewusst unangenehme Wahrheiten.',
+ tip:'Griech. „eu“ = gut: Es wird schöner gesagt, als es ist.',
+ ex:['Die Firma hat 200 Mitarbeiter freigesetzt.','Mein Uropa ist letztes Jahr friedlich eingeschlafen.','Die Preise werden leicht angepasst.']},
+{id:'correctio',n:'Correctio',r:3,on:'Liveschalte',p:[84,74],
+ fund:'Reporter live: „Das war ein guter, nein, ein historischer Abend!“',
+ d:'Ein zu schwacher oder unpassender Ausdruck wird berichtigt und durch einen treffenderen ersetzt.',pdf:'Diese Äpfel haben einen guten, nein, den besten Geschmack.',
+ w:'Steigert die Aussage und wirkt spontan, als würde man gerade nachdenken.',
+ tip:'Signalwörter: „nein“, „besser gesagt“, „vielmehr“, „ach was“.',
+ ex:['Das Konzert war gut – nein, es war unglaublich!',['Er ging – besser gesagt: er rannte – aus dem Raum.',['parenthese']],['Sie ist nett, ach was, sie ist die netteste Person der Welt.',['hyperbel']]]},
+{id:'pleonasmus',n:'Pleonasmus',r:3,on:'Bildtext',p:[16,30],
+ fund:'Bildunterschrift: „Ein weißer Schimmel galoppiert über den Strand.“',
+ d:'Eine Eigenschaft, die im Wort schon enthalten ist, wird noch einmal genannt.',pdf:'der weiße Schimmel; der nasse Regen',
  w:'Soll verstärken, wirkt aber oft überflüssig – häufig ein Stilfehler.',
- tip:'Weißer Schimmel: Ein Schimmel ist doch schon weiß!',
- ex:['Die Lehrerin zeichnete einen runden Kreis an die Tafel.','Nach den Ferien kehren wir wieder zurück.','Im Winter fiel kalter Schnee.']},
-{id:'tautologie',n:'Tautologie',r:3,o:'🔁',on:'Doppelpfeil',p:[47,52],
- d:'Derselbe Gedanke wird mit gleichbedeutenden Wörtern doppelt ausgedrückt – oder ein Begriff wird mit sich selbst erklärt.',
- pdf:'voll und ganz; nie und nimmer; Krieg ist Krieg',
- w:'Verstärkt und betont nachdrücklich.',
- tip:'Zwei Wörter mit gleicher Bedeutung im Doppelpack – oder: „Regeln sind Regeln.“',
+ tip:'Ein Schimmel ist immer weiß – „weißer Schimmel“ sagt es doppelt.',
+ ex:['Wir kehren nach den Ferien wieder zurück.','Der Shop wirbt mit neuen Neuheiten.','Im Winter fiel kalter Schnee.']},
+{id:'tautologie',n:'Tautologie',r:3,on:'Kommentar',p:[84,30],
+ fund:'Kommentar: „Fakt ist Fakt.“',
+ d:'Derselbe Gedanke wird mit gleichbedeutenden Wörtern doppelt ausgedrückt – oder ein Begriff wird mit sich selbst erklärt.',pdf:'voll und ganz; nie und nimmer; Krieg ist Krieg',
+ w:'Wirkt nachdrücklich und endgültig – oft, um Diskussionen abzuwürgen.',
+ tip:'Zwei gleichbedeutende Wörter im Doppelpack – oder: „Regeln sind Regeln.“',
  ex:['Das mache ich nie und nimmer!','Ich bin voll und ganz deiner Meinung.',['Regeln sind Regeln.',['repetitio']]]},
 
-/* Raum 4 – Satzwerkstatt */
-{id:'ellipse',n:'Ellipse',r:4,o:'✂️',on:'Schere',p:[22,62],
- d:'Ein Satzteil oder Wort wird ausgelassen; der Satz ist unvollständig, aber verständlich.',
- pdf:'Er rannte nach draußen. [Er] Blieb stehen. [Er] Keuchte.',
- w:'Wirkt knapp, spannend oder umgangssprachlich.',
- tip:'Etwas ist abgeschnitten – wie mit der Schere.',
+/* 05 CORE */
+{id:'ellipse',n:'Ellipse',r:4,on:'Chatfenster',p:[20,28],
+ fund:'Chat: „Morgen Kino?“ – „Klar, 8 Uhr.“',
+ d:'Ein Satzteil oder Wort wird ausgelassen; der Satz ist unvollständig, aber verständlich.',pdf:'Er rannte nach draußen. [Er] Blieb stehen. [Er] Keuchte.',
+ w:'Wirkt knapp, schnell und umgangssprachlich – oder erzeugt Spannung.',
+ tip:'Griech. „elleipsis“ = Auslassung: Da fehlt was – und man versteht es trotzdem.',
  ex:['Je früher, desto besser.','Und jetzt? Was nun?','Ende gut, alles gut.']},
-{id:'inversion',n:'Inversion',r:4,o:'🔄',on:'Drehrad',p:[40,30],
- d:'Die übliche Reihenfolge der Satzglieder wird umgestellt.',
- pdf:'Glänzend sind deine Augen.',
- w:'Betont das vorangestellte Wort besonders.',
- tip:'Umgedreht: Das Wichtige rückt nach vorn.',
- ex:['Groß war die Freude.','Unglaublich war dieses Spiel.','Kalt war es in dieser Nacht.']},
-{id:'parenthese',n:'Parenthese',r:4,o:'📎',on:'Büroklammer',p:[58,52],
- d:'Ein Einschub in einen Satz, meist durch Gedankenstriche, Kommas oder Klammern abgetrennt.',
- pdf:'Ich wollte ihr – sie ahnte es nicht – einen Heiratsantrag machen.',
- w:'Liefert Zusatzinfos oder Kommentare und wirkt oft spontan.',
- tip:'Etwas wird mitten in den Satz dazwischengeschoben.',
- ex:[['Mein Bruder – er ist zwei Jahre älter – fährt schon Auto.',['parataxe']],['Der Ausflug (wir freuten uns seit Wochen) fiel leider aus.',['parataxe']],['Die Prüfung – das wusste jeder – würde schwer werden.',['parataxe']]]},
-{id:'hypotaxe',n:'Hypotaxe',r:4,o:'🧩',on:'Puzzle',p:[76,28],
- d:'Satzgefüge: Nebensätze werden einem Hauptsatz untergeordnet.',
- pdf:'Er singt, weil er fröhlich ist.',
- w:'Stellt Zusammenhänge (Grund, Zeit, Bedingung) genau dar; wirkt durchdacht, aber auch kompliziert.',
- tip:'Hypo = unter: Nebensätze werden untergeordnet.',
+{id:'inversion',n:'Inversion',r:4,on:'Rede',p:[80,28],
+ fund:'Redeentwurf: „Groß ist unsere Verantwortung.“',
+ d:'Die übliche Reihenfolge der Satzglieder wird umgestellt.',pdf:'Glänzend sind deine Augen.',
+ w:'Rückt das vorangestellte Wort ins Rampenlicht.',
+ tip:'Normal: „Die Freude war groß.“ Invertiert: „Groß war die Freude.“',
+ ex:['Groß war die Freude nach dem Sieg.','Unglaublich war dieses Spiel.','Kalt war es in dieser Nacht.']},
+{id:'parenthese',n:'Parenthese',r:4,on:'Voicemail',p:[20,70],
+ fund:'Sprachnachricht: „Ich komme – ehrlich, diesmal wirklich – pünktlich.“',
+ d:'Ein Einschub in einen Satz, meist durch Gedankenstriche, Kommas oder Klammern abgetrennt.',pdf:'Ich wollte ihr – sie ahnte es nicht – einen Heiratsantrag machen.',
+ w:'Liefert Zusatzinfos oder Kommentare und wirkt spontan, wie gesprochen.',
+ tip:'Etwas wird mitten in den Satz dazwischengeschoben – oft zwischen Gedankenstrichen.',
+ ex:[['Mein Bruder – er ist zwei Jahre älter – hat schon den Führerschein.',['parataxe']],['Der Ausflug (wir freuten uns seit Wochen) fiel leider aus.',['parataxe']],['Die Prüfung – das wusste jeder – würde schwer werden.',['parataxe']]]},
+{id:'hypotaxe',n:'Hypotaxe',r:4,on:'Server',p:[50,26],
+ fund:'Rede-Entwurf: „Wenn wir jetzt handeln, weil die Zeit drängt, können wir verhindern, dass es zu spät ist.“',
+ d:'Satzgefüge: Nebensätze werden einem Hauptsatz untergeordnet.',pdf:'Er singt, weil er fröhlich ist.',
+ w:'Zeigt Zusammenhänge (Grund, Zeit, Bedingung) genau – wirkt durchdacht, aber auch kompliziert.',
+ tip:'Griech. „hypo“ = unter: Nebensätze werden untergeordnet (weil, dass, wenn, als …).',
  ex:['Als wir ankamen, war der Film, den wir sehen wollten, schon vorbei.','Obwohl es regnete, gingen wir los, weil wir es versprochen hatten.','Wenn du mir hilfst, erkläre ich dir, wie das Spiel funktioniert.']},
-{id:'parataxe',n:'Parataxe',r:4,o:'🧱',on:'Ziegelsteine',p:[84,66],
- d:'Hauptsätze werden aneinandergereiht – ohne Nebensätze.',
- pdf:'Mooser ist krank. Er liegt im Bett.',
- w:'Wirkt einfach, knapp und schnell – oft spannend.',
- tip:'Para = neben: Hauptsatz neben Hauptsatz, wie Ziegel.',
+{id:'parataxe',n:'Parataxe',r:4,on:'Terminal',p:[50,76],
+ fund:'Log: „Der Zugriff wurde erkannt. Das System fährt herunter. Die Verbindung ist getrennt.“',
+ d:'Hauptsätze werden aneinandergereiht – ohne Nebensätze.',pdf:'Mooser ist krank. Er liegt im Bett.',
+ w:'Wirkt knapp, schnell und klar – in Erzählungen oft spannungssteigernd.',
+ tip:'Griech. „para“ = neben: Hauptsatz neben Hauptsatz.',
  ex:['Es klingelte. Ich öffnete. Niemand war da.','Der Bus kam zu spät, wir rannten los, die Tür war schon zu.','Es regnet, die Straßen sind nass.']},
-{id:'rhetfrage',n:'Rhetorische Frage',r:4,o:'❓',on:'Fragezeichen',p:[44,80],
- d:'Eine Frage, auf die keine Antwort erwartet wird, weil die Antwort schon feststeht.',
- pdf:'Wer kann das schon verstehen?',
- w:'Lenkt die Zuhörer, bezieht sie ein und unterstreicht die eigene Meinung.',
- tip:'Eine Frage ohne echte Frage – die Antwort ist klar.',
- ex:['Wer will schon freiwillig Hausaufgaben machen?','Ist das nicht wunderbar?','Wie oft soll ich dir das noch sagen?']}
+{id:'rhetfrage',n:'Rhetorische Frage',r:4,on:'Mikrofon',p:[80,70],
+ fund:'Rede: „Wer von uns will schon in einer Welt voller Lügen leben?“',
+ d:'Eine Frage, auf die keine Antwort erwartet wird, weil die Antwort schon feststeht.',pdf:'Wer kann das schon verstehen?',
+ w:'Bezieht das Publikum ein und lenkt es unauffällig zur gewünschten Meinung.',
+ tip:'Klingt wie eine Frage, ist aber eine Behauptung.',
+ ex:['Wer will schon freiwillig am Samstag Hausaufgaben machen?','Ist das nicht der Wahnsinn?','Wie oft soll ich dir das noch sagen?']}
 ];
 SM.forEach(s=>{s.ex=s.ex.map(e=>typeof e==='string'?{t:e,a:[]}:{t:e[0],a:e[1]})});
 const byId=Object.fromEntries(SM.map(s=>[s.id,s]));
 const inRoom=r=>SM.filter(s=>s.r===r);
+const RANKS=[[0,'Rookie'],[800,'Scout'],[2500,'Analyst'],[4500,'Decoder'],[7000,'Mastermind']];
 
 /* ===================== Hilfen ===================== */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const pick=a=>a[Math.random()*a.length|0];
-function shade(h,p){const n=parseInt(h.slice(1),16);const f=p/100;const t=v=>Math.max(0,Math.min(255,Math.round(f<0?v*(1+f):v+(255-v)*f)));
-  return '#'+((1<<24)|(t(n>>16)<<16)|(t(n>>8&255)<<8)|t(n&255)).toString(16).slice(1)}
-
-const KEY='pags-stilmittel-burg-v1';
+const KEY='pags-decode-rhetorik-v1';
 let S=load();
-function fresh(){return {v:1,name:'',found:{},solved:{},boss:false,intro:false,mute:false,train:{ok:0,all:0,best:0}}}
+function fresh(){return {v:1,name:'',found:{},solved:{},boss:false,intro:false,mute:false,xp:0,blitzBest:0,train:{ok:0,all:0}}}
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&v.v===1)return Object.assign(fresh(),v)}catch(e){}return fresh()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const foundCount=()=>Object.keys(S.found).length;
-const starSum=()=>Object.values(S.solved).reduce((a,b)=>a+b,0);
 const roomFound=r=>inRoom(r).filter(s=>S.found[s.id]).length;
 const unlocked=r=>r===0||!!S.solved[r-1];
+const rank=()=>RANKS.filter(x=>S.xp>=x[0]).pop()[1];
+const grade=n=>({3:'S',2:'A',1:'B'})[n]||'–';
 
-/* Ton */
 let AC;
-function tone(f,d=.12,type='sine',v=.07,delay=0){if(S.mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+function tone(f,d=.12,type='sine',v=.06,delay=0){if(S.mute)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
   const t=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,t);
   g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.03)}catch(e){}}
-const sfx={ok(){tone(660);tone(880,.18,'sine',.07,.1)},bad(){tone(190,.25,'square',.035)},
-  collect(){[523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',.06,i*.07))},
-  win(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,.25,'triangle',.06,i*.12))}};
+const sfx={ok(){tone(880,.08,'square',.03);tone(1320,.14,'square',.03,.07)},bad(){tone(140,.28,'sawtooth',.035)},
+  scan(){[600,900,1200,1600].forEach((f,i)=>tone(f,.07,'square',.025,i*.05))},
+  win(){[392,523,659,784,1047].forEach((f,i)=>tone(f,.2,'square',.03,i*.1))},tick(){tone(1800,.03,'square',.015)}};
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
+function addXP(n,el){const before=rank();S.xp+=n;save();updateTop();
+  if(el){try{const r=el.getBoundingClientRect();const f=document.createElement('div');f.className='xpfly';f.textContent='+'+n+' XP';
+    f.style.left=(r.left+r.width/2-30)+'px';f.style.top=(r.top-10)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}catch(e){}}
+  if(rank()!==before)setTimeout(()=>toast('▲ Neuer Rang: '+rank().toUpperCase()),400)}
 
-function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
-
-/* ===================== Grafiken ===================== */
-const LUMI=`<defs><linearGradient id="lf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#ffcf6e"/></linearGradient></defs>
-<path d="M100 6 C62 10 30 38 30 82 L38 86 C52 58 74 34 104 14 Z" fill="url(#lf)" stroke="#c98a1b" stroke-width="3" stroke-linejoin="round"/>
-<path d="M100 9 C72 30 52 56 35 84" stroke="#c98a1b" stroke-width="2.5" fill="none"/>
-<path d="M88 16 l-8 -4 M78 24 l-9 -3 M68 34 l-9 -2 M90 22 l4 6 M82 32 l4 6" stroke="#e0a83c" stroke-width="2" stroke-linecap="round"/>
-<path d="M30 82 L20 110 L41 88 Z" fill="#3a2a4a"/>
-<circle cx="56" cy="50" r="8" fill="#fff" stroke="#3a2a4a" stroke-width="2"/><circle cx="72" cy="42" r="8" fill="#fff" stroke="#3a2a4a" stroke-width="2"/>
-<circle cx="58" cy="51" r="3.6" fill="#2a1f38"/><circle cx="74" cy="43" r="3.6" fill="#2a1f38"/>
-<circle cx="52" cy="62" r="4" fill="#ff9aa8" opacity=".7"/><circle cx="80" cy="52" r="4" fill="#ff9aa8" opacity=".7"/>
-<path d="M58 62 q10 6 18 -4" stroke="#3a2a4a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-<path d="M14 30 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3z" fill="#ffe08a"/><path d="M106 70 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="#c9f6ff"/>`;
-const GRAU=`<ellipse cx="100" cy="250" rx="70" ry="9" fill="rgba(0,0,0,.4)"/>
-<path d="M100 72 C40 92 30 200 18 248 H182 C170 200 160 92 100 72Z" fill="#6b6b74" stroke="#33333a" stroke-width="4"/>
-<path d="M100 96 L84 248 H116Z" fill="#4a4a52"/>
-<path d="M60 120 q-30 30 -18 60" stroke="#55555d" stroke-width="16" fill="none" stroke-linecap="round"/><circle cx="44" cy="182" r="10" fill="#c9c9cf"/>
-<path d="M140 120 q30 30 18 60" stroke="#55555d" stroke-width="16" fill="none" stroke-linecap="round"/><circle cx="158" cy="182" r="10" fill="#c9c9cf"/>
-<circle cx="100" cy="68" r="36" fill="#cfcfd5" stroke="#33333a" stroke-width="4"/>
-<rect x="68" y="0" width="64" height="36" rx="4" fill="#2e2e33"/><rect x="54" y="32" width="92" height="10" rx="5" fill="#2e2e33"/>
-<path d="M78 58 l14 6 M122 58 l-14 6" stroke="#222" stroke-width="5" stroke-linecap="round"/>
-<circle cx="88" cy="70" r="4" fill="#222"/><circle cx="112" cy="70" r="4" fill="#222"/>
-<circle cx="112" cy="70" r="11" fill="none" stroke="#9a9aa6" stroke-width="3"/><path d="M123 73 q10 20 0 40" stroke="#9a9aa6" fill="none" stroke-width="2"/>
-<path d="M82 86 q18 -9 36 0 q-18 7 -36 0" fill="#3a3a40"/><path d="M90 98 q10 -6 20 0" stroke="#33333a" fill="none" stroke-width="3" stroke-linecap="round"/>`;
-const lumiSvg=()=>`<svg viewBox="0 0 120 120" aria-hidden="true">${LUMI}</svg>`;
-const grauSvg=()=>`<svg viewBox="0 0 200 260" aria-hidden="true">${GRAU}</svg>`;
-
+/* ===================== Szenen (Neon-SVG) ===================== */
+function rng(seed){return ()=>(seed=(seed*9301+49297)%233280)/233280}
 function roomSVG(r){
-  const P=ROOMS[r].pal;
-  let d=`<defs>
-  <linearGradient id="bw${r}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(P[0],10)}"/><stop offset="1" stop-color="${shade(P[0],-30)}"/></linearGradient>
-  <linearGradient id="gd${r}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a87a28"/><stop offset=".5" stop-color="#ffe09a"/><stop offset="1" stop-color="#a87a28"/></linearGradient>
-  <linearGradient id="mi${r}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e3efff"/><stop offset="1" stop-color="#6f8fc4"/></linearGradient>
-  <radialGradient id="lt${r}" cx=".5" cy=".3" r=".65"><stop offset="0" stop-color="${P[5]}" stop-opacity=".35"/><stop offset="1" stop-color="${P[5]}" stop-opacity="0"/></radialGradient>
-  <radialGradient id="vg${r}" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
-  <pattern id="br${r}" width="80" height="40" patternUnits="userSpaceOnUse"><path d="M0 0H80M0 20H80M20 0V20M60 20V40" stroke="rgba(0,0,0,.22)" stroke-width="3" fill="none"/></pattern>
-  </defs>`;
-  let s=`<rect width="1600" height="1000" fill="${P[2]}"/>
-  <polygon points="250,120 1350,120 1350,720 250,720" fill="url(#bw${r})"/>
-  <polygon points="0,0 250,120 250,720 0,1000" fill="${P[1]}"/>
-  <polygon points="1600,0 1350,120 1350,720 1600,1000" fill="${P[1]}"/>
-  <polygon points="0,1000 250,720 1350,720 1600,1000" fill="${P[3]}"/>`;
-  for(let i=-7;i<=7;i++) s+=`<line x1="${800+i*80}" y1="720" x2="${800+i*260}" y2="1000" stroke="rgba(0,0,0,.2)" stroke-width="3"/>`;
-  [770,840,920].forEach(y=>s+=`<line x1="0" y1="${y}" x2="1600" y2="${y}" stroke="rgba(0,0,0,.15)" stroke-width="3"/>`);
-  const dark=shade(P[0],-45), gold=P[4];
-  if(r===0){
-    [300,1256].forEach(x=>s+=`<rect x="${x}" y="150" width="44" height="570" fill="${shade(P[0],-30)}"/><rect x="${x-12}" y="138" width="68" height="22" fill="${dark}"/><rect x="${x-12}" y="700" width="68" height="22" fill="${dark}"/>`);
-    [400,1060].forEach(x=>s+=`<path d="M${x} 560 V320 a70 70 0 0 1 140 0 V560 Z" fill="${P[5]}" opacity=".35"/><path d="M${x+70} 250 V560 M${x} 440 H${x+140}" stroke="${dark}" stroke-width="8"/>`);
-    s+=`<rect x="610" y="520" width="380" height="200" rx="12" fill="#3a2418"/><rect x="630" y="560" width="340" height="18" fill="#5a3a26"/>`;
-    [170,220,270,320,360,360,320,270,220,170].forEach((h,i)=>s+=`<rect x="${622+i*36}" y="${520-h}" width="28" height="${h}" rx="12" fill="url(#gd${r})" stroke="#8a6420" stroke-width="3"/><rect x="${630+i*36}" y="${520-h+30}" width="12" height="8" rx="3" fill="#3a2418"/>`);
-    s+=`<polygon points="70,120 170,170 170,520 120,480 70,500" fill="${gold}" opacity=".8"/><polygon points="1530,120 1430,170 1430,520 1480,480 1530,500" fill="${gold}" opacity=".8"/>`;
-    s+=`<text x="120" y="330" font-size="60" fill="${dark}" text-anchor="middle">♪</text><text x="1480" y="330" font-size="60" fill="${dark}" text-anchor="middle">♫</text>`;
+  const R=ROOMS[r],A=R.a,B=R.b,rnd=rng(r*17+3),M='font-family="JetBrains Mono,monospace"';
+  let s=`<defs><linearGradient id="sk${r}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${R.bg[0]}"/><stop offset="1" stop-color="${R.bg[1]}"/></linearGradient>
+   <filter id="gl${r}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+   <radialGradient id="vg${r}" cx=".5" cy=".5" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".7"/></radialGradient>
+   <radialGradient id="cr${r}"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="${A}"/><stop offset="1" stop-color="${A}" stop-opacity="0"/></radialGradient></defs>
+   <rect width="1600" height="1000" fill="url(#sk${r})"/>`;
+  // Boden-Raster
+  s+=`<rect y="720" width="1600" height="280" fill="#000" opacity=".45"/><g stroke="${r===5?B:A}" stroke-opacity=".35" stroke-width="2">`;
+  for(let i=-12;i<=12;i++)s+=`<line x1="${800+i*60}" y1="720" x2="${800+i*260}" y2="1000"/>`;
+  [728,745,770,805,850,910,985].forEach(y=>s+=`<line x1="0" y1="${y}" x2="1600" y2="${y}"/>`);
+  s+=`</g><line x1="0" y1="720" x2="1600" y2="720" stroke="${A}" stroke-width="3" filter="url(#gl${r})"/>`;
+  const G=`filter="url(#gl${r})"`;
+  if(r===0){ // Stadt mit Werbetafeln
+    for(let x=0;x<1600;){const w=60+rnd()*110,h=180+rnd()*360;s+=`<rect x="${x}" y="${720-h}" width="${w}" height="${h}" fill="#0c0d1a"/>`;
+      for(let k=0;k<10;k++)if(rnd()>.5)s+=`<rect x="${x+8+rnd()*(w-20)}" y="${720-h+15+rnd()*(h-40)}" width="6" height="9" fill="${rnd()>.5?A:B}" opacity=".45"/>`;x+=w+6}
+    s+=`<g ${G} fill="none" stroke-width="6"><rect x="130" y="180" width="420" height="220" rx="8" stroke="${A}"/><rect x="640" y="90" width="320" height="300" rx="8" stroke="${B}"/><rect x="1050" y="200" width="420" height="200" rx="8" stroke="#ffd23f"/></g>`;
+    s+=`<g fill="${A}" opacity=".75"><rect x="170" y="230" width="260" height="26"/><rect x="170" y="275" width="320" height="18"/><rect x="170" y="305" width="200" height="18"/></g>`;
+    s+=`<text x="800" y="290" text-anchor="middle" font-size="150" font-weight="700" ${M} fill="none" stroke="${B}" stroke-width="5" ${G}>AD</text>`;
+    s+=`<g fill="#ffd23f" opacity=".75"><rect x="1090" y="250" width="300" height="24"/><rect x="1090" y="292" width="200" height="18"/><circle cx="1400" cy="340" r="30"/></g>`;
+    s+=`<g stroke="#2a2d44" stroke-width="10"><line x1="340" y1="400" x2="340" y2="720"/><line x1="1260" y1="400" x2="1260" y2="720"/></g>`;
+    s+=`<rect x="680" y="520" width="150" height="200" rx="10" fill="#0b0e18" stroke="${B}" stroke-width="5" ${G}/><g fill="${A}" opacity=".7">${[0,1,2].map(i=>`<rect x="${700+i*38}" y="545" width="28" height="40" rx="4"/><rect x="${700+i*38}" y="600" width="28" height="40" rx="4"/>`).join('')}</g>`;
+    s+=`<rect x="1150" y="520" width="300" height="170" rx="10" fill="#0b0e18" stroke="${A}" stroke-width="5" ${G}/><rect x="1175" y="545" width="250" height="18" fill="${B}" opacity=".7"/><rect x="1175" y="580" width="180" height="14" fill="${B}" opacity=".45"/>`;
+    s+=`<g ${G}><rect x="200" y="560" width="110" height="140" rx="12" fill="#0b0e18" stroke="${B}" stroke-width="5"/><circle cx="255" cy="610" r="30" fill="none" stroke="${B}" stroke-width="5"/><circle cx="255" cy="670" r="14" fill="none" stroke="${B}" stroke-width="4"/></g>`;
   }
-  if(r===1){
-    [[320,220,260,200],[670,170,260,300],[1020,220,260,200]].forEach(([x,y,w,h],k)=>{
-      s+=`<polygon points="${x+w/2-24},120 ${x+w/2+24},120 ${x+w+40},${y+h+60} ${x-40},${y+h+60}" fill="#fff" opacity=".06"/>`;
-      s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${['#9fd8ff','#ffd6a5','#c8f2c2'][k]}"/>`;
-      s+=`<polygon points="${x},${y+h} ${x+w*.35},${y+h*.45} ${x+w*.6},${y+h*.75} ${x+w*.8},${y+h*.4} ${x+w},${y+h}" fill="${['#2f6e5a','#9b4b3a','#3d6b8a'][k]}"/>`;
-      s+=`<circle cx="${x+w*.75}" cy="${y+h*.25}" r="${h*.1}" fill="#ffb84d"/>`;
-      s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="url(#gd${r})" stroke-width="18"/>`;});
-    s+=`<polygon points="60,260 190,300 190,520 60,550" fill="${P[5]}" opacity=".45" stroke="${gold}" stroke-width="8"/><polygon points="1540,260 1410,300 1410,520 1540,550" fill="${P[5]}" opacity=".45" stroke="${gold}" stroke-width="8"/>`;
-    s+=`<ellipse cx="800" cy="870" rx="440" ry="85" fill="#7a2433" stroke="${gold}" stroke-width="10"/><ellipse cx="800" cy="870" rx="360" ry="60" fill="none" stroke="#b5485c" stroke-width="6"/>`;
-    s+=`<rect x="700" y="640" width="200" height="80" rx="8" fill="#5a3a26"/><rect x="690" y="630" width="220" height="16" rx="6" fill="#7a5236"/>`;
+  if(r===1){ // Social-Media-Wand
+    for(let row=0;row<2;row++)for(let i=0;i<7;i++){const x=150+i*190,y=110+row*290,c=(i+row)%2?A:B;
+      s+=`<rect x="${x}" y="${y}" width="130" height="240" rx="18" fill="#0b0b1c" stroke="${c}" stroke-width="5" ${G}/>`;
+      s+=`<circle cx="${x+30}" cy="${y+32}" r="12" fill="${c}" opacity=".8"/><rect x="${x+50}" y="${y+26}" width="60" height="10" rx="5" fill="${c}" opacity=".5"/>`;
+      s+=`<rect x="${x+16}" y="${y+60}" width="98" height="${80+((i*29+row*13)%60)}" rx="8" fill="${c}" opacity=".18"/>`;
+      s+=`<path d="M${x+28} ${y+212} l-10 -10 a6 6 0 0 1 10 -7 a6 6 0 0 1 10 7z" fill="${A}"/><rect x="${x+52}" y="${y+200}" width="50" height="8" rx="4" fill="${c}" opacity=".4"/>`}
+    s+=`<rect x="420" y="660" width="760" height="22" rx="6" fill="#141433" stroke="${B}" stroke-width="3"/>`;
+    s+=`<circle cx="1480" cy="560" r="80" fill="none" stroke="#fff" stroke-width="10" opacity=".85" ${G}/><line x1="1480" y1="640" x2="1480" y2="720" stroke="#2a2a44" stroke-width="8"/>`;
   }
-  if(r===2){
-    [300,520,940,1160].forEach(x=>s+=`<path d="M${x} 650 V300 a70 70 0 0 1 140 0 V650 Z" fill="url(#mi${r})" stroke="url(#gd${r})" stroke-width="12"/><line x1="${x+30}" y1="620" x2="${x+110}" y2="320" stroke="#fff" stroke-opacity=".45" stroke-width="10"/><line x1="${x+60}" y1="630" x2="${x+125}" y2="400" stroke="#fff" stroke-opacity=".25" stroke-width="5"/>`);
-    s+=`<line x1="800" y1="0" x2="800" y2="150" stroke="#9a8250" stroke-width="5"/><ellipse cx="800" cy="185" rx="130" ry="26" fill="url(#gd${r})"/>`;
-    for(let i=-3;i<=3;i++) s+=`<rect x="${796+i*36}" y="150" width="8" height="30" fill="#fff"/><ellipse cx="${800+i*36}" cy="142" rx="7" ry="11" fill="#ffd56b"/>`;
-    s+=`<circle cx="800" cy="170" r="200" fill="#ffd56b" opacity=".08"/>`;
-    for(let i=0;i<8;i++) s+=`<polygon points="${400+i*100},720 ${450+i*100},760 ${400+i*100},800 ${350+i*100},760" fill="#fff" opacity=".05"/>`;
+  if(r===2){ // Talkshow
+    for(let k=0;k<3;k++)s+=`<polygon points="${330+k*470},0 ${370+k*470},0 ${500+k*470},760 ${200+k*470},760" fill="#fff" opacity=".045"/>`;
+    s+=`<rect x="280" y="110" width="1040" height="340" rx="10" fill="#0b0608" stroke="${B}" stroke-width="5" ${G}/>`;
+    for(let i=0;i<34;i++){const h=40+Math.abs(Math.sin(i*.7))*220+rnd()*40;s+=`<rect x="${300+i*30}" y="${430-h}" width="18" height="${h}" fill="${i%2?A:B}" opacity=".55"/>`}
+    s+=`<ellipse cx="800" cy="800" rx="600" ry="110" fill="${A}" fill-opacity=".06" stroke="${A}" stroke-width="5" ${G}/>`;
+    [[470,0],[1010,1]].forEach(([x,f])=>s+=`<g stroke="${A}" stroke-width="6" fill="#120a0c" ${G}><path d="M${x} 560 h120 v60 h-120z"/><path d="M${f?x+120:x} 560 v-110 h${f?-26:26} v110"/><line x1="${x+20}" y1="620" x2="${x+20}" y2="700"/><line x1="${x+100}" y1="620" x2="${x+100}" y2="700"/></g>`);
+    s+=`<rect x="760" y="610" width="80" height="110" fill="#120a0c" stroke="${B}" stroke-width="5"/>`;
+    s+=`<g stroke="${B}" stroke-width="5" fill="#0b0608" ${G}><rect x="100" y="420" width="150" height="90" rx="10"/><circle cx="270" cy="465" r="26"/><line x1="175" y1="510" x2="120" y2="720"/><line x1="175" y1="510" x2="230" y2="720"/></g>`;
+    s+=`<text x="1330" y="560" ${M} font-size="34" font-weight="700" fill="${A}" ${G}>● ON AIR</text>`;
   }
-  if(r===3){
-    s+=`<polygon points="250,120 1350,120 1350,720 250,720" fill="url(#br${r})"/><polygon points="0,0 250,120 250,720 0,1000" fill="url(#br${r})"/><polygon points="1600,0 1350,120 1350,720 1600,1000" fill="url(#br${r})"/>`;
-    s+=`<circle cx="800" cy="330" r="160" fill="#141a36" stroke="#2a2c3a" stroke-width="26"/>`;
-    s+=`<g fill="#3b4570"><circle cx="720" cy="300" r="50"/><circle cx="790" cy="280" r="60"/><circle cx="870" cy="305" r="48"/><rect x="700" y="300" width="200" height="40"/></g>`;
-    s+=`<polyline points="830,330 790,400 835,400 790,480" fill="none" stroke="${P[5]}" stroke-width="12" stroke-linejoin="round"/>`;
-    s+=`<path d="M640 330 H960 M800 170 V490" stroke="#2a2c3a" stroke-width="12"/>`;
-    for(let i=0;i<10;i++){const y=700-i*56,x=1180+i*12;s+=`<polygon points="${x},${y} 1345,${y-12} 1345,${y+14} ${x},${y+24}" fill="${shade(P[0],-35)}" stroke="rgba(0,0,0,.3)" stroke-width="3"/>`}
-    s+=`<rect x="150" y="390" width="16" height="90" fill="#5a3a20"/><ellipse cx="158" cy="372" rx="16" ry="28" fill="#ffb347"/><ellipse cx="158" cy="380" rx="8" ry="14" fill="#fff1a8"/><circle cx="158" cy="380" r="110" fill="#ffb347" opacity=".12"/>`;
+  if(r===3){ // Newsroom
+    s+=`<rect x="360" y="110" width="880" height="380" rx="10" fill="#0a0a12" stroke="${A}" stroke-width="5" ${G}/>`;
+    s+=`<text x="800" y="230" text-anchor="middle" ${M} font-size="96" font-weight="700" fill="${A}" ${G}>BREAKING</text>`;
+    s+=`<g fill="#fff" opacity=".35"><rect x="430" y="290" width="740" height="22"/><rect x="430" y="330" width="560" height="22"/><rect x="430" y="370" width="660" height="22"/></g>`;
+    s+=`<rect x="360" y="510" width="880" height="54" fill="${A}"/><text x="380" y="547" ${M} font-size="28" font-weight="700" fill="#0a0a12">+++ EILMELDUNG +++ ALLES ESKALIERT +++ EXPERTEN SCHOCKIERT +++</text>`;
+    s+=`<g fill="none" stroke="${B}" stroke-width="4" ${G}><circle cx="190" cy="330" r="115"/><ellipse cx="190" cy="330" rx="50" ry="115"/><line x1="75" y1="330" x2="305" y2="330"/><path d="M90 270 h200 M90 390 h200"/></g>`;
+    s+=`<g stroke="${B}" stroke-width="5" fill="none" ${G}><circle cx="1420" cy="270" r="80"/><line x1="1420" y1="270" x2="1420" y2="215"/><line x1="1420" y1="270" x2="1465" y2="290"/></g>`;
+    [[180,600],[1190,600]].forEach(([x,y])=>s+=`<g stroke="${B}" stroke-width="4" fill="#0a0f1c"><rect x="${x}" y="${y}" width="230" height="40" rx="4"/><rect x="${x+50}" y="${y-110}" width="140" height="95" rx="6" stroke="${A}"/></g>`);
   }
-  if(r===4){
-    [230,370].forEach(y=>{s+=`<rect x="300" y="${y}" width="380" height="14" fill="#3a2312"/>`;
-      const cols=['#c0392b','#2e86de','#f1c40f','#27ae60','#8e44ad','#e67e22','#16a085','#d35400','#2c3e50'];
-      cols.forEach((c,j)=>{const h=50+((j*37+y)%40);s+=`<rect x="${310+j*40}" y="${y-h}" width="32" height="${h}" rx="3" fill="${c}"/>`})});
-    s+=`<circle cx="1060" cy="290" r="80" fill="none" stroke="${gold}" stroke-width="34" stroke-dasharray="18 14"/><circle cx="1060" cy="290" r="62" fill="${shade(P[0],-25)}" stroke="${gold}" stroke-width="8"/><circle cx="1060" cy="290" r="16" fill="${gold}"/>`;
-    s+=`<circle cx="1180" cy="400" r="50" fill="none" stroke="#c9a46a" stroke-width="26" stroke-dasharray="12 10"/><circle cx="1180" cy="400" r="36" fill="${shade(P[0],-25)}" stroke="#c9a46a" stroke-width="6"/><circle cx="1180" cy="400" r="10" fill="#c9a46a"/>`;
-    s+=`<rect x="420" y="570" width="760" height="36" rx="6" fill="#7a5236"/><rect x="450" y="606" width="30" height="114" fill="#5b3a22"/><rect x="1120" y="606" width="30" height="114" fill="#5b3a22"/>`;
-    s+=`<rect x="520" y="530" width="120" height="40" rx="6" fill="#55606e"/><rect x="900" y="520" width="16" height="50" fill="#8a6a40"/><rect x="870" y="508" width="76" height="22" rx="4" fill="#9aa4b0"/>`;
-    s+=`<line x1="800" y1="0" x2="800" y2="90" stroke="#222" stroke-width="5"/><polygon points="740,140 860,140 830,90 770,90" fill="#2b2b2b"/><ellipse cx="800" cy="146" rx="60" ry="12" fill="${P[5]}"/><polygon points="740,146 860,146 1000,560 600,560" fill="${P[5]}" opacity=".08"/>`;
+  if(r===4){ // Serverraum
+    for(let i=0;i<6;i++){const x=200+i*205;s+=`<rect x="${x}" y="130" width="150" height="560" rx="6" fill="#06100c" stroke="${B}" stroke-width="4" stroke-opacity=".7"/>`;
+      for(let y=160;y<670;y+=34){s+=`<rect x="${x+14}" y="${y}" width="122" height="22" rx="3" fill="#0c1a14"/>`;
+        for(let k=0;k<4;k++){const on=rnd()>.45;s+=`<circle cx="${x+100+k*9}" cy="${y+11}" r="3" fill="${on?A:'#1d3a2c'}">${on&&rnd()>.6?`<animate attributeName="opacity" values="1;.2;1" dur="${(.6+rnd()*1.4).toFixed(2)}s" repeatCount="indefinite"/>`:''}</circle>`}}}
+    s+=`<g fill="none" stroke="${A}" stroke-width="4" opacity=".55"><path d="M275 690 C 275 780 500 760 640 860"/><path d="M890 690 C 900 790 760 800 760 900"/><path d="M1300 690 C 1300 780 1100 800 980 870"/></g>`;
+    s+=`<rect x="610" y="760" width="380" height="200" rx="10" fill="#020806" stroke="${A}" stroke-width="5" ${G}/>`;
+    ['> scan --rhetorik','> stilmittel: 0/30','> firewall: aktiv','> _'].forEach((t,i)=>s+=`<text x="630" y="${800+i*38}" ${M} font-size="26" fill="${A}">${t}</text>`);
   }
-  if(r===5){
-    [330,1230].forEach(x=>s+=`<rect x="${x}" y="140" width="50" height="580" fill="${shade(P[0],-40)}"/>`);
-    [430,1110].forEach(x=>s+=`<polygon points="${x},140 ${x+70},140 ${x+70},460 ${x+35},420 ${x},460" fill="#7a1f3a"/>`);
-    s+=`<polygon points="640,720 640,330 700,240 800,170 900,240 960,330 960,720" fill="#26252c" stroke="#55545e" stroke-width="6"/><rect x="600" y="560" width="400" height="44" rx="8" fill="#3a3942"/>`;
-    for(let i=0;i<6;i++) s+=`<ellipse cx="${150+i*260}" cy="${940+(i%2)*30}" rx="260" ry="50" fill="#fff" opacity=".05"/>`;
+  if(r===5){ // VOXA-Kern
+    s+=`<g transform="translate(800 360)">`;
+    [260,200,140].forEach((rr,i)=>s+=`<circle r="${rr}" fill="none" stroke="${i===1?B:A}" stroke-width="${6-i}" stroke-dasharray="${[40,18,8][i]} ${[20,12,10][i]}" ${G}><animateTransform attributeName="transform" type="rotate" from="0" to="${i%2?-360:360}" dur="${14-i*4}s" repeatCount="indefinite"/></circle>`);
+    for(let k=0;k<24;k++){const a=k*Math.PI/12;s+=`<line x1="${Math.cos(a)*290}" y1="${Math.sin(a)*290}" x2="${Math.cos(a)*330}" y2="${Math.sin(a)*330}" stroke="${A}" stroke-width="4" opacity=".6"/>`}
+    s+=`<circle r="90" fill="url(#cr${r})"><animate attributeName="r" values="80;100;80" dur="2s" repeatCount="indefinite"/></circle><circle r="26" fill="#fff"/></g>`;
+    s+=`<text x="800" y="690" text-anchor="middle" ${M} font-size="40" font-weight="700" letter-spacing="20" fill="${A}" ${G}>VOXA</text>`;
   }
-  s+=`<rect width="1600" height="1000" fill="url(#lt${r})"/><rect width="1600" height="1000" fill="url(#vg${r})"/>`;
-  return `<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${d}${s}</svg>`;
+  s+=`<rect width="1600" height="1000" fill="url(#vg${r})"/>`;
+  return `<svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${s}</svg>`;
 }
 
-const NODES=[[14,84],[33,66],[54,82],[78,68],[66,42],[45,20]];
+const NODES=[[12,76],[30,46],[50,74],[70,44],[88,72],[50,16]];
 function mapSVG(path=true){
-  let st='';let seed=7;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
-  for(let i=0;i<80;i++) st+=`<circle cx="${(rnd()*1000).toFixed(0)}" cy="${(rnd()*330).toFixed(0)}" r="${(rnd()*1.8+.5).toFixed(1)}" fill="#fff" opacity="${(rnd()*.6+.3).toFixed(2)}"/>`;
-  const solved=Object.keys(S.solved).length;
-  let win='';[[350,300],[400,300],[560,300],[610,300],[350,380],[610,380],[470,250],[520,250]].forEach(([x,y],i)=>{
-    win+=`<path d="M${x} ${y+40} V${y+12} a12 12 0 0 1 24 0 V${y+40}Z" fill="${(i<solved*2||S.boss)?'#ffd77a':'#3a4170'}"/>`});
-  const pts=NODES.map(([x,y])=>`${x*10},${y*6.2}`).join(' ');
-  return `<svg viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs>
-   <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c1230"/><stop offset="1" stop-color="#2f3672"/></linearGradient></defs>
-   <rect width="1000" height="620" fill="url(#sky)"/>${st}
-   <circle cx="870" cy="90" r="42" fill="#fff3c4"/><circle cx="888" cy="78" r="38" fill="#141b3d"/>
-   <path d="M0 470 Q160 380 330 440 T700 420 T1000 450 V620 H0Z" fill="#1d2452"/>
-   <g fill="${S.boss?'#3b4a8f':'#232a55'}">
-    <rect x="300" y="250" width="380" height="250"/>
-    ${[0,1,2,3,4,5,6,7,8,9].map(i=>`<rect x="${300+i*40}" y="232" width="22" height="22"/>`).join('')}
-    <rect x="250" y="190" width="80" height="310"/><rect x="650" y="190" width="80" height="310"/>
-    ${[0,1,2].map(i=>`<rect x="${250+i*30}" y="172" width="20" height="20"/><rect x="${650+i*30}" y="172" width="20" height="20"/>`).join('')}
-    <rect x="425" y="110" width="70" height="150"/>
-   </g>
-   <polygon points="410,112 510,112 460,40" fill="${S.boss?'#ffd77a':'#3a2a55'}"/>
-   <polygon points="240,192 340,192 290,130" fill="#3a2a55"/><polygon points="640,192 740,192 690,130" fill="#3a2a55"/>
-   ${win}
-   <path d="M455 500 V440 a35 35 0 0 1 70 0 V500Z" fill="#141a38"/>
-   <path d="M0 540 Q250 470 520 540 T1000 520 V620 H0Z" fill="#141a38"/>
-   ${path?`<polyline points="${pts}" fill="none" stroke="#ffd77a" stroke-width="5" stroke-dasharray="4 14" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/>`:''}
-  </svg>`;
+  const rnd=rng(11);let s=`<defs><radialGradient id="mg" cx=".5" cy=".4" r=".8"><stop offset="0" stop-color="#141a33"/><stop offset="1" stop-color="#07080d"/></radialGradient>
+   <filter id="mgl"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+   <rect width="1000" height="600" fill="url(#mg)"/>`;
+  for(let x=0;x<1000;x+=50)s+=`<line x1="${x}" y1="0" x2="${x}" y2="600" stroke="#19e3ff" stroke-opacity=".05"/>`;
+  for(let y=0;y<600;y+=50)s+=`<line x1="0" y1="${y}" x2="1000" y2="${y}" stroke="#19e3ff" stroke-opacity=".05"/>`;
+  for(let i=0;i<70;i++){const x=rnd()*960,y=rnd()*560,w=14+rnd()*50,h=14+rnd()*50;s+=`<rect x="${x.toFixed(0)}" y="${y.toFixed(0)}" width="${w.toFixed(0)}" height="${h.toFixed(0)}" fill="#11152a" stroke="#1d2340"/>`}
+  s+=`<path d="M-20 520 C 200 430 300 600 520 520 S 800 380 1020 470" fill="none" stroke="#19e3ff" stroke-opacity=".18" stroke-width="22"/>`;
+  if(path){const pts=NODES.map(([x,y])=>[x*10,y*6]);
+    for(let i=0;i<pts.length-1;i++){const done=i<5?!!S.solved[i]:S.boss;const [x1,y1]=pts[i],[x2,y2]=pts[i+1];
+      s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${done?'#b6ff3b':'#19e3ff'}" stroke-opacity="${done?.9:.35}" stroke-width="3" stroke-dasharray="${done?'0':'6 8'}" ${done?'filter="url(#mgl)"':''}/>`}}
+  s+=`<text x="20" y="34" font-family="JetBrains Mono,monospace" font-size="14" fill="#6b7196" letter-spacing="3">SEKTOR 9 // NETZWERKKARTE</text>`;
+  return `<svg viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${s}</svg>`;
 }
 
 /* ===================== Bildschirme ===================== */
 function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.toggle('on',e.id===id));
   $('#topbar').hidden=(id==='scr-title');updateTop();window.scrollTo({top:0,behavior:'smooth'})}
-function updateTop(){$('#cCount').textContent=foundCount();$('#sCount').textContent=starSum();$('#bSnd').textContent=S.mute?'🔇':'🔊'}
-
+function updateTop(){$('#cCount').textContent=foundCount();$('#xpV').textContent=S.xp;$('#rkV').textContent=rank().toUpperCase();$('#bSnd').textContent=S.mute?'⨯':'♪'}
 function sheet(html,{wide=false,close=true}={}){const sh=$('#sheet');sh.className='sheet'+(wide?' wide':'');
   sh.innerHTML=(close?'<button class="x" id="xBtn" aria-label="Schließen">✕</button>':'')+html;$('#ov').hidden=false;sh.scrollTop=0;
-  if(close)$('#xBtn').onclick=closeSheet;const f=sh.querySelector('.btn.primary,.btn,button');f&&f.focus({preventScroll:true})}
+  if(close)$('#xBtn').onclick=closeSheet;const f=sh.querySelector('.btn.go,.btn');f&&f.focus({preventScroll:true})}
 function closeSheet(){$('#ov').hidden=true}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#ov').hidden&&$('#xBtn'))closeSheet()});
 
-function talk(lines,who,done){let i=0;const step=()=>{if(i>=lines.length){closeSheet();done&&done();return}
-  const last=i===lines.length-1;
-  sheet(`<div class="talk"><div class="portrait ${who==='grau'?'grau':''}">${who==='grau'?grauSvg():lumiSvg()}</div><div><div class="who">${who==='grau'?'Graf Grau':'Lumi'}</div><p>${lines[i]}</p></div></div>
-   <div class="actions"><button class="btn primary" id="nx">${last?'Los geht’s!':'Weiter ›'}</button></div>`,{close:false});
-  i++;$('#nx').onclick=step};step()}
+function talk(lines,who,done){let i=0;const vx=who==='voxa';
+  const step=()=>{if(i>=lines.length){closeSheet();done&&done();return}const last=i===lines.length-1;
+    sheet(`<div class="msg"><div class="ava ${vx?'vx':''}">${vx?'VX':'K'}</div><div style="flex:1"><div class="who ${vx?'vx':''}">${vx?'VOXA // SYSTEMSTIMME':'KIRA // DECODE · verschlüsselt'}</div>
+      <div class="bubble" id="bub"><span class="typing"><i></i><i></i><i></i></span></div></div></div>
+      <div class="actions"><button class="btn ${last?'go':''}" id="nx">${last?(vx?'Bring it on →':'Verstanden →'):'Weiter →'}</button></div>`,{close:false});
+    const txt=lines[i];i++;setTimeout(()=>{const b=$('#bub');if(b)b.innerHTML=txt},380);$('#nx').onclick=step};step()}
 
 /* Titel */
-function renderTitle(){$('#titlebg').innerHTML=mapSVG(false);$('#titlelumi').innerHTML=LUMI;$('#nameIn').value=S.name||'';
-  $('#resetRow').hidden=!(S.name&&(foundCount()||S.intro));$('#bStart').textContent=S.intro?'Weiterspielen ›':'Abenteuer starten ›';show('scr-title')}
-$('#bStart').onclick=()=>{const n=$('#nameIn').value.trim();if(!n){toast('Gib zuerst deinen Namen ein.');$('#nameIn').focus();return}
-  S.name=n.slice(0,24);save();
-  if(!S.intro){talk([
-    `Hallo ${esc(S.name)}! Ich bin Lumi, die Schreibfeder dieser Burg.`,
-    'Der fiese Graf Grau hat alle schönen Worte gestohlen. Seitdem ist die Burg grau, still und langweilig.',
-    'In fünf Räumen haben sich je sechs <b>Stilmittel</b> versteckt. Tippe auf die leuchtenden Gegenstände, um sie als Wortkristalle einzusammeln.',
-    'Hast du alle sechs gefunden, kannst du das Tor öffnen – aber nur, wenn du seine Rätsel löst. Dann kehrt die Farbe zurück!',
-    'Ganz oben im Turm wartet Graf Grau. Alles, was du findest, steht im 📖 Lexikon. Bist du bereit?'],'lumi',()=>{S.intro=true;save();renderMap()})}
+function renderTitle(){$('#titlebg').innerHTML=roomSVG(0);$('#nameIn').value=S.name||'';
+  $('#resetRow').hidden=!(S.name&&(foundCount()||S.intro));$('#bStart').textContent=S.intro?'Weiter →':'Mission starten →';show('scr-title')}
+$('#bStart').onclick=()=>{const n=$('#nameIn').value.trim();if(!n){toast('Codename fehlt.');$('#nameIn').focus();return}
+  S.name=n.slice(0,20);save();
+  if(!S.intro)talk([
+    `${esc(S.name)}? Gut. Ich bin Kira von <b>DECODE</b>. Keine Zeit für Smalltalk.`,
+    'Die KI <b>VOXA</b> schreibt Werbung, Posts, Schlagzeilen und Reden – für Millionen Menschen. Ihre Waffe sind <b>Stilmittel</b>. Wer sie nicht erkennt, wird manipuliert, ohne es zu merken.',
+    'Dein Job: Schleus dich in fünf Zonen ein. Scanne die Texte dort – in jeder Zone stecken sechs Stilmittel.',
+    'Jede Zone hat eine Firewall: sechs Fragen, mindestens vier richtig. Combos bringen Extra-XP, dein Rang steigt.',
+    'Am Ende wartet VOXA selbst – mit Zeitlimit. Alles, was du entschlüsselst, landet in deiner ▤ Datenbank. Los.'],'kira',()=>{S.intro=true;save();renderMap()});
   else renderMap()};
 $('#nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('#bStart').click()});
-$('#bReset').onclick=()=>{sheet(`<h2 style="margin-top:0">Neu beginnen?</h2><p>Dein ganzer Spielstand (Kristalle, Sterne, Urkunde) wird gelöscht.</p>
-  <div class="actions"><button class="btn" id="rNo">Abbrechen</button><button class="btn primary" id="rYes">Ja, neu beginnen</button></div>`);
+$('#bReset').onclick=()=>{sheet(`<h2 style="margin-top:0">Alles löschen?</h2><p>XP, Rang, Zonen und Lizenz werden auf diesem Gerät zurückgesetzt.</p>
+  <div class="actions"><button class="btn" id="rNo">Abbrechen</button><button class="btn pink" id="rYes">Ja, neu starten</button></div>`);
   $('#rNo').onclick=closeSheet;$('#rYes').onclick=()=>{S=fresh();save();closeSheet();renderTitle()}};
 
-/* Karte */
-function renderMap(){
-  const m=$('#map');m.innerHTML=mapSVG();
-  NODES.forEach(([x,y],i)=>{const boss=i===5;const R=ROOMS[i];
-    const open=boss?[0,1,2,3,4].every(k=>S.solved[k]):unlocked(i);const done=boss?S.boss:!!S.solved[i];
-    const b=document.createElement('button');b.className='node '+(done?'done':open?'open':'locked');b.style.left=x+'%';b.style.top=y+'%';
-    const stars=boss?(S.boss?'👑':''):(done?'⭐'.repeat(S.solved[i]):open?`💎 ${roomFound(i)}/6`:'');
-    b.innerHTML=`<span class="dot">${open||done?R.icon:'🔒'}</span><span class="lab">${boss?'Graf Grau':R.name}</span><span class="st">${stars}</span>`;
-    b.setAttribute('aria-label',`${boss?'Thronsaal – Graf Grau':R.name}${open?'':' (gesperrt)'}`);
-    b.onclick=()=>{if(!open){toast(boss?'Löse zuerst alle fünf Räume.':'Löse zuerst den vorherigen Raum.');return}boss?startBoss():enterRoom(i)};
-    m.appendChild(b)});
+/* Map */
+function renderMap(){const m=$('#map');m.innerHTML=mapSVG();
+  NODES.forEach(([x,y],i)=>{const boss=i===5,R=ROOMS[i];const open=boss?[0,1,2,3,4].every(k=>S.solved[k]):unlocked(i);const done=boss?S.boss:!!S.solved[i];
+    const b=document.createElement('button');b.className='node '+(boss?'boss ':'')+(done?'done':open?'open':'locked');b.style.left=x+'%';b.style.top=y+'%';
+    b.innerHTML=`<span class="dot"><span>${open||done?R.code:'⨯'}</span></span><span class="lab">${R.name}</span><span class="st">${boss?(S.boss?'BESIEGT':open?'BEREIT':'GESPERRT'):done?'RATING '+grade(S.solved[i]):open?roomFound(i)+'/6 DATA':'GESPERRT'}</span>`;
+    b.setAttribute('aria-label',`Zone ${R.name}${open?'':' (gesperrt)'}`);
+    b.onclick=()=>{if(!open){toast(boss?'Erst alle fünf Zonen knacken.':'Erst die vorherige Zone knacken.');return}boss?startBoss():enterRoom(i)};m.appendChild(b)});
   const n=Object.keys(S.solved).length;
-  $('#mapHint').textContent=S.boss?`Geschafft, ${S.name}! Die Burg leuchtet wieder. Übe weiter auf dem Trainingsplatz.`:
-    n===5?'Alle Räume gelöst! Jetzt wartet Graf Grau im Turm.':`Wähle einen Raum. Gelöst: ${n} von 5.`;
+  $('#mapHint').textContent=S.boss?`> VOXA offline. Gute Arbeit, ${S.name}. Halte dich im Training fit.`:n===5?'> Alle Zonen geknackt. VOXA wartet.':`> Zonen geknackt: ${n}/5 · Wähle dein nächstes Ziel.`;
   $('#bCert').hidden=!S.boss;show('scr-map');
-  const cur=m.querySelector('.node.open')||m.querySelector('.node.done:last-of-type');const sc=m.parentElement;
-  if(cur&&sc.scrollWidth>sc.clientWidth)requestAnimationFrame(()=>{sc.scrollLeft=cur.offsetLeft-sc.clientWidth/2})}
-$('#bMap').onclick=()=>{closeSheet();renderMap()};
-$('#bBack').onclick=renderMap;
-$('#bCert').onclick=renderEnd;
-$('#bEndMap').onclick=renderMap;
+  const cur=m.querySelector('.node.open'),sc=m.parentElement;if(cur&&sc.scrollWidth>sc.clientWidth)requestAnimationFrame(()=>{sc.scrollLeft=cur.offsetLeft-sc.clientWidth/2})}
+$('#bMap').onclick=()=>{stopTimer();closeSheet();renderMap()};
+$('#bBack').onclick=renderMap;$('#bCert').onclick=renderEnd;$('#bEndMap').onclick=renderMap;
 $('#bSnd').onclick=()=>{S.mute=!S.mute;save();updateTop()};
 
-/* Raum */
+/* Zone */
 let curRoom=0;
-function enterRoom(r){curRoom=r;const R=ROOMS[r];$('#roomName').textContent=R.name;$('#roomSub').textContent=`Raum ${r+1} · ${R.sub}`;
-  drawRoom();show('scr-room');
-  if(!roomFound(r)&&!S.solved[r])talk([R.hello,'Tippe auf die leuchtenden Gegenstände!'],'lumi')}
-function drawRoom(){const r=curRoom,sc=$('#scene');const n=roomFound(r),solved=!!S.solved[r];
-  sc.innerHTML=roomSVG(r);sc.querySelector('svg').style.filter=solved?'none':`grayscale(${(1-n/6*.55).toFixed(2)}) brightness(${(.8+n/6*.15).toFixed(2)})`;
-  inRoom(r).forEach(s=>{const b=document.createElement('button');b.className='hot'+(S.found[s.id]?' found':'');b.style.left=s.p[0]+'%';b.style.top=s.p[1]+'%';
-    b.textContent=s.o;b.title=S.found[s.id]?s.n:s.on;b.setAttribute('aria-label',S.found[s.id]?`${s.on}: ${s.n}`:`Gegenstand: ${s.on}`);
-    b.onclick=()=>openItem(s,b);sc.appendChild(b)});
-  const d=document.createElement('button');const all=n===6;d.className='door'+(all&&!solved?' ready':'');
-  d.innerHTML=solved?`✅ ${'⭐'.repeat(S.solved[r])} · Tor nochmal`:all?'🚪 Tor öffnen':`🔒 Tor (${n}/6)`;
-  d.onclick=()=>{if(!all){toast(`Finde zuerst alle Stilmittel (${n}/6).`);return}startRoomQuiz(r)};const ds=$('#doorSlot');ds.innerHTML='';ds.appendChild(d);
-  $('#roomCrys').innerHTML=inRoom(r).map(s=>`<i class="${S.found[s.id]?'on':''}"></i>`).join('');
-  $('#roomHint').textContent=solved?'Raum gelöst! Tippe die Gegenstände an, um die Stilmittel zu wiederholen.':all?'Alle gefunden – öffne das Tor!':'Tippe auf die leuchtenden Gegenstände.'}
-
-function infoHTML(s){const R=ROOMS[s.r];return `<div class="cardtop"><span class="big">${s.o}</span><div><div class="kicker">${R.name} · ${s.on}</div><h2>${s.n}</h2></div></div>
+function enterRoom(r){curRoom=r;const R=ROOMS[r];$('#roomName').textContent=R.name;$('#roomSub').textContent=`Zone ${R.code} · ${R.sub}`;
+  drawRoom();show('scr-room');if(!roomFound(r)&&!S.solved[r])talk([R.brief],'kira')}
+function drawRoom(){const r=curRoom,sc=$('#scene'),n=roomFound(r),solved=!!S.solved[r];
+  sc.innerHTML=roomSVG(r)+`<div class="status">SIGNAL: <b class="${solved?'on':''}">${solved?'ENTSCHLÜSSELT':n+'/6 GESCANNT'}</b></div>`;
+  sc.querySelector('svg').style.filter=solved?'none':`grayscale(${(.85-n/6*.6).toFixed(2)}) brightness(${(.75+n/6*.2).toFixed(2)})`;
+  inRoom(r).forEach(s=>{const b=document.createElement('button');const f=!!S.found[s.id];b.className='hot'+(f?' found':'');b.style.left=s.p[0]+'%';b.style.top=s.p[1]+'%';
+    b.innerHTML=`<span class="ring"></span>${f?s.n:s.on}`;b.setAttribute('aria-label',f?`${s.on}: ${s.n}`:`Scannen: ${s.on}`);b.onclick=()=>openItem(s,b);sc.appendChild(b)});
+  const all=n===6,d=document.createElement('button');d.className='btn '+(all&&!solved?'go door ready':'');
+  d.textContent=solved?`↻ Firewall nochmal (Rating ${grade(S.solved[r])})`:all?'▶ Firewall knacken':`Firewall gesperrt (${n}/6)`;
+  d.onclick=()=>{if(!all){toast(`Scanne erst alle Texte (${n}/6).`);return}startRoomQuiz(r)};$('#doorSlot').innerHTML='';$('#doorSlot').appendChild(d);
+  $('#roomBars').innerHTML=inRoom(r).map(s=>`<i class="${S.found[s.id]?'on':''}"></i>`).join('');
+  $('#roomHint').textContent=solved?'> Zone gesichert. Tippe Texte an zum Wiederholen.':all?'> Alle Daten gesammelt. Firewall knacken!':'> Tippe auf die markierten Texte, um sie zu scannen.'}
+function infoHTML(s){return `<div class="cardtop"><div class="kicker">Zone ${ROOMS[s.r].name} · Entschlüsselt</div><h2>${s.n}</h2></div>
+  <div class="fund"><div class="src">◉ Fundstück · ${s.on}</div><p>${esc(s.fund)}</p></div>
   <p class="def">${s.d}</p>
-  <div class="exbox"><div class="lbl">Beispiele</div><p>${esc(s.pdf)}</p><p>${esc(s.ex[0].t)}</p></div>
-  <div class="duo"><div class="mini"><div class="lbl">Wirkung</div>${s.w}</div><div class="mini tip"><div class="lbl">💡 Merktipp</div>${s.tip}</div></div>`}
+  <div class="grid2"><div class="mini ex"><div class="kicker">Weitere Beispiele</div><p>${esc(s.pdf)}</p><p>${esc(s.ex[0].t)}</p></div>
+  <div class="mini"><div class="kicker">Wirkung</div>${s.w}</div><div class="mini tip"><div class="kicker">Merktrick</div>${s.tip}</div></div>`}
 function openItem(s,btn){
-  if(S.found[s.id]){sheet(infoHTML(s)+`<div class="actions"><button class="btn primary" id="okb">Alles klar</button></div>`);$('#okb').onclick=closeSheet;return}
-  sheet(`<div class="talk" style="margin-bottom:12px"><div class="portrait">${lumiSvg()}</div><div><div class="who">Lumi</div><p>Du hast etwas entdeckt: <b>${s.on}</b>! Darin steckt ein Stilmittel …</p></div></div>`
-   +infoHTML(s)+`<div class="actions"><button class="btn primary" id="col">💎 Wortkristall einsammeln</button></div>`);
-  $('#col').onclick=()=>{S.found[s.id]=1;save();sfx.collect();closeSheet();flyGem(btn);drawRoom();updateTop();
-    if(roomFound(curRoom)===6&&!S.solved[curRoom])setTimeout(()=>talk(['Großartig! Du hast alle sechs Stilmittel dieses Raums gefunden.','Jetzt kannst du das <b>Tor öffnen</b>. Du brauchst mindestens 4 von 6 richtige Antworten. Tipp: Schau vorher noch einmal ins 📖 Lexikon.'],'lumi'),700)}}
-function flyGem(btn){try{const a=btn.getBoundingClientRect(),b=$('#cCount').getBoundingClientRect();const g=document.createElement('div');g.className='fly';g.textContent='💎';
-  g.style.left=a.left+a.width/2-20+'px';g.style.top=a.top+'px';document.body.appendChild(g);
-  requestAnimationFrame(()=>{g.style.left=b.left-10+'px';g.style.top=b.top-10+'px';g.style.transform='scale(.4)';g.style.opacity='.3'});setTimeout(()=>g.remove(),900)}catch(e){}}
+  if(S.found[s.id]){sheet(infoHTML(s)+`<div class="actions"><button class="btn go" id="okb">OK</button></div>`);$('#okb').onclick=closeSheet;return}
+  sfx.scan();sheet(infoHTML(s)+`<div class="actions"><button class="btn go" id="col">In Datenbank speichern · +50 XP</button></div>`);
+  $('#col').onclick=e=>{S.found[s.id]=1;save();addXP(50,e.target);closeSheet();drawRoom();
+    if(roomFound(curRoom)===6&&!S.solved[curRoom])setTimeout(()=>talk(['Sauber, alle sechs gescannt. Jetzt die <b>Firewall</b>: 6 Fragen, mindestens 4 richtig. Tipp: Check vorher kurz deine ▤ Datenbank.'],'kira'),500)}}
 
-/* ===================== Aufgaben ===================== */
+/* ===================== Fragen ===================== */
 const SATZ=['hypotaxe','parataxe'];
 function distractors(t,exclude,n){const c=SM.filter(s=>s.id!==t.id&&!exclude.includes(s.id)&&(t.r===4||!SATZ.includes(s.id)));
   const same=shuffle(c.filter(s=>s.r===t.r)),other=shuffle(c.filter(s=>s.r!==t.r));
   const res=same.slice(0,2);for(const s of other.concat(same.slice(2))){if(res.length>=n)break;res.push(s)}return res}
-function qRecognize(s){const e=pick(s.ex);const ds=distractors(s,e.a,3);
-  return {type:'mc',prompt:'Welches Stilmittel steckt in diesem Satz?',quote:e.t,
+function qRecognize(s){const e=pick(s.ex),ds=distractors(s,e.a,3);
+  return {type:'mc',kind:'Erkennen',prompt:'Welches Stilmittel steckt in diesem Satz?',quote:e.t,
    options:shuffle([{label:s.n,ok:true},...ds.map(d=>({label:d.n,ok:false}))]),explain:`<b>${s.n}</b>: ${s.d}`}}
-function qFind(s){const e=pick(s.ex);const pool=[];SM.forEach(o=>{if(o.id===s.id||(SATZ.includes(s.id)&&o.r!==4))return;o.ex.forEach(x=>{if(!x.a.includes(s.id))pool.push({o,x})})});
-  const same=shuffle(pool.filter(p=>p.o.r===s.r)),oth=shuffle(pool.filter(p=>p.o.r!==s.r));const w=[same[0],oth[0]].filter(Boolean);
-  return {type:'mc',long:true,prompt:`Welcher Satz enthält das Stilmittel <u>${s.n}</u>?`,
-   options:shuffle([{label:e.t,ok:true},...w.map(p=>({label:p.x.t,ok:false,why:p.o.n}))]),
-   explain:`<b>${s.n}</b>: ${s.d}`}}
+function qFind(s){const e=pick(s.ex),pool=[];SM.forEach(o=>{if(o.id===s.id||(SATZ.includes(s.id)&&o.r!==4))return;o.ex.forEach(x=>{if(!x.a.includes(s.id))pool.push({o,x})})});
+  const same=shuffle(pool.filter(p=>p.o.r===s.r)),oth=shuffle(pool.filter(p=>p.o.r!==s.r)),w=[same[0],oth[0]].filter(Boolean);
+  return {type:'mc',kind:'Aufspüren',long:true,prompt:`Welcher Satz enthält das Stilmittel <u>${s.n}</u>?`,
+   options:shuffle([{label:e.t,ok:true},...w.map(p=>({label:p.x.t,ok:false,why:p.o.n}))]),explain:`<b>${s.n}</b>: ${s.d}`}}
 function qDef(s){const ds=distractors(s,[],3);
-  return {type:'mc',long:true,prompt:`Was versteht man unter <u>${s.n}</u>?`,options:shuffle([{label:s.d,ok:true},...ds.map(d=>({label:d.d,ok:false,why:d.n}))]),
-   explain:`💡 ${s.tip}`}}
+  return {type:'mc',kind:'Definition',long:true,prompt:`Was versteht man unter <u>${s.n}</u>?`,options:shuffle([{label:s.d,ok:true},...ds.map(d=>({label:d.d,ok:false,why:d.n}))]),explain:`Merktrick: ${s.tip}`}}
+function qWirkung(s){const ds=distractors(s,[],2);
+  return {type:'mc',kind:'Wirkung',long:true,prompt:`Welche Wirkung hat das Stilmittel <u>${s.n}</u> typischerweise?`,options:shuffle([{label:s.w,ok:true},...ds.map(d=>({label:d.w,ok:false,why:d.n}))]),explain:`<b>${s.n}</b>: ${s.d}`}}
 function qMatch(list){const ids=list.map(s=>s.id);
-  const pairs=list.map(s=>{const ok=s.ex.filter(e=>e.a.every(a=>!ids.includes(a)));return {s,e:pick(ok.length?ok:s.ex)}});
-  return {type:'match',prompt:'Ordne zu: Welcher Satz gehört zu welchem Stilmittel?',pairs}}
-function randomQ(pool){const s=pick(pool),k=Math.random();return k<.55?qRecognize(s):k<.8?qFind(s):qDef(s)}
+  return {type:'match',kind:'Zuordnen',prompt:'Ordne jedem Satz das passende Stilmittel zu.',pairs:list.map(s=>{const ok=s.ex.filter(e=>e.a.every(a=>!ids.includes(a)));return {s,e:pick(ok.length?ok:s.ex)}})}}
+function randomQ(pool){const s=pick(pool),k=Math.random();return k<.55?qRecognize(s):k<.78?qFind(s):k<.9?qDef(s):qWirkung(s)}
 
-function renderQuestion(host,q,onDone,nextLabel='Weiter ›'){
-  let h=`<div class="qcard"><div class="qprompt">${q.prompt}</div>`;
+let answering=null;
+function renderQuestion(host,q,onDone,nextLabel='Weiter →'){
+  let h=`<div class="qcard"><div class="qtype">// ${q.kind}</div><div class="qprompt">${q.prompt}</div>`;
   if(q.quote)h+=`<blockquote class="quote">${esc(q.quote)}</blockquote>`;
   if(q.type==='match'){const names=shuffle(q.pairs.map((p,i)=>({i,n:p.s.n})));
-    h+=`<p class="mhint">Tippe zuerst einen Satz an, dann das passende Stilmittel.</p><div class="match"><div class="col">${q.pairs.map((p,i)=>`<button class="mq" data-i="${i}">${esc(p.e.t)}</button>`).join('')}</div>
+    h+=`<p class="mhint">Erst Satz antippen, dann Stilmittel.</p><div class="match"><div class="col">${q.pairs.map((p,i)=>`<button class="mq" data-i="${i}">${esc(p.e.t)}</button>`).join('')}</div>
     <div class="col">${names.map(o=>`<button class="mn" data-i="${o.i}">${o.n}</button>`).join('')}</div></div>`}
-  else h+=`<div class="opts ${q.long?'long':''}">${q.options.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.label)}</button>`).join('')}</div>`;
-  h+=`<div class="fb" id="fb" hidden></div></div>`;host.innerHTML=h;
-  const fin=(ok,body)=>{const fb=host.querySelector('#fb');fb.hidden=false;fb.className='fb '+(ok?'ok':'no');
-    fb.innerHTML=`<h3>${ok?pick(['Richtig! 🎉','Stark! ✨','Genau! 👍','Volltreffer! 🎯']):pick(['Leider nicht ganz.','Knapp daneben.','Nicht ganz – merk es dir!'])}</h3>${body}<div class="actions"><button class="btn primary" id="qn">${nextLabel}</button></div>`;
-    ok?sfx.ok():sfx.bad();const n=fb.querySelector('#qn');n.onclick=()=>onDone(ok);n.focus({preventScroll:true});fb.scrollIntoView({behavior:'smooth',block:'nearest'})};
+  else h+=`<div class="opts ${q.long?'long':''}">${q.options.map((o,i)=>`<button class="opt" data-i="${i}"><span class="key">${'ABCD'[i]}</span><span>${esc(o.label)}</span></button>`).join('')}</div>`;
+  h+=`<div class="fb" id="fb" hidden></div></div>`;host.innerHTML=h;let ended=false;
+  const fin=(ok,body)=>{if(ended)return;ended=true;answering=null;const fb=host.querySelector('#fb');fb.hidden=false;fb.className='fb '+(ok?'ok':'no');
+    fb.innerHTML=`<h3>${ok?pick(['Treffer.','Sauber.','Korrekt.','Stark.']):pick(['Daneben.','Nope.','Fast – aber nein.'])}</h3>${body}<div class="actions"><button class="btn go" id="qn">${nextLabel}</button></div>`;
+    ok?sfx.ok():sfx.bad();const n=fb.querySelector('#qn');n.onclick=()=>onDone(ok,n);n.focus({preventScroll:true});fb.scrollIntoView({behavior:'smooth',block:'nearest'})};
   if(q.type==='match'){let sel=null,mist=0,done=0;
+    answering={timeout(){host.querySelectorAll('.mq,.mn').forEach(b=>b.disabled=true);fin(false,'<p>Zeit abgelaufen.</p>')}};
     host.querySelectorAll('.mq').forEach(b=>b.onclick=()=>{if(b.disabled)return;host.querySelectorAll('.mq').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');sel=+b.dataset.i});
-    host.querySelectorAll('.mn').forEach(b=>b.onclick=()=>{if(b.disabled)return;if(sel===null){toast('Wähle zuerst einen Satz.');return}
-      if(+b.dataset.i===sel){const q1=host.querySelector(`.mq[data-i="${sel}"]`);q1.classList.remove('sel');q1.classList.add('c'+done);b.classList.add('c'+done);q1.disabled=b.disabled=true;done++;sel=null;tone(700,.08);
-        if(done===3)fin(mist===0,mist===0?'<p>Alle drei auf Anhieb richtig zugeordnet.</p>':`<p>Geschafft – mit ${mist} Fehlversuch${mist>1?'en':''}. Bei der nächsten Aufgabe klappt es ohne!</p>`)}
+    host.querySelectorAll('.mn').forEach(b=>b.onclick=()=>{if(b.disabled)return;if(sel===null){toast('Erst einen Satz wählen.');return}
+      if(+b.dataset.i===sel){const q1=host.querySelector(`.mq[data-i="${sel}"]`);q1.classList.remove('sel');q1.classList.add('c'+done);b.classList.add('c'+done);q1.disabled=b.disabled=true;done++;sel=null;tone(1000,.06,'square',.02);
+        if(done===3)fin(mist===0,mist===0?'<p>Alle drei auf Anhieb richtig.</p>':`<p>Gelöst – aber mit ${mist} Fehlversuch${mist>1?'en':''}. Zählt nicht als Treffer.</p>`)}
       else{mist++;b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');sfx.bad()}})}
-  else host.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.options[+b.dataset.i];
-    host.querySelectorAll('.opt').forEach((x,i)=>{x.disabled=true;if(q.options[i].ok)x.classList.add('right')});
-    if(!o.ok)b.classList.add('wrong');
-    let body=`<p>${q.explain}</p>`;if(!o.ok&&o.why)body+=`<p><small>Deine Wahl passt zu: <b>${o.why}</b>.</small></p>`;fin(o.ok,body)});
-}
+  else{const btns=[...host.querySelectorAll('.opt')];
+    const reveal=i=>{btns.forEach((x,k)=>{x.disabled=true;if(q.options[k].ok)x.classList.add('right')});if(i!=null&&!q.options[i].ok)btns[i].classList.add('wrong')};
+    answering={timeout(){reveal(null);fin(false,`<p>Zeit abgelaufen.</p><p>${q.explain}</p>`)}};
+    btns.forEach((b,i)=>b.onclick=()=>{const o=q.options[i];reveal(i);let body=`<p>${q.explain}</p>`;if(!o.ok&&o.why)body+=`<p><small>Deine Wahl passt zu: <b>${o.why}</b>.</small></p>`;fin(o.ok,body)})}}
+document.addEventListener('keydown',e=>{if(!$('#ov').hidden)return;const k='abcd1234'.indexOf(e.key.toLowerCase());if(k<0)return;
+  const host=document.querySelector('.screen.on .qcard');if(!host)return;const b=host.querySelectorAll('.opt')[k%4];if(b&&!b.disabled)b.click()});
 
-/* Raum-Quiz */
+/* Firewall */
 function startRoomQuiz(r){const L=shuffle(inRoom(r));
   const qs=[qRecognize(L[0]),qDef(L[1]),qRecognize(L[2]),qFind(L[3]),qRecognize(L[4]),qMatch([L[5],L[1],L[3]])];
-  let i=0,score=0;const res=[];$('#qTitle').textContent=`🚪 Das Tor der ${ROOMS[r].name}`;
-  const dots=()=>$('#qDots').innerHTML=qs.map((_,k)=>`<i class="${k<i?(res[k]?'ok':'no'):k===i?'cur':''}"></i>`).join('');
-  const next=()=>{if(i>=qs.length)return endRoomQuiz(r,score);dots();
-    renderQuestion($('#qHost'),qs[i],ok=>{res[i]=ok;if(ok)score++;i++;next()},i===qs.length-1?'Ergebnis ›':'Weiter ›')};
+  let i=0,score=0,combo=0;const res=[];$('#qTitle').textContent=`FIREWALL // ${ROOMS[r].name}`;
+  const ui=()=>{$('#qDots').innerHTML=qs.map((_,k)=>`<i class="${k<i?(res[k]?'ok':'no'):k===i?'cur':''}"></i>`).join('');$('#qCombo').textContent=combo>1?`COMBO ×${combo}`:''};
+  const next=()=>{if(i>=qs.length)return endRoomQuiz(r,score);ui();
+    renderQuestion($('#qHost'),qs[i],(ok,btn)=>{res[i]=ok;if(ok){score++;combo++;addXP(100+Math.min(combo-1,5)*25,btn)}else combo=0;i++;next()},i===qs.length-1?'Ergebnis →':'Weiter →')};
   show('scr-quiz');next()}
-function endRoomQuiz(r,score){const stars=score>=6?3:score>=5?2:score>=4?1:0;
-  if(!stars){sheet(`<div class="talk"><div class="portrait">${lumiSvg()}</div><div><div class="who">Lumi</div><p>${score} von 6 richtig – das Tor bleibt noch zu. Du brauchst mindestens 4. Schau dir die Stilmittel im Lexikon an und versuch es noch einmal!</p></div></div>
-    <div class="actions"><button class="btn" id="e1">📖 Lexikon</button><button class="btn" id="e2">Zum Raum</button><button class="btn primary" id="e3">Nochmal versuchen</button></div>`,{close:false});
+function endRoomQuiz(r,score){const st=score>=6?3:score>=5?2:score>=4?1:0;
+  if(!st){sheet(`<div class="msg"><div class="ava">K</div><div style="flex:1"><div class="who">KIRA</div><div class="bubble">${score}/6. Die Firewall hält noch – du brauchst 4. Check die Datenbank und geh nochmal rein. Die Fragen werden neu gemischt.</div></div></div>
+    <div class="actions"><button class="btn" id="e1">▤ Datenbank</button><button class="btn" id="e2">Zur Zone</button><button class="btn go" id="e3">Neuer Versuch</button></div>`,{close:false});
     $('#e1').onclick=()=>openLex();$('#e2').onclick=()=>{closeSheet();enterRoom(r)};$('#e3').onclick=()=>{closeSheet();startRoomQuiz(r)};return}
-  const first=!S.solved[r];S.solved[r]=Math.max(S.solved[r]||0,stars);save();sfx.win();updateTop();
-  sheet(`<div style="text-align:center"><div style="font-size:46px;letter-spacing:6px">${'⭐'.repeat(stars)}${'☆'.repeat(3-stars)}</div>
-    <h2 style="margin:6px 0">Das Tor ist offen!</h2><p>${score} von 6 richtig. ${first?'Die Farben kehren in die '+ROOMS[r].name+' zurück.':''}</p>
-    ${r<4&&first?`<p>Neuer Raum freigeschaltet: <b>${ROOMS[r+1].icon} ${ROOMS[r+1].name}</b></p>`:''}${r===4&&first?'<p><b>Alle Räume gelöst! Graf Grau erwartet dich im Turm …</b></p>':''}</div>
-    <div class="actions" style="justify-content:center"><button class="btn" id="v1">Raum ansehen</button><button class="btn primary" id="v2">Zur Karte ›</button></div>`,{close:false});
+  const first=!S.solved[r];S.solved[r]=Math.max(S.solved[r]||0,st);if(first)S.xp+=200;save();sfx.win();updateTop();
+  sheet(`<div style="text-align:center"><div class="kicker">Firewall geknackt</div><div class="bigscore">${grade(st)}</div><p>${score}/6 richtig${first?' · Zonen-Bonus +200 XP':''}</p>
+    ${r<4&&first?`<p class="mono" style="color:var(--cy)">> Neue Zone freigeschaltet: ${ROOMS[r+1].name}</p>`:''}${r===4&&first?'<p class="mono" style="color:var(--pink)">> Alle Zonen geknackt. VOXA ist jetzt angreifbar.</p>':''}</div>
+    <div class="actions" style="justify-content:center"><button class="btn" id="v1">Zur Zone</button><button class="btn go" id="v2">Zur Map →</button></div>`,{close:false});
   $('#v1').onclick=()=>{closeSheet();enterRoom(r)};$('#v2').onclick=()=>{closeSheet();renderMap()}}
 
-/* Endgegner */
-const BOSS_HP=8;
-function startBoss(){if(S.boss){sheet(`<h2 style="margin-top:0">Graf Grau ist besiegt!</h2><p>Willst du noch einmal gegen ihn antreten?</p><div class="actions"><button class="btn" id="b1">Lieber nicht</button><button class="btn primary" id="b2">Revanche!</button></div>`);
-    $('#b1').onclick=closeSheet;$('#b2').onclick=()=>{closeSheet();bossFight()};return}
-  bossFight(true)}
-function bossFight(intro){const sc=$('#bossScene');sc.innerHTML=roomSVG(5)+`<div class="hp"><span>Graf Grau</span><div class="bar"><span id="hpb" style="width:100%"></span></div><span id="hpt">${BOSS_HP}/${BOSS_HP}</span></div>`
-  +`<div class="boss-figure" id="grau">${grauSvg()}</div>`;sc.querySelector('svg').style.filter='grayscale(.7)';
-  show('scr-boss');$('#bossHost').innerHTML='';let hp=BOSS_HP,mist=0;
-  const ask=()=>renderQuestion($('#bossHost'),randomQ(SM),ok=>{
-      if(ok){hp--;const g=$('#grau');g.classList.remove('hit');void g.offsetWidth;g.classList.add('hit');
-        $('#hpb').style.width=(hp/BOSS_HP*100)+'%';$('#hpt').textContent=`${hp}/${BOSS_HP}`;
-        sc.querySelector('svg').style.filter=`grayscale(${(.7*hp/BOSS_HP).toFixed(2)})`;
-        if(hp<=0)return bossWin(mist);
-        if(hp===4)return talk(['Grrr! Meine graue Rüstung bekommt Risse … Aber noch habe ich nicht verloren!'],'grau',ask)}
-      else{mist++;if(mist%2===1)return talk([pick(['Hahaha! Falsch! Die Burg bleibt grau!','Siehst du? Ohne Stilmittel ist alles langweilig – genau wie ich es mag!','Ha! Das war wohl nichts. Versuch’s doch noch einmal!'])],'grau',ask)}
-      ask()},'Nächste Frage ›');
-  if(intro)talk(['So, so … du hast also die Farben in meine Burg zurückgebracht.','Aber an mir kommst du nicht vorbei! Ich stelle dir Fragen zu <b>allen 30</b> Stilmitteln.',`Für jede richtige Antwort verliere ich einen Lebenspunkt. Bei ${BOSS_HP} Treffern bin ich besiegt … was natürlich nie passieren wird!`],'grau',ask);
-  else ask()}
-function bossWin(mist){S.boss=true;S.bossMist=Math.min(S.bossMist??99,mist);save();sfx.win();$('#grau').style.opacity='0';$('#grau').style.transform='translate(-50%,-50%) scale(.3) rotate(30deg)';
-  $('#bossScene svg').style.filter='none';$('#bossHost').innerHTML='';
-  setTimeout(()=>talk(['Neeeein! Zu viel Farbe! Zu viele schöne Worte! Ich verschwinde …'],'grau',()=>talk([`Du hast es geschafft, ${esc(S.name)}! Graf Grau ist besiegt und die Stilmittel-Burg leuchtet wieder in allen Farben.`,'Zur Belohnung bekommst du eine Urkunde. Auf dem 🎯 Trainingsplatz kannst du jederzeit weiterüben.'],'lumi',renderEnd)),900)}
+/* ===================== Endgegner ===================== */
+const BOSS_HP=8,BOSS_T=25;let tmr=null;
+function stopTimer(){if(tmr){clearInterval(tmr);tmr=null}}
+function startTimer(sec,onEnd){stopTimer();const bar=$('#bossTimer span'),t0=Date.now();bar.style.width='100%';bar.style.background='var(--yel)';
+  tmr=setInterval(()=>{const left=sec-(Date.now()-t0)/1000;bar.style.width=Math.max(0,left/sec*100)+'%';if(left<6)bar.style.background='var(--red)';
+    if(left<=0){stopTimer();onEnd()}},100);return ()=>Math.max(0,sec-(Date.now()-t0)/1000)}
+function startBoss(){bossFight(!S.boss)}
+function bossFight(intro){const sc=$('#bossScene');let hp=BOSS_HP,lives=3,streak=0;
+  sc.innerHTML=roomSVG(5)+`<div class="hud"><div class="hpw"><span>VOXA</span><div class="bar"><span id="hpb" style="width:100%"></span></div><span id="hpt">${hp}/${hp}</span></div><div class="lives" id="lv">LEBEN ♥♥♥</div></div>`;
+  show('scr-boss');$('#bossHost').innerHTML='';$('#bossTimer span').style.width='100%';
+  const taunts=['Falsch. Genau so funktioniert Manipulation.','Siehst du? Du merkst es nicht einmal.','Ich formuliere – ihr glaubt.','Zu langsam. Zu leicht zu beeinflussen.'];
+  const ask=()=>{let timeLeft=startTimer(BOSS_T,()=>answering&&answering.timeout());
+    renderQuestion($('#bossHost'),randomQ(SM),(ok,btn)=>{stopTimer();
+      if(ok){hp--;streak++;const bonus=Math.round(timeLeft()*4);addXP(150+bonus,btn);const svg=sc.querySelector('svg');svg.classList.remove('voxa-hit');void svg.offsetWidth;svg.classList.add('voxa-hit');
+        $('#hpb').style.width=(hp/BOSS_HP*100)+'%';$('#hpt').textContent=`${hp}/${BOSS_HP}`;svg.style.filter=`saturate(${(.3+.7*hp/BOSS_HP).toFixed(2)})`;
+        if(hp<=0)return bossWin();if(hp===4)return talk(['Fehler … in meinem … Sprachmodell. Unmöglich. Weiter!'],'voxa',ask)}
+      else{lives--;streak=0;$('#lv').textContent='LEBEN '+'♥'.repeat(lives)+'♡'.repeat(3-lives);
+        if(lives<=0)return bossLose();return talk([pick(taunts)],'voxa',ask)}
+      ask()},'Nächste Frage →')};
+  const go=()=>ask();
+  if(intro)talk(['Du bist also die Person, die durch meine Zonen geschlichen ist.','Ich bin VOXA. Ich schreibe die Sätze, die ihr glaubt. Du glaubst, du kennst meine Tricks? Beweise es.',`Regeln: ${BOSS_T} Sekunden pro Frage. ${BOSS_HP} Treffer zerstören meinen Kern. Drei Fehler – und du fliegst raus.`],'voxa',go);
+  else go()}
+function bossLose(){stopTimer();sheet(`<div class="msg"><div class="ava vx">VX</div><div style="flex:1"><div class="who vx">VOXA</div><div class="bubble">Verbindung getrennt. Komm wieder, wenn du bereit bist.</div></div></div>
+  <div class="msg" style="margin-top:12px"><div class="ava">K</div><div style="flex:1"><div class="who">KIRA</div><div class="bubble">Kopf hoch. Trainier kurz die Blitzrunde und greif dann nochmal an.</div></div></div>
+  <div class="actions"><button class="btn" id="l1">⚡ Training</button><button class="btn go" id="l2">Nochmal angreifen</button></div>`,{close:false});
+  $('#l1').onclick=()=>{closeSheet();openTraining()};$('#l2').onclick=()=>{closeSheet();bossFight(false)}}
+function bossWin(){stopTimer();const first=!S.boss;S.boss=true;if(first)S.xp+=500;save();sfx.win();updateTop();$('#bossHost').innerHTML='';
+  const svg=$('#bossScene svg');svg.style.transition='filter 1.5s, opacity 1.5s';svg.style.filter='saturate(0) brightness(.3)';
+  setTimeout(()=>talk(['Kern … kompromittiert … Sprache … nicht mehr … kontrollierbar …'],'voxa',()=>talk([`VOXA ist offline, ${esc(S.name)}. Du erkennst jetzt, wie Sprache wirkt – und wer dich beeinflussen will.${first?' Bonus: +500 XP.':''}`,'Hier ist deine <b>Decoder-Lizenz</b>. Im Training kannst du deinen Blitzrunden-Rekord jagen.'],'kira',renderEnd)),700)}
 
-/* Urkunde */
-function renderEnd(){const d=new Date().toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'});
-  $('#cert').innerHTML=`<div style="width:90px;margin:0 auto">${lumiSvg()}</div><small>Pater-Alois-Grimm-Schule Külsheim · Deutsch</small>
-   <h2>Urkunde</h2><p>Hiermit wird bestätigt, dass</p><div class="nm">${esc(S.name)}</div>
-   <p>alle <b>30 Stilmittel</b> gefunden, alle fünf Tore geöffnet und <b>Graf Grau</b> besiegt hat.</p>
-   <div class="stars">${'⭐'.repeat(starSum())}</div><p><b>${starSum()} von 15 Sternen</b></p>
-   <p><small>Külsheim, den ${d}<br>Lehrer: Thorsten von Plotho-Kettner</small></p>`;show('scr-end')}
+/* Lizenz */
+function renderEnd(){const d=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  const grades=[0,1,2,3,4].map(r=>grade(S.solved[r])).join(' · ');
+  $('#lic').innerHTML=`<div class="row"><div><div class="kicker">DECODE // Pater-Alois-Grimm-Schule Külsheim · Deutsch</div><h2>DECODER-LIZENZ</h2></div><div class="stamp">VOXA OFFLINE</div></div>
+   <div class="nm">${esc(S.name)}</div><p style="margin:0;color:var(--ink2)">hat alle 30 Stilmittel entschlüsselt, fünf Firewalls geknackt und die KI VOXA besiegt.</p>
+   <dl><div><dt>Rang</dt><dd>${rank()}</dd></div><div><dt>XP</dt><dd>${S.xp}</dd></div><div><dt>Blitz-Rekord</dt><dd>${S.blitzBest||'–'}</dd></div></dl>
+   <p class="mono" style="margin:0 0 14px">Zonen-Ratings: ${grades}</p>
+   <small>Külsheim, ${d} · Lehrer: Thorsten von Plotho-Kettner</small>`;show('scr-end')}
 
-/* Training */
-function startTrain(){const pool=SM.filter(s=>S.found[s.id]);const P=pool.length>=4?pool:SM;let streak=0;
-  const stat=()=>$('#trStat').textContent=`✅ ${S.train.ok}/${S.train.all} · 🔥 Serie ${streak} · Rekord ${S.train.best}`;
-  const ask=()=>{stat();renderQuestion($('#trHost'),randomQ(P),ok=>{S.train.all++;if(ok){S.train.ok++;streak++;S.train.best=Math.max(S.train.best,streak)}else streak=0;save();ask()},'Nächste Frage ›')};
-  show('scr-train');if(P===SM&&foundCount()<4)toast('Du übst mit allen 30 Stilmitteln.');ask()}
-$('#bTrain').onclick=startTrain;$('#bTrBack').onclick=renderMap;
+/* ===================== Training ===================== */
+function openTraining(){const P=foundCount()>=4;
+  $('#trWrap').innerHTML=`<div class="qhead"><h2>⚡ TRAINING</h2></div><div class="modes">
+   <button class="mode" id="mBlitz"><div class="kicker">60 Sekunden</div><h3>Blitzrunde</h3><p>So viele richtige Antworten wie möglich. Falsche kosten 3 Sekunden. Rekord: <b>${S.blitzBest||0}</b></p></button>
+   <button class="mode" id="mFree"><div class="kicker">Ohne Zeitdruck</div><h3>Freies Training</h3><p>Endlos üben mit ${P?'deinen entschlüsselten':'allen 30'} Stilmitteln. Bilanz: ${S.train.ok}/${S.train.all}</p></button></div>
+   <div class="actions"><button class="btn ghost" id="trBack">← Map</button></div>`;
+  $('#mBlitz').onclick=blitz;$('#mFree').onclick=freeTrain;$('#trBack').onclick=renderMap;show('scr-train')}
+$('#bTrain').onclick=openTraining;
+const pool=()=>{const p=SM.filter(s=>S.found[s.id]);return p.length>=4?p:SM};
+function freeTrain(){let streak=0;
+  $('#trWrap').innerHTML=`<div class="qhead"><h2>FREIES TRAINING</h2><span class="combo" id="trS"></span></div><div id="trHost"></div><div class="actions"><button class="btn ghost" id="trB">← Zurück</button></div>`;
+  $('#trB').onclick=openTraining;
+  const ask=()=>{$('#trS').textContent=`${S.train.ok}/${S.train.all} · SERIE ${streak}`;
+    renderQuestion($('#trHost'),randomQ(pool()),(ok,btn)=>{S.train.all++;if(ok){S.train.ok++;streak++;addXP(20,btn)}else streak=0;save();ask()},'Nächste →')};ask()}
+function blitz(){let left=60,pts=0,t0=Date.now(),pen=0,over=false;
+  $('#trWrap').innerHTML=`<div class="qhead"><h2>BLITZRUNDE</h2><span class="chip" id="bz">0 PKT</span><span class="chip" id="bt">60s</span></div><div class="timer"><span id="bbar"></span></div><div id="trHost"></div>`;
+  const end=()=>{if(over)return;over=true;stopTimer();answering=null;const rec=pts>(S.blitzBest||0);if(rec)S.blitzBest=pts;addXP(pts*30);save();
+    $('#trHost').innerHTML=`<div class="qcard" style="text-align:center"><div class="kicker">Zeit abgelaufen</div><div class="bigscore">${pts}</div><p>${rec?'▲ NEUER REKORD!':'Rekord: '+S.blitzBest}</p><p class="mono" style="color:var(--lime)">+${pts*30} XP</p>
+     <div class="actions" style="justify-content:center"><button class="btn" id="b1">Zurück</button><button class="btn go" id="b2">Nochmal</button></div></div>`;
+    $('#b1').onclick=openTraining;$('#b2').onclick=blitz;sfx.win()};
+  stopTimer();tmr=setInterval(()=>{left=60-(Date.now()-t0)/1000-pen;const bar=$('#bbar');if(!bar){stopTimer();return}
+    bar.style.width=Math.max(0,left/60*100)+'%';bar.style.background=left<10?'var(--red)':'var(--yel)';$('#bt').textContent=Math.max(0,Math.ceil(left))+'s';if(left<=0)end()},100);
+  const ask=()=>{if(over)return;let q=randomQ(pool());while(q.type!=='mc')q=randomQ(pool());
+    renderQuestion($('#trHost'),q,()=>ask(),'Weiter →');
+    // Blitz: sofort weiter ohne Erklärung
+    $('#trHost').querySelectorAll('.opt').forEach((b,i)=>{b.onclick=()=>{if(over)return;const ok=q.options[i].ok;
+      if(ok){pts++;sfx.ok()}else{pen+=3;sfx.bad()}$('#bz').textContent=pts+' PKT';b.classList.add(ok?'right':'wrong');
+      $('#trHost').querySelectorAll('.opt').forEach(x=>x.disabled=true);setTimeout(ask,ok?250:650)}})};
+  ask()}
 
-/* Lexikon */
-function openLex(){let h=`<h2 style="margin:0 40px 4px 0">📖 Lexikon der Stilmittel</h2><p style="margin:0;color:var(--muted)">${foundCount()} von 30 gefunden. Tippe ein Stilmittel an.</p>`;
-  ROOMS.slice(0,5).forEach((R,r)=>{h+=`<div class="lexroom">${R.icon} ${R.name} <small style="color:var(--muted);font-family:Arial">· ${R.sub}</small></div><div class="lexgrid">`+
-    inRoom(r).map(s=>S.found[s.id]?`<button class="lex" data-id="${s.id}"><span class="e">${s.o}</span><span><b>${s.n}</b></span></button>`:
-      `<div class="lex locked"><span class="e">❔</span><span><b>???</b><small>noch versteckt</small></span></div>`).join('')+'</div>'});
-  sheet(h,{wide:true});document.querySelectorAll('.lex[data-id]').forEach(b=>b.onclick=()=>{const s=byId[b.dataset.id];
-    sheet(infoHTML(s)+`<div class="actions"><button class="btn" id="lb">‹ Zurück zum Lexikon</button></div>`);$('#lb').onclick=openLex})}
+/* Datenbank */
+function openLex(){let h=`<h2 style="margin:0 44px 4px 0">▤ DATENBANK</h2><p class="mono" style="margin:0;color:var(--mute);font-size:.82rem">${foundCount()}/30 entschlüsselt · antippen für Details</p>`;
+  ROOMS.slice(0,5).forEach((R,r)=>{h+=`<div class="lexroom">Zone ${R.code} · ${R.name}</div><div class="lexgrid">`+
+    inRoom(r).map(s=>S.found[s.id]?`<button class="lex" data-id="${s.id}"><small>${s.on.toUpperCase()}</small>${s.n}</button>`:`<div class="lex locked"><small>VERSCHLÜSSELT</small>█████</div>`).join('')+'</div>'});
+  sheet(h,{wide:true});document.querySelectorAll('.lex[data-id]').forEach(b=>b.onclick=()=>{sheet(infoHTML(byId[b.dataset.id])+`<div class="actions"><button class="btn" id="lb">← Datenbank</button></div>`);$('#lb').onclick=openLex})}
 $('#bLex').onclick=openLex;
 
-/* Start */
-$('#brandlumi').innerHTML=LUMI;
 renderTitle();
 </script>
 </body>
