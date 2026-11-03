@@ -50,3 +50,9 @@ Bevor die App an Eltern oder Schülerinnen und Schüler weitergegeben wird, soll
 
 Die Schuldaten (Kontakte, Ferien, Links) stehen in `alltag.html` im Block `<script type="application/json" id="pags-data">`.
 Stand der Inhalte: Oktober 2026, übernommen von pags-kuelsheim.de.
+
+## Deutsch: Die Stilmittel-Burg
+
+`deutsch/stilmittel.html` – Grafikadventure für Klasse 9: 30 rhetorische Stilmittel in fünf Räumen entdecken, an den Toren Rätsel lösen, Graf Grau besiegen, Urkunde drucken, Trainingsplatz zum Weiterüben. Spielstand bleibt im Browser des Geräts.
+Link: `https://ratpoison-de.github.io/pags-app/deutsch/stilmittel.html` · QR-Code: `deutsch/stilmittel-qr.png`
+Inhalte nach der Übersicht „Rhetorische Mittel“ von lehrerfreund.de.
