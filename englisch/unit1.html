@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>English 9 · Unit 1</title>
+<meta name="description" content="Englisch Klasse 9: Modal verbs, Comparison, Letter of application – Erklärungen und interaktive Übungen">
+<style>
+:root{
+  --bg:#f6f8f3; --card:#ffffff; --ink:#1d2a1a; --muted:#5b6b57; --line:#dfe6d8;
+  --accent:#5a9e1f; --accent-ink:#ffffff; --accent-soft:#eaf4df;
+  --pink:#d6336c; --pink-soft:#fde7ef;
+  --ok:#2f8f3a; --ok-soft:#e3f5e5; --bad:#c43c2b; --bad-soft:#fbe6e3; --hint:#8a6d00; --hint-soft:#fff6d6;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121611; --card:#1b2119; --ink:#e6eee2; --muted:#a3b19d; --line:#2e382b;
+    --accent:#7cc443; --accent-ink:#0e140c; --accent-soft:#233019;
+    --pink:#f06595; --pink-soft:#3a1f29;
+    --ok:#6fd17b; --ok-soft:#1d3220; --bad:#ff8a7a; --bad-soft:#3b1f1b; --hint:#f1cd5a; --hint-soft:#352d13;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Arial, "Liberation Sans", Helvetica, sans-serif}
+header{background:var(--accent);color:var(--accent-ink);padding:18px 16px 14px}
+header .wrap{max-width:860px;margin:0 auto}
+header small{opacity:.85;font-weight:bold;letter-spacing:.04em;text-transform:uppercase}
+header h1{margin:2px 0 4px;font-size:1.55rem;line-height:1.2}
+header p{margin:0;opacity:.9}
+.progress{margin-top:12px;height:8px;border-radius:99px;background:rgba(255,255,255,.35);overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--accent-ink);transition:width .4s}
+#score{font-size:.9rem;margin-top:6px}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+nav .wrap{max-width:860px;margin:0 auto;display:flex;gap:4px;padding:6px 10px;overflow-x:auto}
+nav button{flex:1 0 auto;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:bold;padding:10px 12px;border-radius:10px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{background:var(--accent-soft);color:var(--ink)}
+main{max-width:860px;margin:0 auto;padding:16px}
+section.tab{display:none}
+section.tab.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:0 0 16px}
+.card h2{margin:0 0 8px;font-size:1.2rem}
+.card h3{margin:16px 0 6px;font-size:1.02rem}
+.tag{display:inline-block;font-size:.75rem;font-weight:bold;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--ink);margin-bottom:6px}
+.tag.pink{background:var(--pink-soft)}
+.input{border-left:4px solid var(--accent)}
+.input.pink{border-left-color:var(--pink)}
+table{width:100%;border-collapse:collapse;font-size:.95rem;margin:8px 0}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+.tablewrap{overflow-x:auto}
+b.k{color:var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) b.k{color:var(--accent)}}
+.de{color:var(--muted);font-size:.9rem}
+.box{background:var(--hint-soft);border-radius:10px;padding:10px 12px;margin:10px 0}
+ol.ex{padding-left:0;list-style:none;margin:8px 0;counter-reset:n}
+ol.ex>li{counter-increment:n;padding:10px 0;border-bottom:1px dashed var(--line);display:flex;gap:10px;align-items:flex-start}
+ol.ex>li::before{content:counter(n);flex:0 0 26px;height:26px;border-radius:50%;background:var(--accent-soft);font-weight:bold;font-size:.85rem;display:flex;align-items:center;justify-content:center;margin-top:2px}
+ol.ex>li .q{flex:1;min-width:0}
+input[type=text],select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;max-width:100%}
+input[type=text]{width:11em}
+input.wide{width:100%}
+input.ok,select.ok{border-color:var(--ok);background:var(--ok-soft)}
+input.bad,select.bad{border-color:var(--bad);background:var(--bad-soft)}
+.fb{display:block;font-size:.88rem;margin-top:4px}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.choices{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.choices button{font:inherit;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:99px;padding:5px 14px;cursor:pointer}
+.choices button.ok{border-color:var(--ok);background:var(--ok-soft)}
+.choices button.bad{border-color:var(--bad);background:var(--bad-soft)}
+.choices button:disabled{cursor:default}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.btn{font:inherit;font-weight:bold;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:var(--accent-soft);color:var(--ink)}
+.btn.pink{background:var(--pink);color:#fff}
+.result{font-weight:bold}
+.sort li{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:6px 0;border:1.5px solid var(--line);border-radius:10px;background:var(--bg)}
+.sort li span{flex:1}
+.sort li button{font:inherit;border:0;background:var(--accent-soft);color:var(--ink);border-radius:8px;width:34px;height:32px;cursor:pointer}
+.sort li.ok{border-color:var(--ok);background:var(--ok-soft)}
+.sort li.bad{border-color:var(--bad);background:var(--bad-soft)}
+.sort{list-style:none;padding:0;margin:8px 0}
+.letter{background:var(--pink-soft);border-radius:10px;padding:14px;font-size:.95rem}
+.letter p{margin:0 0 8px}
+.letter .r{text-align:right}
+.lbl{display:inline-block;font-size:.72rem;font-weight:bold;background:var(--pink);color:#fff;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:middle}
+.ad{border:2px dashed var(--pink);border-radius:12px;padding:12px 14px;margin:8px 0}
+.ad h4{margin:0 0 4px}
+textarea{width:100%;min-height:320px;line-height:1.5}
+.check{list-style:none;padding:0;margin:8px 0;display:grid;grid-template-columns:1fr;gap:4px}
+@media(min-width:600px){.check{grid-template-columns:1fr 1fr}}
+.check li::before{content:"○ ";color:var(--muted)}
+.check li.done::before{content:"✔ ";color:var(--ok)}
+.check li.done{color:var(--ok)}
+footer{max-width:860px;margin:0 auto;padding:8px 16px 32px;color:var(--muted);font-size:.85rem}
+details summary{cursor:pointer;font-weight:bold;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <small>English · Klasse 9 · Unit 1</small>
+    <h1>Modal verbs · Comparison · Letter of application</h1>
+    <p>Lies zuerst den Input, dann übe. Jede Übung kannst du sofort prüfen.</p>
+    <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+    <div id="score">0 Punkte</div>
+  </div>
+</header>
+
+<nav><div class="wrap" role="tablist">
+  <button role="tab" data-tab="t1" aria-selected="true">1 Modal verbs</button>
+  <button role="tab" data-tab="t2" aria-selected="false">2 Comparison</button>
+  <button role="tab" data-tab="t3" aria-selected="false">3 Application</button>
+  <button role="tab" data-tab="t4" aria-selected="false">4 Mix-Test</button>
+</div></nav>
+
+<main>
+
+<!-- ================= TAB 1: MODALS ================= -->
+<section class="tab active" id="t1">
+  <div class="card input">
+    <span class="tag">Input · G1</span>
+    <h2>Modal verbs and their substitutes</h2>
+    <p><b>can, must, mustn't</b> gibt es nur im <b>simple present</b>. Für andere Zeiten brauchst du <b>Ersatzformen</b>. Nur <b>can</b> hat eine eigene Vergangenheitsform: <b>could</b>.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Bedeutung</th><th>Present</th><th>Past</th><th>Future</th></tr>
+      <tr><td>können<br><span class="de">Fähigkeit</span></td><td><b class="k">can</b> / am, is, are able to</td><td><b class="k">could</b> / was, were able to</td><td><b class="k">will be able to</b></td></tr>
+      <tr><td>dürfen<br><span class="de">Erlaubnis</span></td><td><b class="k">can</b> / am, is, are allowed to</td><td><b class="k">could</b> / was, were allowed to</td><td><b class="k">will be allowed to</b></td></tr>
+      <tr><td>nicht dürfen<br><span class="de">Verbot</span></td><td><b class="k">mustn't</b> / can't / isn't allowed to</td><td>wasn't / weren't allowed to</td><td>won't be allowed to</td></tr>
+      <tr><td>müssen<br><span class="de">Pflicht</span></td><td><b class="k">must</b> / have to, has to</td><td><b class="k">had to</b></td><td><b class="k">will have to</b></td></tr>
+      <tr><td>nicht müssen<br><span class="de">keine Pflicht</span></td><td>don't / doesn't have to · <b class="k">needn't</b></td><td>didn't have to</td><td>won't have to</td></tr>
+      <tr><td>sollen<br><span class="de">Rat</span></td><td><b class="k">should / shouldn't</b></td><td colspan="2" class="de">(nur Gegenwart nötig)</td></tr>
+    </table></div>
+    <div class="box">⚠️ <b>Falscher Freund:</b> <b>mustn't</b> heißt „<u>nicht dürfen</u>“ – nicht „nicht müssen“!<br>
+    You <b>mustn't</b> use your phone. = Du <i>darfst</i> dein Handy nicht benutzen.<br>
+    You <b>don't have to / needn't</b> come. = Du <i>musst</i> nicht kommen.</div>
+  </div>
+
+  <div class="card" data-ex="m1">
+    <span class="tag">Übung 1.1</span>
+    <h2>Use the correct form.</h2>
+    <p class="de">Achte auf die Zeit (Signalwörter!). Schreibe nur die fehlende Form.</p>
+    <ol class="ex">
+      <li><div class="q">Yesterday I <input type="text" data-a="had to"> (must) clean my room.</div></li>
+      <li><div class="q">Next year my sister <input type="text" data-a="will be able to|'ll be able to"> (can) drive a car.</div></li>
+      <li><div class="q">When she was five, Mia <input type="text" data-a="could|was able to"> (can) ride a bike.</div></li>
+      <li><div class="q">At our school we <input type="text" data-a="don't have to|needn't|do not have to"> (not must) wear a uniform. <span class="de">(keine Pflicht)</span></div></li>
+      <li><div class="q">Last summer we <input type="text" data-a="couldn't|weren't able to|could not|were not able to"> (not can) go to the beach – it rained all week.</div></li>
+      <li><div class="q">Tomorrow you <input type="text" data-a="won't be allowed to|will not be allowed to"> (not can) use your phone in the test. <span class="de">(Erlaubnis)</span></div></li>
+      <li><div class="q">My little brother <input type="text" data-a="will have to|'ll have to"> (must) go to the dentist next Monday.</div></li>
+      <li><div class="q">Last night we <input type="text" data-a="were allowed to|could"> (can) stay up until midnight. <span class="de">(Erlaubnis)</span></div></li>
+      <li><div class="q">She <input type="text" data-a="didn't have to|did not have to"> (not must) get up early yesterday – it was Sunday.</div></li>
+      <li><div class="q">In the museum, visitors <input type="text" data-a="aren't allowed to|mustn't|can't|are not allowed to|must not|cannot"> (not can) touch the paintings. <span class="de">(Verbot)</span></div></li>
+      <li><div class="q">Did you <input type="text" data-a="have to"> (must) wait long for the bus this morning?</div></li>
+      <li><div class="q">Don't worry. I'm sure you <input type="text" data-a="will be able to|'ll be able to"> (can) find a good job after school.</div></li>
+    </ol>
+    <div class="actions"><button class="btn" data-check>Prüfen</button><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="m2">
+    <span class="tag">Übung 1.2</span>
+    <h2>Choose the right word.</h2>
+    <ol class="ex">
+      <li><div class="q">You ___ smoke in here. It's forbidden.<div class="choices" data-a="mustn't"><button>mustn't</button><button>needn't</button><button>don't have to</button></div></div></li>
+      <li><div class="q">You ___ bring any food. There will be a buffet.<div class="choices" data-a="needn't"><button>mustn't</button><button>needn't</button><button>shouldn't</button></div></div></li>
+      <li><div class="q">It's freezing outside. You ___ wear a warm jacket.<div class="choices" data-a="should"><button>mustn't</button><button>should</button><button>needn't</button></div></div></li>
+      <li><div class="q">I ___ finish my project last week, so I stayed at home.<div class="choices" data-a="had to"><button>must</button><button>have to</button><button>had to</button></div></div></li>
+      <li><div class="q">___ you be able to help me tomorrow?<div class="choices" data-a="Will"><button>Can</button><button>Will</button><button>Did</button></div></div></li>
+      <li><div class="q">Tom ___ swim when he was three. He learned it very early.<div class="choices" data-a="could"><button>can</button><button>could</button><button>will be able to</button></div></div></li>
+      <li><div class="q">Students ___ use a dictionary in the test. The teacher said it's OK.<div class="choices" data-a="are allowed to"><button>are allowed to</button><button>mustn't</button><button>had to</button></div></div></li>
+      <li><div class="q">My dad ___ work tomorrow. It's a holiday.<div class="choices" data-a="won't have to"><button>mustn't</button><button>won't have to</button><button>won't be allowed to</button></div></div></li>
+    </ol>
+    <div class="actions"><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="m3">
+    <span class="tag">Übung 1.3</span>
+    <h2>Translate into English.</h2>
+    <p class="de">Ganze Sätze. Kleine Abweichungen (z. B. Satzzeichen) sind egal.</p>
+    <ol class="ex">
+      <li><div class="q">Ich musste gestern nicht arbeiten.<br><input type="text" class="wide" data-a="I didn't have to work yesterday|Yesterday I didn't have to work"></div></li>
+      <li><div class="q">Wir durften keine Fotos machen.<br><input type="text" class="wide" data-a="We weren't allowed to take photos|We weren't allowed to take any photos|We couldn't take photos|We couldn't take any photos|We weren't allowed to take pictures|We weren't allowed to take any pictures"></div></li>
+      <li><div class="q">Sie wird morgen kommen können.<br><input type="text" class="wide" data-a="She will be able to come tomorrow|She'll be able to come tomorrow"></div></li>
+      <li><div class="q">Du brauchst nicht zu warten.<br><input type="text" class="wide" data-a="You needn't wait|You don't have to wait|You needn't wait for me|You don't need to wait"></div></li>
+      <li><div class="q">Du solltest mehr Wasser trinken.<br><input type="text" class="wide" data-a="You should drink more water"></div></li>
+      <li><div class="q">Wirst du am Samstag zur Party gehen dürfen?<br><input type="text" class="wide" data-a="Will you be allowed to go to the party on Saturday|Will you be allowed to go to the party on saturday"></div></li>
+    </ol>
+    <div class="actions"><button class="btn" data-check>Prüfen</button><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+</section>
+
+<!-- ================= TAB 2: COMPARISON ================= -->
+<section class="tab" id="t2">
+  <div class="card input">
+    <span class="tag">Input · G2</span>
+    <h2>Comparison of adjectives and adverbs</h2>
+    <h3>Adjektiv oder Adverb?</h3>
+    <p>Ein <b>Adjektiv</b> beschreibt eine Person oder Sache: <i>She is a <b class="k">careful</b> driver.</i><br>
+    Ein <b>Adverb</b> beschreibt, <b>wie</b> jemand etwas tut: <i>She drives <b class="k">carefully</b>.</i> → meistens Adjektiv + <b>-ly</b>.</p>
+    <h3>Adjektive steigern</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Regel</th><th>Grundform</th><th>Komparativ</th><th>Superlativ</th></tr>
+      <tr><td>1 Silbe</td><td>small</td><td>small<b class="k">er</b></td><td>the small<b class="k">est</b></td></tr>
+      <tr><td>2 Silben auf -y</td><td>happy</td><td>happ<b class="k">ier</b></td><td>the happ<b class="k">iest</b></td></tr>
+      <tr><td>2+ Silben</td><td>expensive</td><td><b class="k">more</b> expensive</td><td><b class="k">the most</b> expensive</td></tr>
+      <tr><td>Konsonant verdoppeln</td><td>big, hot</td><td>big<b class="k">g</b>er, hot<b class="k">t</b>er</td><td>the big<b class="k">g</b>est, the hot<b class="k">t</b>est</td></tr>
+      <tr><td>unregelmäßig</td><td>good · bad</td><td>better · worse</td><td>the best · the worst</td></tr>
+    </table></div>
+    <h3>Adverbien steigern</h3>
+    <p>Adverbien auf <b>-ly</b> steigerst du mit <b>more</b> / <b>(the) most</b>: slowly → more slowly → (the) most slowly.<br>
+    <b>fast</b> und <b>hard</b> wie einsilbige Adjektive: faster / (the) fastest, harder / (the) hardest.</p>
+    <div class="box">🔍 <b>Achtung:</b> good (Adjektiv) → <b>well</b> (Adverb) → better → (the) best.<br><i>He is a <b>good</b> singer. He sings <b>well</b>.</i></div>
+    <h3>Vergleichen</h3>
+    <div class="tablewrap"><table>
+      <tr><td><b class="k">… -er / more … than</b></td><td>New York is bigger <b>than</b> Berlin.</td><td class="de">größer als</td></tr>
+      <tr><td><b class="k">as … as</b></td><td>Kate works <b>as</b> carefully <b>as</b> Kim.</td><td class="de">so sorgfältig wie</td></tr>
+      <tr><td><b class="k">not as … as</b></td><td>Phones are <b>not as</b> expensive <b>as</b> laptops.</td><td class="de">nicht so teuer wie</td></tr>
+      <tr><td><b class="k">less … than</b></td><td>Phones are <b>less</b> expensive <b>than</b> laptops.</td><td class="de">weniger teuer als</td></tr>
+    </table></div>
+    <div class="box">⚠️ Deutsch „als“ → <b>than</b> (nicht <i>then</i>!). Deutsch „wie“ → <b>as … as</b>.</div>
+  </div>
+
+  <div class="card" data-ex="c1">
+    <span class="tag">Übung 2.1</span>
+    <h2>Complete the table.</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Adjective</th><th>Comparative</th><th>Superlative</th></tr>
+      <tr><td>cheap</td><td><input type="text" data-a="cheaper"></td><td><input type="text" data-a="the cheapest|cheapest"></td></tr>
+      <tr><td>easy</td><td><input type="text" data-a="easier"></td><td><input type="text" data-a="the easiest|easiest"></td></tr>
+      <tr><td>big</td><td><input type="text" data-a="bigger"></td><td><input type="text" data-a="the biggest|biggest"></td></tr>
+      <tr><td>interesting</td><td><input type="text" data-a="more interesting"></td><td><input type="text" data-a="the most interesting|most interesting"></td></tr>
+      <tr><td>funny</td><td><input type="text" data-a="funnier"></td><td><input type="text" data-a="the funniest|funniest"></td></tr>
+      <tr><td>good</td><td><input type="text" data-a="better"></td><td><input type="text" data-a="the best|best"></td></tr>
+      <tr><td>bad</td><td><input type="text" data-a="worse"></td><td><input type="text" data-a="the worst|worst"></td></tr>
+      <tr><td>important</td><td><input type="text" data-a="more important"></td><td><input type="text" data-a="the most important|most important"></td></tr>
+    </table></div>
+    <div class="actions"><button class="btn" data-check>Prüfen</button><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="c2">
+    <span class="tag">Übung 2.2</span>
+    <h2>Adjective or adverb?</h2>
+    <ol class="ex">
+      <li><div class="q">Lena is a very ___ driver.<div class="choices" data-a="careful"><button>careful</button><button>carefully</button></div></div></li>
+      <li><div class="q">Lena always drives ___.<div class="choices" data-a="carefully"><button>careful</button><button>carefully</button></div></div></li>
+      <li><div class="q">The maths test was really ___.<div class="choices" data-a="easy"><button>easy</button><button>easily</button></div></div></li>
+      <li><div class="q">Jonas answered all the questions ___.<div class="choices" data-a="easily"><button>easy</button><button>easily</button></div></div></li>
+      <li><div class="q">You speak English very ___!<div class="choices" data-a="well"><button>good</button><button>well</button></div></div></li>
+      <li><div class="q">That's a ___ idea.<div class="choices" data-a="good"><button>good</button><button>well</button></div></div></li>
+      <li><div class="q">Max can run really ___.<div class="choices" data-a="fast"><button>fast</button><button>fastly</button></div></div></li>
+      <li><div class="q">Please talk ___ – the baby is sleeping.<div class="choices" data-a="quietly"><button>quiet</button><button>quietly</button></div></div></li>
+    </ol>
+    <div class="actions"><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="c3">
+    <span class="tag">Übung 2.3</span>
+    <h2>Use the correct form.</h2>
+    <p class="de">Komparativ, Superlativ oder Grundform – entscheide selbst. Beim Superlativ: mit <b>the</b>.</p>
+    <ol class="ex">
+      <li><div class="q">My bag is <input type="text" data-a="heavier"> (heavy) than yours.</div></li>
+      <li><div class="q">Mount Everest is <input type="text" data-a="the highest"> (high) mountain in the world.</div></li>
+      <li><div class="q">The film was <input type="text" data-a="more exciting"> (exciting) than the book.</div></li>
+      <li><div class="q">Of all the girls in the choir, Emma sings <input type="text" data-a="the most beautifully|most beautifully"> (beautifully).</div></li>
+      <li><div class="q">Can you speak <input type="text" data-a="more slowly"> (slowly), please? I can't understand you.</div></li>
+      <li><div class="q">Jonas plays football <input type="text" data-a="better"> (well) than his brother.</div></li>
+      <li><div class="q">Tim works <input type="text" data-a="harder"> (hard) than anyone else in our class.</div></li>
+      <li><div class="q">My marks are bad, but Ben's are even <input type="text" data-a="worse"> (bad).</div></li>
+      <li><div class="q">Our new teacher explains things <input type="text" data-a="more clearly"> (clearly) than our old one.</div></li>
+      <li><div class="q">A bike is not as <input type="text" data-a="fast"> (fast) as a car.</div></li>
+      <li><div class="q">Today is <input type="text" data-a="the hottest"> (hot) day of the year.</div></li>
+      <li><div class="q">Who in your family gets up <input type="text" data-a="the earliest|earliest"> (early)?</div></li>
+    </ol>
+    <div class="actions"><button class="btn" data-check>Prüfen</button><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="c4">
+    <span class="tag">Übung 2.4</span>
+    <h2>than or as?</h2>
+    <ol class="ex">
+      <li><div class="q">My brother is taller ___ me.<div class="choices" data-a="than"><button>than</button><button>as</button><button>then</button></div></div></li>
+      <li><div class="q">I'm not as old ___ you.<div class="choices" data-a="as"><button>than</button><button>as</button><button>like</button></div></div></li>
+      <li><div class="q">Kate writes as neatly ___ Nora.<div class="choices" data-a="as"><button>than</button><button>as</button><button>like</button></div></div></li>
+      <li><div class="q">Trains are less expensive ___ planes.<div class="choices" data-a="than"><button>than</button><button>as</button><button>then</button></div></div></li>
+    </ol>
+    <div class="actions"><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+</section>
+
+<!-- ================= TAB 3: APPLICATION ================= -->
+<section class="tab" id="t3">
+  <div class="card input pink">
+    <span class="tag pink">Input · S13</span>
+    <h2>Writing a letter of application</h2>
+    <p>Ein Bewerbungsschreiben ist ein <b>formeller Brief</b>. Diese Teile gehören in genau dieser Reihenfolge hinein:</p>
+    <div class="letter">
+      <p class="r"><span class="lbl">1</span>Your address<br>Bahnhofstraße 5<br>97900 Külsheim<br>Germany</p>
+      <p><span class="lbl">2</span>Mr Daniel Hughes<br>Lakeside Adventure Camp<br>22 Shore Road<br>Galway, Ireland</p>
+      <p class="r"><span class="lbl">3</span>3rd November 2026</p>
+      <p><span class="lbl">4</span><b>Re:</b> Your advertisement for summer helpers</p>
+      <p><span class="lbl">5</span>Dear Mr Hughes,</p>
+      <p><span class="lbl">6</span><i>1. Absatz:</i> Wer bist du? Für welche Stelle bewirbst du dich? Wo hast du die Anzeige gesehen?</p>
+      <p><span class="lbl">7</span><i>2. Absatz:</i> Qualifikationen, Erfahrungen, Stärken. Warum bist du die richtige Person? Warum willst du die Stelle?</p>
+      <p><span class="lbl">8</span><i>Schluss:</i> I look forward to hearing from you.</p>
+      <p><span class="lbl">9</span>Yours sincerely,<br>Unterschrift<br>Name</p>
+      <p><span class="lbl">10</span>Encl.: CV <span class="de">(Anlage: Lebenslauf)</span></p>
+    </div>
+    <h3>Wichtige Regeln</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Anrede</th><th>Grußformel</th></tr>
+      <tr><td>Dear <b>Mr</b> / <b>Ms</b> Hughes, <span class="de">(Name bekannt)</span></td><td><b class="k">Yours sincerely,</b></td></tr>
+      <tr><td>Dear Sir or Madam, <span class="de">(Name unbekannt)</span></td><td><b class="k">Yours faithfully,</b></td></tr>
+    </table></div>
+    <p>✔ Keine Kurzformen: <b>I am</b> statt <i>I'm</i>, <b>I would</b> statt <i>I'd</i>.<br>
+    ✔ Datum im englischen Format: <b>3rd November 2026</b>.<br>
+    ✔ <b>Ms</b> für Frauen (egal ob verheiratet).<br>
+    ✔ Am Ende genau auf Rechtschreib- und Grammatikfehler prüfen!</p>
+    <h3>Useful phrases</h3>
+    <div class="tablewrap"><table>
+      <tr><td>I am writing to apply for the job as …</td><td class="de">Hiermit bewerbe ich mich als …</td></tr>
+      <tr><td>I saw your advertisement in / on …</td><td class="de">Ich habe Ihre Anzeige in / auf … gesehen.</td></tr>
+      <tr><td>I am 15 years old and I go to … school.</td><td class="de">Ich bin 15 und besuche die …schule.</td></tr>
+      <tr><td>I have experience in …</td><td class="de">Ich habe Erfahrung in …</td></tr>
+      <tr><td>I am reliable / friendly / hard-working.</td><td class="de">Ich bin zuverlässig / freundlich / fleißig.</td></tr>
+      <tr><td>I can work well in a team.</td><td class="de">Ich kann gut im Team arbeiten.</td></tr>
+      <tr><td>I believe that I am well-qualified for this job.</td><td class="de">Ich glaube, dass ich für die Stelle gut geeignet bin.</td></tr>
+      <tr><td>This job would give me the chance to …</td><td class="de">Diese Stelle würde mir die Chance geben, …</td></tr>
+      <tr><td>Thank you for taking the time to consider my application.</td><td class="de">Danke, dass Sie sich Zeit für meine Bewerbung nehmen.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card" data-ex="a1">
+    <span class="tag pink">Übung 3.1</span>
+    <h2>Put the parts in the right order.</h2>
+    <p class="de">Sortiere mit den Pfeilen. Dann prüfen.</p>
+    <ul class="sort" id="sortlist"></ul>
+    <div class="actions"><button class="btn pink" data-sortcheck>Prüfen</button><button class="btn ghost" data-sortshuffle>Neu mischen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="a2">
+    <span class="tag pink">Übung 3.2</span>
+    <h2>Match the phrases.</h2>
+    <p class="de">Wähle die passende englische Formulierung.</p>
+    <ol class="ex" id="matchlist"></ol>
+    <div class="actions"><button class="btn pink" data-check>Prüfen</button><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="a3">
+    <span class="tag pink">Übung 3.3</span>
+    <h2>Formal or not?</h2>
+    <ol class="ex">
+      <li><div class="q">You don't know the name of the person. You start with …<div class="choices" data-a="Dear Sir or Madam,"><button>Hi there,</button><button>Dear Sir or Madam,</button><button>Dear Friend,</button></div></div></li>
+      <li><div class="q">You started with „Dear Sir or Madam,“. You end with …<div class="choices" data-a="Yours faithfully,"><button>Yours sincerely,</button><button>Yours faithfully,</button><button>Love,</button></div></div></li>
+      <li><div class="q">You started with „Dear Ms Reed,“. You end with …<div class="choices" data-a="Yours sincerely,"><button>Yours sincerely,</button><button>Yours faithfully,</button><button>Bye,</button></div></div></li>
+      <li><div class="q">Which sentence is right for a letter of application?<div class="choices" data-a="I am very interested in this job."><button>I'm super into this job!</button><button>I am very interested in this job.</button><button>This job is cool.</button></div></div></li>
+      <li><div class="q">Which date is written correctly?<div class="choices" data-a="3rd November 2026"><button>3.11.26</button><button>3rd November 2026</button><button>November, the 3.</button></div></div></li>
+      <li><div class="q">What does „Encl.: CV“ mean?<div class="choices" data-a="Anlage: Lebenslauf"><button>Anlage: Lebenslauf</button><button>Kopie an: Chef</button><button>Ende des Briefes</button></div></div></li>
+    </ol>
+    <div class="actions"><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+
+  <div class="card" data-ex="a4">
+    <span class="tag pink">Übung 3.4 · Schreibaufgabe</span>
+    <h2>Write your own letter of application.</h2>
+    <div class="ad">
+      <h4>🌊 Summer job in Ireland!</h4>
+      <p style="margin:0">Lakeside Adventure Camp is looking for <b>young helpers (15+)</b> for July and August. You help in the kitchen, look after children (8–12) and organize games. Good English is important.<br>
+      Send your application to: <b>Mr Daniel Hughes, Lakeside Adventure Camp, 22 Shore Road, Galway, Ireland</b>.<br>
+      <span class="de">Seen on: www.teen-jobs-abroad.com, October 2026</span></p>
+    </div>
+    <p class="de">Schreibe mindestens 120 Wörter. Benutze mindestens <b>ein Modalverb / eine Ersatzform</b> und <b>einen Vergleich</b>. Die Checkliste prüft automatisch mit. Dein Text bleibt auf diesem Gerät gespeichert.</p>
+    <textarea id="letter" spellcheck="true" placeholder="Bahnhofstraße 5&#10;97900 Külsheim&#10;Germany&#10;&#10;Mr Daniel Hughes&#10;…"></textarea>
+    <ul class="check" id="checklist"></ul>
+    <div class="actions"><button class="btn pink" id="copyLetter">Text kopieren</button><button class="btn ghost" id="dlLetter">Als .txt speichern</button><span class="result" id="wc">0 Wörter</span></div>
+    <details><summary>Musterlösung anzeigen (erst nach dem Schreiben!)</summary>
+      <div class="letter" style="margin-top:8px">
+        <p class="r">Bahnhofstraße 5<br>97900 Külsheim<br>Germany</p>
+        <p>Mr Daniel Hughes<br>Lakeside Adventure Camp<br>22 Shore Road<br>Galway, Ireland</p>
+        <p class="r">3rd November 2026</p>
+        <p><b>Re:</b> Your advertisement for summer helpers</p>
+        <p>Dear Mr Hughes,</p>
+        <p>I am writing to apply for the job as a summer helper at Lakeside Adventure Camp, as advertised on www.teen-jobs-abroad.com in October 2026. I am 15 years old and I go to the Pater-Alois-Grimm-Schule in Külsheim, Germany.</p>
+        <p>I believe that I am well-qualified for this job. Last year I had to look after my two younger cousins every afternoon, so I know how to organize games for children. I also help in our kitchen at home and I can cook simple meals. My friends say I am more patient than most people of my age, and I am reliable and hard-working. My English is good, so I will be able to talk to children and guests from other countries.<br>
+        I would like to spend my summer abroad because it is the best way to improve my English and to get work experience.</p>
+        <p>Thank you for taking the time to consider my application. I look forward to hearing from you.</p>
+        <p>Yours sincerely,<br><i>Lea Schmitt</i><br>Lea Schmitt</p>
+        <p>Encl.: CV</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ================= TAB 4: MIX ================= -->
+<section class="tab" id="t4">
+  <div class="card" data-ex="x1">
+    <span class="tag">Mix-Test</span>
+    <h2>Find the mistake – write the correct word.</h2>
+    <p class="de">In jedem Satz ist <b>ein</b> Fehler. Schreibe nur das richtige Wort / die richtigen Wörter.</p>
+    <ol class="ex">
+      <li><div class="q">Yesterday I must go to the doctor.<br>→ <input type="text" data-a="had to"></div></li>
+      <li><div class="q">She sings more beautiful than her sister.<br>→ <input type="text" data-a="more beautifully"></div></li>
+      <li><div class="q">My phone is more cheap than yours.<br>→ <input type="text" data-a="cheaper"></div></li>
+      <li><div class="q">Next week we will can visit our grandma.<br>→ <input type="text" data-a="will be able to|be able to"></div></li>
+      <li><div class="q">You speak German very good.<br>→ <input type="text" data-a="well"></div></li>
+      <li><div class="q">He is older then me.<br>→ <input type="text" data-a="than"></div></li>
+      <li><div class="q">Dear Sir or Madam, … Yours sincerely,<br>→ <input type="text" data-a="Yours faithfully|Yours faithfully,"></div></li>
+      <li><div class="q">This is the most good pizza in town.<br>→ <input type="text" data-a="the best|best"></div></li>
+      <li><div class="q">You mustn't pay. The concert is free.<br>→ <input type="text" data-a="needn't|don't have to|do not have to|need not"></div></li>
+      <li><div class="q">I am as tall than my father.<br>→ <input type="text" data-a="as"></div></li>
+    </ol>
+    <div class="actions"><button class="btn" data-check>Prüfen</button><button class="btn ghost" data-reset>Zurücksetzen</button><span class="result"></span></div>
+  </div>
+  <div class="card">
+    <h2>Wie lief's?</h2>
+    <p id="summary" class="de">Mach die Übungen in allen Teilen – hier siehst du dann deine Gesamtpunktzahl.</p>
+    <div class="actions"><button class="btn ghost" id="resetAll">Alles zurücksetzen</button></div>
+  </div>
+</section>
+
+</main>
+<footer>Pater-Alois-Grimm-Schule Külsheim · Englisch Klasse 9 · Übungen zu Unit 1 (G1, G2, S13) · erstellt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+(function(){
+  "use strict";
+  var store = {
+    get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+    set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  };
+
+  /* ---------- Tabs ---------- */
+  var tabs = document.querySelectorAll("nav button");
+  function show(id){
+    tabs.forEach(function(b){b.setAttribute("aria-selected", b.dataset.tab===id ? "true":"false");});
+    document.querySelectorAll("section.tab").forEach(function(s){s.classList.toggle("active", s.id===id);});
+    store.set("en9u1-tab", id);
+    window.scrollTo({top:0});
+  }
+  tabs.forEach(function(b){b.addEventListener("click",function(){show(b.dataset.tab);});});
+  var saved = store.get("en9u1-tab"); if(saved && document.getElementById(saved)) show(saved);
+
+  /* ---------- Normalizer ---------- */
+  function norm(s){
+    s = (s||"").toLowerCase().replace(/[’‘´`]/g,"'").replace(/[.!?,;:]+/g," ").replace(/\s+/g," ").trim();
+    s = s.replace(/\bwon't\b/g,"will not").replace(/\bcan't\b/g,"can not").replace(/\bcannot\b/g,"can not")
+         .replace(/\bshan't\b/g,"shall not").replace(/n't\b/g," not").replace(/'ll\b/g," will")
+         .replace(/\bi'm\b/g,"i am").replace(/'re\b/g," are").replace(/'s\b/g," is").replace(/'d\b/g," would");
+    return s.replace(/\s+/g," ").trim();
+  }
+  function accepted(el){ return el.dataset.a.split("|").map(norm); }
+
+  /* ---------- Scoring ---------- */
+  var scores = {};
+  var totals = {};
+  function updateScore(){
+    var got=0, tot=0;
+    Object.keys(totals).forEach(function(k){ tot+=totals[k]; got+=(scores[k]||0); });
+    document.getElementById("score").textContent = got+" von "+tot+" Punkten";
+    document.getElementById("bar").style.width = (tot? Math.round(got/tot*100):0)+"%";
+    var pct = tot? got/tot : 0;
+    var msg = got===0 ? "Mach die Übungen in allen Teilen – hier siehst du dann deine Gesamtpunktzahl."
+      : "Du hast "+got+" von "+tot+" Punkten ("+Math.round(pct*100)+" %). " +
+        (pct>=0.9?"Excellent! 🏆":pct>=0.7?"Well done! Schau dir die Fehler noch einmal an. 👍":pct>=0.5?"Not bad – lies den Input noch einmal und versuch es erneut. 💪":"Keep going! Lies den Input in Ruhe und probiere es noch einmal. 📘");
+    document.getElementById("summary").textContent = msg;
+  }
+
+  /* ---------- Text inputs ---------- */
+  document.querySelectorAll(".card[data-ex]").forEach(function(card){
+    var id = card.dataset.ex;
+    var inputs = card.querySelectorAll("input[data-a]");
+    var choiceGroups = card.querySelectorAll(".choices[data-a]");
+    if(inputs.length) totals[id] = inputs.length;
+    if(choiceGroups.length) totals[id] = choiceGroups.length;
+
+    var chk = card.querySelector("[data-check]");
+    if(chk && inputs.length){
+      chk.addEventListener("click",function(){
+        var ok=0;
+        inputs.forEach(function(inp){
+          var fb = inp.parentNode.querySelector(".fb[data-for]");
+          if(fb && fb.dataset.for===String(Array.prototype.indexOf.call(inputs,inp))) fb.remove();
+          var old = inp.nextElementSibling; if(old && old.classList.contains("fb")) old.remove();
+          var right = accepted(inp).indexOf(norm(inp.value))>-1;
+          inp.classList.remove("ok","bad"); inp.classList.add(right?"ok":"bad");
+          if(right) ok++;
+          else {
+            var s=document.createElement("span"); s.className="fb bad";
+            s.textContent = inp.value.trim()==="" ? "Noch leer." : "Richtig: "+inp.dataset.a.split("|")[0];
+            inp.insertAdjacentElement("afterend", s);
+          }
+        });
+        scores[id]=ok;
+        card.querySelector(".result").textContent = ok+" / "+inputs.length+" richtig";
+        updateScore();
+      });
+    }
+
+    /* ---------- Choice buttons ---------- */
+    choiceGroups.forEach(function(g){
+      var answer = g.dataset.a;
+      g.querySelectorAll("button").forEach(function(b){
+        b.type="button";
+        b.addEventListener("click",function(){
+          if(g.dataset.done) return;
+          g.dataset.done="1";
+          var right = b.textContent.trim()===answer;
+          b.classList.add(right?"ok":"bad");
+          if(!right){ g.querySelectorAll("button").forEach(function(x){ if(x.textContent.trim()===answer) x.classList.add("ok"); }); }
+          else g.dataset.right="1";
+          g.querySelectorAll("button").forEach(function(x){x.disabled=true;});
+          var done = card.querySelectorAll(".choices[data-done]").length;
+          var right_n = card.querySelectorAll(".choices[data-right]").length;
+          scores[id]=right_n;
+          card.querySelector(".result").textContent = right_n+" / "+choiceGroups.length+" richtig"+(done<choiceGroups.length?" (bisher)":"");
+          updateScore();
+        });
+      });
+    });
+
+    var rst = card.querySelector("[data-reset]");
+    if(rst) rst.addEventListener("click",function(){ resetCard(card); });
+  });
+
+  function resetCard(card){
+    var id = card.dataset.ex;
+    card.querySelectorAll("input[data-a]").forEach(function(i){ i.value=""; i.classList.remove("ok","bad"); });
+    card.querySelectorAll("select[data-a]").forEach(function(s){ s.selectedIndex=0; s.classList.remove("ok","bad"); });
+    card.querySelectorAll(".fb").forEach(function(f){ f.remove(); });
+    card.querySelectorAll(".choices[data-a]").forEach(function(g){
+      delete g.dataset.done; delete g.dataset.right;
+      g.querySelectorAll("button").forEach(function(b){ b.disabled=false; b.classList.remove("ok","bad"); });
+    });
+    var r = card.querySelector(".result"); if(r && r.id!=="wc") r.textContent="";
+    scores[id]=0; updateScore();
+  }
+
+  /* ---------- Sorting (3.1) ---------- */
+  var parts = [
+    "Your own address (top right)",
+    "Name and address of the person you write to",
+    "Date: 3rd November 2026",
+    "Re: Your advertisement for summer helpers",
+    "Dear Mr Hughes,",
+    "1st paragraph: who you are, which job, where you saw the ad",
+    "2nd paragraph: skills, experience, why you want the job",
+    "I look forward to hearing from you.",
+    "Yours sincerely, + signature + name",
+    "Encl.: CV"
+  ];
+  totals.a1 = parts.length;
+  var sortList = document.getElementById("sortlist");
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+  function renderSort(order){
+    sortList.innerHTML="";
+    order.forEach(function(txt){
+      var li=document.createElement("li");
+      li.innerHTML='<span></span><button type="button" aria-label="nach oben">↑</button><button type="button" aria-label="nach unten">↓</button>';
+      li.querySelector("span").textContent=txt;
+      var bs=li.querySelectorAll("button");
+      bs[0].addEventListener("click",function(){ if(li.previousElementSibling) sortList.insertBefore(li, li.previousElementSibling); clearSort(); });
+      bs[1].addEventListener("click",function(){ if(li.nextElementSibling) sortList.insertBefore(li.nextElementSibling, li); clearSort(); });
+      sortList.appendChild(li);
+    });
+  }
+  function clearSort(){ sortList.querySelectorAll("li").forEach(function(l){l.classList.remove("ok","bad");}); }
+  var o; do { o = shuffle(parts); } while(o.join()===parts.join());
+  renderSort(o);
+  var sortCard = sortList.closest(".card");
+  sortCard.querySelector("[data-sortcheck]").addEventListener("click",function(){
+    var ok=0;
+    sortList.querySelectorAll("li").forEach(function(li,i){
+      var r = li.querySelector("span").textContent===parts[i];
+      li.classList.remove("ok","bad"); li.classList.add(r?"ok":"bad"); if(r) ok++;
+    });
+    scores.a1=ok;
+    sortCard.querySelector(".result").textContent = ok===parts.length ? "Perfekt! 10 / 10" : ok+" / "+parts.length+" an der richtigen Stelle";
+    updateScore();
+  });
+  sortCard.querySelector("[data-sortshuffle]").addEventListener("click",function(){ renderSort(shuffle(parts)); scores.a1=0; sortCard.querySelector(".result").textContent=""; updateScore(); });
+
+  /* ---------- Matching (3.2) ---------- */
+  var pairs = [
+    ["Hiermit bewerbe ich mich als …","I am writing to apply for the job as …"],
+    ["Ich habe Ihre Anzeige … gesehen.","I saw your advertisement …"],
+    ["Ich habe Erfahrung in …","I have experience in …"],
+    ["Ich bin zuverlässig und fleißig.","I am reliable and hard-working."],
+    ["Ich kann gut im Team arbeiten.","I can work well in a team."],
+    ["Ich bin für die Stelle gut geeignet.","I believe that I am well-qualified for this job."],
+    ["Ich freue mich auf Ihre Antwort.","I look forward to hearing from you."],
+    ["Anlage: Lebenslauf","Encl.: CV"]
+  ];
+  totals.a2 = pairs.length;
+  var ml = document.getElementById("matchlist");
+  var opts = shuffle(pairs.map(function(p){return p[1];}));
+  pairs.forEach(function(p){
+    var li=document.createElement("li");
+    var q=document.createElement("div"); q.className="q";
+    q.appendChild(document.createTextNode(p[0])); q.appendChild(document.createElement("br"));
+    var s=document.createElement("select"); s.dataset.a=p[1]; s.style.width="100%";
+    var o0=document.createElement("option"); o0.value=""; o0.textContent="– bitte wählen –"; s.appendChild(o0);
+    opts.forEach(function(t){ var op=document.createElement("option"); op.value=t; op.textContent=t; s.appendChild(op); });
+    q.appendChild(s); li.appendChild(q); ml.appendChild(li);
+  });
+  var mcard = ml.closest(".card");
+  mcard.querySelector("[data-check]").addEventListener("click",function(){
+    var ok=0;
+    ml.querySelectorAll("select").forEach(function(s){
+      var r = s.value===s.dataset.a; s.classList.remove("ok","bad"); s.classList.add(r?"ok":"bad"); if(r) ok++;
+    });
+    scores.a2=ok; mcard.querySelector(".result").textContent = ok+" / "+pairs.length+" richtig"; updateScore();
+  });
+
+  /* ---------- Writing task (3.4) ---------- */
+  var ta = document.getElementById("letter");
+  var checks = [
+    ["Datum (z. B. 3rd November 2026)", /\b\d{1,2}(st|nd|rd|th)\s+[A-Z][a-z]+\s+\d{4}\b/],
+    ["Betreffzeile mit „Re:“", /\bRe:/],
+    ["Anrede „Dear …,“", /\bDear\s+(Mr|Ms|Mrs|Sir)/],
+    ["Stelle genannt (apply)", /\bappl(y|ying|ication)\b/i],
+    ["Modalverb / Ersatzform", /\b(can|could|able to|allowed to|have to|had to|must|should|would like)\b/i],
+    ["Vergleich (-er / more / than / as … as / best)", /\b(\w+er than|more \w+|than|as \w+ as|the best|the most)\b/i],
+    ["Schluss: look forward to hearing", /look forward to hearing/i],
+    ["Grußformel „Yours sincerely,“", /Yours\s+(sincerely|faithfully)/i],
+    ["Encl.: CV", /Encl\.?\s*:?\s*CV/i],
+    ["Keine Kurzformen (I'm, don't …)", null],
+    ["Mindestens 120 Wörter", null]
+  ];
+  var cl = document.getElementById("checklist");
+  checks.forEach(function(c){ var li=document.createElement("li"); li.textContent=c[0]; cl.appendChild(li); });
+  function evalLetter(){
+    var t = ta.value;
+    var words = (t.match(/[A-Za-zÄÖÜäöüß'’\-]+/g)||[]).length;
+    document.getElementById("wc").textContent = words+" Wörter";
+    var lis = cl.querySelectorAll("li");
+    checks.forEach(function(c,i){
+      var done;
+      if(i===9) done = t.trim().length>40 && !/\b\w+(n't|'m|'re|'ve|'ll|'d)\b/i.test(t.replace(/’/g,"'"));
+      else if(i===10) done = words>=120;
+      else done = c[1].test(t);
+      lis[i].classList.toggle("done", done);
+    });
+    store.set("en9u1-letter", t);
+  }
+  ta.value = store.get("en9u1-letter") || "";
+  ta.addEventListener("input", evalLetter); evalLetter();
+  document.getElementById("copyLetter").addEventListener("click",function(){
+    var b=this;
+    function done(){ b.textContent="Kopiert ✔"; setTimeout(function(){b.textContent="Text kopieren";},1500); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value).then(done,function(){ ta.select(); try{document.execCommand("copy");done();}catch(e){} }); }
+    else { ta.select(); try{document.execCommand("copy");done();}catch(e){} }
+  });
+  document.getElementById("dlLetter").addEventListener("click",function(){
+    var blob = new Blob([ta.value],{type:"text/plain;charset=utf-8"});
+    var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="letter-of-application.txt";
+    document.body.appendChild(a); a.click(); setTimeout(function(){URL.revokeObjectURL(a.href); a.remove();},500);
+  });
+
+  /* ---------- Reset all ---------- */
+  document.getElementById("resetAll").addEventListener("click",function(){
+    document.querySelectorAll(".card[data-ex]").forEach(resetCard);
+    sortCard.querySelector("[data-sortshuffle]").click();
+    mcard.querySelectorAll(".result").forEach(function(r){r.textContent="";});
+  });
+
+  updateScore();
+})();
+</script>
+</body>
+</html>
