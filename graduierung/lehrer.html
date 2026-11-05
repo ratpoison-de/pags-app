@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Graduierung – Lehrerbereich</title>
+<link rel="icon" href="../icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../config.js"></script>
+<script src="bogen.js"></script>
+<style>
+:root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.4}
+header{background:var(--red);color:#fff;padding:14px 16px}
+header .in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:38px;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.1rem;margin:0}
+header p{margin:0;font-size:.82rem;opacity:.9}
+header .sp{flex:1}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+input,select{font:inherit;padding:9px 11px;border:1px solid #ccc;border-radius:8px;background:#fff}
+.btn{padding:10px 14px;font:inherit;font-weight:600;border-radius:8px;border:0;cursor:pointer;background:var(--red);color:#fff}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.leiste input[type=search]{flex:1 1 180px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
+.chip{border:1.5px solid var(--c);color:var(--c);background:#fff;border-radius:20px;padding:4px 12px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--c);color:#fff}
+.info{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.78rem;text-transform:uppercase;color:var(--muted);letter-spacing:.03em}
+.st{display:inline-block;color:#fff;border-radius:12px;padding:1px 9px;font-size:.78rem;font-weight:700}
+.pk{font-weight:700;white-space:nowrap}
+.akt{white-space:nowrap;text-align:right}
+.akt button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer;font:inherit;font-size:.82rem}
+.akt button.del{color:var(--red)}
+.leer{text-align:center;color:var(--muted);padding:30px}
+.msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px}
+.hidden{display:none}
+.klein{color:var(--muted);font-size:.78rem}
+@media(max-width:640px){
+  thead{display:none}
+  tr{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:10px 0;border-bottom:1px solid var(--line)}
+  td{border:0;padding:2px 0}
+  td.akt{grid-column:1/3;text-align:left;padding-top:6px}
+}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS">
+  <div><h1>Graduierung – Abgaben</h1><p>Lehrerbereich · nur mit Zugangsschlüssel</p></div>
+  <span class="sp"></span>
+  <button id="abmelden" class="hidden">Abmelden</button>
+</div></header>
+
+<main>
+  <section class="card" id="login">
+    <h2 style="margin-top:0;font-size:1.05rem">Zugang</h2>
+    <form id="loginForm" class="leiste">
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" style="flex:1 1 240px">
+      <label class="klein"><input type="checkbox" id="merken" checked> auf diesem Gerät merken</label>
+      <button class="btn" type="submit">Öffnen</button>
+    </form>
+    <div id="loginErr" class="msg hidden"></div>
+  </section>
+
+  <div id="bereich" class="hidden">
+    <section class="card">
+      <div class="leiste">
+        <input type="search" id="suche" placeholder="Name suchen …">
+        <input type="date" id="von" title="Datum von">
+        <input type="date" id="bis" title="Datum bis">
+        <button class="btn sec" id="neuLaden" type="button">↻ Aktualisieren</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="leiste" style="margin-top:12px">
+        <button class="btn" id="alleBtn" type="button">Angezeigte als ein PDF</button>
+        <button class="btn sec" id="csvBtn" type="button">Tabelle (Excel/CSV)</button>
+      </div>
+      <p class="info" id="zahl"></p>
+    </section>
+
+    <section class="card" style="padding:6px 16px">
+      <table>
+        <thead><tr><th>Name</th><th>Stufe</th><th>Datum</th><th>Punkte</th><th>Eingang</th><th></th></tr></thead>
+        <tbody id="liste"></tbody>
+      </table>
+    </section>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let KEY = null, DATEN = [], FILTER = new Set(Object.keys(STUFEN));
+function store(k,v){try{ if(v===null) localStorage.removeItem(k); else if(v===undefined) return localStorage.getItem(k); else localStorage.setItem(k,v);}catch(e){return null}}
+ladeLogo('../img/logo.png');
+
+async function rpc(fn, body){
+  const r = await sbFetch('rpc/'+fn, body);
+  if (!r.ok) { let m=''; try{ m=(await r.json()).message; }catch(e){} throw new Error(m || ('Fehler '+r.status)); }
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+
+async function laden(){
+  $('zahl').textContent = 'Lade …';
+  DATEN = await rpc('graduierung_liste', {schluessel: KEY});
+  zeigen();
+}
+
+async function oeffnen(k, merken){
+  KEY = k; $('loginErr').classList.add('hidden');
+  try {
+    await laden();
+    if (merken) store('grad_lehrer', k);
+    $('login').classList.add('hidden'); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden');
+  } catch(e) {
+    KEY = null; store('grad_lehrer', null);
+    $('loginErr').textContent = e.message === 'Zugang verweigert' ? 'Der Schlüssel stimmt nicht.' : 'Verbindung fehlgeschlagen: '+e.message;
+    $('loginErr').classList.remove('hidden');
+  }
+}
+
+function gefiltert(){
+  const q = $('suche').value.trim().toLowerCase(), von = $('von').value, bis = $('bis').value;
+  return DATEN.filter(a => FILTER.has(a.stufe)
+    && (!q || a.name.toLowerCase().includes(q))
+    && (!von || a.datum >= von) && (!bis || a.datum <= bis));
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function zeigen(){
+  const l = gefiltert(), tb = $('liste');
+  $('zahl').textContent = `${l.length} von ${DATEN.length} Abgaben angezeigt`;
+  if (!l.length) { tb.innerHTML = `<tr><td colspan="6" class="leer">Keine Abgaben${DATEN.length?' für diese Auswahl':''}.</td></tr>`; return; }
+  tb.innerHTML = l.map(a => { const s = STUFEN[a.stufe]; return `<tr>
+    <td><b>${esc(a.name)}</b>${a.dienste?`<div class="klein">${esc(a.dienste.slice(0,70))}${a.dienste.length>70?' …':''}</div>`:''}</td>
+    <td><span class="st" style="background:${s.farbe}">${s.name}</span></td>
+    <td>${datumDE(a.datum)}</td>
+    <td class="pk">${Number(a.punkte)} / ${a.max_punkte}</td>
+    <td class="klein">${new Date(a.eingang).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'})}</td>
+    <td class="akt"><button data-pdf="${a.id}">PDF</button> <button class="del" data-del="${a.id}">Löschen</button></td></tr>`; }).join('');
+}
+
+function oeffnePDF(doc, name){
+  const w = window.open(URL.createObjectURL(doc.output('blob')), '_blank'); if (!w) doc.save(name);
+}
+
+$('liste').onclick = async (e) => {
+  const id = e.target.dataset.pdf || e.target.dataset.del; if (!id) return;
+  const a = DATEN.find(x=>x.id===id);
+  if (e.target.dataset.pdf) { oeffnePDF(bogenPDF(a), dateiName(a)); return; }
+  if (!confirm(`Abgabe von ${a.name} (${datumDE(a.datum)}) endgültig löschen?`)) return;
+  try { await rpc('graduierung_loeschen', {schluessel: KEY, eintrag: id}); DATEN = DATEN.filter(x=>x.id!==id); zeigen(); }
+  catch(err) { alert('Löschen fehlgeschlagen: '+err.message); }
+};
+
+$('alleBtn').onclick = () => {
+  const l = gefiltert(); if (!l.length) return;
+  let doc = null; l.slice().sort((a,b)=>a.name.localeCompare(b.name,'de')).forEach(a => { doc = bogenPDF(a, doc); });
+  oeffnePDF(doc, `Graduierung_Abgaben_${new Date().toISOString().slice(0,10)}.pdf`);
+};
+
+$('csvBtn').onclick = () => {
+  const l = gefiltert(); if (!l.length) return;
+  const zelle = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
+  const kopf = ['Name','Stufe','Datum','Punkte','Max','Kriterium 1','Kriterium 2','Kriterium 3','Kriterium 4','Zusatzpunkt','Dienste','Bemerkung','Eingang'];
+  const zeilen = l.map(a => [a.name, STUFEN[a.stufe].name, datumDE(a.datum), String(a.punkte).replace('.',','), a.max_punkte,
+    a.werte[0], a.werte[1], a.werte[2], a.werte[3], a.stufe==='walker'?a.zusatz:'', a.dienste, a.bemerkung,
+    new Date(a.eingang).toLocaleString('de-DE')]);
+  const csv = '﻿' + [kopf, ...zeilen].map(z=>z.map(zelle).join(';')).join('\r\n');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+  link.download = `Graduierung_Abgaben_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+};
+
+// Stufen-Filter
+for (const [k,s] of Object.entries(STUFEN)) {
+  const b = document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=s.name;
+  b.style.setProperty('--c', s.farbe); b.setAttribute('aria-pressed','true');
+  b.onclick = () => { FILTER.has(k) ? FILTER.delete(k) : FILTER.add(k); b.setAttribute('aria-pressed', FILTER.has(k)); zeigen(); };
+  $('chips').appendChild(b);
+}
+['suche','von','bis'].forEach(id => $(id).oninput = zeigen);
+$('neuLaden').onclick = () => laden().catch(e=>alert(e.message));
+$('loginForm').onsubmit = (e) => { e.preventDefault(); oeffnen($('schluessel').value.trim(), $('merken').checked); };
+$('abmelden').onclick = () => { store('grad_lehrer', null); location.reload(); };
+
+const gemerkt = store('grad_lehrer');
+if (gemerkt) oeffnen(gemerkt, true);
+</script>
+</body>
+</html>
