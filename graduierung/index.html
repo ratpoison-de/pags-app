@@ -105,6 +105,9 @@ footer{text-align:center;font-size:.78rem;color:var(--muted);padding:10px 16px 3
 
 <script>
 const EMPFAENGER = 't.von.plotho-kettner@pagskuelsheim.de';
+// Web-App-URL des Google-Apps-Skripts (siehe mailer.gs), das die Mail mit PDF verschickt
+const SKRIPT_URL = '';
+const SKRIPT_TOKEN = 'pags-graduierung';
 
 const RESPEKT = {t:'Gesprächsregeln einhalten und respektvolles Verhalten', b:['im Atelier und Klassenzimmer','gegenüber Mitschülern, Lernbegleitern, Eigentum']};
 const RESPEKT2 = {t:RESPEKT.t, b:['im Atelier und Klassenzimmer und außerhalb','gegenüber Mitschülern, Lernbegleitern, Eigentum']};
@@ -228,14 +231,14 @@ function box(doc, x, y, w, titel, inhalt, minH){
 
 function erzeugePDF(){
   const { jsPDF } = window.jspdf; const s = STUFEN[stufeKey];
-  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const doc = new jsPDF({unit:'mm', format:'a4', compress:true});
   const W=210, M=16, B=W-2*M;
   doc.setFillColor(168,16,16); doc.rect(0,0,W,24,'F');
-  if (logoData) { try{ doc.setFillColor(255); doc.roundedRect(M,4,16,16,2,2,'F'); doc.addImage(logoData,'PNG',M+1,5,14,14);}catch(e){} }
+  if (logoData) { try{ doc.setFillColor(255); doc.roundedRect(M,6,20,12,2,2,'F'); doc.addImage(logoData,'PNG',M+1,7,18,9,undefined,'FAST');}catch(e){} }
   doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(15);
-  doc.text('Graduierungspunkte – Selbstbewertung', M+21, 12);
+  doc.text('Graduierungspunkte – Selbstbewertung', M+24, 12);
   doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
-  doc.text('Pater-Alois-Grimm-Schule Külsheim', M+21, 18);
+  doc.text('Pater-Alois-Grimm-Schule Külsheim', M+24, 18);
   doc.setFillColor(...s.hex); doc.roundedRect(W-M-36, 7, 36, 10, 2, 2, 'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(s.name, W-M-18, 13.8, {align:'center'});
 
@@ -268,33 +271,40 @@ function erzeugePDF(){
 
 $('dlBtn').onclick = () => { if (!pruefen()) return; const doc = erzeugePDF(); const url = URL.createObjectURL(doc.output('blob')); window.open(url,'_blank') || doc.save(dateiname()); };
 
-$('bogen').onsubmit = (ev) => {
+function fehlerSenden(text){
+  const btn=$('sendBtn'); btn.disabled=false; btn.textContent='📨 Abschicken';
+  const em=$('errMsg'); em.innerHTML=text+'<br>Tipp: Mit „PDF ansehen“ kannst du das PDF speichern und per E-Mail an '+EMPFAENGER+' schicken.';
+  em.classList.remove('hidden'); em.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+$('bogen').onsubmit = async (ev) => {
   ev.preventDefault();
   if (!pruefen()) return;
+  if (!SKRIPT_URL) { fehlerSenden('Der Versand ist noch nicht eingerichtet.'); return; }
   store('grad_name', $('name').value.trim());
   const btn = $('sendBtn'); btn.disabled = true; btn.textContent = 'Wird gesendet …';
+  const s = STUFEN[stufeKey];
   try {
-    const doc = erzeugePDF(); const s = STUFEN[stufeKey];
-    const file = new File([doc.output('blob')], dateiname(), {type:'application/pdf'});
-    const f = document.createElement('form');
-    f.method='POST'; f.enctype='multipart/form-data'; f.action='https://formsubmit.co/'+EMPFAENGER; f.style.display='none';
-    const ret = location.origin + location.pathname + '?stufe=' + stufeKey + '&gesendet=1';
-    const felder = {
-      _subject: `Selbstbewertung ${s.name}: ${$('name').value.trim()} (${datumDE($('datum').value)})`,
-      _captcha:'false', _template:'table', _next: ret,
-      Name: $('name').value.trim(), Stufe: s.name, Datum: datumDE($('datum').value),
-      Punkte: `${gesamt()} / ${s.max}`,
-      Einzelwertung: s.krit.map((k,i)=>`${k.t}: ${werte[i]}/${k.max}`).join(' | ') + (s.zusatz?` | Zusatzpunkt: ${zusatz}/1`:''),
-      Dienste: $('dienste').value.trim() || '–', Bemerkung: $('bemerkung').value.trim() || '–'
+    const doc = erzeugePDF();
+    const pdf = doc.output('datauristring').split(',')[1];
+    const daten = {
+      token: SKRIPT_TOKEN, pdf, dateiname: dateiname(),
+      betreff: `Selbstbewertung ${s.name}: ${$('name').value.trim()} (${datumDE($('datum').value)})`,
+      name: $('name').value.trim(), stufe: s.name, datum: datumDE($('datum').value),
+      punkte: `${gesamt()} / ${s.max}`,
+      einzel: s.krit.map((k,i)=>`${k.t}: ${werte[i]}/${k.max}`).concat(s.zusatz?[`Zusatzpunkt: ${zusatz}/1`]:[]),
+      dienste: $('dienste').value.trim(), bemerkung: $('bemerkung').value.trim()
     };
-    for (const [k,v] of Object.entries(felder)) { const i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=v; f.appendChild(i); }
-    const fi = document.createElement('input'); fi.type='file'; fi.name='attachment';
-    const dt = new DataTransfer(); dt.items.add(file); fi.files = dt.files;
-    f.appendChild(fi); document.body.appendChild(f); f.submit();
-  } catch(e) {
+    const ctrl = new AbortController(); const t = setTimeout(()=>ctrl.abort(), 45000);
+    const r = await fetch(SKRIPT_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(daten), signal: ctrl.signal});
+    clearTimeout(t);
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.fehler || 'unbekannt');
     btn.disabled=false; btn.textContent='📨 Abschicken';
-    const em=$('errMsg'); em.innerHTML='Senden klappt auf diesem Gerät nicht. Lade das PDF mit „PDF ansehen“ herunter und schicke es per E-Mail an '+EMPFAENGER+'.';
-    em.classList.remove('hidden');
+    $('okMsg').classList.remove('hidden'); $('errMsg').classList.add('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  } catch(e) {
+    fehlerSenden(e.name==='AbortError' ? 'Das Senden dauert zu lange. Bitte prüfe die Internetverbindung und versuche es noch einmal.' : 'Senden hat nicht geklappt ('+e.message+').');
   }
 };
 

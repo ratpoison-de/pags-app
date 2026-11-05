@@ -60,5 +60,5 @@ Definitionen nach der Übersicht „Rhetorische Mittel“ von lehrerfreund.de.
 ## Graduierung – Selbstbewertung (`graduierung/`)
 
 Selbstbewertungsbogen für die Stufen Walker, Hiker, Climber und Freeclimber. Direktlinks: `graduierung/?stufe=walker|hiker|climber|freeclimber`.
-Die Schülerin / der Schüler gibt Name und Datum ein, wählt die Punkte, beim „Abschicken“ wird im Browser ein PDF erzeugt (jsPDF) und über [FormSubmit](https://formsubmit.co) als Anhang an t.von.plotho-kettner@pagskuelsheim.de geschickt.
-Einmalig nötig: erste Test-Abgabe machen und die Bestätigungsmail von FormSubmit anklicken. QR-Codes: `graduierung/QR-Codes_Graduierung.pdf`.
+Die Schülerin / der Schüler gibt Name und Datum ein, wählt die Punkte, beim „Abschicken“ wird im Browser ein PDF erzeugt (jsPDF) und über ein Google-Apps-Skript (`graduierung/mailer.gs`, Web-App unter Thorstens Google-Konto) als Anhang an t.von.plotho-kettner@pagskuelsheim.de geschickt.
+Einrichtung steht oben in `mailer.gs`; die Web-App-URL kommt in `SKRIPT_URL` in `graduierung/index.html`. QR-Codes: `graduierung/QR-Codes_Graduierung.pdf`.
