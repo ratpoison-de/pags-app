@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graduierung – Selbstbewertung</title>
+<link rel="icon" href="../icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--red:#A81010;--red-dark:#860000;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3;--card:#fff;
+  --walker:#2E7D32;--hiker:#1565C0;--climber:#E65100;--free:#6A1B9A;}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.45}
+header{background:var(--red);color:#fff;padding:14px 16px}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:38px;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.1rem;margin:0;font-weight:700}
+header p{margin:0;font-size:.82rem;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+h2{font-size:1.05rem;margin:0 0 10px}
+.stufen{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:560px){.stufen{grid-template-columns:repeat(4,1fr)}}
+.stufe{border:2px solid var(--line);background:#fff;border-radius:10px;padding:14px 8px;font:inherit;font-weight:700;cursor:pointer;color:var(--c);text-align:center}
+.stufe small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
+.stufe[aria-pressed=true]{background:var(--c);color:#fff;border-color:var(--c)}
+.stufe[aria-pressed=true] small{color:#fff}
+.badge{display:inline-block;background:var(--c);color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;font-size:.9rem}
+label.f{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
+input[type=text],input[type=date],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff}
+textarea{min-height:70px;resize:vertical}
+.krit{border-top:1px solid var(--line);padding:14px 0}
+.krit:first-of-type{border-top:0;padding-top:4px}
+.krit h3{margin:0;font-size:.98rem}
+.krit ul{margin:4px 0 8px 18px;padding:0;color:var(--muted);font-size:.86rem}
+.pts{display:flex;flex-wrap:wrap;gap:8px}
+.pts button{min-width:52px;padding:10px 12px;font:inherit;font-weight:700;border:2px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--text)}
+.pts button[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#fff}
+.krit.miss h3{color:var(--red)}
+.krit.miss .pts button{border-color:#e6a0a0}
+.summe{display:flex;justify-content:space-between;align-items:center;font-size:1.1rem;font-weight:700;padding:12px 16px;border-radius:10px;background:var(--c);color:#fff;margin-bottom:14px}
+.hint{font-size:.83rem;color:var(--muted);margin:4px 0 0}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btn{flex:1 1 200px;padding:14px;font:inherit;font-weight:700;border-radius:10px;border:0;cursor:pointer}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:disabled{opacity:.6;cursor:wait}
+.btn.sec{background:#fff;color:var(--red);border:2px solid var(--red)}
+.msg{padding:12px 14px;border-radius:10px;margin-bottom:14px;font-weight:600}
+.msg.ok{background:#E8F5E9;color:#1B5E20;border:1px solid #A5D6A7}
+.msg.err{background:#FDECEA;color:#8A1C1C;border:1px solid #F5B7B1}
+.hidden{display:none}
+footer{text-align:center;font-size:.78rem;color:var(--muted);padding:10px 16px 30px}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS">
+  <div><h1>Graduierung – Selbstbewertung</h1><p>Pater-Alois-Grimm-Schule Külsheim</p></div>
+</div></header>
+
+<main>
+  <div id="okMsg" class="msg ok hidden">✅ Deine Selbstbewertung wurde verschickt. Danke!</div>
+
+  <section class="card" id="stufenWahl">
+    <h2>1. Deine Stufe</h2>
+    <div class="stufen" id="stufen"></div>
+  </section>
+
+  <form id="bogen" class="hidden" novalidate>
+    <section class="card">
+      <h2>2. Deine Angaben <span class="badge" id="stufeBadge"></span></h2>
+      <label class="f" for="name">Vor- und Nachname</label>
+      <input type="text" id="name" autocomplete="name" placeholder="z. B. Lena Müller" required>
+      <label class="f" for="datum">Datum</label>
+      <input type="date" id="datum" required>
+    </section>
+
+    <section class="card">
+      <h2>3. Bewerte dich selbst – ehrlich!</h2>
+      <div id="kriterien"></div>
+    </section>
+
+    <section class="card">
+      <h2 id="dienstTitel">4. Dienste und Leistungen über den Unterricht hinaus</h2>
+      <label class="f" for="dienste">Was hast du diese Woche zusätzlich übernommen?</label>
+      <textarea id="dienste" placeholder="z. B. Tafeldienst, Mitschüler geholfen, Atelier aufgeräumt …"></textarea>
+      <div id="zusatzBox"></div>
+      <label class="f" for="bemerkung">Bemerkung (freiwillig)</label>
+      <textarea id="bemerkung" placeholder="Möchtest du etwas erklären?"></textarea>
+    </section>
+
+    <div class="summe"><span>Meine Punkte</span><span id="summe">0 / 0</span></div>
+
+    <div id="errMsg" class="msg err hidden"></div>
+
+    <div class="btns">
+      <button type="submit" class="btn primary" id="sendBtn">📨 Abschicken</button>
+      <button type="button" class="btn sec" id="dlBtn">PDF ansehen</button>
+    </div>
+    <p class="hint">Beim Abschicken wird ein PDF mit deiner Selbstbewertung erstellt und an deinen Lernbegleiter geschickt. Gelbe Karten trägt nur der Lernbegleiter ein.</p>
+  </form>
+</main>
+<footer>PAGS Külsheim · Thorsten von Plotho-Kettner</footer>
+
+<script>
+const EMPFAENGER = 't.von.plotho-kettner@pagskuelsheim.de';
+
+const RESPEKT = {t:'Gesprächsregeln einhalten und respektvolles Verhalten', b:['im Atelier und Klassenzimmer','gegenüber Mitschülern, Lernbegleitern, Eigentum']};
+const RESPEKT2 = {t:RESPEKT.t, b:['im Atelier und Klassenzimmer und außerhalb','gegenüber Mitschülern, Lernbegleitern, Eigentum']};
+const ZEIT = {t:'Effektive Nutzung der Arbeitszeit und Lernplan auf aktuellem Stand', b:['in Unterricht und IL','pünktliche Vorbereitung auf Präsentationen, Tests']};
+const ZUV_ORG = {t:'Zuverlässigkeit sowie Organisation und Ordnung', b:['Rückgabezettel, Unterschriften, Material …','Lerntagebuch, Überblick haben, selbstständig planen']};
+const VORBILD = {t:'Vorbildliche und aktive Teilnahme über den Unterricht hinaus', b:['Übernahme zusätzlicher Dienste']};
+
+const STUFEN = {
+  walker:{name:'Walker', farbe:'var(--walker)', hex:[46,125,50], max:6, zusatz:true, krit:[
+    {...RESPEKT, max:2}, {...ZEIT, max:2},
+    {t:'Zuverlässigkeit', b:['Rückgabezettel, Unterschriften, Material rechtzeitig dabeihaben und nicht vergessen'], max:1},
+    {t:'Organisation und Ordnung', b:['Lerntagebuch, Überblick und Ordnung haben','Selbstständigkeit, selbstständige Arbeit sinnvoll planen'], max:1}]},
+  hiker:{name:'Hiker', farbe:'var(--hiker)', hex:[21,101,192], krit:[
+    {...RESPEKT2, max:3}, {...ZEIT, max:3}, {...ZUV_ORG, max:2}, {...VORBILD, max:2}]},
+  climber:{name:'Climber', farbe:'var(--climber)', hex:[230,81,0], krit:[
+    {...RESPEKT2, max:4}, {...ZEIT, max:4}, {...ZUV_ORG, max:3}, {...VORBILD, max:3}]},
+  freeclimber:{name:'Freeclimber', farbe:'var(--free)', hex:[106,27,154], krit:[
+    {...RESPEKT2, max:4}, {...ZEIT, max:4}, {...ZUV_ORG, max:3}, {...VORBILD, max:3}]}
+};
+for (const s of Object.values(STUFEN)) if (!s.max) s.max = s.krit.reduce((a,k)=>a+k.max,0);
+
+let stufeKey = null, werte = [], zusatz = 0;
+const $ = id => document.getElementById(id);
+
+function store(k,v){try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){return null}}
+
+// Stufen-Buttons
+const sw = $('stufen');
+for (const [key,s] of Object.entries(STUFEN)) {
+  const b = document.createElement('button');
+  b.type='button'; b.className='stufe'; b.style.setProperty('--c', s.farbe);
+  b.innerHTML = `${s.name}<small>max. ${s.max} Punkte</small>`;
+  b.setAttribute('aria-pressed','false'); b.dataset.key = key;
+  b.onclick = () => waehle(key, true);
+  sw.appendChild(b);
+}
+
+function waehle(key, push){
+  stufeKey = key; const s = STUFEN[key];
+  document.documentElement.style.setProperty('--c', s.farbe);
+  sw.querySelectorAll('.stufe').forEach(b=>b.setAttribute('aria-pressed', b.dataset.key===key));
+  $('stufeBadge').textContent = s.name;
+  werte = s.krit.map(()=>null); zusatz = 0;
+  const kc = $('kriterien'); kc.innerHTML='';
+  s.krit.forEach((k,i)=>{
+    const d = document.createElement('div'); d.className='krit'; d.id='k'+i;
+    d.innerHTML = `<h3>${k.t} <span style="color:var(--muted);font-weight:400">(max. ${k.max})</span></h3><ul>${k.b.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+    const p = document.createElement('div'); p.className='pts';
+    for (let n=0;n<=k.max;n++){
+      const b=document.createElement('button'); b.type='button'; b.textContent=n; b.setAttribute('aria-pressed','false');
+      b.onclick=()=>{werte[i]=n; p.querySelectorAll('button').forEach((x,j)=>x.setAttribute('aria-pressed', j===n)); d.classList.remove('miss'); summe();};
+      p.appendChild(b);
+    }
+    d.appendChild(p); kc.appendChild(d);
+  });
+  const zb = $('zusatzBox'); zb.innerHTML='';
+  if (s.zusatz){
+    zb.innerHTML = `<label class="f">Zusatzpunkt für Dienste (max. 1, insgesamt nicht über ${s.max})</label>
+      <div class="pts" id="zpts"><button type="button" aria-pressed="true">0</button><button type="button" aria-pressed="false">+1</button></div>`;
+    zb.querySelectorAll('button').forEach((b,j)=>b.onclick=()=>{zusatz=j; zb.querySelectorAll('button').forEach((x,m)=>x.setAttribute('aria-pressed', m===j)); summe();});
+  }
+  $('bogen').classList.remove('hidden');
+  $('errMsg').classList.add('hidden');
+  summe();
+  if (push) { history.replaceState(null,'','?stufe='+key); $('bogen').scrollIntoView({behavior:'smooth'}); }
+}
+
+function gesamt(){ const s=STUFEN[stufeKey]; const r = werte.reduce((a,v)=>a+(v||0),0) + (s.zusatz?zusatz:0); return Math.min(r, s.max); }
+function summe(){ $('summe').textContent = `${gesamt()} / ${STUFEN[stufeKey].max}`; }
+
+function pruefen(){
+  const fehler = [];
+  if (!$('name').value.trim()) fehler.push('Bitte gib deinen Namen ein.');
+  if (!$('datum').value) fehler.push('Bitte gib das Datum ein.');
+  let fehlt=false; werte.forEach((v,i)=>{ if(v===null){ $('k'+i).classList.add('miss'); fehlt=true; } });
+  if (fehlt) fehler.push('Bitte bewerte jedes Kriterium.');
+  const e=$('errMsg');
+  if (fehler.length){ e.innerHTML=fehler.join('<br>'); e.classList.remove('hidden'); e.scrollIntoView({behavior:'smooth',block:'center'}); return false; }
+  e.classList.add('hidden'); return true;
+}
+
+function datumDE(v){ const [y,m,d]=v.split('-'); return `${d}.${m}.${y}`; }
+function dateiname(){ const n=$('name').value.trim().replace(/[^A-Za-zÄÖÜäöüß0-9]+/g,'_'); return `Selbstbewertung_${STUFEN[stufeKey].name}_${n}_${$('datum').value}.pdf`; }
+
+let logoData = null;
+fetch('../img/logo.png').then(r=>r.blob()).then(b=>{const fr=new FileReader(); fr.onload=()=>logoData=fr.result; fr.readAsDataURL(b);}).catch(()=>{});
+
+function baueTabelle(doc, x, y, w, rows, hex){
+  // rows: [[kriterium, unterpunkte, punkte]]
+  const c1 = w-34;
+  doc.setFillColor(...hex); doc.rect(x,y,w,8,'F');
+  doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
+  doc.text('Kriterium', x+3, y+5.5); doc.text('Punkte', x+c1+17, y+5.5, {align:'center'});
+  y += 8; doc.setTextColor(40);
+  rows.forEach((r,i)=>{
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    const t = doc.splitTextToSize(r[0], c1-6);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    const u = r[1].flatMap(s=>doc.splitTextToSize('– '+s, c1-10));
+    const h = 5 + t.length*4.6 + u.length*3.9 + 2;
+    if (i%2) { doc.setFillColor(246,245,243); doc.rect(x,y,w,h,'F'); }
+    doc.setDrawColor(200); doc.rect(x,y,w,h); doc.line(x+c1,y,x+c1,y+h);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text(t, x+3, y+5);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(100); doc.text(u, x+6, y+5+t.length*4.6);
+    doc.setTextColor(40); doc.setFont('helvetica','bold'); doc.setFontSize(13);
+    doc.text(r[2], x+c1+17, y+h/2+1.8, {align:'center'});
+    y += h;
+  });
+  return y;
+}
+
+function box(doc, x, y, w, titel, inhalt, minH){
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(40); doc.text(titel, x, y);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  const lines = inhalt ? doc.splitTextToSize(inhalt, w-6) : [];
+  const h = Math.max(minH, lines.length*4.6+5);
+  doc.setDrawColor(190); doc.rect(x, y+2, w, h);
+  if (lines.length) doc.text(lines, x+3, y+7);
+  return y+2+h+7;
+}
+
+function erzeugePDF(){
+  const { jsPDF } = window.jspdf; const s = STUFEN[stufeKey];
+  const doc = new jsPDF({unit:'mm', format:'a4'});
+  const W=210, M=16, B=W-2*M;
+  doc.setFillColor(168,16,16); doc.rect(0,0,W,24,'F');
+  if (logoData) { try{ doc.setFillColor(255); doc.roundedRect(M,4,16,16,2,2,'F'); doc.addImage(logoData,'PNG',M+1,5,14,14);}catch(e){} }
+  doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(15);
+  doc.text('Graduierungspunkte – Selbstbewertung', M+21, 12);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+  doc.text('Pater-Alois-Grimm-Schule Külsheim', M+21, 18);
+  doc.setFillColor(...s.hex); doc.roundedRect(W-M-36, 7, 36, 10, 2, 2, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(s.name, W-M-18, 13.8, {align:'center'});
+
+  let y = 34; doc.setTextColor(40); doc.setFontSize(11);
+  doc.setFont('helvetica','bold'); doc.text('Name:', M, y); doc.setFont('helvetica','normal'); doc.text($('name').value.trim(), M+16, y);
+  doc.setFont('helvetica','bold'); doc.text('Datum:', M+120, y); doc.setFont('helvetica','normal'); doc.text(datumDE($('datum').value), M+136, y);
+  y += 7;
+
+  const rows = s.krit.map((k,i)=>[k.t, k.b, `${werte[i]} / ${k.max}`]);
+  if (s.zusatz) rows.push(['Zusatzpunkt für Dienste', ['max. 1 Zusatzpunkt, aber insgesamt nicht über '+s.max+' Punkte'], `${zusatz} / 1`]);
+  y = baueTabelle(doc, M, y, B, rows, s.hex);
+  doc.setFillColor(...s.hex); doc.rect(M, y, B, 10, 'F');
+  doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text('Gesamt (Selbsteinschätzung)', M+3, y+6.8); doc.text(`${gesamt()} / ${s.max}`, M+B-17, y+6.8, {align:'center'});
+  y += 18;
+
+  y = box(doc, M, y, B, 'Aktiv gemachte Dienste oder Leistungen über den Unterricht hinaus (selbst ausgefüllt)', $('dienste').value.trim(), 14);
+  if ($('bemerkung').value.trim()) y = box(doc, M, y, B, 'Bemerkung der Schülerin / des Schülers', $('bemerkung').value.trim(), 10);
+  doc.setTextColor(168,16,16);
+  y = box(doc, M, y, B, 'Gelbe Karten (nur vom Lernbegleiter auszufüllen mit Datum und Unterschrift)', '', 16);
+  y = box(doc, M, y, B, 'Bemerkungen zu Abzügen oder Zusatzpunkten (Lernbegleiter)', '', 16);
+  doc.setTextColor(40); doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text('Punkte nach Prüfung: ______ / '+s.max, M, y+4);
+  doc.line(M+100, y+4, M+B, y+4); doc.setFontSize(8); doc.text('Datum, Unterschrift Lernbegleiter', M+100, y+8);
+
+  doc.setFontSize(7.5); doc.setTextColor(140);
+  doc.text('Erstellt am '+new Date().toLocaleString('de-DE')+' über die PAGS-App', M, 290);
+  return doc;
+}
+
+$('dlBtn').onclick = () => { if (!pruefen()) return; const doc = erzeugePDF(); const url = URL.createObjectURL(doc.output('blob')); window.open(url,'_blank') || doc.save(dateiname()); };
+
+$('bogen').onsubmit = (ev) => {
+  ev.preventDefault();
+  if (!pruefen()) return;
+  store('grad_name', $('name').value.trim());
+  const btn = $('sendBtn'); btn.disabled = true; btn.textContent = 'Wird gesendet …';
+  try {
+    const doc = erzeugePDF(); const s = STUFEN[stufeKey];
+    const file = new File([doc.output('blob')], dateiname(), {type:'application/pdf'});
+    const f = document.createElement('form');
+    f.method='POST'; f.enctype='multipart/form-data'; f.action='https://formsubmit.co/'+EMPFAENGER; f.style.display='none';
+    const ret = location.origin + location.pathname + '?stufe=' + stufeKey + '&gesendet=1';
+    const felder = {
+      _subject: `Selbstbewertung ${s.name}: ${$('name').value.trim()} (${datumDE($('datum').value)})`,
+      _captcha:'false', _template:'table', _next: ret,
+      Name: $('name').value.trim(), Stufe: s.name, Datum: datumDE($('datum').value),
+      Punkte: `${gesamt()} / ${s.max}`,
+      Einzelwertung: s.krit.map((k,i)=>`${k.t}: ${werte[i]}/${k.max}`).join(' | ') + (s.zusatz?` | Zusatzpunkt: ${zusatz}/1`:''),
+      Dienste: $('dienste').value.trim() || '–', Bemerkung: $('bemerkung').value.trim() || '–'
+    };
+    for (const [k,v] of Object.entries(felder)) { const i=document.createElement('input'); i.type='hidden'; i.name=k; i.value=v; f.appendChild(i); }
+    const fi = document.createElement('input'); fi.type='file'; fi.name='attachment';
+    const dt = new DataTransfer(); dt.items.add(file); fi.files = dt.files;
+    f.appendChild(fi); document.body.appendChild(f); f.submit();
+  } catch(e) {
+    btn.disabled=false; btn.textContent='📨 Abschicken';
+    const em=$('errMsg'); em.innerHTML='Senden klappt auf diesem Gerät nicht. Lade das PDF mit „PDF ansehen“ herunter und schicke es per E-Mail an '+EMPFAENGER+'.';
+    em.classList.remove('hidden');
+  }
+};
+
+// Start
+$('datum').value = new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+const gespeichert = store('grad_name'); if (gespeichert) $('name').value = gespeichert;
+const q = new URLSearchParams(location.search);
+if (q.get('gesendet')) { $('okMsg').classList.remove('hidden'); }
+const st = (q.get('stufe')||'').toLowerCase();
+if (STUFEN[st]) waehle(st, false);
+</script>
+</body>
+</html>

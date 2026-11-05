@@ -56,3 +56,9 @@ Stand der Inhalte: Oktober 2026, übernommen von pags-kuelsheim.de.
 `deutsch/stilmittel.html` – Agenten-Adventure für Klasse 9 (14–16 J.): Die KI VOXA manipuliert mit Sprache. In fünf Zonen (Werbeagentur, Social Media, Talkshow, Newsroom, Rede-Labor) werden 30 Stilmittel in realistischen Texten gescannt, Firewalls (6 Fragen, mind. 4 richtig) geknackt und VOXA im Endkampf mit Zeitlimit besiegt. XP, Ränge, Combos, Blitzrunde (60 s) mit Rekord, druckbare Decoder-Lizenz. Spielstand bleibt im Browser des Geräts.
 Link: `https://ratpoison-de.github.io/pags-app/deutsch/stilmittel.html` · QR-Code: `deutsch/stilmittel-qr.png`
 Definitionen nach der Übersicht „Rhetorische Mittel“ von lehrerfreund.de.
+
+## Graduierung – Selbstbewertung (`graduierung/`)
+
+Selbstbewertungsbogen für die Stufen Walker, Hiker, Climber und Freeclimber. Direktlinks: `graduierung/?stufe=walker|hiker|climber|freeclimber`.
+Die Schülerin / der Schüler gibt Name und Datum ein, wählt die Punkte, beim „Abschicken“ wird im Browser ein PDF erzeugt (jsPDF) und über [FormSubmit](https://formsubmit.co) als Anhang an t.von.plotho-kettner@pagskuelsheim.de geschickt.
+Einmalig nötig: erste Test-Abgabe machen und die Bestätigungsmail von FormSubmit anklicken. QR-Codes: `graduierung/QR-Codes_Graduierung.pdf`.
