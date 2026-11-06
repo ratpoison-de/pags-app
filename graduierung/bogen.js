@@ -120,7 +120,7 @@ function bogenPDF(a, doc, mitLehrer){
   doc.setTextColor(168,16,16);
   y = _box(doc, M, y, B, 'Gelbe Karten (nur vom Lernbegleiter auszufüllen mit Datum und Unterschrift)', '', 16);
   doc.setTextColor(168,16,16);
-  y = _box(doc, M, y, B, 'Bemerkungen zu Abzügen oder Zusatzpunkten (Lernbegleiter)', '', 16);
+  y = _box(doc, M, y, B, 'Bemerkungen zu Abzügen oder Zusatzpunkten (Lernbegleiter)', mitLehrer ? (a.lehrer_bemerkung||'').trim() : '', 16);
   doc.setTextColor(40); doc.setFont('helvetica','normal'); doc.setFontSize(10);
   doc.text('Punkte nach Prüfung: ' + (mitLehrer && lg!==null ? zahl(lg) : '______') + ' / '+s.max, M, y+4);
   doc.line(M+100, y+4, M+B, y+4); doc.setFontSize(8); doc.text('Datum, Unterschrift Lernbegleiter', M+100, y+8);
@@ -181,7 +181,7 @@ function _kompakt(doc, a, X, Y){
   const feld = (titel, text, maxZ, minH, rot) => {
     doc.setFont('helvetica','bold'); doc.setFontSize(6.5); rot ? doc.setTextColor(168,16,16) : doc.setTextColor(60);
     doc.text(titel, x, y);
-    doc.setFont('helvetica','normal'); doc.setFontSize(6.8); doc.setTextColor(40);
+    doc.setFont('helvetica','normal'); doc.setFontSize(6.8); rot ? doc.setTextColor(150,20,20) : doc.setTextColor(40);
     let l = text ? doc.splitTextToSize(text, w-3) : [];
     if (l.length > maxZ) { l = l.slice(0, maxZ); l[maxZ-1] = l[maxZ-1].replace(/.{0,2}$/, '…'); }
     const h = Math.max(minH, l.length*2.9 + 2.5);
@@ -191,8 +191,10 @@ function _kompakt(doc, a, X, Y){
   };
   feld('Dienste / Leistungen über den Unterricht hinaus', (a.dienste||'').trim(), 4, 7);
   if ((a.bemerkung||'').trim()) feld('Bemerkung Schüler/in', a.bemerkung.trim(), 2, 5);
-  const rest = Y + H - m - 9 - y;                 // Platz bis zur Unterschrift
-  feld('Gelbe Karten / Bemerkungen Lernbegleiter', '', 0, Math.max(9, rest - 1), true);
+  const lb = (a.lehrer_bemerkung||'').trim();
+  if (lb) { feld('Bemerkungen Lernbegleiter', lb, 6, 7, true); }
+  const rest2 = Y + H - m - 9 - y;
+  feld(lb ? 'Gelbe Karten' : 'Gelbe Karten / Bemerkungen Lernbegleiter', '', 0, Math.max(8, rest2 - 1), true);
   // Unterschrift
   const uy = Y + H - m - 2;
   doc.setDrawColor(120); doc.line(x+w-45, uy, x+w, uy);

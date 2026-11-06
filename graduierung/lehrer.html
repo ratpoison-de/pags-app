@@ -73,6 +73,10 @@ body.panel-offen header{padding-right:calc(min(46vw,640px) + 16px)}
 .gesamt .klein{flex:1 1 160px}
 .bknopf{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .bknopf .btn{padding:8px 12px;font-size:.88rem}
+.bem{margin-top:10px}
+.bem label{display:block;font-weight:700;font-size:.88rem;margin-bottom:4px}
+.bem textarea{width:100%;min-height:76px;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid #ccc;border-radius:8px;resize:vertical}
+.bem .klein{float:right;font-weight:400}
 .gespeichert{color:#1B5E20;font-size:.82rem;font-weight:600;align-self:center}
 .lk{color:var(--red)}
 .offen{font-size:.72rem;color:var(--muted);border:1px dashed #bbb;border-radius:10px;padding:0 6px}
@@ -199,7 +203,7 @@ function zeigen(){
     <td><span class="st" style="background:${s.farbe}">${s.name}</span></td>
     <td>${datumDE(a.datum)}</td>
     <td class="pk">${zahl(a.punkte)} / ${a.max_punkte}</td>
-    <td class="pk lk">${lehrerGesamt(a)===null ? '<span class="offen">offen</span>' : zahl(lehrerGesamt(a))+' / '+a.max_punkte}</td>
+    <td class="pk lk">${lehrerGesamt(a)===null ? '<span class="offen">offen</span>' : zahl(lehrerGesamt(a))+' / '+a.max_punkte}${a.lehrer_bemerkung ? ` <span title="${esc(a.lehrer_bemerkung)}">💬</span>` : ''}</td>
     <td class="klein ein">${new Date(a.eingang).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'})}</td>
     <td class="akt"><button data-pdf="${a.id}">Bewerten</button> <button data-dl="${a.id}" title="PDF herunterladen">⬇</button> <button class="del" data-del="${a.id}">Löschen</button></td></tr>`; }).join('');
 }
@@ -248,13 +252,13 @@ function schliessePanel(){
 $('pZu').onclick = schliessePanel;
 $('pDownload').onclick = () => { if (P_BLOB) herunterladen(P_BLOB, P_NAME); };
 $('pTab').onclick = () => { if (P_URL) window.open(P_URL, '_blank'); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement.tagName !== 'INPUT') schliessePanel(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) schliessePanel(); });
 
 /* ---------- Bewertung aus Lehrersicht ---------- */
 let ENTWURF = null;   // {id, werte[], zusatz, gesamt:'', manuell, geaendert}
 function verwerfenOk(){ return !ENTWURF || !ENTWURF.geaendert || confirm('Deine Lehrerpunkte sind noch nicht gespeichert. Trotzdem verwerfen?'); }
 function entwurfAbgabe(){ const a = DATEN.find(x=>x.id===ENTWURF.id);
-  return {...a, lehrer_werte: ENTWURF.werte, lehrer_zusatz: ENTWURF.zusatz, lehrer_gesamt: gesamtZahl()}; }
+  return {...a, lehrer_werte: ENTWURF.werte, lehrer_zusatz: ENTWURF.zusatz, lehrer_gesamt: gesamtGueltig() ? gesamtZahl() : null, lehrer_bemerkung: ENTWURF.bemerkung}; }
 function summeEntwurf(){ const a = DATEN.find(x=>x.id===ENTWURF.id); return gesamtPunkte(a.stufe, ENTWURF.werte, ENTWURF.zusatz); }
 function gesamtZahl(){ const v = String(ENTWURF.gesamt).trim().replace(',','.'); return v==='' ? null : Number(v); }
 
@@ -265,7 +269,7 @@ function bewerten(a){
   const hat = werte.some(v=>v!==null);
   const lg = a.lehrer_gesamt===null || a.lehrer_gesamt===undefined ? null : Number(a.lehrer_gesamt);
   ENTWURF = { id:a.id, werte, zusatz: s.zusatz ? (a.lehrer_zusatz ?? 0) : null,
-    gesamt: lg===null ? '' : zahl(lg), manuell: false, geaendert:false };
+    gesamt: lg===null ? '' : zahl(lg), bemerkung: a.lehrer_bemerkung || '', manuell: false, geaendert:false };
   ENTWURF.manuell = lg!==null && (!hat || lg !== summeEntwurf());
   formular();
   zeigePDF(bogenPDF(a, null, true), dateiName(a), `${a.name} · ${s.name} · ${datumDE(a.datum)}`, a.id);
@@ -282,6 +286,8 @@ function formular(){
   h += `<div class="gesamt"><label for="gesamtFeld">Gesamtpunkte</label>
       <input id="gesamtFeld" inputmode="decimal" value="${E.gesamt}" placeholder="–"> <b>/ ${s.max}</b>
       <span class="klein" id="gHinweis">${hinweis()}</span></div>
+    <div class="bem"><label for="bemFeld">Bemerkungen Lernbegleiter <span class="klein"><span id="bemZahl">${E.bemerkung.length}</span>/1500</span></label>
+      <textarea id="bemFeld" maxlength="1500" placeholder="z. B. Abzug wegen vergessener Unterschrift, Zusatzpunkt für Hilfe beim Aufräumen …">${esc(E.bemerkung)}</textarea></div>
     <div class="bknopf">
       <button class="btn" type="button" id="bSpeichern">Speichern</button>
       <button class="btn" type="button" id="bWeiter">Speichern &amp; nächste offene ›</button>
@@ -325,6 +331,13 @@ $('bewertung').addEventListener('click', async e => {
   }
 });
 $('bewertung').addEventListener('input', e => {
+  if (e.target.id === 'bemFeld' && ENTWURF) {
+    ENTWURF.bemerkung = e.target.value; ENTWURF.geaendert = true;
+    $('bemZahl').textContent = e.target.value.length; $('bStatus').textContent = '';
+    clearTimeout(vorschauTimer);
+    vorschauTimer = setTimeout(()=>{ if (ENTWURF) renderVorschau(bogenPDF(entwurfAbgabe(), null, true)); }, 600);
+    return;
+  }
   if (e.target.id !== 'gesamtFeld' || !ENTWURF) return;
   ENTWURF.gesamt = e.target.value; ENTWURF.manuell = e.target.value.trim() !== '';
   ENTWURF.geaendert = true; $('bStatus').textContent = ''; $('gHinweis').innerHTML = hinweis();
@@ -339,12 +352,12 @@ async function speichern(){
   if (!gesamtGueltig()) { $('bStatus').innerHTML = `<span style="color:var(--red)">Gesamtpunkte: Zahl zwischen 0 und ${s.max} (halbe Punkte erlaubt)</span>`; return false; }
   const hat = E.werte.some(v=>v!==null);
   const body = { schluessel: KEY, eintrag: E.id, werte: hat ? E.werte : null,
-    zusatz: hat && s.zusatz ? E.zusatz : null, gesamt: gesamtZahl() };
+    zusatz: hat && s.zusatz ? E.zusatz : null, gesamt: gesamtZahl(), bemerkung: E.bemerkung.trim() };
   $('bStatus').textContent = 'speichere …';
   try {
     await rpc('graduierung_bewerten', body);
-    Object.assign(a, { lehrer_werte: body.werte, lehrer_zusatz: body.zusatz, lehrer_gesamt: body.gesamt,
-      bewertet_am: (body.werte || body.gesamt!==null) ? new Date().toISOString() : null });
+    Object.assign(a, { lehrer_werte: body.werte, lehrer_zusatz: body.zusatz, lehrer_gesamt: body.gesamt, lehrer_bemerkung: body.bemerkung || null,
+      bewertet_am: (body.werte || body.gesamt!==null || body.bemerkung) ? new Date().toISOString() : null });
     E.geaendert = false; zeigen();
     $('bStatus').textContent = '✓ gespeichert';
     renderVorschau(bogenPDF(a, null, true));
@@ -386,12 +399,12 @@ $('csvBtn').onclick = () => {
   const zelle = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
   const kopf = ['Name','Stufe','Datum','Schüler gesamt','Lehrer gesamt','Max',
     'S Krit. 1','S Krit. 2','S Krit. 3','S Krit. 4','S Zusatz','L Krit. 1','L Krit. 2','L Krit. 3','L Krit. 4','L Zusatz',
-    'Dienste','Bemerkung','Eingang','Bewertet am'];
+    'Dienste','Bemerkung','Bemerkung Lernbegleiter','Eingang','Bewertet am'];
   const zeilen = nachName(l).map(a => { const w = STUFEN[a.stufe].zusatz; return [a.name, STUFEN[a.stufe].name, datumDE(a.datum),
     zahl(a.punkte), zahl(lehrerGesamt(a)), a.max_punkte,
     a.werte[0], a.werte[1], a.werte[2], a.werte[3], w ? a.zusatz : '',
     lw(a,0), lw(a,1), lw(a,2), lw(a,3), w ? a.lehrer_zusatz : '',
-    a.dienste, a.bemerkung, new Date(a.eingang).toLocaleString('de-DE'),
+    a.dienste, a.bemerkung, a.lehrer_bemerkung, new Date(a.eingang).toLocaleString('de-DE'),
     a.bewertet_am ? new Date(a.bewertet_am).toLocaleString('de-DE') : '']; });
   const csv = '﻿' + [kopf, ...zeilen].map(z=>z.map(zelle).join(';')).join('\r\n');
   herunterladen(new Blob([csv], {type:'text/csv;charset=utf-8'}), `Graduierung_Abgaben_${heute()}.csv`);
