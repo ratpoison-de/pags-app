@@ -54,9 +54,34 @@ body.panel-offen header{padding-right:calc(min(46vw,640px) + 16px)}
 .pkopf b{flex:1;font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pkopf button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font:inherit;font-size:.85rem;cursor:pointer}
 .pkopf button.dl{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
-#seiten{flex:1;overflow:auto;background:#E9E8E6;padding:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
+#pInhalt{flex:1;overflow:auto;background:#E9E8E6}
+#seiten{padding:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
+#bewertung{background:#fff;border-bottom:1px solid var(--line);padding:12px 14px}
+#bewertung h3{margin:0 0 8px;font-size:.95rem;display:flex;align-items:center;gap:8px}
+#bewertung h3 .st{font-size:.72rem}
+.bz{display:grid;grid-template-columns:1fr auto auto;gap:6px 10px;align-items:center;padding:7px 0;border-top:1px solid #f0f0f0}
+.bz:first-of-type{border-top:0}
+.bz .kt{font-size:.85rem;font-weight:600}
+.bz .sw{font-size:.78rem;color:var(--muted);white-space:nowrap;text-align:right}
+.bz .sw b{color:var(--text)}
+.lp{display:flex;gap:4px}
+.lp button{min-width:34px;padding:6px 0;border:1.5px solid var(--line);background:#fff;border-radius:6px;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
+.lp button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.gesamt{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px;padding:10px;border-radius:8px;background:#FFF4F2}
+.gesamt label{font-weight:700}
+.gesamt input{width:84px;font-weight:700;font-size:1.05rem;text-align:center}
+.gesamt .klein{flex:1 1 160px}
+.bknopf{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.bknopf .btn{padding:8px 12px;font-size:.88rem}
+.gespeichert{color:#1B5E20;font-size:.82rem;font-weight:600;align-self:center}
+.lk{color:var(--red)}
+.offen{font-size:.72rem;color:var(--muted);border:1px dashed #bbb;border-radius:10px;padding:0 6px}
 #seiten canvas{width:100%;max-width:820px;height:auto;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
 tr.aktiv td{background:#FFF4F2}
+body.panel-offen #liste .klein, body.panel-offen th:nth-child(6){display:none}
+body.panel-offen #liste td.ein{display:none}
+body.panel-offen .akt{white-space:normal}
+body.panel-offen .akt button{margin:1px 0}
 @media(max-width:900px){
   #panel{width:100%}
   body.panel-offen main{margin-right:0}
@@ -99,7 +124,8 @@ tr.aktiv td{background:#FFF4F2}
       </div>
       <div class="chips" id="chips"></div>
       <div class="leiste" style="margin-top:12px">
-        <button class="btn" id="alleBtn" type="button">Angezeigte als ein PDF</button>
+        <button class="btn" id="druckBtn" type="button">🖨 Drucken (4 pro Seite)</button>
+        <button class="btn sec" id="alleBtn" type="button">Einzelbögen ansehen</button>
         <button class="btn sec" id="csvBtn" type="button">Tabelle (Excel/CSV)</button>
       </div>
       <p class="info" id="zahl"></p>
@@ -107,21 +133,21 @@ tr.aktiv td{background:#FFF4F2}
 
     <section class="card" style="padding:6px 16px">
       <table>
-        <thead><tr><th>Name</th><th>Stufe</th><th>Datum</th><th>Punkte</th><th>Eingang</th><th></th></tr></thead>
+        <thead><tr><th>Name</th><th>Stufe</th><th>Datum</th><th>Schüler</th><th>Lehrer</th><th>Eingang</th><th></th></tr></thead>
         <tbody id="liste"></tbody>
       </table>
     </section>
   </div>
 </main>
 
-<aside id="panel" aria-label="PDF-Vorschau">
+<aside id="panel" aria-label="Bewertung und PDF-Vorschau">
   <div class="pkopf">
     <b id="ptitel">Vorschau</b>
     <button class="dl" id="pDownload" type="button">⬇ Herunterladen</button>
     <button id="pTab" type="button" title="In neuem Tab öffnen">↗</button>
     <button id="pZu" type="button" title="Schließen">✕</button>
   </div>
-  <div id="seiten"></div>
+  <div id="pInhalt"><div id="bewertung" class="hidden"></div><div id="seiten"></div></div>
 </aside>
 
 <script>
@@ -167,14 +193,15 @@ function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;'
 function zeigen(){
   const l = gefiltert(), tb = $('liste');
   $('zahl').textContent = `${l.length} von ${DATEN.length} Abgaben angezeigt`;
-  if (!l.length) { tb.innerHTML = `<tr><td colspan="6" class="leer">Keine Abgaben${DATEN.length?' für diese Auswahl':''}.</td></tr>`; return; }
+  if (!l.length) { tb.innerHTML = `<tr><td colspan="7" class="leer">Keine Abgaben${DATEN.length?' für diese Auswahl':''}.</td></tr>`; return; }
   tb.innerHTML = l.map(a => { const s = STUFEN[a.stufe]; return `<tr data-id="${a.id}"${a.id===AKTIV?' class="aktiv"':''}>
     <td><b>${esc(a.name)}</b>${a.dienste?`<div class="klein">${esc(a.dienste.slice(0,70))}${a.dienste.length>70?' …':''}</div>`:''}</td>
     <td><span class="st" style="background:${s.farbe}">${s.name}</span></td>
     <td>${datumDE(a.datum)}</td>
-    <td class="pk">${Number(a.punkte)} / ${a.max_punkte}</td>
-    <td class="klein">${new Date(a.eingang).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'})}</td>
-    <td class="akt"><button data-pdf="${a.id}">Ansehen</button> <button data-dl="${a.id}" title="PDF herunterladen">⬇</button> <button class="del" data-del="${a.id}">Löschen</button></td></tr>`; }).join('');
+    <td class="pk">${zahl(a.punkte)} / ${a.max_punkte}</td>
+    <td class="pk lk">${lehrerGesamt(a)===null ? '<span class="offen">offen</span>' : zahl(lehrerGesamt(a))+' / '+a.max_punkte}</td>
+    <td class="klein ein">${new Date(a.eingang).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'})}</td>
+    <td class="akt"><button data-pdf="${a.id}">Bewerten</button> <button data-dl="${a.id}" title="PDF herunterladen">⬇</button> <button class="del" data-del="${a.id}">Löschen</button></td></tr>`; }).join('');
 }
 
 // PDF-Seitenleiste
@@ -187,64 +214,190 @@ function herunterladen(blob, name){
 }
 
 async function zeigePDF(doc, name, titel, id){
-  AKTIV = id || null; P_NAME = name; P_BLOB = doc.output('blob');
-  if (P_URL) URL.revokeObjectURL(P_URL); P_URL = URL.createObjectURL(P_BLOB);
+  AKTIV = id || null; P_NAME = name;
   $('ptitel').textContent = titel;
   $('panel').classList.add('offen'); document.body.classList.add('panel-offen');
   document.querySelectorAll('#liste tr').forEach(tr=>tr.classList.toggle('aktiv', tr.dataset.id===AKTIV));
-  const box = $('seiten'); box.innerHTML = ''; box.scrollTop = 0;
-  const nr = ++renderNr;
-  if (!window.pdfjsLib) { box.innerHTML = `<iframe src="${P_URL}" style="width:100%;height:100%;border:0"></iframe>`; return; }
+  if (!id) { $('bewertung').classList.add('hidden'); ENTWURF = null; }
+  $('pInhalt').scrollTop = 0;
+  await renderVorschau(doc);
+}
+async function renderVorschau(doc){
+  P_BLOB = doc.output('blob');
+  if (P_URL) URL.revokeObjectURL(P_URL); P_URL = URL.createObjectURL(P_BLOB);
+  const box = $('seiten'), nr = ++renderNr;
+  if (!window.pdfjsLib) { box.innerHTML = `<iframe src="${P_URL}" style="width:100%;height:80vh;border:0"></iframe>`; return; }
   const pdf = await pdfjsLib.getDocument({data: new Uint8Array(await P_BLOB.arrayBuffer())}).promise;
-  const breite = Math.min(box.clientWidth - 24, 820) * (window.devicePixelRatio || 1);
+  const breite = Math.min($('pInhalt').clientWidth - 24, 820) * (window.devicePixelRatio || 1);
+  const neu = [];
   for (let i = 1; i <= pdf.numPages; i++) {
     if (nr !== renderNr) return;            // inzwischen anderes PDF gewählt
     const seite = await pdf.getPage(i);
     const v = seite.getViewport({scale: breite / seite.getViewport({scale:1}).width});
     const c = document.createElement('canvas'); c.width = v.width; c.height = v.height;
-    box.appendChild(c);
     await seite.render({canvasContext: c.getContext('2d'), viewport: v}).promise;
+    neu.push(c);
   }
+  if (nr === renderNr) box.replaceChildren(...neu);   // ohne Flackern austauschen
 }
 function schliessePanel(){
-  $('panel').classList.remove('offen'); document.body.classList.remove('panel-offen'); AKTIV = null;
+  if (!verwerfenOk()) return;
+  $('panel').classList.remove('offen'); document.body.classList.remove('panel-offen'); AKTIV = null; ENTWURF = null;
   document.querySelectorAll('#liste tr.aktiv').forEach(tr=>tr.classList.remove('aktiv'));
 }
 $('pZu').onclick = schliessePanel;
 $('pDownload').onclick = () => { if (P_BLOB) herunterladen(P_BLOB, P_NAME); };
 $('pTab').onclick = () => { if (P_URL) window.open(P_URL, '_blank'); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape') schliessePanel(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.activeElement.tagName !== 'INPUT') schliessePanel(); });
+
+/* ---------- Bewertung aus Lehrersicht ---------- */
+let ENTWURF = null;   // {id, werte[], zusatz, gesamt:'', manuell, geaendert}
+function verwerfenOk(){ return !ENTWURF || !ENTWURF.geaendert || confirm('Deine Lehrerpunkte sind noch nicht gespeichert. Trotzdem verwerfen?'); }
+function entwurfAbgabe(){ const a = DATEN.find(x=>x.id===ENTWURF.id);
+  return {...a, lehrer_werte: ENTWURF.werte, lehrer_zusatz: ENTWURF.zusatz, lehrer_gesamt: gesamtZahl()}; }
+function summeEntwurf(){ const a = DATEN.find(x=>x.id===ENTWURF.id); return gesamtPunkte(a.stufe, ENTWURF.werte, ENTWURF.zusatz); }
+function gesamtZahl(){ const v = String(ENTWURF.gesamt).trim().replace(',','.'); return v==='' ? null : Number(v); }
+
+function bewerten(a){
+  if (AKTIV !== a.id && !verwerfenOk()) return;
+  const s = STUFEN[a.stufe];
+  const werte = s.krit.map((_,i)=>lw(a,i));
+  const hat = werte.some(v=>v!==null);
+  const lg = a.lehrer_gesamt===null || a.lehrer_gesamt===undefined ? null : Number(a.lehrer_gesamt);
+  ENTWURF = { id:a.id, werte, zusatz: s.zusatz ? (a.lehrer_zusatz ?? 0) : null,
+    gesamt: lg===null ? '' : zahl(lg), manuell: false, geaendert:false };
+  ENTWURF.manuell = lg!==null && (!hat || lg !== summeEntwurf());
+  formular();
+  zeigePDF(bogenPDF(a, null, true), dateiName(a), `${a.name} · ${s.name} · ${datumDE(a.datum)}`, a.id);
+}
+
+function formular(){
+  const a = DATEN.find(x=>x.id===ENTWURF.id), s = STUFEN[a.stufe], E = ENTWURF;
+  const knoepfe = (max, wert, attr) => Array.from({length:max+1},(_,n)=>`<button type="button" ${attr}="${n}" aria-pressed="${wert===n}">${n}</button>`).join('');
+  let h = `<h3>Lehrerpunkte <span class="st" style="background:${s.farbe}">${s.name}</span></h3>`;
+  s.krit.forEach((k,i)=>{ h += `<div class="bz"><span class="kt">${k.k}</span>
+      <span class="sw">Schüler <b>${a.werte[i]}</b>/${k.max}</span><span class="lp" data-i="${i}">${knoepfe(k.max, E.werte[i], 'data-n')}</span></div>`; });
+  if (s.zusatz) h += `<div class="bz"><span class="kt">Zusatzpunkt Dienste</span>
+      <span class="sw">Schüler <b>${a.zusatz||0}</b>/1</span><span class="lp" data-z="1">${knoepfe(1, E.zusatz, 'data-n')}</span></div>`;
+  h += `<div class="gesamt"><label for="gesamtFeld">Gesamtpunkte</label>
+      <input id="gesamtFeld" inputmode="decimal" value="${E.gesamt}" placeholder="–"> <b>/ ${s.max}</b>
+      <span class="klein" id="gHinweis">${hinweis()}</span></div>
+    <div class="bknopf">
+      <button class="btn" type="button" id="bSpeichern">Speichern</button>
+      <button class="btn" type="button" id="bWeiter">Speichern &amp; nächste offene ›</button>
+      <button class="btn sec" type="button" id="bUebernehmen">Wie Schüler</button>
+      <button class="btn sec" type="button" id="bLeeren" title="Lehrerbewertung entfernen">Zurücksetzen</button>
+      <span class="gespeichert" id="bStatus"></span>
+    </div>`;
+  const box = $('bewertung'); box.innerHTML = h; box.classList.remove('hidden');
+}
+
+function hinweis(){ return ENTWURF.manuell
+  ? 'von dir eingetragen · <a href="#" id="neuRechnen">↺ aus Lehrerpunkten berechnen</a>'
+  : 'wird aus den Lehrerpunkten berechnet – du kannst es überschreiben'; }
+
+let vorschauTimer = null;
+function geaendert(neuZeichnen){
+  ENTWURF.geaendert = true;
+  if (!ENTWURF.manuell) ENTWURF.gesamt = ENTWURF.werte.some(v=>v!==null) ? zahl(summeEntwurf()) : '';
+  if (neuZeichnen) formular(); else $('bStatus').textContent = '';
+  clearTimeout(vorschauTimer);
+  vorschauTimer = setTimeout(()=>{ if (ENTWURF) renderVorschau(bogenPDF(entwurfAbgabe(), null, true)); }, 250);
+}
+
+$('bewertung').addEventListener('click', async e => {
+  const t = e.target; if (!ENTWURF) return;
+  if (t.dataset.n !== undefined) {
+    const p = t.parentElement, n = Number(t.dataset.n);
+    if (p.dataset.z) ENTWURF.zusatz = n; else ENTWURF.werte[Number(p.dataset.i)] = n;
+    geaendert(true); return;
+  }
+  if (t.id === 'neuRechnen') { e.preventDefault(); ENTWURF.manuell = false; geaendert(true); return; }
+  if (t.id === 'bUebernehmen') { const a = DATEN.find(x=>x.id===ENTWURF.id);
+    ENTWURF.werte = a.werte.slice(); if (STUFEN[a.stufe].zusatz) ENTWURF.zusatz = a.zusatz||0; ENTWURF.manuell = false; geaendert(true); return; }
+  if (t.id === 'bLeeren') { const a = DATEN.find(x=>x.id===ENTWURF.id);
+    ENTWURF.werte = ENTWURF.werte.map(()=>null); ENTWURF.zusatz = STUFEN[a.stufe].zusatz ? 0 : null; ENTWURF.manuell = false; geaendert(true); return; }
+  if (t.id === 'bSpeichern' || t.id === 'bWeiter') {
+    const ok = await speichern(); if (!ok || t.id !== 'bWeiter') return;
+    const l = gefiltert(), pos = l.findIndex(x=>x.id===ENTWURF.id);
+    const naechste = l.slice(pos+1).concat(l.slice(0,pos)).find(x=>lehrerGesamt(x)===null);
+    if (naechste) bewerten(naechste); else $('bStatus').textContent = '✓ gespeichert – alle angezeigten sind bewertet 🎉';
+  }
+});
+$('bewertung').addEventListener('input', e => {
+  if (e.target.id !== 'gesamtFeld' || !ENTWURF) return;
+  ENTWURF.gesamt = e.target.value; ENTWURF.manuell = e.target.value.trim() !== '';
+  ENTWURF.geaendert = true; $('bStatus').textContent = ''; $('gHinweis').innerHTML = hinweis();
+  clearTimeout(vorschauTimer);
+  vorschauTimer = setTimeout(()=>{ if (ENTWURF && gesamtGueltig()) renderVorschau(bogenPDF(entwurfAbgabe(), null, true)); }, 400);
+});
+function gesamtGueltig(){ const g = gesamtZahl(), a = DATEN.find(x=>x.id===ENTWURF.id);
+  return g === null || (!isNaN(g) && g >= 0 && g <= STUFEN[a.stufe].max && Math.round(g*2) === g*2); }
+
+async function speichern(){
+  const E = ENTWURF, a = DATEN.find(x=>x.id===E.id), s = STUFEN[a.stufe];
+  if (!gesamtGueltig()) { $('bStatus').innerHTML = `<span style="color:var(--red)">Gesamtpunkte: Zahl zwischen 0 und ${s.max} (halbe Punkte erlaubt)</span>`; return false; }
+  const hat = E.werte.some(v=>v!==null);
+  const body = { schluessel: KEY, eintrag: E.id, werte: hat ? E.werte : null,
+    zusatz: hat && s.zusatz ? E.zusatz : null, gesamt: gesamtZahl() };
+  $('bStatus').textContent = 'speichere …';
+  try {
+    await rpc('graduierung_bewerten', body);
+    Object.assign(a, { lehrer_werte: body.werte, lehrer_zusatz: body.zusatz, lehrer_gesamt: body.gesamt,
+      bewertet_am: (body.werte || body.gesamt!==null) ? new Date().toISOString() : null });
+    E.geaendert = false; zeigen();
+    $('bStatus').textContent = '✓ gespeichert';
+    renderVorschau(bogenPDF(a, null, true));
+    return true;
+  } catch(err) { $('bStatus').innerHTML = `<span style="color:var(--red)">Speichern fehlgeschlagen: ${esc(err.message)}</span>`; return false; }
+}
 
 $('liste').onclick = async (e) => {
   const d = e.target.dataset, id = d.pdf || d.dl || d.del; if (!id) return;
   const a = DATEN.find(x=>x.id===id);
-  if (d.pdf) { zeigePDF(bogenPDF(a), dateiName(a), `${a.name} · ${STUFEN[a.stufe].name} · ${datumDE(a.datum)}`, id); return; }
-  if (d.dl) { herunterladen(bogenPDF(a).output('blob'), dateiName(a)); return; }
+  if (d.pdf) { bewerten(a); return; }
+  if (d.dl) { herunterladen(bogenPDF(a, null, true).output('blob'), dateiName(a)); return; }
   if (!confirm(`Abgabe von ${a.name} (${datumDE(a.datum)}) endgültig löschen?`)) return;
   try {
     await rpc('graduierung_loeschen', {schluessel: KEY, eintrag: id});
-    DATEN = DATEN.filter(x=>x.id!==id); if (AKTIV === id) schliessePanel(); zeigen();
+    if (AKTIV === id) { ENTWURF = null; schliessePanel(); }
+    DATEN = DATEN.filter(x=>x.id!==id); zeigen();
   } catch(err) { alert('Löschen fehlgeschlagen: '+err.message); }
 };
 
-$('alleBtn').onclick = () => {
+const nachName = l => l.slice().sort((a,b)=>a.name.localeCompare(b.name,'de') || String(a.datum).localeCompare(String(b.datum)));
+const heute = () => new Date().toISOString().slice(0,10);
+
+$('druckBtn').onclick = () => {
   const l = gefiltert(); if (!l.length) return;
-  let doc = null; l.slice().sort((a,b)=>a.name.localeCompare(b.name,'de')).forEach(a => { doc = bogenPDF(a, doc); });
-  zeigePDF(doc, `Graduierung_Abgaben_${new Date().toISOString().slice(0,10)}.pdf`, `Sammel-PDF · ${l.length} Abgaben`);
+  const offen = l.filter(a=>lehrerGesamt(a)===null).length;
+  if (offen && !confirm(`${offen} der ${l.length} Bögen hast du noch nicht bewertet. Trotzdem drucken?`)) return;
+  herunterladen(druckPDF(nachName(l)).output('blob'), `Graduierung_Druck_${heute()}.pdf`);
+};
+
+$('alleBtn').onclick = () => {
+  const l = gefiltert(); if (!l.length || !verwerfenOk()) return;
+  let doc = null; nachName(l).forEach(a => { doc = bogenPDF(a, doc, true); });
+  zeigePDF(doc, `Graduierung_Abgaben_${heute()}.pdf`, `Einzelbögen · ${l.length} Abgaben`);
 };
 
 $('csvBtn').onclick = () => {
   const l = gefiltert(); if (!l.length) return;
   const zelle = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
-  const kopf = ['Name','Stufe','Datum','Punkte','Max','Kriterium 1','Kriterium 2','Kriterium 3','Kriterium 4','Zusatzpunkt','Dienste','Bemerkung','Eingang'];
-  const zeilen = l.map(a => [a.name, STUFEN[a.stufe].name, datumDE(a.datum), String(a.punkte).replace('.',','), a.max_punkte,
-    a.werte[0], a.werte[1], a.werte[2], a.werte[3], a.stufe==='walker'?a.zusatz:'', a.dienste, a.bemerkung,
-    new Date(a.eingang).toLocaleString('de-DE')]);
+  const kopf = ['Name','Stufe','Datum','Schüler gesamt','Lehrer gesamt','Max',
+    'S Krit. 1','S Krit. 2','S Krit. 3','S Krit. 4','S Zusatz','L Krit. 1','L Krit. 2','L Krit. 3','L Krit. 4','L Zusatz',
+    'Dienste','Bemerkung','Eingang','Bewertet am'];
+  const zeilen = nachName(l).map(a => { const w = STUFEN[a.stufe].zusatz; return [a.name, STUFEN[a.stufe].name, datumDE(a.datum),
+    zahl(a.punkte), zahl(lehrerGesamt(a)), a.max_punkte,
+    a.werte[0], a.werte[1], a.werte[2], a.werte[3], w ? a.zusatz : '',
+    lw(a,0), lw(a,1), lw(a,2), lw(a,3), w ? a.lehrer_zusatz : '',
+    a.dienste, a.bemerkung, new Date(a.eingang).toLocaleString('de-DE'),
+    a.bewertet_am ? new Date(a.bewertet_am).toLocaleString('de-DE') : '']; });
   const csv = '﻿' + [kopf, ...zeilen].map(z=>z.map(zelle).join(';')).join('\r\n');
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
-  link.download = `Graduierung_Abgaben_${new Date().toISOString().slice(0,10)}.csv`; link.click();
+  herunterladen(new Blob([csv], {type:'text/csv;charset=utf-8'}), `Graduierung_Abgaben_${heute()}.csv`);
 };
+
+window.addEventListener('beforeunload', e => { if (ENTWURF && ENTWURF.geaendert) { e.preventDefault(); e.returnValue = ''; } });
 
 // Stufen-Filter
 for (const [k,s] of Object.entries(STUFEN)) {
