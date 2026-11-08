@@ -3,7 +3,7 @@ const RESPEKT = {t:'Gesprächsregeln einhalten und respektvolles Verhalten', k:'
 const RESPEKT2 = {...RESPEKT, b:['im Atelier und Klassenzimmer und außerhalb','gegenüber Mitschülern, Lernbegleitern, Eigentum']};
 const ZEIT = {t:'Effektive Nutzung der Arbeitszeit und Lernplan auf aktuellem Stand', k:'Arbeitszeit & Lernplan', b:['in Unterricht und IL','pünktliche Vorbereitung auf Präsentationen, Tests']};
 const ZUV_ORG = {t:'Zuverlässigkeit sowie Organisation und Ordnung', k:'Zuverlässigkeit, Organisation & Ordnung', b:['Rückgabezettel, Unterschriften, Material …','Lerntagebuch, Überblick haben, selbstständig planen']};
-const VORBILD = {t:'Vorbildliche und aktive Teilnahme über den Unterricht hinaus', k:'Aktive Teilnahme & Dienste', b:['Übernahme zusätzlicher Dienste']};
+const VORBILD = {t:'Aktive Teilnahme am Unterricht und Mitgestaltung des Unterrichtsgeschehens', k:'Aktive Teilnahme & Mitgestaltung des Unterrichts', b:[]};
 
 const STUFEN = {
   walker:{name:'Walker', farbe:'#2E7D32', hex:[46,125,50], max:6, zusatz:true, krit:[
@@ -121,9 +121,14 @@ function bogenPDF(a, doc, mitLehrer){
   y = _box(doc, M, y, B, 'Gelbe Karten (nur vom Lernbegleiter auszufüllen mit Datum und Unterschrift)', '', 16);
   doc.setTextColor(168,16,16);
   y = _box(doc, M, y, B, 'Bemerkungen zu Abzügen oder Zusatzpunkten (Lernbegleiter)', mitLehrer ? (a.lehrer_bemerkung||'').trim() : '', 16);
-  doc.setTextColor(40); doc.setFont('helvetica','normal'); doc.setFontSize(10);
-  doc.text('Punkte nach Prüfung: ' + (mitLehrer && lg!==null ? zahl(lg) : '______') + ' / '+s.max, M, y+4);
-  doc.line(M+100, y+4, M+B, y+4); doc.setFontSize(8); doc.text('Datum, Unterschrift Lernbegleiter', M+100, y+8);
+  // Neue Gesamtpunktzahl (vom Lernbegleiter)
+  doc.setDrawColor(168,16,16); doc.setLineWidth(0.5); doc.rect(M, y-2, 82, 11); doc.setLineWidth(0.2);
+  doc.setTextColor(168,16,16); doc.setFont('helvetica','bold'); doc.setFontSize(10.5);
+  doc.text('Neue Gesamtpunktzahl:', M+3, y+5.2);
+  doc.setFontSize(13);
+  doc.text((mitLehrer && lg!==null ? zahl(lg) : '_____') + ' / ' + s.max, M+79, y+5.4, {align:'right'});
+  doc.setTextColor(40); doc.setDrawColor(120); doc.setFont('helvetica','normal');
+  doc.line(M+100, y+6, M+B, y+6); doc.setFontSize(8); doc.text('Datum, Unterschrift Lernbegleiter', M+100, y+10);
 
   doc.setFontSize(7.5); doc.setTextColor(140);
   const zeit = a.eingang ? new Date(a.eingang) : new Date();
@@ -193,14 +198,20 @@ function _kompakt(doc, a, X, Y){
   if ((a.bemerkung||'').trim()) feld('Bemerkung Schüler/in', a.bemerkung.trim(), 2, 5);
   const lb = (a.lehrer_bemerkung||'').trim();
   if (lb) { feld('Bemerkungen Lernbegleiter', lb, 6, 7, true); }
-  const rest2 = Y + H - m - 9 - y;
+  const rest2 = Y + H - m - 13.5 - y;   // Platz für Gesamtpunktzahl + Unterschrift
   feld(lb ? 'Gelbe Karten' : 'Gelbe Karten / Bemerkungen Lernbegleiter', '', 0, Math.max(8, rest2 - 1), true);
   // Unterschrift
   const uy = Y + H - m - 2;
   doc.setDrawColor(120); doc.line(x+w-45, uy, x+w, uy);
   doc.setFont('helvetica','normal'); doc.setFontSize(5.8); doc.setTextColor(110);
   doc.text('Datum, Unterschrift Lernbegleiter', x+w-45, uy+2.6);
-  doc.text('Abgabe: '+(a.eingang ? new Date(a.eingang).toLocaleDateString('de-DE') : ''), x, uy+2.6);
+  doc.text('Abgabe: '+(a.eingang ? new Date(a.eingang).toLocaleDateString('de-DE') : ''), x, uy+3);
+  // Neue Gesamtpunktzahl
+  const lgk = lehrerGesamt(a);
+  doc.setDrawColor(168,16,16); doc.setLineWidth(0.4); doc.rect(x, uy-7.4, 47, 7.4); doc.setLineWidth(0.2);
+  doc.setTextColor(168,16,16); doc.setFont('helvetica','bold'); doc.setFontSize(6.6);
+  doc.text('Neue Gesamtpunktzahl', x+1.5, uy-2.8);
+  doc.setFontSize(9); doc.text((lgk===null ? '____' : zahl(lgk)) + ' / ' + s.max, x+45.5, uy-2.6, {align:'right'});
 }
 
 // Alle Bögen, 4 pro A4-Seite, mit Schnittlinien

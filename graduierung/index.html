@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="../config.js?v=20261108"></script>
-<script src="bogen.js?v=20261108"></script>
+<script src="bogen.js?v=20261108b"></script>
 <style>
 :root{--c:#A81010;--red:#A81010;--red-dark:#860000;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3;--card:#fff;
   --walker:#2E7D32;--hiker:#1565C0;--climber:#E65100;--free:#6A1B9A;}
@@ -130,7 +130,7 @@ function waehle(key, push){
   const kc = $('kriterien'); kc.innerHTML='';
   s.krit.forEach((k,i)=>{
     const d = document.createElement('div'); d.className='krit'; d.id='k'+i;
-    d.innerHTML = `<h3>${k.t} <span style="color:var(--muted);font-weight:400">(max. ${k.max})</span></h3><ul>${k.b.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+    d.innerHTML = `<h3>${k.t} <span style="color:var(--muted);font-weight:400">(max. ${k.max})</span></h3>${k.b.length ? `<ul>${k.b.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<div style="height:8px"></div>'}`;
     const p = document.createElement('div'); p.className='pts';
     for (let n=0;n<=k.max;n++){
       const b=document.createElement('button'); b.type='button'; b.textContent=n; b.setAttribute('aria-pressed','false');
