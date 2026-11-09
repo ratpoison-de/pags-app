@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="../config.js?v=20261108"></script>
-<script src="bogen.js?v=20261108b"></script>
+<script src="bogen.js?v=20261109"></script>
 <style>
 :root{--c:#A81010;--red:#A81010;--red-dark:#860000;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3;--card:#fff;
   --walker:#2E7D32;--hiker:#1565C0;--climber:#E65100;--free:#6A1B9A;}
@@ -30,7 +30,7 @@ h2{font-size:1.05rem;margin:0 0 10px}
 .stufe[aria-pressed=true] small{color:#fff}
 .badge{display:inline-block;background:var(--c);color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;font-size:.9rem}
 label.f{display:block;font-weight:600;font-size:.9rem;margin:10px 0 4px}
-input[type=text],input[type=date],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff}
+input[type=text],input[type=date],select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff}
 textarea{min-height:70px;resize:vertical}
 .krit{border-top:1px solid var(--line);padding:14px 0}
 .krit:first-of-type{border-top:0;padding-top:4px}
@@ -76,6 +76,9 @@ footer{text-align:center;font-size:.78rem;color:var(--muted);padding:10px 16px 3
       <input type="text" id="name" autocomplete="name" placeholder="z. B. Lena Müller" required>
       <label class="f" for="datum">Datum</label>
       <input type="date" id="datum" required>
+      <label class="f" for="woche">Graduierungswoche</label>
+      <select id="woche" required></select>
+      <p class="hint">Für welche Woche bewertest du dich?</p>
     </section>
 
     <section class="card">
@@ -157,6 +160,7 @@ function pruefen(){
   const fehler = [];
   if ($('name').value.trim().length < 2) fehler.push('Bitte gib deinen Vor- und Nachnamen ein.');
   if (!$('datum').value) fehler.push('Bitte gib das Datum ein.');
+  if (!$('woche').value) fehler.push('Bitte wähle die Graduierungswoche.');
   let fehlt=false; werte.forEach((v,i)=>{ if(v===null){ $('k'+i).classList.add('miss'); fehlt=true; } });
   if (fehlt) fehler.push('Bitte bewerte jedes Kriterium.');
   const e=$('errMsg');
@@ -165,7 +169,7 @@ function pruefen(){
 }
 
 function abgabe(){
-  return { stufe: stufeKey, name: $('name').value.trim(), datum: $('datum').value, werte: werte.slice(), zusatz,
+  return { stufe: stufeKey, name: $('name').value.trim(), datum: $('datum').value, woche: $('woche').value, werte: werte.slice(), zusatz,
     dienste: $('dienste').value.trim(), bemerkung: $('bemerkung').value.trim() };
 }
 
@@ -194,6 +198,16 @@ $('bogen').onsubmit = async (ev) => {
 };
 
 $('datum').value = new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+// Graduierungswoche: 4 Wochen zurück bis 1 Woche voraus, aktuelle Woche vorausgewählt
+(function(){
+  const jetzt = montagVon(heuteISO()), sel = $('woche');
+  for (let i = 4; i >= -1; i--) {
+    const mo = plusTage(jetzt, -7*i), o = document.createElement('option');
+    o.value = mo; o.textContent = wocheText(mo) + (i===0 ? '  (diese Woche)' : i===1 ? '  (letzte Woche)' : '');
+    if (i === 0) o.selected = true;
+    sel.appendChild(o);
+  }
+})();
 const gespeichert = store('grad_name'); if (gespeichert) $('name').value = gespeichert;
 const st = (new URLSearchParams(location.search).get('stufe')||'').toLowerCase();
 if (STUFEN[st]) waehle(st, false);

@@ -10,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="../config.js?v=20261108"></script>
-<script src="bogen.js?v=20261108b"></script>
+<script src="bogen.js?v=20261109"></script>
 <style>
 :root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3}
 *{box-sizing:border-box}
@@ -122,8 +122,7 @@ body.panel-offen .akt button{margin:1px 0}
     <section class="card">
       <div class="leiste">
         <input type="search" id="suche" placeholder="Name suchen …">
-        <input type="date" id="von" title="Datum von">
-        <input type="date" id="bis" title="Datum bis">
+        <select id="wocheFilter" title="Graduierungswoche"></select>
         <button class="btn sec" id="neuLaden" type="button">↻ Aktualisieren</button>
       </div>
       <div class="chips" id="chips"></div>
@@ -137,7 +136,7 @@ body.panel-offen .akt button{margin:1px 0}
 
     <section class="card" style="padding:6px 16px">
       <table>
-        <thead><tr><th>Name</th><th>Stufe</th><th>Datum</th><th>Schüler</th><th>Lehrer</th><th>Eingang</th><th></th></tr></thead>
+        <thead><tr><th>Name</th><th>Stufe</th><th>Woche</th><th>Schüler</th><th>Lehrer</th><th>Eingang</th><th></th></tr></thead>
         <tbody id="liste"></tbody>
       </table>
     </section>
@@ -166,11 +165,24 @@ async function rpc(fn, body){
   const t = await r.text(); return t ? JSON.parse(t) : null;
 }
 
+let WOCHE = null;   // null = noch nicht gewählt, '' = alle Wochen
 async function laden(){
   $('zahl').textContent = 'Lade …';
   DATEN = await rpc('graduierung_liste', {schluessel: KEY});
+  wochenFuellen();
   zeigen();
 }
+function wochenFuellen(){
+  const zaehl = {};
+  DATEN.forEach(a => { const w = wocheVon(a); zaehl[w] = (zaehl[w]||0) + 1; });
+  const wochen = Object.keys(zaehl).sort().reverse();
+  if (WOCHE === null) WOCHE = wochen[0] || '';           // beim ersten Laden: neueste Woche
+  if (WOCHE && !zaehl[WOCHE]) wochen.unshift(WOCHE);       // gewählte Woche behalten, auch wenn leer
+  $('wocheFilter').innerHTML = `<option value="">Alle Wochen (${DATEN.length})</option>` +
+    wochen.map(w => `<option value="${w}">${wocheText(w)} (${zaehl[w]||0})</option>`).join('');
+  $('wocheFilter').value = WOCHE;
+}
+function wocheDatei(){ return WOCHE ? `KW${kwNr(WOCHE)}_${plusTage(WOCHE,3).slice(0,4)}` : heute(); }
 
 async function oeffnen(k, merken){
   KEY = k; $('loginErr').classList.add('hidden');
@@ -186,22 +198,22 @@ async function oeffnen(k, merken){
 }
 
 function gefiltert(){
-  const q = $('suche').value.trim().toLowerCase(), von = $('von').value, bis = $('bis').value;
+  const q = $('suche').value.trim().toLowerCase();
   return DATEN.filter(a => FILTER.has(a.stufe)
     && (!q || a.name.toLowerCase().includes(q))
-    && (!von || a.datum >= von) && (!bis || a.datum <= bis));
+    && (!WOCHE || wocheVon(a) === WOCHE));
 }
 
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 function zeigen(){
   const l = gefiltert(), tb = $('liste');
-  $('zahl').textContent = `${l.length} von ${DATEN.length} Abgaben angezeigt`;
+  $('zahl').textContent = `${l.length} von ${DATEN.length} Abgaben angezeigt` + (WOCHE ? ` · ${wocheText(WOCHE)}` : '');
   if (!l.length) { tb.innerHTML = `<tr><td colspan="7" class="leer">Keine Abgaben${DATEN.length?' für diese Auswahl':''}.</td></tr>`; return; }
   tb.innerHTML = l.map(a => { const s = STUFEN[a.stufe]; return `<tr data-id="${a.id}"${a.id===AKTIV?' class="aktiv"':''}>
     <td><b>${esc(a.name)}</b>${a.dienste?`<div class="klein">${esc(a.dienste.slice(0,70))}${a.dienste.length>70?' …':''}</div>`:''}</td>
     <td><span class="st" style="background:${s.farbe}">${s.name}</span></td>
-    <td>${datumDE(a.datum)}</td>
+    <td><b>KW ${kwNr(wocheVon(a))}</b><div class="klein">${datumDE(a.datum).slice(0,6)}</div></td>
     <td class="pk">${zahl(a.punkte)} / ${a.max_punkte}</td>
     <td class="pk lk">${lehrerGesamt(a)===null ? '<span class="offen">offen</span>' : zahl(lehrerGesamt(a))+' / '+a.max_punkte}${a.lehrer_bemerkung ? ` <span title="${esc(a.lehrer_bemerkung)}">💬</span>` : ''}</td>
     <td class="klein ein">${new Date(a.eingang).toLocaleString('de-DE',{dateStyle:'short',timeStyle:'short'})}</td>
@@ -385,29 +397,29 @@ $('druckBtn').onclick = () => {
   const l = gefiltert(); if (!l.length) return;
   const offen = l.filter(a=>lehrerGesamt(a)===null).length;
   if (offen && !confirm(`${offen} der ${l.length} Bögen hast du noch nicht bewertet. Trotzdem drucken?`)) return;
-  herunterladen(druckPDF(nachName(l)).output('blob'), `Graduierung_Druck_${heute()}.pdf`);
+  herunterladen(druckPDF(nachName(l)).output('blob'), `Graduierung_Druck_${wocheDatei()}.pdf`);
 };
 
 $('alleBtn').onclick = () => {
   const l = gefiltert(); if (!l.length || !verwerfenOk()) return;
   let doc = null; nachName(l).forEach(a => { doc = bogenPDF(a, doc, true); });
-  zeigePDF(doc, `Graduierung_Abgaben_${heute()}.pdf`, `Einzelbögen · ${l.length} Abgaben`);
+  zeigePDF(doc, `Graduierung_Abgaben_${wocheDatei()}.pdf`, `Einzelbögen · ${l.length} Abgaben` + (WOCHE ? ` · KW ${kwNr(WOCHE)}` : ''));
 };
 
 $('csvBtn').onclick = () => {
   const l = gefiltert(); if (!l.length) return;
   const zelle = v => '"' + String(v ?? '').replace(/"/g,'""') + '"';
-  const kopf = ['Name','Stufe','Datum','Schüler gesamt','Lehrer gesamt','Max',
+  const kopf = ['Name','Stufe','Graduierungswoche','Datum','Schüler gesamt','Lehrer gesamt','Max',
     'S Krit. 1','S Krit. 2','S Krit. 3','S Krit. 4','S Zusatz','L Krit. 1','L Krit. 2','L Krit. 3','L Krit. 4','L Zusatz',
     'Dienste','Bemerkung','Bemerkung Lernbegleiter','Eingang','Bewertet am'];
-  const zeilen = nachName(l).map(a => { const w = STUFEN[a.stufe].zusatz; return [a.name, STUFEN[a.stufe].name, datumDE(a.datum),
+  const zeilen = nachName(l).map(a => { const w = STUFEN[a.stufe].zusatz; return [a.name, STUFEN[a.stufe].name, wocheText(wocheVon(a)), datumDE(a.datum),
     zahl(a.punkte), zahl(lehrerGesamt(a)), a.max_punkte,
     a.werte[0], a.werte[1], a.werte[2], a.werte[3], w ? a.zusatz : '',
     lw(a,0), lw(a,1), lw(a,2), lw(a,3), w ? a.lehrer_zusatz : '',
     a.dienste, a.bemerkung, a.lehrer_bemerkung, new Date(a.eingang).toLocaleString('de-DE'),
     a.bewertet_am ? new Date(a.bewertet_am).toLocaleString('de-DE') : '']; });
   const csv = '﻿' + [kopf, ...zeilen].map(z=>z.map(zelle).join(';')).join('\r\n');
-  herunterladen(new Blob([csv], {type:'text/csv;charset=utf-8'}), `Graduierung_Abgaben_${heute()}.csv`);
+  herunterladen(new Blob([csv], {type:'text/csv;charset=utf-8'}), `Graduierung_Abgaben_${wocheDatei()}.csv`);
 };
 
 window.addEventListener('beforeunload', e => { if (ENTWURF && ENTWURF.geaendert) { e.preventDefault(); e.returnValue = ''; } });
@@ -419,7 +431,8 @@ for (const [k,s] of Object.entries(STUFEN)) {
   b.onclick = () => { FILTER.has(k) ? FILTER.delete(k) : FILTER.add(k); b.setAttribute('aria-pressed', FILTER.has(k)); zeigen(); };
   $('chips').appendChild(b);
 }
-['suche','von','bis'].forEach(id => $(id).oninput = zeigen);
+$('suche').oninput = zeigen;
+$('wocheFilter').onchange = () => { WOCHE = $('wocheFilter').value; zeigen(); };
 $('neuLaden').onclick = () => laden().catch(e=>alert(e.message));
 $('loginForm').onsubmit = (e) => { e.preventDefault(); oeffnen($('schluessel').value.trim(), $('merken').checked); };
 $('abmelden').onclick = () => { store('grad_lehrer', null); location.reload(); };

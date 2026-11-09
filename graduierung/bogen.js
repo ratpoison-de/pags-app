@@ -32,6 +32,21 @@ function lehrerGesamt(a){
 function zahl(v){ return v===null || v===undefined ? '' : String(Number(v)).replace('.',','); }
 function lw(a,i){ return Array.isArray(a.lehrer_werte) && a.lehrer_werte[i]!==null && a.lehrer_werte[i]!==undefined ? a.lehrer_werte[i] : null; }
 function datumDE(v){ const [y,m,d]=String(v).slice(0,10).split('-'); return `${d}.${m}.${y}`; }
+
+/* ---------- Graduierungswoche (Kalenderwoche, Mo–Fr) ---------- */
+function _utc(iso){ const [y,m,d]=String(iso).slice(0,10).split('-').map(Number); return new Date(Date.UTC(y,m-1,d)); }
+function _iso(dt){ return dt.toISOString().slice(0,10); }
+function montagVon(iso){ const d=_utc(iso); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay()+6)%7)); return _iso(d); }
+function plusTage(iso, n){ const d=_utc(iso); d.setUTCDate(d.getUTCDate()+n); return _iso(d); }
+function kwNr(iso){ const d=_utc(iso); d.setUTCDate(d.getUTCDate()+3-((d.getUTCDay()+6)%7));
+  const j=new Date(Date.UTC(d.getUTCFullYear(),0,4)); return 1+Math.round(((d-j)/864e5-3+((j.getUTCDay()+6)%7))/7); }
+function heuteISO(){ const t=new Date(); return _iso(new Date(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate()))); }
+// lang: "KW 46 · 09.11.–13.11.2026", kurz: "KW 46 · 09.11.–13.11."
+function wocheText(mo, kurz){
+  const fr=plusTage(mo,4), a=datumDE(mo), b=datumDE(fr);
+  return `KW ${kwNr(mo)} · ${a.slice(0,6)}–${kurz ? b.slice(0,6) : b}`;
+}
+function wocheVon(a){ return a.woche ? String(a.woche).slice(0,10) : montagVon(a.datum); }
 function dateiName(a){ const n=String(a.name).trim().replace(/[^A-Za-zÄÖÜäöüß0-9]+/g,'_'); return `Selbstbewertung_${STUFEN[a.stufe].name}_${n}_${String(a.datum).slice(0,10)}.pdf`; }
 
 let LOGO = null;
@@ -95,7 +110,9 @@ function bogenPDF(a, doc, mitLehrer){
   let y = 34; doc.setTextColor(40); doc.setFontSize(11);
   doc.setFont('helvetica','bold'); doc.text('Name:', M, y); doc.setFont('helvetica','normal'); doc.text(String(a.name).trim(), M+16, y);
   doc.setFont('helvetica','bold'); doc.text('Datum:', M+120, y); doc.setFont('helvetica','normal'); doc.text(datumDE(a.datum), M+136, y);
-  y += 7;
+  y += 6.5;
+  doc.setFont('helvetica','bold'); doc.text('Graduierungswoche:', M, y); doc.setFont('helvetica','normal'); doc.text(wocheText(wocheVon(a)), M+41, y);
+  y += 6;
 
   const L = (v,m) => v===null ? '' : `${zahl(v)} / ${m}`;
   const rows = s.krit.map((k,i)=>[k.t, k.b, `${a.werte[i]} / ${k.max}`, L(lw(a,i), k.max)]);
@@ -152,7 +169,7 @@ function _kompakt(doc, a, X, Y){
   // Name / Datum
   doc.setTextColor(40); doc.setFontSize(8.5); doc.setFont('helvetica','bold');
   doc.text(doc.splitTextToSize(String(a.name).trim(), w-30)[0], x, y);
-  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.text(datumDE(a.datum), x+w, y, {align:'right'});
+  doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.text(wocheText(wocheVon(a), true), x+w, y, {align:'right'});
   y += 3;
   // Tabelle
   const sp = 12, c1 = w - 2*sp;
