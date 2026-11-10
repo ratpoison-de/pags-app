@@ -8,7 +8,7 @@
 <link rel="icon" href="../icon.png">
 <script src="jspdf.umd.min.js"></script>
 <script src="../config.js?v=20261108"></script>
-<script src="bericht.js?v=20261110"></script>
+<script src="bericht.js?v=20261110b"></script>
 <style>
 /* Aufbau wie der Lehrerbereich der Graduierung: roter Kopf, Filterkarte, Tabelle, Seitenleiste zum Lesen */
 :root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;--tint:#FFF4F2}
@@ -48,11 +48,16 @@ td.name b{display:block}
 .akt button.del{color:var(--red)}
 .leer{text-align:center;color:var(--muted);padding:30px}
 .msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px}
-.hidden{display:none}
+.hidden{display:none!important}
+.feld{display:block;margin:0 0 10px}
+.feld span{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}
+.feld small{display:block;color:var(--muted);font-size:.78rem;font-weight:400}
+.feld input{width:100%;max-width:420px}
 tr.aktiv td{background:var(--tint)}
 #panel{position:fixed;top:0;right:0;bottom:0;width:min(48vw,680px);background:#fff;border-left:1px solid var(--line);box-shadow:-6px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(105%);transition:transform .2s;z-index:20}
 #panel.offen{transform:none}
 body.panel-offen main{margin-right:min(48vw,680px);max-width:none}
+body.panel-offen header{padding-right:calc(min(48vw,680px) + 16px)}
 body.panel-offen .nurbreit{display:none}
 .pkopf{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafafa}
 .pkopf b{flex:1;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -73,20 +78,35 @@ body.panel-offen .nurbreit{display:none}
 <body>
 <header><div class="in">
   <img src="../img/logo.png" alt="PAGS Külsheim">
-  <div><h1>Praktikum – Lehrerbereich</h1><p>Berichte der Schülerinnen und Schüler</p></div>
+  <div><h1>Praktikum – Lehrerbereich</h1><p id="kopfText">Berichte der Schülerinnen und Schüler</p></div>
   <span class="sp"></span>
+  <button id="zugangBtn" class="hidden" type="button">Zugangsdaten ändern</button>
   <button id="abmelden" class="hidden" type="button">Abmelden</button>
 </div></header>
 
 <main>
   <section class="card" id="tor">
     <h2 style="margin:0 0 6px;font-size:1.05rem">Zugang</h2>
-    <p class="klein" style="margin:0 0 10px">Es gilt derselbe Zugangsschlüssel wie im Lehrerbereich der Graduierung.</p>
+    <p class="klein" id="torHinweis" style="margin:0 0 10px">Es gilt derselbe Zugangsschlüssel wie im Lehrerbereich der Graduierung.</p>
     <form id="torForm" class="leiste">
+      <input type="text" id="benutzer" class="hidden" placeholder="Benutzername" autocomplete="username" autocapitalize="none" style="flex:1 1 180px">
       <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" required style="flex:1 1 220px">
       <button class="btn" type="submit">Öffnen</button>
     </form>
     <div id="torMsg" class="msg hidden" role="alert"></div>
+  </section>
+
+  <section class="card hidden" id="aendern">
+    <h2 id="aeTitel" style="margin:0 0 6px;font-size:1.05rem">Zugangsdaten ändern</h2>
+    <p class="klein" id="aeText" style="margin:0 0 14px"></p>
+    <form id="aeForm" autocomplete="off">
+      <label class="feld"><span>Name der Lehrkraft<small>Erscheint auf dem Deckblatt der Berichte, z. B. „Frau Muster“ oder Vor- und Nachname.</small></span><input type="text" id="aeName" maxlength="80" required></label>
+      <label class="feld"><span>Neuer Benutzername<small>3 bis 40 Zeichen: Buchstaben, Ziffern und . _ - @</small></span><input type="text" id="aeBenutzer" maxlength="40" required autocapitalize="none" autocomplete="username"></label>
+      <label class="feld"><span>Neues Kennwort<small>Mindestens 10 Zeichen.</small></span><input type="password" id="aePw" minlength="10" maxlength="72" required autocomplete="new-password"></label>
+      <label class="feld"><span>Neues Kennwort wiederholen</span><input type="password" id="aePw2" minlength="10" maxlength="72" required autocomplete="new-password"></label>
+      <div class="leiste"><button class="btn" type="submit">Speichern</button><button class="btn sec hidden" type="button" id="aeAbbruch">Abbrechen</button></div>
+      <div id="aeMsg" class="msg hidden" role="alert"></div>
+    </form>
   </section>
 
   <div id="bereich" class="hidden">
@@ -125,15 +145,24 @@ body.panel-offen .nurbreit{display:none}
 <script>
 'use strict';
 const $ = id => document.getElementById(id), esc = PB.esc;
-let KEY = null, DATEN = [], AKTIV = null, ANSICHT = 'bericht';
+let AUTH = null, DATEN = [], AKTIV = null, ANSICHT = 'bericht', LEHRERNAME = '';
+/* Zwei Zugänge: ohne ?klasse= der Zugangsschlüssel (alle Klassen ohne eigenen Zugang), mit ?klasse=9b Benutzername + Kennwort der Klasse */
+const KLASSE = (new URLSearchParams(location.search).get('klasse') || '').toLowerCase(), MODUS_K = /^(8|9|10)[a-d]$/.test(KLASSE);
+const GRUND = { zugang: MODUS_K ? 'Benutzername oder Kennwort stimmen nicht.' : 'Der Zugangsschlüssel stimmt nicht.', gesperrt: 'Zu viele falsche Versuche. Bitte 10 Minuten warten.',
+  aendern: 'Bitte zuerst eigene Zugangsdaten festlegen.', benutzer: 'Benutzername: 3 bis 40 Zeichen, nur Buchstaben, Ziffern und . _ - @', vergeben: 'Dieser Benutzername ist schon vergeben.',
+  kennwort: 'Das neue Kennwort braucht mindestens 10 Zeichen und muss sich vom Startkennwort unterscheiden.', name: 'Bitte den Namen eingeben (2 bis 80 Zeichen).',
+  recht: 'Dieser Eintrag gehört nicht zu dieser Klasse.', pin: 'Kennwort: 4 bis 40 Zeichen.' };
+const A = o => Object.assign({ schluessel: AUTH.s, benutzer: AUTH.b || null }, o || {});
+function ok(r) { if (!r || !r.ok) { const f = new Error(GRUND[r && r.grund] || 'Zugang verweigert.'); f.grund = (r && r.grund) || 'zugang'; throw f; } return r; }
 PB.ladeLogo('../img/logo.png');
 
 function merk(v) { try { if (v === null) sessionStorage.removeItem('pags-praktikum-lehrer'); else if (v === undefined) return sessionStorage.getItem('pags-praktikum-lehrer'); else sessionStorage.setItem('pags-praktikum-lehrer', v); } catch (e) { return null; } }
 
 async function laden() {
   $('zahl').textContent = 'Lade …';
-  const roh = await PB.rpc('praktikum_liste', { schluessel: KEY });
-  DATEN = roh.map(r => Object.assign(r, { data: PB.normal(r.data), abgabe: PB.normal({ bericht: r.abgabe }).bericht }));
+  const antwort = ok(await PB.rpc('praktikum_liste', A()));
+  LEHRERNAME = antwort.name || '';
+  DATEN = antwort.zeilen.map(r => Object.assign(r, { lehrer: antwort.klasse ? LEHRERNAME : null, data: PB.normal(r.data), abgabe: PB.normal({ bericht: r.abgabe }).bericht }));
   const kl = [...new Set(DATEN.map(r => r.klasse))].sort(), sel = $('klasseFilter'), alt = sel.value;
   sel.innerHTML = '<option value="">Alle Klassen</option>' + kl.map(k => '<option>' + esc(k) + '</option>').join('');
   sel.value = kl.includes(alt) ? alt : '';
@@ -197,11 +226,11 @@ $('liste').addEventListener('click', async e => {
     else if (a === 'pdf') pdfEinzeln(r);
     else if (a === 'pin') {
       const neu = prompt('Neues Kennwort für ' + r.name + ' (mindestens 4 Zeichen).\nDie Einträge bleiben erhalten.'); if (neu === null) return;
-      await PB.rpc('praktikum_pin_neu', { schluessel: KEY, eintrag: r.id, neue_pin: neu.trim() });
+      ok(await PB.rpc('praktikum_pin_neu', A({ eintrag: r.id, neue_pin: neu.trim() })));
       alert('Das Kennwort von ' + r.name + ' wurde geändert.');
     } else if (a === 'del') {
       if (!confirm('Alle Einträge und den Bericht von ' + r.name + ' (' + r.klasse + ') endgültig löschen?')) return;
-      await PB.rpc('praktikum_loeschen', { schluessel: KEY, eintrag: r.id });
+      ok(await PB.rpc('praktikum_loeschen', A({ eintrag: r.id })));
       if (AKTIV === r.id) zu(); await laden();
     }
   } catch (err) { alert(err.message); }
@@ -213,14 +242,40 @@ function gemischt(l) { return PB.pdf(l.map(r => hatBericht(r) ? alsAbgabe(r) : a
 ['suche', 'klasseFilter', 'statusFilter'].forEach(i => $(i).addEventListener('input', zeigen));
 $('neuLaden').onclick = () => laden().catch(e => alert(e.message));
 
-async function oeffnen(k) {
-  KEY = k; const m = $('torMsg'); m.classList.add('hidden');
-  try { await laden(); merk(k); $('tor').classList.add('hidden'); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden'); }
-  catch (e) { KEY = null; merk(null); m.textContent = /verweigert/i.test(e.message) ? 'Der Zugangsschlüssel stimmt nicht.' : 'Die Daten konnten nicht geladen werden: ' + e.message; m.classList.remove('hidden'); }
+function offen() { ['tor', 'aendern'].forEach(i => $(i).classList.add('hidden')); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden'); $('zugangBtn').classList.toggle('hidden', !AUTH.b); }
+function zeigeAendern(pflicht, name) {
+  ['tor', 'bereich'].forEach(i => $(i).classList.add('hidden')); $('aendern').classList.remove('hidden'); zu();
+  $('aeTitel').textContent = pflicht ? 'Willkommen! Bitte eigene Zugangsdaten festlegen' : 'Zugangsdaten ändern';
+  $('aeText').textContent = pflicht ? 'Die Startdaten gelten nur für die erste Anmeldung. Nach dem Speichern gelten nur noch die neuen Zugangsdaten – bitte gut merken.' : 'Nach dem Speichern gelten nur noch die neuen Zugangsdaten.';
+  $('aeAbbruch').classList.toggle('hidden', pflicht);
+  $('aeName').value = name || ''; $('aeBenutzer').value = pflicht ? '' : AUTH.b; $('aePw').value = $('aePw2').value = ''; $('aeMsg').classList.add('hidden');
 }
-$('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
+async function oeffnen(a) {
+  AUTH = a; const m = $('torMsg'); m.classList.add('hidden');
+  try {
+    if (a.b) { const l = ok(await PB.rpc('praktikum_lehrer_login', { p_benutzer: a.b, p_kennwort: a.s })); if (l.muss_aendern) return zeigeAendern(true, l.name); }
+    await laden(); merk(JSON.stringify(a)); offen();
+  } catch (e) { AUTH = null; merk(null); $('tor').classList.remove('hidden'); m.textContent = e.grund ? e.message : 'Die Daten konnten nicht geladen werden: ' + e.message; m.classList.remove('hidden'); }
+}
+$('torForm').onsubmit = e => { e.preventDefault(); oeffnen(MODUS_K ? { b: $('benutzer').value.trim(), s: $('schluessel').value } : { s: $('schluessel').value }); };
+$('aeForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('aeMsg'); m.classList.add('hidden');
+  const fehler = t => { m.textContent = t; m.classList.remove('hidden'); };
+  if ($('aePw').value !== $('aePw2').value) return fehler('Die beiden Kennwörter stimmen nicht überein.');
+  try {
+    const neu = { b: $('aeBenutzer').value.trim(), s: $('aePw').value };
+    ok(await PB.rpc('praktikum_lehrer_aendern', { p_benutzer: AUTH.b, p_kennwort: AUTH.s, p_neuer_benutzer: neu.b, p_neues_kennwort: neu.s, p_name: $('aeName').value.trim() }));
+    AUTH = neu; merk(JSON.stringify(AUTH)); await laden(); offen();
+  } catch (err) { fehler(err.grund ? err.message : 'Das Speichern hat nicht geklappt: ' + err.message); }
+};
+$('aeAbbruch').onclick = offen;
+$('zugangBtn').onclick = () => zeigeAendern(false, LEHRERNAME);
 $('abmelden').onclick = () => { merk(null); location.reload(); };
-if (merk()) oeffnen(merk());
+if (MODUS_K) {
+  $('benutzer').classList.remove('hidden'); $('benutzer').required = true; $('schluessel').placeholder = 'Kennwort';
+  $('torHinweis').textContent = 'Lehrerzugang für die Klasse ' + KLASSE + '.'; $('kopfText').textContent = 'Berichte der Klasse ' + KLASSE;
+}
+(function () { const roh = merk(); let a = null; if (roh) { try { a = JSON.parse(roh); } catch (e) { } if (!a || typeof a !== 'object') a = { s: roh }; } if (a && a.s && (!!a.b) === MODUS_K) oeffnen(a); })();
 </script>
 </body>
 </html>

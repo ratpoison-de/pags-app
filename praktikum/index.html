@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="../icon.png">
 <script src="jspdf.umd.min.js" defer></script>
 <script src="../config.js?v=20261108"></script>
-<script src="bericht.js?v=20261110"></script>
+<script src="bericht.js?v=20261110b"></script>
 <style>
 /* Aufbau: roter Kopf mit Logo und Speicherstatus, Inhalt als Karten, feste Leiste unten mit fünf Bereichen */
 :root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;color-scheme:light}
@@ -257,7 +257,7 @@ $('loginForm').onsubmit = async e => {
     const r = await PB.rpc('praktikum_anmelden', { p_name: $('lName').value, p_klasse: $('lKlasse').value, p_pin: pin, p_neu: NEU });
     if (!r.ok) { m.textContent = GRUND[r.grund] || 'Das hat nicht geklappt.'; m.className = 'msg'; return; }
     const alt = S && S.gesperrt && S.id === r.id && S.dirty ? S.data : null;   // ungesicherte Einträge dieses Geräts behalten
-    S = { id: r.id, pin: pin, name: r.name, klasse: r.klasse, data: alt || PB.normal(r.data), dirty: !!alt, abgegeben_am: r.abgegeben_am, updated_at: r.updated_at };
+    S = { id: r.id, pin: pin, name: r.name, klasse: r.klasse, data: alt || PB.normal(r.data), dirty: !!alt, abgegeben_am: r.abgegeben_am, updated_at: r.updated_at, lehrer: r.lehrer };
     merke(); $('lPin').value = ''; starte(); if (alt) sync(false);
   } catch (err) { m.textContent = 'Keine Verbindung zur Datenbank. Prüfe dein Internet und versuche es noch einmal.'; m.className = 'msg'; }
   finally { $('lBtn').disabled = false; }
@@ -284,6 +284,7 @@ async function abgleich() {
   try {
     const r = await PB.rpc('praktikum_anmelden', { p_name: S.name, p_klasse: S.klasse, p_pin: S.pin, p_neu: false });
     if (!r.ok) { if (r.grund === 'pin' || r.grund === 'unbekannt') { S.gesperrt = true; merke(); zeigeLogin(r.grund === 'pin' ? 'Dein Kennwort wurde geändert. Melde dich bitte neu an.' : GRUND.unbekannt); } return; }
+    if (S.lehrer !== r.lehrer) { S.lehrer = r.lehrer; merke(); }
     if (S.dirty || r.updated_at === S.updated_at) return;
     S.data = PB.normal(r.data); S.updated_at = r.updated_at; S.abgegeben_am = r.abgegeben_am; D = S.data; merke(); zeige(TAB);
   } catch (e) { }
@@ -542,7 +543,7 @@ $('app').addEventListener('click', async e => {
   }
   if (d.act === 'pdf') {
     if (!window.jspdf) return meldung('Das PDF-Werkzeug konnte nicht geladen werden. Prüfe deine Internetverbindung und lade die Seite neu.');
-    PB.pdf([{ name: S.name, klasse: S.klasse, data: D, abgegeben_am: S.dirty ? null : S.abgegeben_am, updated_at: new Date().toISOString() }]).save(PB.dateiname(S));
+    PB.pdf([{ name: S.name, klasse: S.klasse, lehrer: S.lehrer, data: D, abgegeben_am: S.dirty ? null : S.abgegeben_am, updated_at: new Date().toISOString() }]).save(PB.dateiname(S));
   }
 });
 
@@ -550,6 +551,13 @@ $('app').addEventListener('click', async e => {
 PB.ladeLogo('../img/logo.png');
 S = lade();
 if (S && !S.gesperrt) { starte(); abgleich(); } else zeigeLogin();
+/* Klassen-Link (…/praktikum/?klasse=9b): Klasse ist fest vorgegeben */
+const KP = (new URLSearchParams(location.search).get('klasse') || '').toLowerCase();
+if (/^(8|9|10)[a-d]$/.test(KP)) {
+  const sel = $('lKlasse'); if (![...sel.options].some(o => o.value === KP)) sel.add(new Option(KP, KP));
+  sel.value = KP; sel.disabled = true;
+  if (!$('login').classList.contains('hidden')) $('wer').textContent = 'Klasse ' + KP + ' · PAGS Külsheim';
+}
 </script>
 </body>
 </html>

@@ -262,7 +262,7 @@
       doc.text(T('Betriebspraktikum vom ' + PB.zeitraum(d)), W / 2, y, { align: 'center' }); y += 30;
 
       const zeilen = [['Name', rec.name], ['Klasse', rec.klasse], ['Betrieb', d.betrieb.name], ['Ort', d.betrieb.ort],
-        ['Beruf', d.beruf.name || d.betrieb.beruf], ['Betreuung im Betrieb', d.betrieb.ansprech], ['Lehrer', PB.LEHRER]].filter(z => t(z[1]));
+        ['Beruf', d.beruf.name || d.betrieb.beruf], ['Betreuung im Betrieb', d.betrieb.ansprech], ['Lehrkraft', rec.lehrer == null ? PB.LEHRER : rec.lehrer]].filter(z => t(z[1]));
       doc.setFontSize(12);
       zeilen.forEach(z => {
         doc.setFont('helvetica', 'bold'); doc.setTextColor.apply(doc, GRAU); doc.text(T(z[0]), L + 14, y);

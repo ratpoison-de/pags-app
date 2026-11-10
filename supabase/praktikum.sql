@@ -121,3 +121,31 @@ revoke execute on function public.praktikum_anmelden(text, text, text, boolean),
   public.praktikum_liste(text), public.praktikum_loeschen(text, uuid), public.praktikum_pin_neu(text, uuid, text) from public;
 grant execute on function public.praktikum_anmelden(text, text, text, boolean), public.praktikum_speichern(uuid, text, jsonb, boolean),
   public.praktikum_liste(text), public.praktikum_loeschen(text, uuid), public.praktikum_pin_neu(text, uuid, text) to anon, authenticated;
+
+-- ---------------------------------------------------------------------------------------------
+-- Erweiterung 10.11.2026: eigene Lehrerzugänge je Klasse (Migration „praktikum_klassen_lehrer“)
+-- Die vollständigen Funktionsdefinitionen stehen in der Migrationshistorie des Supabase-Projekts.
+-- ---------------------------------------------------------------------------------------------
+-- create table public.praktikum_lehrer (
+--   klasse text primary key,            -- z. B. '9b'
+--   benutzer text not null,             -- Benutzername (ohne Groß-/Kleinschreibung eindeutig)
+--   pw_hash text not null,              -- bcrypt
+--   name text not null default '',      -- Anzeigename der Lehrkraft (Deckblatt der Berichte)
+--   muss_aendern boolean default true,  -- Startdaten: beim ersten Anmelden müssen eigene Zugangsdaten gesetzt werden
+--   fehlversuche smallint, gesperrt_bis timestamptz, updated_at timestamptz
+-- );  -- RLS an, kein direkter Zugriff
+--
+-- praktikum_lehrer_login(p_benutzer, p_kennwort)                       -> {ok, klasse, name, muss_aendern}
+-- praktikum_lehrer_aendern(p_benutzer, p_kennwort, p_neuer_benutzer, p_neues_kennwort, p_name)
+-- praktikum_liste(schluessel, benutzer default null)                   -> {ok, klasse, name, zeilen:[…]}
+-- praktikum_loeschen(schluessel, eintrag, benutzer default null)       -> {ok}
+-- praktikum_pin_neu(schluessel, eintrag, neue_pin, benutzer default null) -> {ok}
+-- praktikum_anmelden(...) liefert zusätzlich 'lehrer' (Name der Lehrkraft der Klasse)
+--
+-- Mit Benutzername: Zugriff nur auf die eigene Klasse. Ohne Benutzername gilt nur der HAUPTschlüssel der
+-- Graduierung (graduierung_zugang.klasse is null, Migration „praktikum_nur_hauptschluessel“); er sieht alle
+-- Klassen, die KEINEN eigenen Lehrerzugang haben. Klassenschlüssel der Graduierung öffnen das Praktikum nicht.
+-- Neuen Klassenzugang anlegen (Startkennwort selbst wählen, nicht ins Repo schreiben):
+--   insert into public.praktikum_lehrer (klasse, benutzer, pw_hash)
+--   values ('9c', 'klasse9c', extensions.crypt('<Startkennwort>', extensions.gen_salt('bf', 10)));
+-- Zugang zurücksetzen: update public.praktikum_lehrer set muss_aendern = true, pw_hash = extensions.crypt('<neu>', extensions.gen_salt('bf', 10)), fehlversuche = 0, gesperrt_bis = null where klasse = '9b';
