@@ -79,7 +79,9 @@ Begleit-App für das Betriebspraktikum (Woche ab 16.11.2026). Link: `https://rat
 - Technik: Tabelle `public.praktikum` und Funktionen `praktikum_*` in `supabase/praktikum.sql`; gemeinsame Logik und PDF-Layout in `praktikum/bericht.js`.
 - **Klassen mit Papierbögen** (z. B. Klasse 5, eigener Zugangsschlüssel mit `klasse` in `graduierung_zugang`): Klassenliste (`graduierung_kinder`) auf der Lehrerseite pflegen, „Papierbögen drucken“ erzeugt pro Kind einen kindgerechten Bogen mit QR-Code (2 pro A4). `graduierung/erfassen.html` scannt den QR-Code mit der Kamera (jsQR) und speichert über `graduierung_erfassen`. Jeder Zugang sieht nur Abgaben seiner Klasse. Schlüssel lassen sich über „🔑 Schlüssel ändern“ selbst ändern (`graduierung_schluessel_aendern`); neue Zugänge mit `erst_schluessel = true` werden nach der ersten Anmeldung dazu aufgefordert. Als Web-App installierbar (`graduierung/manifest.webmanifest`).
 
-### Klasse 9b – eigener Lehrerzugang
+### Klassen 9a und 9b – eigene Lehrerzugänge
+
+Die 9a ist genauso eingerichtet wie die 9b: Schüler `praktikum/9a/` (QR-Code `praktikum/qr-praktikum-9a.png`), Lehrkraft `praktikum/9a/lehrer.html` mit Benutzername und Kennwort. Der allgemeine Link `praktikum/` mit Klassenauswahl funktioniert weiter.
 
 - Schüler 9b: `https://ratpoison-de.github.io/pags-app/praktikum/9b/` (Klasse ist fest auf 9b gestellt) · QR-Code: `praktikum/qr-praktikum-9b.png`
 - Lehrkraft 9b: `https://ratpoison-de.github.io/pags-app/praktikum/9b/lehrer.html` – Anmeldung mit Benutzername und Kennwort. Mit den Startdaten muss die Lehrkraft beim ersten Anmelden eigene Zugangsdaten und ihren Namen festlegen; später über „Zugangsdaten ändern“.
