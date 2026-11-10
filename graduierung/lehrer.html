@@ -6,11 +6,18 @@
 <meta name="robots" content="noindex">
 <title>Graduierung – Lehrerbereich</title>
 <link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#A81010">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Graduierung">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="../config.js?v=20261108"></script>
-<script src="bogen.js?v=20261109"></script>
+<script src="../config.js?v=20261110"></script>
+<script src="bogen.js?v=20261110"></script>
 <style>
 :root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3}
 *{box-sizing:border-box}
@@ -32,6 +39,12 @@ input,select{font:inherit;padding:9px 11px;border:1px solid #ccc;border-radius:8
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0}
 .chip{border:1.5px solid var(--c);color:var(--c);background:#fff;border-radius:20px;padding:4px 12px;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer}
 .chip[aria-pressed=true]{background:var(--c);color:#fff}
+#klasseBox h2{margin:0 0 10px;font-size:1.05rem}
+#klasseBox a.btn{text-decoration:none;display:inline-block}
+.fehlt{margin:10px 0 0;font-size:.88rem}
+.fehlt b{color:var(--red)}
+#listeEdit textarea{width:100%;min-height:220px;font:inherit;font-size:.92rem;padding:10px;border:1px solid #ccc;border-radius:8px;margin-top:8px}
+.papier{font-size:.72rem;color:var(--muted);border:1px solid #ddd;border-radius:8px;padding:0 5px;margin-left:4px;font-weight:400}
 .info{color:var(--muted);font-size:.85rem;margin:10px 0 0}
 table{width:100%;border-collapse:collapse;font-size:.9rem}
 th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
@@ -119,6 +132,24 @@ body.panel-offen .akt button{margin:1px 0}
   </section>
 
   <div id="bereich" class="hidden">
+    <section class="card hidden" id="klasseBox">
+      <h2 id="klasseTitel">Klasse · Papierbögen</h2>
+      <div class="leiste">
+        <a class="btn" href="erfassen.html">📷 Bögen erfassen</a>
+        <button class="btn sec" id="papierBtn" type="button">📄 Papierbögen drucken</button>
+        <button class="btn sec" id="listeBtn" type="button">Klassenliste bearbeiten</button>
+      </div>
+      <p class="info" id="klasseInfo"></p>
+      <div id="listeEdit" class="hidden">
+        <p class="info" style="margin-top:12px">Ein Name pro Zeile (Vor- und Nachname), in der Reihenfolge der Klassenliste. Alle Kinder starten als <b>Walker</b>.</p>
+        <textarea id="listeText" placeholder="Mia Schneider&#10;Jonas Bauer&#10;…"></textarea>
+        <div class="leiste" style="margin-top:8px">
+          <button class="btn" id="listeSpeichern" type="button">Klassenliste speichern</button>
+          <button class="btn sec" id="listeAbbruch" type="button">Abbrechen</button>
+          <span class="info" id="listeStatus" style="margin:0"></span>
+        </div>
+      </div>
+    </section>
     <section class="card">
       <div class="leiste">
         <input type="search" id="suche" placeholder="Name suchen …">
@@ -166,18 +197,24 @@ async function rpc(fn, body){
 }
 
 let WOCHE = null;   // null = noch nicht gewählt, '' = alle Wochen
+let KLASSE = null, KINDER = [];
 async function laden(){
   $('zahl').textContent = 'Lade …';
-  DATEN = await rpc('graduierung_liste', {schluessel: KEY});
+  const info = await rpc('graduierung_info', {schluessel: KEY});
+  KLASSE = info.klasse;
+  [DATEN, KINDER] = await Promise.all([rpc('graduierung_liste', {schluessel: KEY}),
+    KLASSE ? rpc('graduierung_kinder_liste', {schluessel: KEY}) : Promise.resolve([])]);
   wochenFuellen();
   zeigen();
 }
 function wochenFuellen(){
   const zaehl = {};
   DATEN.forEach(a => { const w = wocheVon(a); zaehl[w] = (zaehl[w]||0) + 1; });
+  const jetzt = montagVon(heuteISO());
+  if (KLASSE) [jetzt, plusTage(jetzt, 7)].forEach(w => { if (!(w in zaehl)) zaehl[w] = 0; });   // Papier-Klasse: diese und nächste Woche immer wählbar
   const wochen = Object.keys(zaehl).sort().reverse();
-  if (WOCHE === null) WOCHE = wochen[0] || '';           // beim ersten Laden: neueste Woche
-  if (WOCHE && !zaehl[WOCHE]) wochen.unshift(WOCHE);       // gewählte Woche behalten, auch wenn leer
+  if (WOCHE === null) WOCHE = KLASSE ? jetzt : (wochen[0] || '');   // beim ersten Laden
+  if (WOCHE && !(WOCHE in zaehl)) wochen.unshift(WOCHE);   // gewählte Woche behalten, auch wenn leer
   $('wocheFilter').innerHTML = `<option value="">Alle Wochen (${DATEN.length})</option>` +
     wochen.map(w => `<option value="${w}">${wocheText(w)} (${zaehl[w]||0})</option>`).join('');
   $('wocheFilter').value = WOCHE;
@@ -206,12 +243,26 @@ function gefiltert(){
 
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
+function klasseZeigen(){
+  $('klasseBox').classList.toggle('hidden', !KLASSE);
+  if (!KLASSE) return;
+  $('klasseTitel').textContent = `Klasse ${KLASSE} · Papierbögen`;
+  const w = WOCHE || montagVon(heuteISO());
+  const da = new Set(DATEN.filter(a => a.kind_id && wocheVon(a) === w).map(a => a.kind_id));
+  const fehlen = KINDER.filter(k => !da.has(k.id));
+  $('klasseInfo').innerHTML = !KINDER.length
+    ? 'Noch keine Klassenliste – bitte zuerst <b>„Klassenliste bearbeiten“</b> und die Namen eintragen.'
+    : `${KINDER.length} Kinder · ${wocheText(w)}: <b>${KINDER.length - fehlen.length} erfasst</b>` +
+      (fehlen.length ? `<div class="fehlt"><b>Fehlt noch (${fehlen.length}):</b> ${fehlen.map(k=>esc(k.name)).join(', ')}</div>` : ' · alle da 🎉');
+  $('papierBtn').disabled = !KINDER.length;
+}
 function zeigen(){
+  klasseZeigen();
   const l = gefiltert(), tb = $('liste');
   $('zahl').textContent = `${l.length} von ${DATEN.length} Abgaben angezeigt` + (WOCHE ? ` · ${wocheText(WOCHE)}` : '');
   if (!l.length) { tb.innerHTML = `<tr><td colspan="7" class="leer">Keine Abgaben${DATEN.length?' für diese Auswahl':''}.</td></tr>`; return; }
   tb.innerHTML = l.map(a => { const s = STUFEN[a.stufe]; return `<tr data-id="${a.id}"${a.id===AKTIV?' class="aktiv"':''}>
-    <td><b>${esc(a.name)}</b>${a.dienste?`<div class="klein">${esc(a.dienste.slice(0,70))}${a.dienste.length>70?' …':''}</div>`:''}</td>
+    <td><b>${esc(a.name)}</b>${a.quelle==='papier' ? '<span class="papier" title="vom Papierbogen erfasst">Papier</span>' : ''}${a.dienste?`<div class="klein">${esc(a.dienste.slice(0,70))}${a.dienste.length>70?' …':''}</div>`:''}</td>
     <td><span class="st" style="background:${s.farbe}">${s.name}</span></td>
     <td><b>KW ${kwNr(wocheVon(a))}</b><div class="klein">${datumDE(a.datum).slice(0,6)}</div></td>
     <td class="pk">${zahl(a.punkte)} / ${a.max_punkte}</td>
@@ -423,6 +474,33 @@ $('csvBtn').onclick = () => {
 };
 
 window.addEventListener('beforeunload', e => { if (ENTWURF && ENTWURF.geaendert) { e.preventDefault(); e.returnValue = ''; } });
+
+// Papier-Klasse: Bögen drucken, Klassenliste
+$('papierBtn').onclick = () => {
+  if (!KINDER.length) return;
+  const w = WOCHE || montagVon(heuteISO());
+  herunterladen(papierPDF(KINDER, w, KLASSE).output('blob'), `Graduierung_Papierboegen_Klasse${KLASSE}_KW${kwNr(w)}.pdf`);
+};
+$('listeBtn').onclick = () => {
+  $('listeText').value = KINDER.map(k=>k.name).join('\n');
+  $('listeStatus').textContent = ''; $('listeEdit').classList.remove('hidden'); $('listeText').focus();
+};
+$('listeAbbruch').onclick = () => $('listeEdit').classList.add('hidden');
+$('listeSpeichern').onclick = async () => {
+  const namen = $('listeText').value.split('\n').map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);
+  const frei = KINDER.slice(), liste = namen.map(nm => {
+    const i = frei.findIndex(k => k.name.toLowerCase() === nm.toLowerCase());
+    const alt = i >= 0 ? frei.splice(i,1)[0] : null;
+    return alt ? {id: alt.id, name: nm, stufe: alt.stufe} : {name: nm};
+  });
+  if (frei.length && !confirm(`${frei.length} Kind(er) werden aus der Liste entfernt:\n${frei.map(k=>k.name).join(', ')}\n\nBereits erfasste Bögen bleiben erhalten. Fortfahren?`)) return;
+  $('listeStatus').textContent = 'speichere …';
+  try {
+    KINDER = await rpc('graduierung_kinder_speichern', {schluessel: KEY, kinder: liste});
+    $('listeEdit').classList.add('hidden'); klasseZeigen();
+    $('listeStatus').textContent = '';
+  } catch(err) { $('listeStatus').textContent = 'Fehler: ' + err.message; }
+};
 
 // Stufen-Filter
 for (const [k,s] of Object.entries(STUFEN)) {

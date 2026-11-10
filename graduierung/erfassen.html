@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Graduierung – Bögen erfassen</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#A81010">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Graduierung">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="../config.js?v=20261110"></script>
+<script src="bogen.js?v=20261110"></script>
+<style>
+:root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3;--ok:#1B5E20}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.4;-webkit-tap-highlight-color:transparent}
+header{background:var(--red);color:#fff;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top))}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:34px;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.05rem;margin:0}
+header p{margin:0;font-size:.8rem;opacity:.9}
+header .sp{flex:1}
+header a{color:#fff;font-size:.82rem;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;text-decoration:none;white-space:nowrap}
+main{max-width:760px;margin:0 auto;padding:14px 16px 40px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+h2{font-size:1.05rem;margin:0 0 10px}
+input,select,textarea{font:inherit;padding:10px 12px;border:1px solid #ccc;border-radius:8px;background:#fff;width:100%}
+textarea{min-height:56px;resize:vertical}
+label.f{display:block;font-weight:600;font-size:.88rem;margin:12px 0 4px}
+.btn{display:block;width:100%;padding:15px;font:inherit;font-weight:700;font-size:1.05rem;border-radius:12px;border:0;cursor:pointer;background:var(--red);color:#fff;text-align:center}
+.btn.sec{background:#fff;color:var(--red);border:2px solid var(--red)}
+.btn.klein{padding:10px;font-size:.92rem}
+.btn:disabled{opacity:.6}
+.reihe{display:flex;gap:10px;margin-top:10px}
+.reihe .btn{flex:1}
+.fortschritt{display:flex;align-items:center;gap:12px;margin:12px 0}
+.balken{flex:1;height:10px;background:#eee;border-radius:5px;overflow:hidden}
+.balken i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.zahl{font-weight:700;white-space:nowrap}
+.kinder{list-style:none;margin:6px 0 0;padding:0;columns:2;column-gap:14px}
+@media(max-width:480px){.kinder{columns:1}}
+.kinder li{break-inside:avoid;display:flex;justify-content:space-between;gap:8px;padding:8px 2px;border-bottom:1px solid #f1f1f1;cursor:pointer;font-size:.92rem}
+.kinder li .s{color:var(--muted);font-size:.82rem;white-space:nowrap}
+.kinder li.da .s{color:var(--ok);font-weight:700}
+.kinder li.offen .n::before{content:"○ ";color:#bbb}
+.kinder li.da .n::before{content:"✓ ";color:var(--ok)}
+#videoBox{position:relative;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:3/4;max-height:65vh;margin:0 auto}
+#video{width:100%;height:100%;object-fit:cover;display:block}
+#rahmen{position:absolute;inset:18%;border:3px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.hint{color:var(--muted);font-size:.85rem;margin:8px 0 0;text-align:center}
+.kopf{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.kopf .name{font-size:1.4rem;font-weight:700;flex:1 1 200px}
+.st{display:inline-block;color:#fff;border-radius:12px;padding:2px 10px;font-size:.8rem;font-weight:700}
+.wo{color:var(--muted);font-size:.9rem;margin-top:2px}
+.krit{padding:12px 0;border-top:1px solid #f0f0f0}
+.krit .t{font-size:.92rem;margin-bottom:8px}
+.opts{display:flex;gap:8px}
+.opts button{flex:1;padding:12px 4px 8px;border:2px solid var(--line);background:#fff;border-radius:10px;font:inherit;cursor:pointer;color:var(--text)}
+.opts button b{display:block;font-size:1.25rem}
+.opts button small{display:block;font-size:.72rem;color:var(--muted)}
+.opts button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.opts button[aria-pressed=true] small{color:#fff}
+.krit.miss .t{color:var(--red);font-weight:700}
+.summe{display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem;background:#FFF4F2;border-radius:10px;padding:12px 14px;margin-top:12px}
+.banner{background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;padding:10px 12px;font-size:.88rem;margin-top:10px}
+.msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px;font-size:.9rem}
+.hidden{display:none !important}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(calc(100% + 60px));visibility:hidden;background:var(--ok);color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.2);transition:transform .25s;z-index:30;max-width:90vw;text-align:center}
+#toast.zeigen{transform:translateX(-50%) translateY(0);visibility:visible}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS">
+  <div><h1>Bögen erfassen</h1><p id="kopfKlasse">Graduierung · Papierbögen</p></div>
+  <span class="sp"></span>
+  <a href="lehrer.html">Lehrerseite</a>
+</div></header>
+
+<main>
+  <section class="card hidden" id="login">
+    <h2>Zugang</h2>
+    <form id="loginForm">
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password">
+      <button class="btn" type="submit" style="margin-top:10px">Öffnen</button>
+    </form>
+    <div id="loginErr" class="msg hidden"></div>
+  </section>
+
+  <section class="card hidden" id="start">
+    <label class="f" for="woche" style="margin-top:0">Graduierungswoche</label>
+    <select id="woche"></select>
+    <div class="fortschritt"><div class="balken"><i id="balken"></i></div><span class="zahl" id="zahl">–</span></div>
+    <button class="btn" id="scanBtn" type="button">📷 Bogen scannen</button>
+    <p class="hint">Oder ein Kind in der Liste antippen, um den Bogen von Hand zu erfassen.</p>
+    <ul class="kinder" id="kinder"></ul>
+    <div id="startMsg" class="msg hidden"></div>
+  </section>
+
+  <section class="card hidden" id="scanner">
+    <div id="videoBox"><video id="video" playsinline muted></video><div id="rahmen"></div></div>
+    <p class="hint" id="scanHint">QR-Code oben rechts auf dem Bogen in den Rahmen halten.</p>
+    <canvas id="canvas" class="hidden"></canvas>
+    <button class="btn sec klein" id="scanAbbruch" type="button" style="margin-top:12px">Abbrechen</button>
+  </section>
+
+  <section class="card hidden" id="formular">
+    <div class="kopf">
+      <div class="name" id="fName"></div>
+      <span class="st" id="fStufe"></span>
+    </div>
+    <div class="wo" id="fWoche"></div>
+    <div id="fBanner" class="banner hidden"></div>
+    <div id="fKrit" style="margin-top:6px"></div>
+    <div class="summe"><span>Punkte</span><span id="fSumme">–</span></div>
+    <label class="f" for="fDienste">Das habe ich zusätzlich gemacht (abtippen, freiwillig)</label>
+    <textarea id="fDienste" maxlength="1000"></textarea>
+    <label class="f" for="fBemerkung">Das möchte ich noch sagen (freiwillig)</label>
+    <textarea id="fBemerkung" maxlength="1000"></textarea>
+    <div id="fErr" class="msg hidden"></div>
+    <button class="btn" id="speichernWeiter" type="button" style="margin-top:14px">Speichern &amp; nächsten scannen</button>
+    <div class="reihe">
+      <button class="btn sec klein" id="speichern" type="button">Nur speichern</button>
+      <button class="btn sec klein" id="abbrechen" type="button">Abbrechen</button>
+    </div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let KEY = null, KLASSE = null, KINDER = [], ABGABEN = [], WOCHE = montagVon(heuteISO());
+let AKT = null;          // {kind, woche, werte[], zusatz, vorhanden}
+function store(k,v){try{ if(v===null) localStorage.removeItem(k); else if(v===undefined) return localStorage.getItem(k); else localStorage.setItem(k,v);}catch(e){return null}}
+async function rpc(fn, body){
+  const r = await sbFetch('rpc/'+fn, body);
+  if (!r.ok) { let m=''; try{ m=(await r.json()).message; }catch(e){} throw new Error(m || ('Fehler '+r.status)); }
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+function zeige(id){ ['login','start','scanner','formular'].forEach(x=>$(x).classList.toggle('hidden', x!==id)); window.scrollTo(0,0); }
+function toast(t){ const e=$('toast'); e.textContent=t; e.classList.add('zeigen'); clearTimeout(toast.t); toast.t=setTimeout(()=>e.classList.remove('zeigen'), 2600); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ---------- Start / Übersicht ---------- */
+function wochenFuellen(){
+  const jetzt = montagVon(heuteISO()), sel = $('woche'); sel.innerHTML = '';
+  const liste = new Set([WOCHE]);
+  for (let i = 4; i >= -1; i--) liste.add(plusTage(jetzt, -7*i));
+  [...liste].sort().forEach(mo => { const o=document.createElement('option'); o.value=mo;
+    o.textContent = wocheText(mo) + (mo===jetzt ? '  (diese Woche)' : ''); sel.appendChild(o); });
+  sel.value = WOCHE;
+}
+function uebersicht(){
+  const da = new Map(ABGABEN.filter(a=>wocheVon(a)===WOCHE && a.kind_id).map(a=>[a.kind_id, a]));
+  const n = KINDER.length, k = KINDER.filter(x=>da.has(x.id)).length;
+  $('zahl').textContent = `${k} von ${n} erfasst`;
+  $('balken').style.width = n ? (100*k/n)+'%' : '0';
+  $('kinder').innerHTML = KINDER.map(x => { const a = da.get(x.id);
+    return `<li data-code="${x.code}" class="${a?'da':'offen'}"><span class="n">${esc(x.name)}</span><span class="s">${a ? zahl(a.punkte)+' / '+a.max_punkte : 'offen'}</span></li>`; }).join('');
+  const msg = $('startMsg');
+  if (!n) { msg.innerHTML = 'Noch keine Klassenliste angelegt. Bitte zuerst auf der <a href="lehrer.html">Lehrerseite</a> die Namen eintragen und die Bögen drucken.'; msg.classList.remove('hidden'); }
+  else msg.classList.add('hidden');
+}
+async function ladeDaten(){
+  [KINDER, ABGABEN] = await Promise.all([rpc('graduierung_kinder_liste',{schluessel:KEY}), rpc('graduierung_liste',{schluessel:KEY})]);
+  uebersicht();
+}
+$('woche').onchange = () => { WOCHE = $('woche').value; uebersicht(); };
+$('kinder').onclick = e => { const li = e.target.closest('li'); if (li) oeffneKind(li.dataset.code, WOCHE); };
+
+/* ---------- Scanner ---------- */
+let stream = null, scanAktiv = false;
+async function scanStart(){
+  zeige('scanner'); $('scanHint').textContent = 'Kamera wird gestartet …';
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:960}}, audio:false});
+  } catch(e) {
+    $('scanHint').innerHTML = 'Kein Kamerazugriff. Bitte in den Einstellungen die Kamera für diese Seite erlauben – oder den QR-Code mit der normalen Kamera-App scannen.';
+    return;
+  }
+  const v = $('video'); v.srcObject = stream; await v.play().catch(()=>{});
+  $('scanHint').textContent = 'QR-Code oben rechts auf dem Bogen in den Rahmen halten.';
+  scanAktiv = true; requestAnimationFrame(scanSchritt);
+}
+function scanStop(){ scanAktiv = false; if (stream) { stream.getTracks().forEach(t=>t.stop()); stream = null; } }
+function scanSchritt(){
+  if (!scanAktiv) return;
+  const v = $('video'), c = $('canvas');
+  if (v.readyState >= 2 && v.videoWidth) {
+    const w = Math.min(v.videoWidth, 800), h = Math.round(v.videoHeight * w / v.videoWidth);
+    c.width = w; c.height = h; const ctx = c.getContext('2d', {willReadFrequently:true});
+    ctx.drawImage(v, 0, 0, w, h);
+    const r = jsQR(ctx.getImageData(0,0,w,h).data, w, h, {inversionAttempts:'dontInvert'});
+    if (r && r.data) { const p = leseCode(r.data); if (p) { scanStop(); if (navigator.vibrate) navigator.vibrate(60); oeffneKind(p.k, p.w || WOCHE); return; } }
+  }
+  requestAnimationFrame(scanSchritt);
+}
+function leseCode(text){
+  const m = String(text).match(/[#&?]k=([0-9a-f]{6,32})(?:&w=(\d{4}-\d{2}-\d{2}))?/i);
+  if (m) return {k:m[1].toLowerCase(), w:m[2]};
+  if (/^[0-9a-f]{12}$/i.test(text)) return {k:text.toLowerCase()};
+  return null;
+}
+$('scanBtn').onclick = scanStart;
+$('scanAbbruch').onclick = () => { scanStop(); zeige('start'); };
+
+/* ---------- Formular ---------- */
+async function oeffneKind(code, woche){
+  try {
+    const d = await rpc('graduierung_kind', {schluessel:KEY, code, woche});
+    const krit = kindKriterien(d.stufe), a = d.abgabe;
+    AKT = { kind:d, woche, krit, werte: a ? a.werte.slice() : krit.filter(k=>!k.zusatz).map(()=>null),
+            zusatz: a ? (a.zusatz||0) : (STUFEN[d.stufe].zusatz ? null : 0), vorhanden: !!a };
+    const s = STUFEN[d.stufe];
+    $('fName').textContent = d.name;
+    $('fStufe').textContent = s.name; $('fStufe').style.background = s.farbe;
+    $('fWoche').textContent = wocheText(woche) + (woche !== WOCHE ? '  · andere Woche als oben gewählt' : '');
+    $('fDienste').value = a ? (a.dienste||'') : ''; $('fBemerkung').value = a ? (a.bemerkung||'') : '';
+    $('fBanner').innerHTML = a ? `Dieser Bogen wurde schon erfasst (${zahl(a.punkte)} / ${a.max_punkte} Punkte). Die Werte sind geladen – Speichern überschreibt sie.` : '';
+    $('fBanner').classList.toggle('hidden', !a);
+    $('fErr').classList.add('hidden');
+    formularZeichnen(); zeige('formular');
+  } catch(e) {
+    toast(e.message === 'Kind nicht gefunden' ? '⚠ Dieser QR-Code gehört nicht zu deiner Klasse' : '⚠ ' + e.message);
+    zeige('start');
+  }
+  if (location.hash) history.replaceState(null, '', location.pathname);
+}
+function formularZeichnen(){
+  const A = AKT; let h = '', wi = 0;
+  A.krit.forEach((k,i) => {
+    const wert = k.zusatz ? A.zusatz : A.werte[wi], idx = k.zusatz ? 'z' : wi++;
+    h += `<div class="krit" id="kr${i}"><div class="t">${esc(k.text)}</div><div class="opts" data-i="${idx}">` +
+      Array.from({length:k.max+1},(_,n)=>`<button type="button" data-n="${n}" aria-pressed="${wert===n}"><b>${n}</b><small>${optLabel(k.max,n)||'&nbsp;'}</small></button>`).join('') + '</div></div>';
+  });
+  $('fKrit').innerHTML = h; summe();
+}
+function summe(){
+  const A = AKT, s = STUFEN[A.kind.stufe], fertig = A.werte.every(v=>v!==null) && A.zusatz !== null;
+  $('fSumme').textContent = fertig ? `${gesamtPunkte(A.kind.stufe, A.werte, A.zusatz)} / ${s.max}` : '–';
+}
+$('fKrit').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const i = b.parentElement.dataset.i, n = Number(b.dataset.n);
+  if (i === 'z') AKT.zusatz = n; else AKT.werte[Number(i)] = n;
+  b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+  b.closest('.krit').classList.remove('miss'); summe();
+};
+async function speichern(weiter){
+  const A = AKT; let fehlt = false;
+  let wi = 0;
+  A.krit.forEach((k,i) => { const v = k.zusatz ? A.zusatz : A.werte[wi++]; if (v === null) { $('kr'+i).classList.add('miss'); fehlt = true; } });
+  if (fehlt) { $('fErr').textContent = 'Bitte in jeder Zeile einen Wert antippen (wie auf dem Bogen angekreuzt).'; $('fErr').classList.remove('hidden'); return; }
+  const btns = [$('speichern'), $('speichernWeiter')]; btns.forEach(b=>b.disabled=true);
+  const body = {schluessel:KEY, code:A.kind.code, woche:A.woche, werte:A.werte, zusatz:A.zusatz||0,
+    dienste:$('fDienste').value, bemerkung:$('fBemerkung').value, ueberschreiben:A.vorhanden};
+  try {
+    let r = await rpc('graduierung_erfassen', body);
+    if (r.status === 'vorhanden') {
+      if (!confirm(`Für ${r.name} ist diese Woche schon ein Bogen erfasst. Überschreiben?`)) { btns.forEach(b=>b.disabled=false); return; }
+      body.ueberschreiben = true; r = await rpc('graduierung_erfassen', body);
+    }
+    toast(`✓ ${r.name}: ${gesamtPunkte(A.kind.stufe, A.werte, A.zusatz)} / ${STUFEN[A.kind.stufe].max} gespeichert`);
+    AKT = null;
+    ladeDaten().catch(()=>{});
+    if (weiter) scanStart(); else zeige('start');
+  } catch(e) {
+    $('fErr').textContent = 'Speichern fehlgeschlagen: ' + e.message; $('fErr').classList.remove('hidden');
+  } finally { btns.forEach(b=>b.disabled=false); }
+}
+$('speichern').onclick = () => speichern(false);
+$('speichernWeiter').onclick = () => speichern(true);
+$('abbrechen').onclick = () => { AKT = null; zeige('start'); };
+
+/* ---------- Anmeldung ---------- */
+async function anmelden(k, merken){
+  KEY = k;
+  try {
+    const info = await rpc('graduierung_info', {schluessel:k});
+    if (merken) store('grad_lehrer', k);
+    KLASSE = info.klasse;
+    if (!KLASSE) {
+      zeige('start'); $('scanBtn').classList.add('hidden'); $('woche').disabled = true;
+      $('startMsg').innerHTML = 'Dieser Zugang gehört zu einer Klasse, die online abgibt. Das Erfassen von Papierbögen ist für Klassen mit Klassenliste gedacht. <a href="lehrer.html">Zur Lehrerseite</a>';
+      $('startMsg').classList.remove('hidden'); return;
+    }
+    $('kopfKlasse').textContent = 'Graduierung · Klasse ' + KLASSE;
+    const p = leseCode(location.hash);
+    if (p && p.w) WOCHE = p.w;
+    wochenFuellen(); zeige('start');
+    await ladeDaten();
+    if (p) oeffneKind(p.k, p.w || WOCHE);
+  } catch(e) {
+    KEY = null; store('grad_lehrer', null); zeige('login');
+    $('loginErr').textContent = e.message === 'Zugang verweigert' ? 'Der Schlüssel stimmt nicht.' : 'Verbindung fehlgeschlagen: ' + e.message;
+    $('loginErr').classList.remove('hidden');
+  }
+}
+$('loginForm').onsubmit = e => { e.preventDefault(); anmelden($('schluessel').value.trim(), true); };
+window.addEventListener('hashchange', () => { const p = leseCode(location.hash); if (p && KEY && KLASSE) { scanStop(); oeffneKind(p.k, p.w || WOCHE); } });
+document.addEventListener('visibilitychange', () => { if (document.hidden && scanAktiv) { scanStop(); zeige('start'); } });
+
+const gemerkt = store('grad_lehrer');
+if (gemerkt) anmelden(gemerkt, true); else zeige('login');
+</script>
+</body>
+</html>

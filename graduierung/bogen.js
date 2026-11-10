@@ -248,6 +248,99 @@ function druckPDF(liste){
   return doc;
 }
 
+/* ---------- Papierbogen für Klassen ohne Geräte (z. B. Klasse 5) ---------- */
+// Kindgerechte Formulierungen (Punkte und Reihenfolge wie STUFEN)
+const KIND_TEXTE = {
+  walker: [
+    'Ich halte mich an die Gesprächsregeln und bin freundlich und respektvoll – zu Kindern, Lehrkräften und fremden Sachen.',
+    'Ich nutze meine Arbeitszeit gut. Mein Lernplan ist auf dem neuesten Stand.',
+    'Ich bin zuverlässig: Zettel, Unterschriften und Material habe ich dabei.',
+    'Ich halte Ordnung und habe den Überblick (Lerntagebuch, Planen).'
+  ],
+  zusatz: 'Extra-Punkt: Ich habe einen zusätzlichen Dienst übernommen.'
+};
+function kindKriterien(stufe){
+  const s = STUFEN[stufe], t = KIND_TEXTE[stufe];
+  const l = s.krit.map((k,i)=>({text: t ? t[i] : k.t, kurz: k.k, max: k.max}));
+  if (s.zusatz) l.push({text: KIND_TEXTE.zusatz, kurz: 'Extra-Punkt (Dienst)', max: 1, zusatz: true});
+  return l;
+}
+function optLabel(max, n){
+  if (max === 1) return n ? 'ja' : 'nein';
+  if (max === 2) return ['noch nicht','teilweise','sehr gut'][n];
+  return '';
+}
+function erfassenUrl(code, woche){
+  const basis = location.href.replace(/[^/]*([?#].*)?$/, '');
+  return basis + 'erfassen.html#k=' + code + '&w=' + woche;
+}
+function _qr(doc, text, x, y, groesse){
+  const q = qrcode(0, 'M'); q.addData(text); q.make();
+  const n = q.getModuleCount(), m = groesse / n;
+  doc.setFillColor(0);
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) doc.rect(x + c*m, y + r*m, m + 0.02, m + 0.02, 'F');
+}
+function _papierBogen(doc, kind, woche, klasse, Y){
+  const s = STUFEN[kind.stufe], M = 10, W = 210, B = W - 2*M;
+  let y = Y + 7;
+  doc.setFillColor(168,16,16); doc.rect(M, y, B, 12, 'F');
+  if (LOGO) { try{ doc.setFillColor(255); doc.roundedRect(M+2,y+1.6,17,8.8,1.2,1.2,'F'); doc.addImage(LOGO,'PNG',M+2.6,y+2.1,15.8,7.8,'logo','FAST'); }catch(e){} }
+  doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  doc.text('Graduierung – So war meine Woche', M+22, y+6.2);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.text('Pater-Alois-Grimm-Schule Külsheim' + (klasse ? ' · Klasse ' + klasse : ''), M+22, y+10);
+  doc.setFillColor(...s.hex); doc.roundedRect(W-M-30, y+2.5, 28, 7, 1.5, 1.5, 'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text(s.name, W-M-16, y+7.4, {align:'center'});
+  y += 18;
+  // Name, Woche, QR
+  doc.setTextColor(40); doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text('Name', M, y);
+  doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text(String(kind.name), M, y+7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text('Woche', M+100, y);
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(wocheText(woche), M+100, y+6.5);
+  _qr(doc, erfassenUrl(kind.code, woche), W-M-25, y-4, 25);
+  doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(120);
+  doc.text('Nr. ' + kind.nr + ' · nur für die Lehrkraft', W-M-12.5, y+24, {align:'center'});
+  doc.setFontSize(8.5); doc.setTextColor(80);
+  doc.text('Kreuze in jeder Zeile genau ein Kästchen an. Sei ehrlich!', M, y+13);
+  y += 27;
+  // Tabelle
+  const krit = kindKriterien(kind.stufe), maxOpt = Math.max(...krit.map(k=>k.max)) + 1;
+  const ow = maxOpt <= 3 ? 22 : 15, tw = B - maxOpt*ow;
+  krit.forEach((k,i)=>{
+    doc.setFont('helvetica', k.zusatz ? 'bolditalic' : 'normal'); doc.setFontSize(9.5);
+    const t = doc.splitTextToSize(k.text, tw - 4), h = Math.max(11, t.length*4.2 + 4);
+    if (i%2 === 0) { doc.setFillColor(246,245,243); doc.rect(M, y, B, h, 'F'); }
+    doc.setDrawColor(205); doc.rect(M, y, B, h);
+    doc.setTextColor(40); doc.text(t, M+2, y + h/2 - (t.length-1)*2.1 + 1.2);
+    for (let n = 0; n <= k.max; n++) {
+      const cx = M + tw + n*ow + ow/2, lab = optLabel(k.max, n);
+      doc.setDrawColor(60); doc.setLineWidth(0.4); doc.rect(cx-2.8, y + (lab ? 1.8 : h/2-2.8), 5.6, 5.6); doc.setLineWidth(0.2);
+      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(150); doc.text(String(n), cx+4, y + (lab ? 3.6 : h/2-1));
+      if (lab) { doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(70); doc.text(lab, cx, y + 10.3, {align:'center'}); }
+    }
+    y += h;
+  });
+  y += 5;
+  // Textfelder
+  const fw = (B - 6) / 2, fh = Y + 148.5 - 9 - y - 4;
+  [['Das habe ich zusätzlich gemacht (z. B. Dienste, anderen geholfen):', M], ['Das möchte ich noch sagen:', M + fw + 6]].forEach(([t, x])=>{
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(60); doc.text(t, x, y);
+    doc.setDrawColor(190); doc.rect(x, y+1.5, fw, fh);
+    doc.setDrawColor(225); for (let ly = y + 9; ly < y + 1.5 + fh - 2; ly += 7) doc.line(x+2, ly, x+fw-2, ly);
+  });
+}
+// Alle Kinder einer Klasse, 2 Bögen pro A4-Seite (A5 quer)
+function papierPDF(kinder, woche, klasse){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'mm', format:'a4', compress:true});
+  kinder.forEach((k,i)=>{
+    const pos = i % 2;
+    if (i && !pos) doc.addPage();
+    if (!pos) { doc.setDrawColor(170); doc.setLineDashPattern([1.5,1.5],0); doc.line(4, 148.5, 206, 148.5); doc.setLineDashPattern([],0); }
+    _papierBogen(doc, k, woche, klasse, pos * 148.5);
+  });
+  return doc;
+}
+
 // Supabase-REST ohne Bibliothek
 function sbFetch(pfad, body){
   const c = window.PAGS_CONFIG;
