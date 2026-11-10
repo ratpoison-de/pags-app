@@ -16,8 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="../config.js?v=20261110"></script>
-<script src="bogen.js?v=20261110"></script>
+<script src="../config.js?v=20261110b"></script>
+<script src="bogen.js?v=20261110b"></script>
 <style>
 :root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#777;--bg:#F6F5F3}
 *{box-sizing:border-box}
@@ -28,7 +28,7 @@ header img{height:38px;background:#fff;border-radius:6px;padding:3px}
 header h1{font-size:1.1rem;margin:0}
 header p{margin:0;font-size:.82rem;opacity:.9}
 header .sp{flex:1}
-header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+header button{margin-left:6px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}
 main{max-width:1000px;margin:0 auto;padding:16px}
 .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
 input,select{font:inherit;padding:9px 11px;border:1px solid #ccc;border-radius:8px;background:#fff}
@@ -58,6 +58,7 @@ th{font-size:.78rem;text-transform:uppercase;color:var(--muted);letter-spacing:.
 .msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px}
 .hidden{display:none}
 .klein{color:var(--muted);font-size:.78rem}
+@media(max-width:560px){#schluesselBtn .t{display:none}}
 /* Seitenleiste */
 #panel{position:fixed;top:0;right:0;bottom:0;width:min(46vw,640px);background:#fff;border-left:1px solid var(--line);box-shadow:-6px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(105%);transition:transform .2s;z-index:20}
 #panel.offen{transform:none}
@@ -117,10 +118,24 @@ body.panel-offen .akt button{margin:1px 0}
   <img src="../img/logo.png" alt="PAGS">
   <div><h1>Graduierung – Abgaben</h1><p>Lehrerbereich · nur mit Zugangsschlüssel</p></div>
   <span class="sp"></span>
+  <button id="schluesselBtn" class="hidden" type="button">🔑<span class="t"> Schlüssel ändern</span></button>
   <button id="abmelden" class="hidden">Abmelden</button>
 </div></header>
 
 <main>
+  <section class="card hidden" id="schluesselBox">
+    <h2 style="margin-top:0;font-size:1.05rem">🔑 Eigenen Zugangsschlüssel festlegen</h2>
+    <p class="info" id="schluesselText" style="margin:0 0 10px">Lege einen eigenen Schlüssel fest, den nur du kennst. Danach gilt der bisherige Schlüssel nicht mehr.</p>
+    <form id="schluesselForm" class="leiste">
+      <input type="password" id="neu1" placeholder="Neuer Schlüssel (mind. 8 Zeichen)" autocomplete="new-password" style="flex:1 1 220px">
+      <input type="password" id="neu2" placeholder="Neuen Schlüssel wiederholen" autocomplete="new-password" style="flex:1 1 220px">
+      <label class="klein"><input type="checkbox" id="zeigen"> anzeigen</label>
+      <button class="btn" type="submit">Speichern</button>
+      <button class="btn sec" type="button" id="schluesselSpaeter">Später</button>
+    </form>
+    <div id="schluesselMsg" class="msg hidden"></div>
+  </section>
+
   <section class="card" id="login">
     <h2 style="margin-top:0;font-size:1.05rem">Zugang</h2>
     <form id="loginForm" class="leiste">
@@ -202,6 +217,7 @@ async function laden(){
   $('zahl').textContent = 'Lade …';
   const info = await rpc('graduierung_info', {schluessel: KEY});
   KLASSE = info.klasse;
+  if (info.erst_schluessel) schluesselZeigen(true);
   [DATEN, KINDER] = await Promise.all([rpc('graduierung_liste', {schluessel: KEY}),
     KLASSE ? rpc('graduierung_kinder_liste', {schluessel: KEY}) : Promise.resolve([])]);
   wochenFuellen();
@@ -226,7 +242,7 @@ async function oeffnen(k, merken){
   try {
     await laden();
     if (merken) store('grad_lehrer', k);
-    $('login').classList.add('hidden'); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden');
+    $('login').classList.add('hidden'); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden'); $('schluesselBtn').classList.remove('hidden');
   } catch(e) {
     KEY = null; store('grad_lehrer', null);
     $('loginErr').textContent = e.message === 'Zugang verweigert' ? 'Der Schlüssel stimmt nicht.' : 'Verbindung fehlgeschlagen: '+e.message;
@@ -500,6 +516,32 @@ $('listeSpeichern').onclick = async () => {
     $('listeEdit').classList.add('hidden'); klasseZeigen();
     $('listeStatus').textContent = '';
   } catch(err) { $('listeStatus').textContent = 'Fehler: ' + err.message; }
+};
+
+// Zugangsschlüssel ändern
+function schluesselZeigen(erst){
+  $('schluesselText').innerHTML = erst
+    ? '<b>Du meldest dich mit dem Start-Schlüssel an.</b> Bitte lege jetzt einen eigenen Schlüssel fest, den nur du kennst. Danach gilt der Start-Schlüssel nicht mehr.'
+    : 'Lege einen neuen Schlüssel fest, den nur du kennst. Danach gilt der bisherige Schlüssel nicht mehr – auch nicht auf deinen anderen Geräten.';
+  $('schluesselMsg').classList.add('hidden'); $('neu1').value = ''; $('neu2').value = '';
+  $('schluesselBox').classList.remove('hidden'); $('schluesselBox').scrollIntoView({behavior:'smooth'});
+}
+$('schluesselBtn').onclick = () => schluesselZeigen(false);
+$('schluesselSpaeter').onclick = () => $('schluesselBox').classList.add('hidden');
+$('zeigen').onchange = e => { $('neu1').type = $('neu2').type = e.target.checked ? 'text' : 'password'; };
+$('schluesselForm').onsubmit = async e => {
+  e.preventDefault();
+  const a = $('neu1').value.trim(), b = $('neu2').value.trim(), m = $('schluesselMsg');
+  const fehler = a.length < 8 ? 'Der neue Schlüssel braucht mindestens 8 Zeichen.' : a !== b ? 'Die beiden Eingaben stimmen nicht überein.' : a === KEY ? 'Der neue Schlüssel ist derselbe wie der bisherige.' : '';
+  if (fehler) { m.style.cssText = ''; m.textContent = fehler; m.classList.remove('hidden'); return; }
+  try {
+    await rpc('graduierung_schluessel_aendern', {schluessel: KEY, neu: a});
+    KEY = a; if (store('grad_lehrer') !== null) store('grad_lehrer', a);
+    m.style.cssText = 'background:#E8F5E9;color:#1B5E20';
+    m.textContent = '✓ Dein neuer Schlüssel ist gespeichert. Merke ihn dir gut – er wird ab sofort auf allen Geräten gebraucht.';
+    m.classList.remove('hidden'); $('neu1').value = ''; $('neu2').value = '';
+    setTimeout(() => $('schluesselBox').classList.add('hidden'), 6000);
+  } catch(err) { m.style.cssText = ''; m.textContent = 'Ändern fehlgeschlagen: ' + err.message; m.classList.remove('hidden'); }
 };
 
 // Stufen-Filter
