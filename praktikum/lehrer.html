@@ -73,6 +73,19 @@ body.panel-offen .nurbreit{display:none}
 #pInhalt h3{color:var(--red);font-size:1rem;border-bottom:2px solid var(--red);padding-bottom:3px;margin:20px 0 8px}
 #pInhalt p.abs{white-space:pre-wrap;margin:0 0 10px;font-size:.93rem}
 @media (max-width:800px){#panel{width:100vw}body.panel-offen main{margin-right:0}}
+.gruppe{flex:0 0 100%;font-size:.76rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+.nurdruck{display:none}
+/* Übersicht drucken: nur Titel, Tabelle und Legende */
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  header,#tor,#aendern,#panel,#bereich>.card:first-child,.akt,th:last-child{display:none!important}
+  main,body.panel-offen main{margin:0!important;padding:0;max-width:none}
+  .nurdruck{display:block;font-size:14pt;margin:0 0 8pt;color:#000}
+  .nurbreit,body.panel-offen .nurbreit{display:table-cell!important}
+  .card{border:0;padding:0!important;margin:0 0 8pt}
+  table{font-size:9.5pt}tr{break-inside:avoid}tr.aktiv td{background:none}
+}
 </style>
 </head>
 <body>
@@ -117,12 +130,20 @@ body.panel-offen .nurbreit{display:none}
         <select id="statusFilter" title="Status"><option value="">Alle</option><option value="ab">Bericht abgegeben</option><option value="offen">Noch nicht abgegeben</option></select>
         <button class="btn sec" id="neuLaden" type="button">↻ Aktualisieren</button>
       </div>
-      <div class="leiste" style="margin-top:12px">
-        <button class="btn" id="allePdf" type="button">Abgegebene Berichte als ein PDF</button>
-        <button class="btn sec" id="alleEntwurf" type="button">Alle angezeigten als ein PDF (auch Entwürfe)</button>
+      <div class="leiste" style="margin-top:14px">
+        <b class="gruppe">Berichte</b>
+        <button class="btn" id="allePdf" type="button">⬇ Abgegebene als ein PDF</button>
+        <button class="btn" id="alleDruck" type="button">🖨 Abgegebene drucken</button>
+        <button class="btn sec" id="alleEntwurf" type="button">⬇ Alle angezeigten als PDF (auch Entwürfe)</button>
+      </div>
+      <div class="leiste" style="margin-top:10px">
+        <b class="gruppe">Übersicht der Abgaben</b>
+        <button class="btn sec" id="listeDruck" type="button">🖨 Übersicht drucken</button>
+        <button class="btn sec" id="listeCsv" type="button">⬇ Übersicht als Tabelle (CSV für Excel)</button>
       </div>
       <p class="info" id="zahl"></p>
     </section>
+    <h2 id="druckTitel" class="nurdruck"></h2>
     <section class="card" style="padding:6px 16px"><div class="tw">
       <table>
         <thead><tr><th>Name</th><th>Betrieb</th><th title="Tagesberichte Montag bis Freitag">Mo–Fr</th><th class="nurbreit">Bereiche</th><th>Bericht</th><th class="nurbreit">Zuletzt aktiv</th><th></th></tr></thead>
@@ -137,6 +158,7 @@ body.panel-offen .nurbreit{display:none}
   <div class="pkopf">
     <b id="ptitel">Bericht</b>
     <button class="dl" id="pDownload" type="button">⬇ PDF</button>
+    <button id="pDruck" type="button">🖨 Drucken</button>
     <button id="pZu" type="button" title="Schließen">✕</button>
   </div>
   <div id="pInhalt"></div>
@@ -177,7 +199,8 @@ function gefiltert() {
 function zeigen() {
   const l = gefiltert(), ab = l.filter(r => r.abgegeben_am).length;
   $('zahl').textContent = l.length + (l.length === 1 ? ' Schüler/in' : ' Schülerinnen und Schüler') + ' · ' + ab + ' Berichte abgegeben';
-  $('allePdf').disabled = !ab; $('alleEntwurf').disabled = !l.length;
+  $('allePdf').disabled = $('alleDruck').disabled = !ab; $('alleEntwurf').disabled = $('listeDruck').disabled = $('listeCsv').disabled = !l.length;
+  $('druckTitel').textContent = 'Praktikum – Übersicht der Abgaben' + (titelKlasse() ? ' · Klasse ' + titelKlasse() : '') + ' · Stand: ' + PB.zeitpunkt(new Date().toISOString());
   if (!l.length) { $('liste').innerHTML = '<tr><td colspan="7" class="leer">' + (DATEN.length ? 'Keine Treffer.' : 'Noch hat sich niemand angemeldet.') + '</td></tr>'; return; }
   $('liste').innerHTML = l.map(r => {
     const d = r.data, st = PB.stand(d), fertig = st.filter(x => x.stand === 2).length;
@@ -212,10 +235,28 @@ function lesen(r) {
   document.querySelectorAll('#liste tr').forEach(tr => tr.classList.toggle('aktiv', tr.dataset.id === r.id));
 }
 function zu() { AKTIV = null; $('panel').classList.remove('offen'); document.body.classList.remove('panel-offen'); document.querySelectorAll('#liste tr.aktiv').forEach(tr => tr.classList.remove('aktiv')); }
+function titelKlasse() { return $('klasseFilter').value || [...new Set(DATEN.map(r => r.klasse))].join(', '); }
+/* Drucken: PDF mit Druckbefehl in neuem Tab öffnen; blockiert der Browser das Fenster, wird das PDF heruntergeladen. */
+function drucke(doc, name) { doc.autoPrint(); const w = window.open(doc.output('bloburl'), '_blank'); if (!w) { alert('Der Browser hat das Druckfenster blockiert. Das PDF wird stattdessen heruntergeladen – bitte von dort drucken.'); doc.save(name); } }
+function berichtStatus(r) { return r.abgegeben_am ? 'abgegeben' : r.data.bericht ? 'in Arbeit' : 'noch nicht'; }
+function csv() {
+  const TAG = ['kein Eintrag', 'angefangen', 'vollständig'], zelle = v => { v = String(v == null ? '' : v); if (/^[=+\-@\t]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+  const kopf = ['Name', 'Klasse', 'Betrieb', 'Ort', 'Beruf', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Tagesberichte vollständig', 'Bereiche fertig (von 9)', 'Bericht', 'Abgegeben am', 'Zuletzt aktiv'];
+  const zeilen = gefiltert().map(r => { const d = r.data, st = PB.stand(d);
+    return [r.name, r.klasse, d.betrieb.name, d.betrieb.ort, d.beruf.name || d.betrieb.beruf].concat(d.tage.map(t => t.status === 'fehlt' ? 'nicht im Betrieb' : TAG[PB.tagStand(t)]),
+      [d.tage.filter(t => PB.tagStand(t) === 2).length, st.filter(x => x.stand === 2).length, berichtStatus(r), PB.zeitpunkt(r.abgegeben_am), PB.zeitpunkt(r.updated_at)]); });
+  const text = '\uFEFF' + [kopf].concat(zeilen).map(z => z.map(zelle).join(';')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' })); a.download = 'Praktikum_Uebersicht' + ($('klasseFilter').value ? '_' + $('klasseFilter').value : '') + '.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
 function pdfEinzeln(r, neu) { PB.pdf([neu || !hatBericht(r) ? alsEntwurf(r) : alsAbgabe(r)]).save(PB.dateiname(r)); }
 
 $('pInhalt').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return; ANSICHT = b.dataset.v; lesen(DATEN.find(x => x.id === AKTIV)); });
 $('pZu').onclick = zu;
+$('pDruck').onclick = () => { const r = DATEN.find(x => x.id === AKTIV); if (r) drucke(PB.pdf([ANSICHT === 'eintraege' || !hatBericht(r) ? alsEntwurf(r) : alsAbgabe(r)]), PB.dateiname(r)); };
+$('alleDruck').onclick = () => { const l = gefiltert().filter(hatBericht); if (l.length) drucke(PB.pdf(l.map(alsAbgabe)), 'Praktikumsberichte.pdf'); };
+$('listeDruck').onclick = () => window.print();
+$('listeCsv').onclick = csv;
 $('pDownload').onclick = () => { const r = DATEN.find(x => x.id === AKTIV); if (r) pdfEinzeln(r, ANSICHT === 'eintraege'); };
 $('liste').addEventListener('click', async e => {
   const b = e.target.closest('button[data-a]'), tr = e.target.closest('tr[data-id]'); if (!tr) return;
