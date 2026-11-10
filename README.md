@@ -64,3 +64,16 @@ Selbstbewertungsbogen für die Stufen Walker, Hiker, Climber und Freeclimber. Di
 - **Schüler** (`graduierung/index.html`): Name, Datum, Graduierungswoche (Kalenderwoche, Spalte `woche` = Montag), Punkte wählen → „Abgeben“. Die Abgabe wird in Supabase gespeichert (Tabelle `public.graduierung`, Projekt pags-lernplaner). Schüler können nur abgeben, nichts lesen.
 - **Lehrer** (`graduierung/lehrer.html`): Zugang nur mit Zugangsschlüssel (in der Datenbank nur als SHA-256-Hash in `public.graduierung_zugang`). „Bewerten“ öffnet eine Seitenleiste mit Lehrerpunkten je Kriterium , einem Gesamtfeld (wird berechnet, kann überschrieben werden) und einem Feld „Bemerkungen Lernbegleiter“; gespeichert über `graduierung_bewerten`. „Drucken“ lädt alle angezeigten Bögen als PDF mit 4 Bögen (A6) pro A4-Seite herunter. Liste mit Filter nach Graduierungswoche (Standard: neueste Woche), Stufe und Name; PDF-Vorschau in einer Seitenleiste mit Herunterladen, Sammel-PDF der angezeigten Abgaben, CSV für Excel, Löschen.
 - Gemeinsame Kriterien und PDF-Layout: `graduierung/bogen.js`.
+
+## Praktikum Klasse 9 (`praktikum/`)
+
+Begleit-App für das Betriebspraktikum (Woche ab 16.11.2026). Link: `https://ratpoison-de.github.io/pags-app/praktikum/` · QR-Code: `praktikum/qr-praktikum.png`
+
+- **Schüler** (`praktikum/index.html`): Anmeldung mit Name, Klasse und selbst gewähltem Kennwort (kein E-Mail-Konto nötig). Alles wird automatisch in Supabase gespeichert und ist auf jedem Gerät wieder abrufbar; ohne Netz bleiben die Einträge im Gerät und werden nachgeholt.
+  - *Vorbereiten:* Steckbrief des Betriebs, Checkliste, Erwartungen, Verhaltenstipps, „Was tue ich, wenn …“.
+  - *Woche:* Tagesbericht für Montag bis Freitag (Arbeitszeit, Tätigkeiten, Gelerntes, Schwieriges, Highlight, Stimmung) mit einem Auftrag pro Tag.
+  - *Erkunden:* Betrieb, Berufsbild, Arbeitsvorgang Schritt für Schritt, Interview.
+  - *Bericht:* Rückblick mit Selbsteinschätzung; „Bericht erstellen“ baut aus allen Einträgen den Praktikumsbericht, der abschnittsweise überarbeitet, abgegeben und als PDF heruntergeladen werden kann.
+- **Lehrer** (`praktikum/lehrer.html`): Zugang mit demselben Zugangsschlüssel wie bei der Graduierung. Übersicht aller Schüler (Betrieb, Tagesberichte Mo–Fr, Stand des Berichts), Lesen in der Seitenleiste (abgegebener Bericht oder aktuelle Einträge), PDF einzeln oder alle als ein PDF, Kennwort zurücksetzen, Löschen.
+- Abgegebene Berichte werden als fester Stand gesichert; spätere Änderungen sieht der Lehrer im Bericht erst nach erneutem Abgeben.
+- Technik: Tabelle `public.praktikum` und Funktionen `praktikum_*` in `supabase/praktikum.sql`; gemeinsame Logik und PDF-Layout in `praktikum/bericht.js`.

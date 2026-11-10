@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Praktikum – Lehrerbereich</title>
+<link rel="icon" href="../icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../config.js?v=20261108"></script>
+<script src="bericht.js?v=20261110"></script>
+<style>
+/* Aufbau wie der Lehrerbereich der Graduierung: roter Kopf, Filterkarte, Tabelle, Seitenleiste zum Lesen */
+:root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;--tint:#FFF4F2}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.45}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+header{background:var(--red);color:#fff;padding:14px 16px}
+header .in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:38px;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.1rem;margin:0}
+header p{margin:0;font-size:.82rem;opacity:.9}
+header .sp{flex:1}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+input,select{font:inherit;padding:9px 11px;border:1px solid #ccc;border-radius:8px;background:#fff}
+.btn{padding:10px 14px;font:inherit;font-weight:600;border-radius:8px;border:0;cursor:pointer;background:var(--red);color:#fff}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.leiste input[type=search]{flex:1 1 180px}
+.info{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.76rem;text-transform:uppercase;color:var(--muted);letter-spacing:.03em;white-space:nowrap}
+td.name b{display:block}
+.klein{color:var(--muted);font-size:.78rem}
+.dots{display:inline-flex;gap:4px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid #BDBDBD;background:#fff}
+.dot.s1{border-color:var(--warn);background:linear-gradient(90deg,var(--warn) 50%,#fff 50%)}
+.dot.s2{border-color:var(--ok);background:var(--ok)}
+.st{display:inline-block;border-radius:12px;padding:1px 9px;font-size:.78rem;font-weight:700;background:#EEE;color:#555;white-space:nowrap}
+.st.gut{background:#E9F6EC;color:#14562B}
+.st.mittel{background:#FFF3DC;color:#7A4A00}
+.akt{white-space:nowrap;text-align:right}
+.akt button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer;font:inherit;font-size:.82rem}
+.akt button.del{color:var(--red)}
+.leer{text-align:center;color:var(--muted);padding:30px}
+.msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px}
+.hidden{display:none}
+tr.aktiv td{background:var(--tint)}
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(48vw,680px);background:#fff;border-left:1px solid var(--line);box-shadow:-6px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(105%);transition:transform .2s;z-index:20}
+#panel.offen{transform:none}
+body.panel-offen main{margin-right:min(48vw,680px);max-width:none}
+body.panel-offen .nurbreit{display:none}
+.pkopf{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafafa}
+.pkopf b{flex:1;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pkopf button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font:inherit;font-size:.85rem;cursor:pointer}
+.pkopf button.dl{background:var(--red);border-color:var(--red);color:#fff;font-weight:600}
+#pInhalt{flex:1;overflow:auto;padding:16px 18px 40px}
+.umschalt{display:flex;gap:6px;margin:0 0 14px}
+.umschalt button{flex:1;font:inherit;font-size:.85rem;padding:7px 8px;border:1.5px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.umschalt button[aria-pressed=true]{border-color:var(--red);background:var(--tint);font-weight:700;color:var(--red)}
+.steck{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.88rem;background:#F7F7F7;border-radius:10px;padding:10px 12px;margin:0 0 16px}
+.steck dt{color:var(--muted)}
+.steck dd{margin:0}
+#pInhalt h3{color:var(--red);font-size:1rem;border-bottom:2px solid var(--red);padding-bottom:3px;margin:20px 0 8px}
+#pInhalt p.abs{white-space:pre-wrap;margin:0 0 10px;font-size:.93rem}
+@media (max-width:800px){#panel{width:100vw}body.panel-offen main{margin-right:0}}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim">
+  <div><h1>Praktikum – Lehrerbereich</h1><p>Berichte der Schülerinnen und Schüler</p></div>
+  <span class="sp"></span>
+  <button id="abmelden" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section class="card" id="tor">
+    <h2 style="margin:0 0 6px;font-size:1.05rem">Zugang</h2>
+    <p class="klein" style="margin:0 0 10px">Es gilt derselbe Zugangsschlüssel wie im Lehrerbereich der Graduierung.</p>
+    <form id="torForm" class="leiste">
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" required style="flex:1 1 220px">
+      <button class="btn" type="submit">Öffnen</button>
+    </form>
+    <div id="torMsg" class="msg hidden" role="alert"></div>
+  </section>
+
+  <div id="bereich" class="hidden">
+    <section class="card">
+      <div class="leiste">
+        <input type="search" id="suche" placeholder="Name oder Betrieb suchen …">
+        <select id="klasseFilter" title="Klasse"><option value="">Alle Klassen</option></select>
+        <select id="statusFilter" title="Status"><option value="">Alle</option><option value="ab">Bericht abgegeben</option><option value="offen">Noch nicht abgegeben</option></select>
+        <button class="btn sec" id="neuLaden" type="button">↻ Aktualisieren</button>
+      </div>
+      <div class="leiste" style="margin-top:12px">
+        <button class="btn" id="allePdf" type="button">Abgegebene Berichte als ein PDF</button>
+        <button class="btn sec" id="alleEntwurf" type="button">Alle angezeigten als ein PDF (auch Entwürfe)</button>
+      </div>
+      <p class="info" id="zahl"></p>
+    </section>
+    <section class="card" style="padding:6px 16px"><div class="tw">
+      <table>
+        <thead><tr><th>Name</th><th>Betrieb</th><th title="Tagesberichte Montag bis Freitag">Mo–Fr</th><th class="nurbreit">Bereiche</th><th>Bericht</th><th class="nurbreit">Zuletzt aktiv</th><th></th></tr></thead>
+        <tbody id="liste"></tbody>
+      </table>
+    </div></section>
+    <p class="klein">Punkte Mo–Fr: grau = kein Eintrag, halb = angefangen, grün = Tagesbericht vollständig. „Bereiche“ zählt die neun Teile der App (Steckbrief, Checkliste, Erwartungen, Tagesberichte, Betrieb, Beruf, Arbeitsvorgang, Interview, Rückblick).</p>
+  </div>
+</main>
+
+<aside id="panel" aria-label="Bericht lesen">
+  <div class="pkopf">
+    <b id="ptitel">Bericht</b>
+    <button class="dl" id="pDownload" type="button">⬇ PDF</button>
+    <button id="pZu" type="button" title="Schließen">✕</button>
+  </div>
+  <div id="pInhalt"></div>
+</aside>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = PB.esc;
+let KEY = null, DATEN = [], AKTIV = null, ANSICHT = 'bericht';
+PB.ladeLogo('../img/logo.png');
+
+function merk(v) { try { if (v === null) sessionStorage.removeItem('pags-praktikum-lehrer'); else if (v === undefined) return sessionStorage.getItem('pags-praktikum-lehrer'); else sessionStorage.setItem('pags-praktikum-lehrer', v); } catch (e) { return null; } }
+
+async function laden() {
+  $('zahl').textContent = 'Lade …';
+  const roh = await PB.rpc('praktikum_liste', { schluessel: KEY });
+  DATEN = roh.map(r => Object.assign(r, { data: PB.normal(r.data), abgabe: PB.normal({ bericht: r.abgabe }).bericht }));
+  const kl = [...new Set(DATEN.map(r => r.klasse))].sort(), sel = $('klasseFilter'), alt = sel.value;
+  sel.innerHTML = '<option value="">Alle Klassen</option>' + kl.map(k => '<option>' + esc(k) + '</option>').join('');
+  sel.value = kl.includes(alt) ? alt : '';
+  zeigen();
+  if (AKTIV) { const r = DATEN.find(x => x.id === AKTIV); if (r) lesen(r); else zu(); }
+}
+function gefiltert() {
+  const q = $('suche').value.trim().toLowerCase(), k = $('klasseFilter').value, s = $('statusFilter').value;
+  return DATEN.filter(r => (!k || r.klasse === k) && (!s || (s === 'ab') === !!r.abgegeben_am) &&
+    (!q || (r.name + ' ' + (r.data.betrieb.name || '') + ' ' + (r.data.betrieb.ort || '')).toLowerCase().includes(q)));
+}
+function zeigen() {
+  const l = gefiltert(), ab = l.filter(r => r.abgegeben_am).length;
+  $('zahl').textContent = l.length + (l.length === 1 ? ' Schüler/in' : ' Schülerinnen und Schüler') + ' · ' + ab + ' Berichte abgegeben';
+  $('allePdf').disabled = !ab; $('alleEntwurf').disabled = !l.length;
+  if (!l.length) { $('liste').innerHTML = '<tr><td colspan="7" class="leer">' + (DATEN.length ? 'Keine Treffer.' : 'Noch hat sich niemand angemeldet.') + '</td></tr>'; return; }
+  $('liste').innerHTML = l.map(r => {
+    const d = r.data, st = PB.stand(d), fertig = st.filter(x => x.stand === 2).length;
+    const dots = d.tage.map((t, i) => '<span class="dot s' + PB.tagStand(t) + '" title="' + PB.wtag(PB.tagDatum(d.start, i)) + (t.status === 'fehlt' ? ': nicht im Betrieb' : '') + '"></span>').join('');
+    const ber = r.abgegeben_am ? '<span class="st gut" title="' + esc(PB.zeitpunkt(r.abgegeben_am)) + '">abgegeben</span>' : d.bericht ? '<span class="st mittel">in Arbeit</span>' : '<span class="st">noch nicht</span>';
+    return '<tr data-id="' + r.id + '" class="' + (r.id === AKTIV ? 'aktiv' : '') + '"><td class="name"><b>' + esc(r.name) + '</b><span class="klein">' + esc(r.klasse) + '</span></td>' +
+      '<td>' + esc(d.betrieb.name || '–') + (d.betrieb.ort ? '<br><span class="klein">' + esc(d.betrieb.ort) + '</span>' : '') + '</td>' +
+      '<td><span class="dots">' + dots + '</span></td><td class="nurbreit">' + fertig + ' / ' + st.length + '</td><td>' + ber + '</td>' +
+      '<td class="nurbreit klein">' + esc(PB.zeitpunkt(r.updated_at)) + '</td>' +
+      '<td class="akt"><button data-a="lesen">Lesen</button> <button data-a="pdf" title="PDF herunterladen">⬇ PDF</button> <button data-a="pin" title="Kennwort zurücksetzen">🔑</button> <button class="del" data-a="del" title="Löschen">✕</button></td></tr>';
+  }).join('');
+}
+
+/* Abgegebener Bericht gilt nur, wenn einer abgegeben wurde – sonst zeigen wir die aktuellen Einträge. */
+function hatBericht(r) { return !!(r.abgegeben_am && r.abgabe && r.abgabe.teile.length); }
+/* Für Ansicht und PDF: fester Stand der Abgabe bzw. frisch aus den Einträgen erzeugter Entwurf */
+function alsAbgabe(r) { return Object.assign({}, r, { data: Object.assign({}, r.data, { bericht: r.abgabe }) }); }
+function alsEntwurf(r) { return Object.assign({}, r, { abgegeben_am: null, data: Object.assign({}, r.data, { bericht: null }) }); }
+function lesen(r) {
+  AKTIV = r.id; const d = r.data;
+  if (!hatBericht(r)) ANSICHT = 'eintraege';
+  const neu = ANSICHT === 'eintraege', teile = (neu ? PB.teile(d) : r.abgabe.teile).filter(t => t.text.trim());
+  $('ptitel').textContent = r.name + ' · ' + r.klasse;
+  const zeile = (k, v) => v ? '<dt>' + k + '</dt><dd>' + esc(v) + '</dd>' : '';
+  $('pInhalt').innerHTML =
+    '<div class="umschalt"><button type="button" data-v="bericht" aria-pressed="' + !neu + '"' + (hatBericht(r) ? '' : ' disabled title="Noch kein Bericht abgegeben"') + '>Abgegebener Bericht</button><button type="button" data-v="eintraege" aria-pressed="' + neu + '">Aktuelle Einträge</button></div>' +
+    '<dl class="steck">' + zeile('Betrieb', d.betrieb.name) + zeile('Adresse', d.betrieb.ort) + zeile('Beruf', d.beruf.name || d.betrieb.beruf) + zeile('Ansprechperson', d.betrieb.ansprech) + zeile('Telefon', d.betrieb.tel) + zeile('Arbeitszeiten', d.betrieb.zeiten) +
+    zeile('Zeitraum', PB.zeitraum(d)) + zeile('Status', r.abgegeben_am ? 'Bericht abgegeben am ' + PB.zeitpunkt(r.abgegeben_am) : 'Bericht noch nicht abgegeben') + zeile('Zuletzt aktiv', PB.zeitpunkt(r.updated_at)) + '</dl>' +
+    (neu && hatBericht(r) ? '<p class="klein">Diese Ansicht wird frisch aus den Einträgen erzeugt – ohne die Überarbeitungen im abgegebenen Bericht.</p>' : !neu ? '<p class="klein">Stand der Abgabe. Spätere Änderungen erscheinen hier erst, wenn erneut abgegeben wird.</p>' : '') +
+    (teile.length ? teile.map((t, i) => '<h3>' + (i + 1) + ' · ' + esc(t.titel) + '</h3><p class="abs">' + esc(t.text) + '</p>').join('') : '<p class="leer">Noch keine Einträge.</p>');
+  $('panel').classList.add('offen'); document.body.classList.add('panel-offen'); $('pInhalt').scrollTop = 0;
+  document.querySelectorAll('#liste tr').forEach(tr => tr.classList.toggle('aktiv', tr.dataset.id === r.id));
+}
+function zu() { AKTIV = null; $('panel').classList.remove('offen'); document.body.classList.remove('panel-offen'); document.querySelectorAll('#liste tr.aktiv').forEach(tr => tr.classList.remove('aktiv')); }
+function pdfEinzeln(r, neu) { PB.pdf([neu || !hatBericht(r) ? alsEntwurf(r) : alsAbgabe(r)]).save(PB.dateiname(r)); }
+
+$('pInhalt').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b || b.disabled) return; ANSICHT = b.dataset.v; lesen(DATEN.find(x => x.id === AKTIV)); });
+$('pZu').onclick = zu;
+$('pDownload').onclick = () => { const r = DATEN.find(x => x.id === AKTIV); if (r) pdfEinzeln(r, ANSICHT === 'eintraege'); };
+$('liste').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-a]'), tr = e.target.closest('tr[data-id]'); if (!tr) return;
+  const r = DATEN.find(x => x.id === tr.dataset.id); if (!r) return;
+  const a = b ? b.dataset.a : 'lesen';
+  try {
+    if (a === 'lesen') { ANSICHT = 'bericht'; lesen(r); }
+    else if (a === 'pdf') pdfEinzeln(r);
+    else if (a === 'pin') {
+      const neu = prompt('Neues Kennwort für ' + r.name + ' (mindestens 4 Zeichen).\nDie Einträge bleiben erhalten.'); if (neu === null) return;
+      await PB.rpc('praktikum_pin_neu', { schluessel: KEY, eintrag: r.id, neue_pin: neu.trim() });
+      alert('Das Kennwort von ' + r.name + ' wurde geändert.');
+    } else if (a === 'del') {
+      if (!confirm('Alle Einträge und den Bericht von ' + r.name + ' (' + r.klasse + ') endgültig löschen?')) return;
+      await PB.rpc('praktikum_loeschen', { schluessel: KEY, eintrag: r.id });
+      if (AKTIV === r.id) zu(); await laden();
+    }
+  } catch (err) { alert(err.message); }
+});
+$('allePdf').onclick = () => { const l = gefiltert().filter(hatBericht); if (l.length) PB.pdf(l.map(alsAbgabe)).save('Praktikumsberichte' + ($('klasseFilter').value ? '_' + $('klasseFilter').value : '') + '.pdf'); };
+$('alleEntwurf').onclick = () => { const l = gefiltert(); if (!l.length) return; gemischt(l).save('Praktikum_alle' + ($('klasseFilter').value ? '_' + $('klasseFilter').value : '') + '.pdf'); };
+/* Abgegebene Berichte bleiben wie abgegeben, alle anderen werden aus den Einträgen erzeugt und als Entwurf markiert. */
+function gemischt(l) { return PB.pdf(l.map(r => hatBericht(r) ? alsAbgabe(r) : alsEntwurf(r))); }
+['suche', 'klasseFilter', 'statusFilter'].forEach(i => $(i).addEventListener('input', zeigen));
+$('neuLaden').onclick = () => laden().catch(e => alert(e.message));
+
+async function oeffnen(k) {
+  KEY = k; const m = $('torMsg'); m.classList.add('hidden');
+  try { await laden(); merk(k); $('tor').classList.add('hidden'); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden'); }
+  catch (e) { KEY = null; merk(null); m.textContent = /verweigert/i.test(e.message) ? 'Der Zugangsschlüssel stimmt nicht.' : 'Die Daten konnten nicht geladen werden: ' + e.message; m.classList.remove('hidden'); }
+}
+$('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
+$('abmelden').onclick = () => { merk(null); location.reload(); };
+if (merk()) oeffnen(merk());
+</script>
+</body>
+</html>

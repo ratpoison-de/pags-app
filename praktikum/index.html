@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Mein Praktikum – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="../config.js?v=20261108"></script>
+<script src="bericht.js?v=20261110"></script>
+<style>
+/* Aufbau: roter Kopf mit Logo und Speicherstatus, Inhalt als Karten, feste Leiste unten mit fünf Bereichen */
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
+p{margin:0 0 10px}
+a{color:var(--red)}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;position:sticky;top:0;z-index:10}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:36px;width:auto;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.02rem;white-space:nowrap}
+header p{margin:0;font-size:.78rem;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1;min-width:0;overflow:hidden}
+#sync{font-size:.74rem;border:1px solid rgba(255,255,255,.55);border-radius:20px;padding:3px 9px;white-space:nowrap}
+#menuBtn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:5px 9px;font:inherit;font-size:.8rem;cursor:pointer}
+main{max-width:760px;margin:0 auto;padding:14px 14px 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{font-size:1.08rem;margin-bottom:8px}
+.card h3{font-size:.95rem;margin:14px 0 6px}
+.muted{color:var(--muted);font-size:.86rem}
+.lead{font-size:.95rem}
+/* Formular */
+label.f{display:block;margin:0 0 12px}
+label.f>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px}
+label.f small{display:block;color:var(--muted);font-size:.8rem;font-weight:400;margin-top:1px}
+input[type=text],input[type=tel],input[type=password],input[type=time],input[type=date],select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #C9C9C9;border-radius:10px;background:#fff;color:var(--text)}
+textarea{min-height:76px;resize:vertical;line-height:1.45;overflow:hidden}
+input:focus,textarea:focus,select:focus{border-color:var(--red);outline:2px solid rgba(168,16,16,.18)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0 12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;font:inherit;font-weight:600;border-radius:10px;border:0;cursor:pointer;background:var(--red);color:#fff;text-decoration:none}
+.btn:hover{background:var(--red-dark)}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.sec:hover{background:var(--tint)}
+.btn.klein{min-height:36px;padding:6px 11px;font-size:.84rem}
+.btn[disabled]{opacity:.55;cursor:default}
+.knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.msg{padding:10px 12px;border-radius:10px;background:#FDECEA;color:#8A1C1C;margin:10px 0 0;font-size:.9rem}
+.msg.gut{background:#E9F6EC;color:#14562B}
+/* Aufklapp-Bereiche */
+details.acc{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+details.acc>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:10px;font-weight:700}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s;flex:none}
+details.acc[open]>summary::after{transform:rotate(-135deg)}
+details.acc>summary small{font-weight:400;color:var(--muted);font-size:.8rem}
+details.acc .body{padding:2px 16px 16px;border-top:1px solid var(--line);padding-top:14px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid #BDBDBD;flex:none;background:#fff}
+.dot.s1{border-color:var(--warn);background:linear-gradient(90deg,var(--warn) 50%,#fff 50%)}
+.dot.s2{border-color:var(--ok);background:var(--ok)}
+/* Start */
+.hero{background:linear-gradient(135deg,var(--red),#C62A1E);color:#fff;border:0}
+.hero h2{font-size:1.3rem}
+.hero .gross{font-size:2.4rem;font-weight:700;line-height:1.1;margin:6px 0 2px}
+.hero .btn{background:#fff;color:var(--red);margin-top:10px}
+.hero .btn:hover{background:var(--tint)}
+.fort{list-style:none;margin:0;padding:0}
+.fort li{border-top:1px solid var(--line)}
+.fort li:first-child{border-top:0}
+.fort button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:11px 2px;cursor:pointer}
+.fort button:focus-visible{outline:2px solid var(--red)}
+.fort .info{margin-left:auto;color:var(--muted);font-size:.82rem}
+.balken{height:8px;background:#EEE;border-radius:8px;overflow:hidden;margin:8px 0 2px}
+.balken i{display:block;height:100%;background:var(--ok);border-radius:8px}
+.notfall{border-left:5px solid var(--red)}
+.notfall ol{margin:6px 0 0;padding-left:20px}
+/* Checkliste */
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.check:first-of-type{border-top:0}
+.check input{width:22px;height:22px;accent-color:var(--red);flex:none;margin-top:1px}
+.check input:checked+span{color:var(--muted);text-decoration:line-through}
+ul.tipps{margin:0;padding-left:20px}
+ul.tipps li{margin-bottom:6px}
+dl.wenn{margin:0}
+dl.wenn dt{font-weight:700;margin-top:10px}
+dl.wenn dd{margin:2px 0 0}
+/* Woche */
+.tage{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.tage button{font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 2px;cursor:pointer;display:grid;justify-items:center;gap:2px;color:var(--text)}
+.tage button b{font-size:.95rem}
+.tage button span{font-size:.72rem;color:var(--muted)}
+.tage button[aria-pressed=true]{border-color:var(--red);background:var(--tint)}
+.tage button.heute b::after{content:" •";color:var(--red)}
+.auftrag{background:var(--tint);border:1px solid #F3D3CD;border-radius:12px;padding:12px;margin:0 0 14px}
+.auftrag b{display:block;color:var(--red);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.wahl{display:flex;flex-wrap:wrap;gap:6px}
+.wahl button{font:inherit;min-height:42px;padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--text)}
+.wahl button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff;font-weight:600}
+.wahl.smile button{font-size:1.5rem;padding:4px 10px;flex:1}
+.wahl.smile button[aria-pressed=true]{background:var(--tint)}
+.frage{font-weight:600;font-size:.9rem;margin:0 0 6px}
+.gruppe{margin:0 0 14px}
+.hilfe{background:#F7F7F7;border-radius:10px;padding:8px 12px;margin:-4px 0 12px;font-size:.84rem;color:#555}
+.hilfe summary{cursor:pointer;font-weight:600}
+/* Listen (Schritte, Interview) */
+.item{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;background:#FCFCFC}
+.item .kopf{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-weight:700;font-size:.86rem;color:var(--muted)}
+.item .kopf button{margin-left:auto;border:0;background:none;color:var(--red);font:inherit;font-size:.82rem;cursor:pointer;padding:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.chips button{font:inherit;font-size:.82rem;border:1px dashed #B9B9B9;background:#fff;border-radius:18px;padding:5px 10px;cursor:pointer;text-align:left;color:var(--text)}
+.skala{display:grid;grid-template-columns:1fr;gap:4px;padding:10px 0;border-top:1px solid var(--line)}
+.skala:first-of-type{border-top:0}
+.skala .wahl button{flex:1;font-size:.78rem;padding:4px 6px;min-height:40px}
+/* Bericht */
+.teil{margin-bottom:14px}
+.teil .tk{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.teil .tk b{flex:1;font-size:.92rem}
+.teil .tk button{border:0;background:none;color:var(--red);font:inherit;font-size:.8rem;cursor:pointer;padding:4px}
+.teil textarea{min-height:90px}
+.status{display:inline-block;border-radius:20px;padding:2px 10px;font-size:.8rem;font-weight:700;background:#EEE;color:#555}
+.status.gut{background:#E9F6EC;color:#14562B}
+/* Leiste unten */
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:10;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav button{font:inherit;border:0;background:none;padding:8px 2px 9px;cursor:pointer;display:grid;justify-items:center;gap:1px;color:var(--muted);font-size:.7rem;font-weight:600}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current=page]{color:var(--red)}
+footer{max-width:760px;margin:0 auto;padding:6px 16px 18px;color:var(--muted);font-size:.76rem;text-align:center}
+@media (min-width:560px){.skala{grid-template-columns:1fr 1.2fr;align-items:center}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Mein Praktikum</h1><p id="wer">Klasse 9 · PAGS Külsheim</p></div>
+  <span id="sync" class="hidden" role="status"></span>
+  <button id="menuBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <!-- Anmeldung -->
+  <section id="login" class="hidden">
+    <div class="card">
+      <h2>Willkommen!</h2>
+      <p class="lead">Diese App begleitet dich durch dein Praktikum: vorbereiten, jeden Tag kurz aufschreiben, was du erlebt hast, und am Ende deinen Bericht erstellen.</p>
+      <div class="wahl" style="margin:12px 0 14px" role="group" aria-label="Anmeldeart">
+        <button type="button" id="modusNeu" aria-pressed="true">Neu anfangen</button>
+        <button type="button" id="modusAlt" aria-pressed="false">Weitermachen</button>
+      </div>
+      <form id="loginForm" autocomplete="off">
+        <label class="f"><span>Vorname und Nachname</span><input type="text" id="lName" maxlength="80" required autocomplete="name"></label>
+        <label class="f"><span>Klasse</span><select id="lKlasse"><option>9a</option><option>9b</option><option>9c</option></select></label>
+        <label class="f"><span id="lPinLabel">Denk dir ein Kennwort aus</span><input type="password" id="lPin" minlength="4" maxlength="40" required autocomplete="off">
+          <small id="lPinHinweis">Mindestens 4 Zeichen. Merk es dir gut – damit kommst du auf jedem Gerät wieder an deine Einträge.</small></label>
+        <button class="btn" type="submit" id="lBtn">Los geht’s</button>
+        <div id="lMsg" class="msg hidden" role="alert"></div>
+      </form>
+    </div>
+    <p class="muted" style="text-align:center">Kennwort vergessen? Dein Lehrer kann es zurücksetzen.</p>
+  </section>
+
+  <div id="app" class="hidden"></div>
+</main>
+
+<nav id="nav" class="hidden" aria-label="Bereiche"><div class="in">
+  <button type="button" data-tab="start"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Start</button>
+  <button type="button" data-tab="vor"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h10"/></svg>Vorbereiten</button>
+  <button type="button" data-tab="woche"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Woche</button>
+  <button type="button" data-tab="erkunden"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>Erkunden</button>
+  <button type="button" data-tab="bericht"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Bericht</button>
+</div></nav>
+
+<footer>Praktikums-App der PAGS Külsheim · entwickelt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = PB.esc;
+const LS = 'pags-praktikum-v1';
+let S = null;            // Sitzung: {id, pin, name, klasse, data, dirty, abgegeben_am, updated_at}
+let D = null;            // S.data
+let TAB = 'start', TAG = 0, OFFEN = new Set(), NEU = true;
+
+/* ---------- Speicher im Gerät ---------- */
+function lade() { try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s && s.id && s.pin) { s.data = PB.normal(s.data); return s; } } catch (e) { } return null; }
+function merke() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { } }
+
+/* ---------- Pfade in den Daten ---------- */
+function hole(p) { return p.split('.').reduce((o, k) => (o == null ? undefined : o[k]), D); }
+function setze(p, v) {
+  const k = p.split('.'); let o = D;
+  for (let i = 0; i < k.length - 1; i++) { if (o[k[i]] == null || typeof o[k[i]] !== 'object') o[k[i]] = /^\d+$/.test(k[i + 1]) ? [] : {}; o = o[k[i]]; }
+  o[k[k.length - 1]] = v;
+}
+
+/* ---------- Speichern in der Datenbank ---------- */
+let timer = null, laeuft = false, stand = 0, gesendet = 0;
+function status(txt, titel) { const e = $('sync'); e.textContent = txt; e.title = titel || ''; }
+function geaendert() {
+  stand++; S.dirty = true; merke(); status('Speichert …');
+  clearTimeout(timer); timer = setTimeout(() => sync(false), 1500);
+}
+async function sync(abgeben, keepalive) {
+  if (!S || S.gesperrt) return false;
+  if (laeuft) { if (!abgeben) return false; for (let i = 0; i < 20 && laeuft; i++) await new Promise(r => setTimeout(r, 300)); if (laeuft) return false; }
+  if (!S.dirty && !abgeben) { status('Gespeichert ✓'); return true; }
+  laeuft = true; gesendet = stand; clearTimeout(timer);
+  try {
+    const r = await PB.rpc('praktikum_speichern', { p_id: S.id, p_pin: S.pin, p_data: D, p_abgeben: !!abgeben }, keepalive);
+    if (!r.ok) {
+      if (r.grund === 'pin' || r.grund === 'unbekannt' || r.grund === 'gesperrt') { S.gesperrt = true; merke(); zeigeLogin(r.grund === 'unbekannt' ? 'Dein Eintrag wurde nicht mehr gefunden. Melde dich bitte bei deinem Lehrer.' : 'Dein Kennwort stimmt nicht mehr. Melde dich bitte neu an – deine Einträge auf diesem Gerät bleiben erhalten.'); }
+      else status('Nicht gespeichert', 'Der Bericht ist zu groß.');
+      return false;
+    }
+    S.updated_at = r.updated_at; S.abgegeben_am = r.abgegeben_am;
+    if (gesendet === stand) { S.dirty = false; status('Gespeichert ✓'); } else { timer = setTimeout(() => sync(false), 800); }
+    merke(); return true;
+  } catch (e) { status('Offline – wird nachgeholt', 'Deine Einträge sind auf diesem Gerät gesichert und werden gespeichert, sobald du wieder online bist.'); return false; }
+  finally { laeuft = false; }
+}
+addEventListener('online', () => sync(false));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && S && S.dirty) sync(false, true); });
+
+/* ---------- Anmeldung ---------- */
+const GRUND = {
+  eingabe: 'Bitte Vor- und Nachname, Klasse und ein Kennwort mit mindestens 4 Zeichen eingeben.',
+  vergeben: 'Diesen Namen gibt es in deiner Klasse schon. Hast du schon angefangen? Dann tippe oben auf „Weitermachen“.',
+  unbekannt: 'Mit diesem Namen und dieser Klasse gibt es noch keinen Eintrag. Prüfe die Schreibweise – oder tippe oben auf „Neu anfangen“.',
+  pin: 'Das Kennwort stimmt nicht.',
+  gesperrt: 'Zu viele falsche Versuche. Warte 10 Minuten oder frag deinen Lehrer.',
+  voll: 'Im Moment können keine neuen Einträge angelegt werden. Sag bitte deinem Lehrer Bescheid.'
+};
+function modus(neu) {
+  NEU = neu; $('modusNeu').setAttribute('aria-pressed', neu); $('modusAlt').setAttribute('aria-pressed', !neu);
+  $('lPinLabel').textContent = neu ? 'Denk dir ein Kennwort aus' : 'Dein Kennwort';
+  $('lPinHinweis').classList.toggle('hidden', !neu); $('lBtn').textContent = neu ? 'Los geht’s' : 'Anmelden';
+  $('lMsg').classList.add('hidden');
+}
+function zeigeLogin(meldung) {
+  $('app').classList.add('hidden'); $('nav').classList.add('hidden'); $('sync').classList.add('hidden'); $('menuBtn').classList.add('hidden');
+  $('login').classList.remove('hidden'); $('wer').textContent = 'Klasse 9 · PAGS Külsheim';
+  if (S && S.gesperrt) { modus(false); $('lName').value = S.name; $('lKlasse').value = S.klasse; }
+  if (meldung) { $('lMsg').textContent = meldung; $('lMsg').className = 'msg'; }
+}
+$('modusNeu').onclick = () => modus(true); $('modusAlt').onclick = () => modus(false);
+$('loginForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('lMsg'); m.classList.add('hidden'); $('lBtn').disabled = true;
+  try {
+    const pin = $('lPin').value;
+    const r = await PB.rpc('praktikum_anmelden', { p_name: $('lName').value, p_klasse: $('lKlasse').value, p_pin: pin, p_neu: NEU });
+    if (!r.ok) { m.textContent = GRUND[r.grund] || 'Das hat nicht geklappt.'; m.className = 'msg'; return; }
+    const alt = S && S.gesperrt && S.id === r.id && S.dirty ? S.data : null;   // ungesicherte Einträge dieses Geräts behalten
+    S = { id: r.id, pin: pin, name: r.name, klasse: r.klasse, data: alt || PB.normal(r.data), dirty: !!alt, abgegeben_am: r.abgegeben_am, updated_at: r.updated_at };
+    merke(); $('lPin').value = ''; starte(); if (alt) sync(false);
+  } catch (err) { m.textContent = 'Keine Verbindung zur Datenbank. Prüfe dein Internet und versuche es noch einmal.'; m.className = 'msg'; }
+  finally { $('lBtn').disabled = false; }
+};
+$('menuBtn').onclick = async () => {
+  if (S.dirty && !(await sync(false)) && !confirm('Deine letzten Änderungen sind noch nicht in der Datenbank gespeichert. Wenn du dich jetzt abmeldest, gehen sie verloren. Trotzdem abmelden?')) return;
+  if (!S.dirty && !confirm('Abmelden? Mit deinem Namen und Kennwort kommst du jederzeit wieder an deine Einträge.')) return;
+  try { localStorage.removeItem(LS); } catch (e) { }
+  S = null; D = null; modus(false); zeigeLogin();
+};
+
+function starte() {
+  D = S.data; $('login').classList.add('hidden');
+  ['app', 'nav', 'sync', 'menuBtn'].forEach(i => $(i).classList.remove('hidden'));
+  $('wer').textContent = S.name + ' · ' + S.klasse;
+  status(S.dirty ? 'Speichert …' : 'Gespeichert ✓');
+  const ph = PB.phase(D.start); TAG = ph.phase === 'in' ? ph.tag : Math.max(0, D.tage.findIndex(x => PB.tagStand(x) < 2));
+  zeige('start');
+  if (S.dirty) sync(false);
+}
+/* Beim Öffnen: neueren Stand von einem anderen Gerät holen */
+async function abgleich() {
+  if (!S || S.dirty || S.gesperrt) return;
+  try {
+    const r = await PB.rpc('praktikum_anmelden', { p_name: S.name, p_klasse: S.klasse, p_pin: S.pin, p_neu: false });
+    if (!r.ok) { if (r.grund === 'pin' || r.grund === 'unbekannt') { S.gesperrt = true; merke(); zeigeLogin(r.grund === 'pin' ? 'Dein Kennwort wurde geändert. Melde dich bitte neu an.' : GRUND.unbekannt); } return; }
+    if (S.dirty || r.updated_at === S.updated_at) return;
+    S.data = PB.normal(r.data); S.updated_at = r.updated_at; S.abgegeben_am = r.abgegeben_am; D = S.data; merke(); zeige(TAB);
+  } catch (e) { }
+}
+
+/* ---------- Bausteine ---------- */
+function F(p, label, o) {
+  o = o || {}; const v = hole(p); const wert = esc(v == null ? '' : v);
+  const hint = o.hint ? '<small>' + esc(o.hint) + '</small>' : '';
+  const ph = o.ph ? ' placeholder="' + esc(o.ph) + '"' : '';
+  const feld = o.area ? '<textarea data-p="' + p + '" maxlength="' + (o.max || 2500) + '"' + ph + '>' + wert + '</textarea>'
+    : '<input type="' + (o.type || 'text') + '" data-p="' + p + '" maxlength="' + (o.max || 200) + '" value="' + wert + '"' + ph + '>';
+  return '<label class="f"><span>' + esc(label) + hint + '</span>' + feld + '</label>';
+}
+function wahl(p, werte, klasse, vorgabe) {
+  let v = hole(p); if (v == null) v = vorgabe;
+  return '<div class="wahl ' + (klasse || '') + '">' + werte.map(w => '<button type="button" data-set="' + p + '" data-val="' + esc(w[0]) + '" aria-pressed="' + (String(v) === String(w[0])) + '"' + (w[2] ? ' aria-label="' + esc(w[2]) + '" title="' + esc(w[2]) + '"' : '') + '>' + w[1] + '</button>').join('') + '</div>';
+}
+function acc(id, titel, stand, inhalt, info) {
+  return '<details class="acc" data-acc="' + id + '" id="acc-' + id + '"' + (OFFEN.has(id) ? ' open' : '') + '><summary>' +
+    (stand == null ? '' : '<span class="dot s' + stand + '"></span>') + '<span>' + esc(titel) + (info ? ' <small>· ' + esc(info) + '</small>' : '') + '</span></summary><div class="body">' + inhalt + '</div></details>';
+}
+const hilfe = (titel, text) => '<details class="hilfe"><summary>' + esc(titel) + '</summary>' + text + '</details>';
+
+const CHECK = [
+  'Ich kenne die genaue Adresse und weiß, bei wem ich mich am ersten Tag melde.',
+  'Ich weiß, wann ich am ersten Tag da sein muss.',
+  'Ich habe meinen Weg geplant (Bus, Fahrrad, Mitfahrt) und weiß, wie lange er dauert.',
+  'Ich weiß, was ich anziehen soll (zum Beispiel Arbeitskleidung oder feste Schuhe).',
+  'Die Telefonnummer vom Betrieb ist in meinem Handy gespeichert.',
+  'Die Nummer der Schule ist in meinem Handy gespeichert: ' + PB.SCHULTEL + '.',
+  'Ich weiß, was ich tun muss, wenn ich krank bin.',
+  'Vesper und Getränk sind geplant.',
+  'Ich habe nachgefragt, ob der Betrieb noch Unterlagen von mir braucht.',
+  'Ich habe mir die Internetseite vom Betrieb angeschaut.',
+  'Ich habe mir drei Fragen überlegt, die ich im Betrieb stellen will.',
+  'Block und Stift liegen bereit.'
+];
+const AUFTRAG = [
+  { t: 'Ankommen', txt: 'Schau dich um und hör gut zu. Schreib heute Abend deinen ersten Eindruck auf: Wie wurdest du empfangen? Was hat dich überrascht?' },
+  { t: 'Betrieb erkunden', txt: 'Finde heraus, was dein Betrieb genau macht, wie viele Menschen dort arbeiten und wer die Kunden sind.', tab: 'erkunden', acc: 'erk', knopf: 'Zu „Betrieb erkunden“' },
+  { t: 'Berufsbild', txt: 'Frag nach, wie die Ausbildung in deinem Beruf abläuft und was man dafür können muss.', tab: 'erkunden', acc: 'beruf', knopf: 'Zum Berufsbild' },
+  { t: 'Arbeitsvorgang und Interview', txt: 'Beobachte einen Arbeitsvorgang ganz genau und schreib ihn Schritt für Schritt auf. Führe außerdem dein Interview.', tab: 'erkunden', acc: 'vorgang', knopf: 'Zum Arbeitsvorgang' },
+  { t: 'Abschluss', txt: 'Bedanke dich heute im Betrieb – persönlich und mit Handschlag. Fülle danach deinen Rückblick aus.', tab: 'bericht', acc: 'rb', knopf: 'Zum Rückblick' }
+];
+const FRAGEN = [
+  'Wie sind Sie zu Ihrem Beruf gekommen?', 'Was gefällt Ihnen an Ihrem Beruf am besten?', 'Was ist an Ihrem Beruf anstrengend?',
+  'Wie sieht ein typischer Arbeitstag bei Ihnen aus?', 'Welche Eigenschaften sollte ein Azubi mitbringen?', 'Welche Schulfächer sind für den Beruf wichtig?',
+  'Wie hat sich der Beruf in den letzten Jahren verändert?', 'Welchen Tipp haben Sie für meine Bewerbung?'
+];
+const SMILE = [[1, '😫', 'sehr schlecht'], [2, '😕', 'eher schlecht'], [3, '😐', 'mittel'], [4, '🙂', 'gut'], [5, '🤩', 'super']];
+
+/* ---------- Ansichten ---------- */
+function vStart() {
+  const ph = PB.phase(D.start), st = PB.stand(D), vor = st.filter(x => x.tab === 'vor');
+  const fertig = st.filter(x => x.stand === 2).length, pro = Math.round(st.reduce((a, x) => a + x.stand, 0) / (st.length * 2) * 100);
+  const vn = esc(S.name.split(' ')[0]);
+  let hero;
+  if (ph.phase === 'vor') {
+    const offen = vor.filter(x => x.stand < 2).length;
+    hero = '<h2>Hallo ' + vn + '!</h2><div class="gross">Noch ' + ph.bis + (ph.bis === 1 ? ' Tag' : ' Tage') + '</div><p>bis zu deinem Praktikum (Start: ' + PB.wtag(PB.tagDatum(D.start, 0)) + ', ' + PB.lang(PB.tagDatum(D.start, 0)) + ').</p>' +
+      (offen ? '<p>Für die Vorbereitung fehlt noch etwas.</p><button class="btn" data-go="vor">Jetzt vorbereiten</button>' : '<p>Du bist gut vorbereitet. Viel Erfolg!</p>');
+  } else if (ph.phase === 'in') {
+    const ts = PB.tagStand(D.tage[ph.tag]);
+    hero = '<h2>Hallo ' + vn + '!</h2><div class="gross">Tag ' + (ph.tag + 1) + ' von 5</div><p><b>Auftrag heute – ' + esc(AUFTRAG[ph.tag].t) + ':</b> ' + esc(AUFTRAG[ph.tag].txt) + '</p>' +
+      '<button class="btn" data-go="woche" data-tag="' + ph.tag + '">' + (ts === 2 ? 'Tagesbericht ansehen ✓' : ts === 1 ? 'Tagesbericht weiterschreiben' : 'Tagesbericht schreiben') + '</button>';
+  } else {
+    hero = '<h2>Geschafft, ' + vn + '!</h2><p style="margin-top:8px">Dein Praktikum ist vorbei. ' + (S.abgegeben_am ? 'Dein Bericht ist abgegeben. Du kannst ihn weiter verbessern und noch einmal abgeben.' : 'Jetzt fehlen noch dein Rückblick und dein Bericht.') + '</p>' +
+      '<button class="btn" data-go="bericht">' + (S.abgegeben_am ? 'Bericht ansehen' : 'Zum Bericht') + '</button>';
+  }
+  const tel = String(D.betrieb.tel || '').replace(/[^\d+]/g, '');
+  return '<div class="card hero">' + hero + '</div>' +
+    '<div class="card"><h2>Mein Fortschritt</h2><div class="balken" role="img" aria-label="' + pro + ' Prozent"><i style="width:' + pro + '%"></i></div><p class="muted">' + fertig + ' von ' + st.length + ' Bereichen fertig</p><ul class="fort">' +
+    st.map(x => '<li><button type="button" data-go="' + x.tab + '" data-acc="' + x.id + '"><span class="dot s' + x.stand + '"></span>' + esc(x.titel) + '<span class="info">' + esc(x.info || (x.stand === 2 ? 'fertig' : x.stand === 1 ? 'angefangen' : 'offen')) + '</span></button></li>').join('') + '</ul></div>' +
+    '<div class="card notfall"><h2>Krank oder verspätet?</h2><ol><li><b>Sofort im Betrieb anrufen</b> – noch vor Arbeitsbeginn' +
+    (tel ? ': <a href="tel:' + esc(tel) + '">' + esc(D.betrieb.tel) + '</a>' : ' (trag die Nummer im Steckbrief ein)') + '.</li>' +
+    '<li><b>In der Schule Bescheid geben</b>: <a href="tel:+499345333">' + PB.SCHULTEL + '</a>.</li><li>Problem im Betrieb, das du nicht selbst klären kannst? Sag deinem Lehrer Bescheid.</li></ol></div>';
+}
+
+function vVor() {
+  const st = PB.stand(D), s = id => st.find(x => x.id === id);
+  const d0 = PB.tagDatum(D.start, 0);
+  return '<div class="card"><h2>Vorbereitung</h2><p class="lead">Wer gut vorbereitet ist, startet entspannt. Arbeite die drei Bereiche vor deinem ersten Tag durch.</p></div>' +
+    acc('steckbrief', 'Mein Betrieb (Steckbrief)', s('steckbrief').stand,
+      F('betrieb.name', 'Name des Betriebs') + F('betrieb.branche', 'Branche', { ph: 'z. B. Handwerk, Handel, Pflege, Verwaltung' }) +
+      F('betrieb.ort', 'Adresse', { ph: 'Straße, Ort' }) + F('betrieb.beruf', 'Diesen Beruf lerne ich kennen', { ph: 'z. B. Kfz-Mechatroniker/in' }) +
+      F('betrieb.ansprech', 'Meine Ansprechperson im Betrieb', { ph: 'Frau/Herr …' }) + F('betrieb.tel', 'Telefonnummer vom Betrieb', { type: 'tel' }) +
+      F('betrieb.zeiten', 'Meine Arbeitszeiten', { ph: 'z. B. 7:30 bis 16:00 Uhr, 45 Minuten Pause' }) +
+      F('betrieb.weg', 'So komme ich hin', { ph: 'z. B. mit dem Bus um 6:52 Uhr ab …' }) +
+      F('betrieb.kleidung', 'Das ziehe ich an / das bringe ich mit') +
+      '<label class="f"><span>Erster Praktikumstag<small>Voreingestellt ist Montag, der 16.11.2026. Ändere das Datum nur, wenn dein Praktikum an einem anderen Tag beginnt.</small></span><input type="date" data-p="start" value="' + esc(D.start) + '"></label>' +
+      (d0.getDay() !== 1 ? '<p class="msg">Hinweis: Der ' + PB.lang(d0) + ' ist ein ' + PB.wtag(d0) + '. Die App rechnet mit fünf Tagen ab diesem Datum.</p>' : '')) +
+    acc('check', 'Checkliste', s('check').stand,
+      CHECK.map((c, i) => '<label class="check"><input type="checkbox" data-p="check.c' + (i + 1) + '"' + (D.check['c' + (i + 1)] ? ' checked' : '') + '><span>' + esc(c) + '</span></label>').join(''), s('check').info) +
+    acc('erw', 'Meine Erwartungen', s('erw').stand,
+      '<p class="muted">Schreib in ganzen Sätzen. Diese Texte kommen später in deinen Bericht.</p>' +
+      F('erw.warum', 'Warum habe ich mich für diesen Praktikumsplatz entschieden?', { area: 1 }) +
+      F('erw.erwartung', 'Was erwarte ich von der Woche?', { area: 1, ph: 'Ich stelle mir vor, dass …' }) +
+      F('erw.fragen', 'Das will ich im Praktikum herausfinden', { area: 1, ph: 'Ich möchte wissen, ob …' }) +
+      F('erw.respekt', 'Davor habe ich etwas Respekt', { area: 1, hint: 'freiwillig' }) +
+      F('erw.staerken', 'Diese Stärken bringe ich mit', { area: 1, ph: 'Ich kann gut …' })) +
+    acc('tipps', 'So machst du einen guten Eindruck', null,
+      '<ul class="tipps"><li><b>Pünktlich sein:</b> Plane 10 Minuten Puffer ein.</li><li><b>Grüßen und vorstellen:</b> „Guten Morgen, ich bin … und mache diese Woche hier mein Praktikum.“</li>' +
+      '<li><b>Handy weg:</b> Es bleibt während der Arbeit in der Tasche. Frag, bevor du etwas fotografierst.</li><li><b>Nachfragen:</b> Wer fragt, zeigt Interesse. Niemand erwartet, dass du schon alles kannst.</li>' +
+      '<li><b>Mit anpacken:</b> Wenn du fertig bist, frag: „Kann ich noch etwas helfen?“</li><li><b>Sicherheit:</b> Halte dich an alle Regeln und fass keine Maschinen an, die man dir nicht erklärt hat.</li>' +
+      '<li><b>Verschwiegen sein:</b> Was du über Kunden oder Patienten erfährst, bleibt im Betrieb – auch in deinem Bericht stehen keine Namen von Kunden.</li><li><b>Notizen machen:</b> Schreib dir tagsüber Stichworte auf. Abends schreibst du damit deinen Tagesbericht.</li></ul>') +
+    acc('wenn', 'Was tue ich, wenn …', null,
+      '<dl class="wenn"><dt>… ich krank bin?</dt><dd>Vor Arbeitsbeginn im Betrieb anrufen und in der Schule Bescheid geben (' + PB.SCHULTEL + ').</dd>' +
+      '<dt>… ich zu spät komme?</dt><dd>Sofort im Betrieb anrufen, ehrlich sagen, was los ist, und dich entschuldigen.</dd>' +
+      '<dt>… ich etwas nicht verstanden habe?</dt><dd>Nachfragen: „Können Sie mir das bitte noch einmal zeigen?“</dd>' +
+      '<dt>… mir ein Fehler passiert ist?</dt><dd>Gleich Bescheid sagen. Fehler passieren – Verschweigen macht es schlimmer.</dd>' +
+      '<dt>… ich nichts zu tun habe?</dt><dd>Nachfragen, ob du helfen oder zuschauen darfst. Nutze die Zeit für deine Notizen.</dd>' +
+      '<dt>… ich mich verletzt habe?</dt><dd>Sofort deiner Ansprechperson melden, auch bei Kleinigkeiten. Danach die Schule informieren.</dd>' +
+      '<dt>… ich mich im Betrieb gar nicht wohlfühle?</dt><dd>Sprich mit deinen Eltern und sag deinem Lehrer Bescheid.</dd></dl>');
+}
+
+function vWoche() {
+  const ph = PB.phase(D.start), i = TAG, tag = D.tage[i], p = 'tage.' + i + '.', a = AUFTRAG[i];
+  const kopf = '<div class="tage" role="group" aria-label="Tag wählen">' + D.tage.map((x, k) => { const dat = PB.tagDatum(D.start, k); return '<button type="button" data-tag="' + k + '" aria-pressed="' + (k === i) + '" class="' + (ph.phase === 'in' && ph.tag === k ? 'heute' : '') + '"><b>' + PB.wtag(dat).slice(0, 2) + '</b><span>' + PB.kurz(dat) + '</span><span class="dot s' + PB.tagStand(x) + '"></span></button>'; }).join('') + '</div>';
+  const dat = PB.tagDatum(D.start, i);
+  let body = '<h2>Tag ' + (i + 1) + ' · ' + PB.wtag(dat) + ', ' + PB.lang(dat) + '</h2>' +
+    '<div class="gruppe">' + wahl(p + 'status', [['da', 'Ich war im Betrieb'], ['fehlt', 'Ich war nicht da']], '', 'da') + '</div>';
+  if (tag.status === 'fehlt') body += F(p + 'grund', 'Grund', { ph: 'z. B. krank' });
+  else body += '<div class="auftrag"><b>Auftrag des Tages – ' + esc(a.t) + '</b>' + esc(a.txt) + (a.tab ? '<div class="knoepfe" style="margin-top:8px"><button class="btn sec klein" data-go="' + a.tab + '" data-acc="' + a.acc + '">' + esc(a.knopf) + '</button></div>' : '') + '</div>' +
+    '<div class="row">' + F(p + 'von', 'Beginn', { type: 'time' }) + F(p + 'bis', 'Ende', { type: 'time' }) + F(p + 'pause', 'Pause', { ph: 'z. B. 45 Minuten', max: 40 }) + '</div>' +
+    (i === 0 ? F(p + 'eindruck', 'Mein erster Eindruck', { area: 1, ph: 'Als ich ankam, …' }) : '') +
+    F(p + 'taetigkeiten', 'Das habe ich heute gemacht', { area: 1, hint: 'Eine Tätigkeit pro Zeile, in der Reihenfolge des Tages.', ph: 'Lager aufgeräumt und Ware einsortiert\nBeim Kundengespräch zugeschaut' }) +
+    hilfe('Formulierungshilfen', '<p style="margin:6px 0 0">Zuerst habe ich … · Danach durfte ich … · Gemeinsam mit … habe ich … · Am Nachmittag … · Zum Schluss …</p>') +
+    F(p + 'werkzeuge', 'Damit habe ich gearbeitet', { ph: 'Werkzeuge, Maschinen, Programme, Materialien' }) +
+    F(p + 'gelernt', 'Das habe ich heute Neues gelernt', { area: 1, ph: 'Heute habe ich gelernt, wie …' }) +
+    F(p + 'schwierig', 'Das war schwierig – und so bin ich damit umgegangen', { area: 1, hint: 'freiwillig' }) +
+    F(p + 'highlight', 'Das Beste an diesem Tag', { area: 1 }) +
+    '<div class="gruppe"><p class="frage">Wie ging es dir heute?</p>' + wahl(p + 'stimmung', SMILE, 'smile') + '</div>';
+  const fertig = PB.tagStand(tag) === 2;
+  body += '<p class="muted">' + (fertig ? '✓ Dieser Tag ist vollständig.' : 'Für einen vollständigen Tag brauchst du: Tätigkeiten, „Neues gelernt“ und deine Stimmung.') + ' Alles wird automatisch gespeichert.</p>';
+  return kopf + '<div class="card">' + body + '</div>';
+}
+
+function vErkunden() {
+  const st = PB.stand(D), s = id => st.find(x => x.id === id);
+  const schritte = D.vorgang.schritte.map((x, k) => '<div class="item"><div class="kopf">Schritt ' + (k + 1) + '<button type="button" data-del="vorgang.schritte" data-i="' + k + '">Entfernen</button></div><textarea data-p="vorgang.schritte.' + k + '" maxlength="600" style="min-height:52px">' + esc(x) + '</textarea></div>').join('');
+  const qa = D.interview.qa.map((q, k) => '<div class="item"><div class="kopf">Frage ' + (k + 1) + '<button type="button" data-del="interview.qa" data-i="' + k + '">Entfernen</button></div><input type="text" data-p="interview.qa.' + k + '.f" maxlength="300" value="' + esc(q.f) + '" placeholder="Deine Frage" style="margin-bottom:6px"><textarea data-p="interview.qa.' + k + '.a" maxlength="1500" placeholder="Antwort (in Stichworten mitschreiben, später ausformulieren)" style="min-height:60px">' + esc(q.a) + '</textarea></div>').join('');
+  const frei = FRAGEN.filter(f => !D.interview.qa.some(q => q.f === f));
+  return '<div class="card"><h2>Erkunden</h2><p class="lead">Hier sammelst du während der Woche alles über deinen Betrieb und deinen Beruf. Frag nach – die meisten erzählen gern von ihrer Arbeit.</p></div>' +
+    acc('erk', 'Betrieb erkunden', s('erk').stand,
+      F('erk.produkt', 'Was stellt der Betrieb her oder was bietet er an?', { area: 1 }) +
+      F('erk.mitarbeiter', 'Wie viele Menschen arbeiten dort? Gibt es Auszubildende?', { area: 1 }) +
+      F('erk.abteilungen', 'Welche Abteilungen oder Bereiche gibt es?', { area: 1 }) +
+      F('erk.kunden', 'Wer sind die Kundinnen und Kunden?', { area: 1 }) +
+      F('erk.besonderes', 'Das ist mir besonders aufgefallen', { area: 1, hint: 'freiwillig' })) +
+    acc('beruf', 'Berufsbild', s('beruf').stand,
+      F('beruf.name', 'Genaue Berufsbezeichnung', { ph: D.betrieb.beruf || 'z. B. Industriekaufmann/-frau' }) +
+      F('beruf.dauer', 'Wie lange dauert die Ausbildung?', { ph: 'z. B. 3 Jahre' }) +
+      F('beruf.abschluss', 'Welchen Schulabschluss braucht man?') +
+      F('beruf.taetigkeiten', 'Typische Tätigkeiten in diesem Beruf', { area: 1, hint: 'Eine Tätigkeit pro Zeile.' }) +
+      F('beruf.anforderungen', 'Was muss man können und mitbringen?', { area: 1, ph: 'Man sollte … Wichtig ist außerdem, dass …' }) +
+      F('beruf.orte', 'Wo und wann wird gearbeitet?', { area: 1, ph: 'Werkstatt, Büro, draußen, Schichtarbeit …', hint: 'freiwillig' }) +
+      F('beruf.chancen', 'Wie kann es nach der Ausbildung weitergehen?', { area: 1, hint: 'freiwillig' }) +
+      '<p class="muted">Tipp: Auf <a href="https://berufenet.arbeitsagentur.de/" target="_blank" rel="noopener">BERUFENET</a> der Arbeitsagentur kannst du deine Angaben überprüfen.</p>') +
+    acc('vorgang', 'Arbeitsvorgang Schritt für Schritt', s('vorgang').stand,
+      '<p class="muted">Such dir einen Arbeitsvorgang aus, den du beobachtet oder selbst gemacht hast, und beschreibe ihn so genau, dass jemand anderes ihn nachmachen könnte. Mindestens drei Schritte.</p>' +
+      F('vorgang.titel', 'Welcher Arbeitsvorgang?', { ph: 'z. B. Reifen wechseln, Teig herstellen, Rechnung schreiben' }) +
+      F('vorgang.material', 'Das braucht man dafür', { ph: 'Werkzeuge, Materialien, Programme' }) + schritte +
+      '<button class="btn sec klein" type="button" data-add="vorgang.schritte">+ Schritt hinzufügen</button>' +
+      '<div style="margin-top:12px">' + F('vorgang.achten', 'Darauf muss man besonders achten', { area: 1, hint: 'freiwillig – zum Beispiel Sicherheit oder Sauberkeit' }) + '</div>') +
+    acc('interview', 'Interview', s('interview').stand,
+      '<p class="muted">Bitte jemanden im Betrieb um ein kurzes Interview (etwa 10 Minuten). Mindestens drei Fragen.</p>' +
+      F('interview.person', 'Wen befragst du?', { ph: 'z. B. meine Betreuerin, eine Auszubildende im 2. Lehrjahr', hint: 'Frag, ob der Name im Bericht stehen darf – sonst schreib nur die Aufgabe im Betrieb.' }) + qa +
+      '<button class="btn sec klein" type="button" data-add="interview.qa">+ Eigene Frage</button>' +
+      (frei.length ? '<p class="frage" style="margin-top:12px">Vorschläge – antippen zum Übernehmen:</p><div class="chips">' + frei.map(f => '<button type="button" data-frage="' + esc(f) + '">' + esc(f) + '</button>').join('') + '</div>' : ''), s('interview').info);
+}
+
+function vBericht() {
+  const st = PB.stand(D), rb = st.find(x => x.id === 'rb'), fehlt = st.filter(x => x.stand < 2 && x.id !== 'check');
+  const skala = PB.SELBST.map(x => '<div class="skala"><span>' + esc(x[1]) + '</span>' + wahl('rb.selbst.' + x[0], [1, 2, 3, 4].map(n => [n, esc(PB.SKALA[n])])) + '</div>').join('');
+  let h = acc('rb', 'Mein Rückblick', rb.stand,
+    '<p class="muted">Fülle den Rückblick am letzten Tag oder am Wochenende danach aus. Sei ehrlich – ein Praktikum ist auch dann wertvoll, wenn du merkst, dass der Beruf nichts für dich ist.</p>' +
+    F('rb.erfuellt', 'Haben sich deine Erwartungen erfüllt?', { area: 1, ph: 'Meine Erwartungen haben sich … erfüllt, weil …' }) +
+    F('rb.gefallen', 'Das hat mir gut gefallen', { area: 1 }) + F('rb.nichtgefallen', 'Das hat mir nicht so gut gefallen', { area: 1 }) +
+    F('rb.gelernt', 'Das habe ich über mich und die Arbeitswelt gelernt', { area: 1 }) +
+    '<p class="frage">So schätze ich mich selbst ein</p>' + skala +
+    '<div class="gruppe" style="margin-top:14px"><p class="frage">Kannst du dir vorstellen, später in diesem Beruf zu arbeiten?</p>' + wahl('rb.vorstellbar', [1, 2, 3, 4, 5].map(n => [n, esc(PB.VORSTELLBAR[n].replace(/[.,]$/, '').replace(', auf', ' – auf'))])) + '</div>' +
+    F('rb.begruendung', 'Begründe deine Antwort', { area: 1, ph: 'Das liegt daran, dass …' }) +
+    F('rb.zukunft', 'Wie geht es für dich weiter?', { area: 1, ph: 'Als Nächstes möchte ich …', hint: 'Zum Beispiel: weiteres Praktikum, Bewerbung, anderer Beruf, weiterführende Schule.' }) +
+    F('rb.dank', 'Mein Dank an den Betrieb', { area: 1, hint: 'freiwillig' }));
+
+  h += '<div class="card"><h2>Mein Praktikumsbericht</h2>';
+  if (!D.bericht) {
+    h += '<p class="lead">Aus allem, was du eingetragen hast, baut die App deinen Bericht zusammen. Danach kannst du jeden Abschnitt noch überarbeiten.</p>' +
+      (fehlt.length ? '<p class="frage">Das fehlt noch oder ist noch nicht vollständig:</p><ul class="fort">' + fehlt.map(x => '<li><button type="button" data-go="' + x.tab + '" data-acc="' + x.id + '"><span class="dot s' + x.stand + '"></span>' + esc(x.titel) + '<span class="info">ergänzen ›</span></button></li>').join('') + '</ul>' : '<p class="msg gut">Alle Bereiche sind ausgefüllt. Sehr gut!</p>') +
+      '<div class="knoepfe"><button class="btn" type="button" data-act="erstellen">Bericht erstellen</button></div>' +
+      (fehlt.length ? '<p class="muted" style="margin-top:8px">Du kannst den Bericht auch jetzt schon erstellen und fehlende Teile später nachtragen.</p>' : '');
+  } else {
+    h += '<p><span class="status ' + (S.abgegeben_am ? 'gut' : '') + '" id="abgStatus">' + (S.abgegeben_am ? 'Abgegeben am ' + PB.zeitpunkt(S.abgegeben_am) : 'Noch nicht abgegeben') + '</span></p>' +
+      '<p class="muted">Lies jeden Abschnitt durch und verbessere ihn: ganze Sätze, Rechtschreibung, nichts doppelt. Mit ↻ holst du einen Abschnitt neu aus deinen Einträgen – deine Änderungen an diesem Abschnitt gehen dabei verloren.</p>' +
+      D.bericht.teile.map((x, k) => '<div class="teil"><div class="tk"><b>' + (k + 1) + ' · ' + esc(x.titel) + '</b><button type="button" data-act="teilneu" data-i="' + k + '" title="Diesen Abschnitt neu aus den Einträgen holen">↻ neu holen</button></div><textarea data-p="bericht.teile.' + k + '.text" maxlength="6000" placeholder="Hier steht noch nichts. Fülle den passenden Bereich aus und tippe auf „neu holen“ – oder schreib den Text direkt hier.">' + esc(x.text) + '</textarea></div>').join('') +
+      '<div class="knoepfe"><button class="btn" type="button" data-act="abgeben">' + (S.abgegeben_am ? 'Erneut speichern und abgeben' : 'Speichern und abgeben') + '</button><button class="btn sec" type="button" data-act="pdf">Als PDF herunterladen</button></div>' +
+      '<div id="bMsg" class="msg hidden" role="status"></div>' +
+      '<p class="muted" style="margin-top:10px">Nach dem Abgeben kann dein Lehrer den Bericht lesen. Du kannst ihn danach weiter verbessern und erneut abgeben.</p>';
+  }
+  return h + '</div>';
+}
+
+/* ---------- Anzeigen ---------- */
+const ANSICHT = { start: vStart, vor: vVor, woche: vWoche, erkunden: vErkunden, bericht: vBericht };
+function wachse(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; }
+function zeige(tab, behalte) {
+  const y = scrollY; TAB = tab; $('app').innerHTML = ANSICHT[tab]();
+  document.querySelectorAll('nav button').forEach(b => b.toggleAttribute('aria-current', false));
+  document.querySelector('nav button[data-tab="' + tab + '"]').setAttribute('aria-current', 'page');
+  $('app').querySelectorAll('textarea').forEach(wachse);
+  scrollTo(0, behalte ? y : 0);
+}
+function gehe(tab, accId, tag) {
+  if (tag != null) TAG = +tag;
+  if (accId && accId !== 'woche') OFFEN.add(accId);
+  zeige(tab);
+  const el = accId && $('acc-' + accId); if (el) el.scrollIntoView({ block: 'start' }), scrollBy(0, -70);
+}
+function meldung(txt, gut) { const m = $('bMsg'); if (!m) return; m.textContent = txt; m.className = 'msg' + (gut ? ' gut' : ''); }
+
+$('nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) zeige(b.dataset.tab); });
+$('app').addEventListener('toggle', e => {
+  const d = e.target; if (!d.dataset || !d.dataset.acc) { if (d.open) d.querySelectorAll('textarea').forEach(wachse); return; }
+  if (d.open) { OFFEN.add(d.dataset.acc); d.querySelectorAll('textarea').forEach(wachse); } else OFFEN.delete(d.dataset.acc);
+}, true);
+$('app').addEventListener('input', e => {
+  const el = e.target, p = el.dataset.p; if (!p) return;
+  if (el.type === 'checkbox') setze(p, el.checked);
+  else if (p === 'start') { if (!/^\d{4}-\d\d-\d\d$/.test(el.value)) return; setze(p, el.value); }
+  else setze(p, el.value);
+  if (el.tagName === 'TEXTAREA') wachse(el);
+  geaendert();
+});
+$('app').addEventListener('change', e => { const p = e.target.dataset.p; if (p === 'start' || (p && p.startsWith('check.'))) zeige(TAB, true); });
+$('app').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
+  if (d.go) return gehe(d.go, d.acc, d.tag);
+  if (d.tag != null && !d.go) { TAG = +d.tag; return zeige('woche', true); }
+  if (d.set) { const alt = hole(d.set), neu = /^\d+$/.test(d.val) ? +d.val : d.val; setze(d.set, String(alt) === String(neu) && d.set.indexOf('status') < 0 ? null : neu); geaendert(); return zeige(TAB, true); }
+  if (d.add) { hole(d.add).push(d.add === 'interview.qa' ? { f: '', a: '' } : ''); geaendert(); zeige(TAB, true); const f = $('app').querySelectorAll('[data-p^="' + d.add + '."]'); if (f.length) f[d.add === 'interview.qa' ? f.length - 2 : f.length - 1].focus(); return; }
+  if (d.del) { const arr = hole(d.del), x = arr[+d.i]; const voll = typeof x === 'string' ? x.trim() : (x.f + x.a).trim(); if (voll && !confirm('Diesen Eintrag wirklich entfernen?')) return; arr.splice(+d.i, 1); geaendert(); return zeige(TAB, true); }
+  if (d.frage) { D.interview.qa.push({ f: d.frage, a: '' }); geaendert(); return zeige(TAB, true); }
+  if (d.act === 'erstellen') { D.bericht = { erstellt: new Date().toISOString(), teile: PB.teile(D) }; geaendert(); return zeige('bericht', true); }
+  if (d.act === 'teilneu') {
+    const i = +d.i, neu = PB.teile(D)[i]; if (!neu) return;
+    if (D.bericht.teile[i].text.trim() && D.bericht.teile[i].text !== neu.text && !confirm('Diesen Abschnitt neu aus deinen Einträgen holen? Deine Änderungen an diesem Abschnitt gehen verloren.')) return;
+    D.bericht.teile[i] = neu; geaendert(); return zeige('bericht', true);
+  }
+  if (d.act === 'abgeben') {
+    b.disabled = true; meldung('Wird gespeichert …', true);
+    const ok = await sync(true); b.disabled = false;
+    if (ok) { zeige('bericht', true); meldung('Dein Bericht ist gespeichert und abgegeben. Dein Lehrer kann ihn jetzt lesen.', true); }
+    else meldung('Das Abgeben hat nicht geklappt. Prüfe deine Internetverbindung und versuche es noch einmal. Deine Texte sind auf diesem Gerät gesichert.');
+    return;
+  }
+  if (d.act === 'pdf') {
+    if (!window.jspdf) return meldung('Das PDF-Werkzeug konnte nicht geladen werden. Prüfe deine Internetverbindung und lade die Seite neu.');
+    PB.pdf([{ name: S.name, klasse: S.klasse, data: D, abgegeben_am: S.dirty ? null : S.abgegeben_am, updated_at: new Date().toISOString() }]).save(PB.dateiname(S));
+  }
+});
+
+/* ---------- Start ---------- */
+PB.ladeLogo('../img/logo.png');
+S = lade();
+if (S && !S.gesperrt) { starte(); abgleich(); } else zeigeLogin();
+</script>
+</body>
+</html>
