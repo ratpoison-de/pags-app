@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Elternumfrage – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<script src="../config.js?v=20261108"></script>
+<script src="umfrage.js?v=20261114"></script>
+<style>
+/* Aufbau wie die Praktikums-App: roter Kopf mit Logo, Inhalt als Karten, Umfrage in Schritten */
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
+p{margin:0 0 10px}
+a{color:var(--red)}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;position:sticky;top:0;z-index:10}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:36px;width:auto;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.02rem;white-space:nowrap}
+header p{margin:0;font-size:.78rem;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1;min-width:0;overflow:hidden}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:5px 9px;font:inherit;font-size:.8rem;cursor:pointer;white-space:nowrap}
+main{max-width:760px;margin:0 auto;padding:14px 14px 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{font-size:1.08rem;margin-bottom:8px}
+.card h3{font-size:.95rem;margin:14px 0 6px}
+.muted{color:var(--muted);font-size:.86rem}
+.lead{font-size:.95rem}
+label.f{display:block;margin:0 0 12px}
+label.f>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px}
+label.f small{display:block;color:var(--muted);font-size:.8rem;font-weight:400;margin-top:1px}
+input[type=text],input[type=password],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #C9C9C9;border-radius:10px;background:#fff;color:var(--text)}
+textarea{min-height:86px;resize:vertical;line-height:1.45}
+input:focus,textarea:focus{border-color:var(--red);outline:2px solid rgba(168,16,16,.18)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;font:inherit;font-weight:600;border-radius:10px;border:0;cursor:pointer;background:var(--red);color:#fff;text-decoration:none}
+.btn:hover{background:var(--red-dark)}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.sec:hover{background:var(--tint)}
+.btn.klein{min-height:36px;padding:6px 11px;font-size:.84rem}
+.btn[disabled]{opacity:.55;cursor:default}
+.knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.knoepfe.zwei{justify-content:space-between}
+.msg{padding:10px 12px;border-radius:10px;background:#FDECEA;color:#8A1C1C;margin:10px 0 0;font-size:.9rem}
+.msg.gut{background:#E9F6EC;color:#14562B}
+.wahl{display:flex;flex-wrap:wrap;gap:6px}
+.wahl button{font:inherit;min-height:42px;padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--text);text-align:left}
+.wahl button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff;font-weight:600}
+.wahl.mehr button[aria-pressed=true]::before{content:"✓ "}
+.skala .wahl button{flex:1;justify-content:center;text-align:center;font-weight:700;font-size:1.05rem;min-width:44px}
+.skala .enden{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;color:var(--muted);margin-top:3px}
+.frage{padding:14px 0;border-top:1px solid var(--line)}
+.frage:first-of-type{border-top:0;padding-top:4px}
+.frage .ft{font-weight:600;font-size:.95rem;margin:0 0 8px}
+.frage .ft i{color:var(--red);font-style:normal}
+.frage .hilfe{font-size:.8rem;color:var(--muted);margin:-4px 0 8px}
+.hero{background:linear-gradient(135deg,var(--red),#C62A1E);color:#fff;border:0}
+.hero h2{font-size:1.25rem}
+.hero .btn{background:#fff;color:var(--red)}
+.hero .btn:hover{background:var(--tint)}
+.status{display:inline-block;border-radius:20px;padding:2px 10px;font-size:.8rem;font-weight:700;background:#EEE;color:#555}
+.status.gut{background:#E9F6EC;color:#14562B}
+.status.mittel{background:#FFF3DC;color:#7A4A00}
+.runde{display:grid;gap:6px}
+.runde h3{margin:0;font-size:1rem}
+.balken{height:8px;background:#EEE;border-radius:8px;overflow:hidden;margin:10px 0 4px}
+.balken i{display:block;height:100%;background:var(--red);border-radius:8px;transition:width .2s}
+.schritt{font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.art{display:grid;gap:10px;margin:6px 0 4px}
+.art button{all:unset;box-sizing:border-box;cursor:pointer;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:3px;background:#fff}
+.art button b{font-size:1rem}
+.art button span{font-size:.85rem;color:var(--muted)}
+.art button[aria-pressed=true]{border-color:var(--red);background:var(--tint)}
+.art button[aria-pressed=true] b::before{content:"● ";color:var(--red)}
+.art button:focus-visible{outline:2px solid var(--red)}
+.rueck{border-left:5px solid var(--ok);background:#F4FBF6}
+.rueck .von{font-size:.8rem;color:var(--muted);margin:0 0 4px}
+.rueck p.t{white-space:pre-wrap;margin:0}
+dl.antw{margin:0}
+dl.antw dt{font-weight:600;font-size:.88rem;margin-top:10px}
+dl.antw dd{margin:2px 0 0;white-space:pre-wrap;font-size:.92rem}
+dl.antw dd.ohne{color:var(--muted);font-style:italic}
+details.info{background:#F7F7F7;border-radius:10px;padding:8px 12px;font-size:.85rem;color:#555;margin-top:12px}
+details.info summary{cursor:pointer;font-weight:600}
+footer{max-width:760px;margin:0 auto;padding:6px 16px 22px;color:var(--muted);font-size:.76rem;text-align:center}
+@media (max-width:480px){header{padding-left:12px;padding-right:12px}header .in{gap:7px}header img{height:28px}header h1{font-size:.95rem}header button{font-size:.72rem;padding:4px 7px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Elternumfrage</h1><p id="wer">Klasse 9a · PAGS Külsheim</p></div>
+  <button id="kontoBtn" class="hidden" type="button">Mein Konto</button>
+  <button id="abmeldenBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="login" class="hidden">
+    <div class="card">
+      <h2>Willkommen!</h2>
+      <p class="lead">Hier können Sie an Umfragen der Klasse <b class="klasseText">9a</b> teilnehmen. Sie entscheiden bei jeder Abgabe selbst, ob Sie <b>mit Namen</b> oder <b>anonym</b> antworten.</p>
+      <div class="wahl" style="margin:12px 0 14px" role="group" aria-label="Anmeldeart">
+        <button type="button" id="modusNeu" aria-pressed="true">Neues Konto anlegen</button>
+        <button type="button" id="modusAlt" aria-pressed="false">Anmelden</button>
+      </div>
+      <form id="loginForm" autocomplete="on">
+        <label class="f"><span>Benutzername</span><input type="text" id="lBenutzer" maxlength="60" required autocapitalize="none" autocomplete="username">
+          <small id="lBenHinweis">Frei wählbar, z. B. Ihre E-Mail-Adresse oder ein Spitzname. Er ist für den Lehrer nicht mit anonymen Antworten verknüpft.</small></label>
+        <label class="f"><span id="lPwLabel">Kennwort ausdenken</span><input type="password" id="lPw" minlength="6" maxlength="72" required autocomplete="new-password">
+          <small id="lPwHinweis">Mindestens 6 Zeichen. Damit kommen Sie auf jedem Gerät wieder in Ihr Konto.</small></label>
+        <label class="f" id="lPw2Feld"><span>Kennwort wiederholen</span><input type="password" id="lPw2" minlength="6" maxlength="72" autocomplete="new-password"></label>
+        <button class="btn" type="submit" id="lBtn">Konto anlegen</button>
+        <div id="lMsg" class="msg hidden" role="alert"></div>
+      </form>
+      <details class="info">
+        <summary>Was wird gespeichert?</summary>
+        <p style="margin:8px 0 6px">Für das Konto nur Benutzername und Kennwort (verschlüsselt). Die Daten liegen in einer passwortgeschützten Datenbank mit Serverstandort in Deutschland (Frankfurt). Die Abgaben sieht nur der Klassenlehrer.</p>
+        <p style="margin:0">Bei <b>anonymer Abgabe</b> wird weder Ihr Konto noch ein Name noch die Uhrzeit mit den Antworten gespeichert. Es wird nur vermerkt, dass Ihr Konto teilgenommen hat, damit niemand doppelt abgibt. Auch der Lehrer kann anonyme Antworten keinem Konto zuordnen.</p>
+      </details>
+    </div>
+    <p class="muted" style="text-align:center">Kennwort vergessen? Der Klassenlehrer kann es zurücksetzen.</p>
+  </section>
+
+  <div id="app" class="hidden"></div>
+</main>
+
+<footer>Elternumfrage der PAGS Külsheim · entwickelt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = UF.esc;
+const KLASSE = ((new URLSearchParams(location.search).get('klasse')) || '9a').toLowerCase().replace(/[^0-9a-d]/g, '') || '9a';
+const LS = 'pags-elternumfrage-v1';
+let S = null;          // Sitzung {id, pw, benutzer}
+let STAND = null;      // {konto, runden, abgaben} aus der Datenbank
+let ANSICHT = { name: 'start' }, NEU = true;
+
+document.querySelectorAll('.klasseText').forEach(e => e.textContent = KLASSE);
+$('wer').textContent = 'Klasse ' + KLASSE + ' · PAGS Külsheim';
+
+/* ---------- Gerät ---------- */
+function ladeSitzung() { try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s && s.id && s.pw) return s; } catch (e) { } return null; }
+function merkeSitzung() { try { if (S) localStorage.setItem(LS, JSON.stringify(S)); else localStorage.removeItem(LS); } catch (e) { } }
+const EK = r => LS + '-entwurf-' + S.id + '-' + r;
+function entwurf(r) { try { return JSON.parse(localStorage.getItem(EK(r)) || 'null') || { antworten: {}, schritt: 0 }; } catch (e) { return { antworten: {}, schritt: 0 }; } }
+function merkeEntwurf(r, e) { try { localStorage.setItem(EK(r), JSON.stringify(e)); } catch (x) { } }
+function loescheEntwurf(r) { try { localStorage.removeItem(EK(r)); } catch (x) { } }
+const GK = LS + '-gelesen';
+function gelesen() { try { return JSON.parse(localStorage.getItem(GK) || '{}'); } catch (e) { return {}; } }
+function merkeGelesen(id, t) { const g = gelesen(); g[id] = t; try { localStorage.setItem(GK, JSON.stringify(g)); } catch (e) { } }
+
+/* ---------- Anmeldung ---------- */
+function modus(neu) {
+  NEU = neu; $('modusNeu').setAttribute('aria-pressed', neu); $('modusAlt').setAttribute('aria-pressed', !neu);
+  $('lPwLabel').textContent = neu ? 'Kennwort ausdenken' : 'Kennwort';
+  $('lPwHinweis').classList.toggle('hidden', !neu); $('lBenHinweis').classList.toggle('hidden', !neu);
+  $('lPw2Feld').classList.toggle('hidden', !neu); $('lPw2').required = neu;
+  $('lPw').autocomplete = neu ? 'new-password' : 'current-password';
+  $('lBtn').textContent = neu ? 'Konto anlegen' : 'Anmelden'; $('lMsg').classList.add('hidden');
+}
+$('modusNeu').onclick = () => modus(true);
+$('modusAlt').onclick = () => modus(false);
+function zeigeLogin(hinweis) {
+  $('login').classList.remove('hidden'); $('app').classList.add('hidden');
+  $('kontoBtn').classList.add('hidden'); $('abmeldenBtn').classList.add('hidden');
+  if (hinweis) { $('lMsg').textContent = hinweis; $('lMsg').classList.remove('hidden'); }
+}
+$('loginForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('lMsg'); m.classList.add('hidden');
+  const b = $('lBenutzer').value.trim(), pw = $('lPw').value;
+  if (NEU && pw !== $('lPw2').value) { m.textContent = 'Die beiden Kennwörter stimmen nicht überein.'; m.classList.remove('hidden'); return; }
+  $('lBtn').disabled = true;
+  try {
+    const r = UF.ok(await UF.rpc('umfrage_anmelden', { p_benutzer: b, p_pw: pw, p_neu: NEU, p_klasse: KLASSE }));
+    S = { id: r.konto.id, pw, benutzer: r.konto.benutzer }; merkeSitzung();
+    $('lPw').value = $('lPw2').value = '';
+    angemeldet(r, NEU);
+  } catch (err) { m.textContent = err.grund ? err.message : 'Keine Verbindung zur Datenbank. Bitte später noch einmal versuchen.'; m.classList.remove('hidden'); }
+  finally { $('lBtn').disabled = false; }
+};
+function angemeldet(r, neu) {
+  STAND = r; $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  try { localStorage.setItem(LS + '-hatte-konto', '1'); } catch (e) { }
+  $('kontoBtn').classList.remove('hidden'); $('abmeldenBtn').classList.remove('hidden');
+  if (r.konto.klasse !== KLASSE) $('wer').textContent = 'Klasse ' + r.konto.klasse + ' · PAGS Külsheim';
+  zeige(neu ? { name: 'start', neu: true } : { name: 'start' });
+}
+$('abmeldenBtn').onclick = () => { if (!confirm('Abmelden? Angefangene Antworten bleiben auf diesem Gerät gespeichert.')) return; S = null; STAND = null; merkeSitzung(); modus(false); zeigeLogin(); };
+$('kontoBtn').onclick = () => zeige({ name: 'konto' });
+
+async function neuLaden() {
+  const r = await UF.rpc('umfrage_laden', { p_id: S.id, p_pw: S.pw });
+  if (!r.ok) { if (['pw', 'unbekannt'].includes(r.grund)) { S = null; merkeSitzung(); zeigeLogin(r.grund === 'pw' ? 'Ihr Kennwort wurde geändert. Bitte melden Sie sich neu an.' : 'Ihr Konto wurde nicht mehr gefunden.'); return null; } UF.ok(r); }
+  STAND = r; return r;
+}
+
+/* ---------- Ansichten ---------- */
+function zeige(a) { ANSICHT = a; const f = { start: startAnsicht, umfrage: umfrageAnsicht, antworten: antwortenAnsicht, danke: dankeAnsicht, konto: kontoAnsicht }[a.name]; $('app').innerHTML = f(a); scrollTo(0, 0); nachZeigen(a); }
+function runde(id) { return STAND.runden.find(r => r.id === id); }
+
+function startAnsicht(a) {
+  const k = STAND.konto, g = gelesen();
+  const rueck = STAND.abgaben.filter(x => x.antwort_lehrer);
+  let h = '<div class="card hero"><h2>' + (a.neu ? 'Ihr Konto ist angelegt.' : 'Hallo' + (k.name_eltern ? ' ' + esc(k.name_eltern) : '') + '!') + '</h2>' +
+    '<p style="margin:6px 0 0">' + (a.neu ? 'Merken Sie sich Benutzername und Kennwort gut. Unten finden Sie die aktuelle Umfrage.' : 'Schön, dass Sie da sind. Hier sehen Sie die Umfragen der Klasse ' + esc(k.klasse) + '.') + '</p></div>';
+  if (rueck.length) {
+    h += rueck.map(x => { const r = runde(x.runde_id), neu = g[x.id] !== x.antwort_am;
+      return '<div class="card rueck"><p class="von">' + (neu ? '<span class="status gut">Neu</span> ' : '') + 'Rückmeldung des Klassenlehrers vom ' + esc(UF.datum(x.antwort_am)) + (r ? ' · zu „' + esc(r.titel) + '“' : '') + '</p>' +
+        '<p class="t">' + esc(x.antwort_lehrer) + '</p></div>'; }).join('');
+    rueck.forEach(x => merkeGelesen(x.id, x.antwort_am));
+  }
+  if (!STAND.runden.length) h += '<div class="card"><h2>Gerade keine Umfrage</h2><p class="muted" style="margin:0">Zurzeit ist keine Umfrage geöffnet. Sobald es eine neue gibt, erscheint sie hier.</p></div>';
+  h += STAND.runden.map(r => {
+    const e = r.teilnahme ? null : entwurf(r.id), n = UF.fragen(r).length, beantw = e ? UF.fragen(r).filter(f => UF.beantwortet(e.antworten[f.id])).length : 0;
+    const ab = STAND.abgaben.find(x => x.runde_id === r.id);
+    let st, knopf;
+    if (r.teilnahme === 'name') { st = '<span class="status gut">Mit Namen abgegeben' + (ab ? ' am ' + esc(UF.datum(ab.abgegeben_am)) : '') + '</span>'; knopf = ab ? '<button class="btn sec klein" data-a="antworten" data-r="' + r.id + '">Meine Antworten ansehen</button>' : ''; }
+    else if (r.teilnahme === 'anonym') { st = '<span class="status gut">Anonym abgegeben</span>'; knopf = '<p class="muted" style="margin:0">Anonyme Antworten sind keinem Konto zugeordnet – deshalb können sie hier nicht mehr angezeigt werden.</p>'; }
+    else if (!r.offen) { st = '<span class="status">Geschlossen</span>'; knopf = ''; }
+    else { st = beantw ? '<span class="status mittel">Angefangen · ' + beantw + ' von ' + n + ' Fragen</span>' : '<span class="status">Noch nicht ausgefüllt</span>';
+      knopf = '<button class="btn" data-a="start" data-r="' + r.id + '">' + (beantw ? 'Weiter ausfüllen' : 'Umfrage starten') + '</button>'; }
+    return '<div class="card runde"><h3>' + esc(r.titel) + '</h3><div>' + st + '</div>' + (r.einleitung && !r.teilnahme ? '<p class="muted" style="margin:4px 0 0;white-space:pre-wrap">' + esc(r.einleitung) + '</p>' : '') + '<div class="knoepfe" style="margin-top:6px">' + knopf + '</div></div>';
+  }).join('');
+  return h;
+}
+
+/* Umfrage: Abschnitte als Schritte, zuletzt der Schritt „Abgeben“ */
+function umfrageAnsicht(a) {
+  const r = runde(a.runde), schritte = UF.schritte(r), e = entwurf(r.id);
+  const i = Math.min(Math.max(a.schritt != null ? a.schritt : e.schritt || 0, 0), schritte.length);
+  ANSICHT.schritt = i; e.schritt = i; merkeEntwurf(r.id, e);
+  const gesamt = schritte.length + 1, proz = Math.round(i / schritte.length * 100);
+  let h = '<div class="card"><div class="schritt">Schritt ' + (i + 1) + ' von ' + gesamt + '</div><h2 style="margin:4px 0 0">' + esc(i < schritte.length ? schritte[i].titel : 'Abgeben') + '</h2>' +
+    '<div class="balken"><i style="width:' + proz + '%"></i></div><p class="muted" style="margin:0">' + esc(r.titel) + '</p></div>';
+  if (i < schritte.length) {
+    h += '<div class="card">' + schritte[i].fragen.map(f => frageHtml(f, e.antworten[f.id])).join('') + '</div>';
+    h += '<div class="knoepfe zwei"><button class="btn sec" data-a="zurueck">' + (i ? '‹ Zurück' : '‹ Übersicht') + '</button><button class="btn" data-a="weiter">Weiter ›</button></div>';
+    h += '<div id="uMsg" class="msg hidden" role="alert"></div>';
+  } else h += abgabeHtml(r, e);
+  h += '<p class="muted" style="text-align:center;margin-top:14px">Ihre Antworten werden automatisch auf diesem Gerät zwischengespeichert, bis Sie abgeben.</p>';
+  return h;
+}
+function frageHtml(f, v) {
+  let h = '<div class="frage" data-f="' + esc(f.id) + '"><p class="ft">' + esc(f.text) + (f.pflicht ? ' <i title="Pflichtfrage">*</i>' : '') + '</p>' + (f.hilfe ? '<p class="hilfe">' + esc(f.hilfe) + '</p>' : '');
+  if (f.typ === 'skala') h += '<div class="skala"><div class="wahl" role="group" aria-label="' + esc(f.text) + '">' + [1, 2, 3, 4, 5].map(n => '<button type="button" data-w="' + n + '" aria-pressed="' + (v === n) + '">' + n + '</button>').join('') + '</div><div class="enden"><span>1 = ' + esc(f.links || 'gar nicht') + '</span><span>5 = ' + esc(f.rechts || 'voll und ganz') + '</span></div></div>';
+  else if (f.typ === 'wahl') h += '<div class="wahl" role="group">' + (f.optionen || []).map(o => '<button type="button" data-w="' + esc(o) + '" aria-pressed="' + (v === o) + '">' + esc(o) + '</button>').join('') + '</div>';
+  else if (f.typ === 'mehrfach') h += '<div class="wahl mehr" role="group">' + (f.optionen || []).map(o => '<button type="button" data-w="' + esc(o) + '" aria-pressed="' + (Array.isArray(v) && v.includes(o)) + '">' + esc(o) + '</button>').join('') + '</div>';
+  else h += '<textarea maxlength="3000" data-t="1" aria-label="' + esc(f.text) + '">' + esc(v || '') + '</textarea>';
+  return h + '</div>';
+}
+function abgabeHtml(r, e) {
+  const k = STAND.konto, alle = UF.fragen(r), beantw = alle.filter(f => UF.beantwortet(e.antworten[f.id])).length, art = e.art || '';
+  return '<div class="card"><p class="lead" style="margin:0 0 12px">Sie haben <b>' + beantw + ' von ' + alle.length + '</b> Fragen beantwortet. Wie möchten Sie abgeben?</p>' +
+    '<div class="art" role="radiogroup">' +
+    '<button type="button" role="radio" data-art="name" aria-pressed="' + (art === 'name') + '"><b>Mit Namen abgeben</b><span>Der Klassenlehrer sieht, von wem die Antworten sind, kann darauf eingehen und Ihnen hier eine Rückmeldung geben.</span></button>' +
+    '<button type="button" role="radio" data-art="anonym" aria-pressed="' + (art === 'anonym') + '"><b>Anonym abgeben</b><span>Es wird weder Ihr Name noch Ihr Konto mit den Antworten gespeichert. Eine persönliche Rückmeldung ist dann nicht möglich.</span></button></div>' +
+    '<div id="nameFelder" class="' + (art === 'name' ? '' : 'hidden') + '" style="margin-top:14px">' +
+    '<label class="f"><span>Ihr Name</span><input type="text" id="aName" maxlength="80" value="' + esc(e.name_eltern != null ? e.name_eltern : k.name_eltern) + '" autocomplete="name"></label>' +
+    '<label class="f"><span>Name Ihres Kindes <small style="display:inline">(freiwillig, hilft bei der Zuordnung)</small></span><input type="text" id="aKind" maxlength="80" value="' + esc(e.name_kind != null ? e.name_kind : k.name_kind) + '"></label></div>' +
+    '<p class="muted hidden" id="anonHinweis" style="margin:12px 0 0">Bitte bedenken Sie: Sehr persönliche Angaben in Freitexten können trotzdem Rückschlüsse erlauben.</p>' +
+    '<div id="uMsg" class="msg hidden" role="alert"></div>' +
+    '<div class="knoepfe zwei"><button class="btn sec" data-a="zurueck">‹ Zurück</button><button class="btn" data-a="abgeben"' + (art ? '' : ' disabled') + '>Verbindlich abgeben</button></div></div>' +
+    '<details class="info"><summary>Meine Antworten noch einmal ansehen</summary>' + antwortListe(r, e.antworten) + '</details>';
+}
+function antwortListe(r, antw) {
+  return UF.schritte(r).map(s => '<h3 style="color:var(--red);font-size:.95rem;margin:14px 0 2px">' + esc(s.titel) + '</h3><dl class="antw">' +
+    s.fragen.map(f => { const t = UF.text(f, antw[f.id]); return '<dt>' + esc(f.text) + '</dt><dd' + (t ? '' : ' class="ohne"') + '>' + esc(t || 'keine Angabe') + '</dd>'; }).join('') + '</dl>').join('');
+}
+function antwortenAnsicht(a) {
+  const r = runde(a.runde), ab = STAND.abgaben.find(x => x.runde_id === a.runde);
+  return '<div class="card"><h2>' + esc(r.titel) + '</h2><p class="muted" style="margin:0">Abgegeben am ' + esc(UF.zeitpunkt(ab.abgegeben_am)) + ' mit Namen: ' + esc(ab.name_eltern) + (ab.name_kind ? ' (Kind: ' + esc(ab.name_kind) + ')' : '') + '</p></div>' +
+    (ab.antwort_lehrer ? '<div class="card rueck"><p class="von">Rückmeldung des Klassenlehrers vom ' + esc(UF.datum(ab.antwort_am)) + '</p><p class="t">' + esc(ab.antwort_lehrer) + '</p></div>' : '') +
+    '<div class="card">' + antwortListe(r, ab.antworten) + '</div><div class="knoepfe"><button class="btn sec" data-a="uebersicht">‹ Zur Übersicht</button></div>';
+}
+function dankeAnsicht(a) {
+  return '<div class="card hero"><h2>Vielen Dank!</h2><p style="margin:6px 0 0">' + (a.anonym ? 'Ihre Antworten wurden anonym abgegeben.' : 'Ihre Antworten wurden mit Ihrem Namen abgegeben. Wenn der Klassenlehrer Ihnen antwortet, sehen Sie die Rückmeldung hier in der App.') + '</p></div>' +
+    '<div class="knoepfe"><button class="btn" data-a="uebersicht">Zur Übersicht</button></div>';
+}
+function kontoAnsicht() {
+  const k = STAND.konto;
+  return '<div class="card"><h2>Mein Konto</h2><p class="muted">Benutzername: <b>' + esc(k.benutzer) + '</b> · Klasse ' + esc(k.klasse) + '</p>' +
+    '<form id="kForm"><label class="f"><span>Ihr Name</span><input type="text" id="kName" maxlength="80" value="' + esc(k.name_eltern) + '"><small>Wird nur bei Abgaben mit Namen verwendet und dort vorausgefüllt.</small></label>' +
+    '<label class="f"><span>Name Ihres Kindes</span><input type="text" id="kKind" maxlength="80" value="' + esc(k.name_kind) + '"></label>' +
+    '<label class="f"><span>Neues Kennwort</span><input type="password" id="kPw" minlength="6" maxlength="72" autocomplete="new-password"><small>Leer lassen, wenn das Kennwort bleiben soll.</small></label>' +
+    '<label class="f"><span>Neues Kennwort wiederholen</span><input type="password" id="kPw2" minlength="6" maxlength="72" autocomplete="new-password"></label>' +
+    '<div class="knoepfe"><button class="btn" type="submit">Speichern</button><button class="btn sec" type="button" data-a="uebersicht">Abbrechen</button></div><div id="kMsg" class="msg hidden" role="alert"></div></form></div>' +
+    '<div class="card"><h2>Konto löschen</h2><p class="muted">Löscht Ihr Konto und alle Abgaben <b>mit Namen</b>. Anonyme Abgaben sind keinem Konto zugeordnet und bleiben deshalb in der Auswertung.</p><button class="btn sec" type="button" data-a="loeschen">Konto endgültig löschen</button></div>';
+}
+
+/* ---------- Bedienung ---------- */
+function nachZeigen(a) {
+  if (a.name === 'umfrage') {
+    const r = runde(a.runde);
+    $('app').querySelectorAll('textarea[data-t]').forEach(t => { const groesse = () => { t.style.height = 'auto'; t.style.height = Math.max(86, t.scrollHeight + 2) + 'px'; }; groesse(); t.addEventListener('input', () => { groesse(); setze(r, t.closest('.frage').dataset.f, t.value); }); });
+    ['aName', 'aKind'].forEach(i => { const el = $(i); if (el) el.addEventListener('input', () => { const e = entwurf(r.id); e[i === 'aName' ? 'name_eltern' : 'name_kind'] = el.value; merkeEntwurf(r.id, e); }); });
+  }
+  if (a.name === 'konto') $('kForm').onsubmit = kontoSpeichern;
+}
+function setze(r, fid, v) { const e = entwurf(r.id); if (UF.beantwortet(v)) e.antworten[fid] = v; else delete e.antworten[fid]; merkeEntwurf(r.id, e); }
+
+$('app').addEventListener('click', async ev => {
+  const wb = ev.target.closest('.frage .wahl button');
+  if (wb && ANSICHT.name === 'umfrage') {
+    const r = runde(ANSICHT.runde), fr = wb.closest('.frage'), f = UF.fragen(r).find(x => x.id === fr.dataset.f), e = entwurf(r.id);
+    let v = e.antworten[f.id];
+    if (f.typ === 'mehrfach') { v = Array.isArray(v) ? v.slice() : []; const o = wb.dataset.w; v = v.includes(o) ? v.filter(x => x !== o) : (f.optionen || []).filter(x => x === o || v.includes(x)); }
+    else { const neu = f.typ === 'skala' ? Number(wb.dataset.w) : wb.dataset.w; v = v === neu ? null : neu; }
+    setze(r, f.id, v);
+    fr.querySelectorAll('.wahl button').forEach(b => { const w = f.typ === 'skala' ? Number(b.dataset.w) : b.dataset.w; b.setAttribute('aria-pressed', f.typ === 'mehrfach' ? (Array.isArray(v) && v.includes(w)) : v === w); });
+    return;
+  }
+  const artB = ev.target.closest('.art button');
+  if (artB) {
+    const r = runde(ANSICHT.runde), e = entwurf(r.id); e.art = artB.dataset.art; merkeEntwurf(r.id, e);
+    document.querySelectorAll('.art button').forEach(b => b.setAttribute('aria-pressed', b === artB));
+    $('nameFelder').classList.toggle('hidden', e.art !== 'name'); $('anonHinweis').classList.toggle('hidden', e.art !== 'anonym');
+    document.querySelector('[data-a=abgeben]').disabled = false; if (e.art === 'name' && !$('aName').value) $('aName').focus();
+    return;
+  }
+  const b = ev.target.closest('[data-a]'); if (!b) return;
+  const act = b.dataset.a;
+  if (act === 'start') zeige({ name: 'umfrage', runde: b.dataset.r });
+  else if (act === 'antworten') zeige({ name: 'antworten', runde: b.dataset.r });
+  else if (act === 'uebersicht') zeige({ name: 'start' });
+  else if (act === 'zurueck') { if (ANSICHT.schritt === 0) zeige({ name: 'start' }); else zeige({ name: 'umfrage', runde: ANSICHT.runde, schritt: ANSICHT.schritt - 1 }); }
+  else if (act === 'weiter') {
+    const r = runde(ANSICHT.runde), s = UF.schritte(r)[ANSICHT.schritt], e = entwurf(r.id);
+    const fehlt = s.fragen.filter(f => f.pflicht && !UF.beantwortet(e.antworten[f.id]));
+    if (fehlt.length) { const m = $('uMsg'); m.textContent = 'Bitte beantworten Sie noch: ' + fehlt.map(f => '„' + f.text + '“').join(', '); m.classList.remove('hidden'); document.querySelector('.frage[data-f="' + CSS.escape(fehlt[0].id) + '"]').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    zeige({ name: 'umfrage', runde: r.id, schritt: ANSICHT.schritt + 1 });
+  }
+  else if (act === 'abgeben') abgeben(b);
+  else if (act === 'loeschen') kontoLoeschen();
+});
+
+async function abgeben(b) {
+  const r = runde(ANSICHT.runde), e = entwurf(r.id), m = $('uMsg'); m.classList.add('hidden');
+  const fehler = t => { m.textContent = t; m.classList.remove('hidden'); };
+  const pflicht = UF.fragen(r).filter(f => f.pflicht && !UF.beantwortet(e.antworten[f.id]));
+  if (pflicht.length) return fehler('Bitte beantworten Sie zuerst die Pflichtfragen: ' + pflicht.map(f => '„' + f.text + '“').join(', '));
+  const anonym = e.art === 'anonym', name = anonym ? '' : $('aName').value.trim(), kind = anonym ? '' : $('aKind').value.trim();
+  if (!anonym && name.length < 2) { $('aName').focus(); return fehler('Bitte geben Sie Ihren Namen an.'); }
+  if (!confirm(anonym ? 'Antworten jetzt anonym abgeben? Danach lassen sie sich nicht mehr ändern.' : 'Antworten jetzt mit dem Namen „' + name + '“ abgeben? Danach lassen sie sich nicht mehr ändern.')) return;
+  b.disabled = true; b.textContent = 'Wird abgegeben …';
+  const antw = {}; UF.fragen(r).forEach(f => { if (UF.beantwortet(e.antworten[f.id])) antw[f.id] = e.antworten[f.id]; });
+  try {
+    const res = await UF.rpc('umfrage_abgeben', { p_id: S.id, p_pw: S.pw, p_runde: r.id, p_antworten: antw, p_anonym: anonym, p_name_eltern: name, p_name_kind: kind });
+    if (!res.ok && res.grund === 'doppelt') { loescheEntwurf(r.id); await neuLaden(); return zeige({ name: 'start' }); }
+    STAND = UF.ok(res); loescheEntwurf(r.id); zeige({ name: 'danke', anonym });
+  } catch (err) { b.disabled = false; b.textContent = 'Verbindlich abgeben'; fehler(err.grund ? err.message : 'Keine Verbindung. Ihre Antworten sind auf diesem Gerät gesichert – bitte später noch einmal auf „Abgeben“ tippen.'); }
+}
+async function kontoSpeichern(ev) {
+  ev.preventDefault(); const m = $('kMsg'); m.className = 'msg hidden';
+  const pw = $('kPw').value; if (pw !== $('kPw2').value) { m.textContent = 'Die beiden Kennwörter stimmen nicht überein.'; m.classList.remove('hidden'); return; }
+  try {
+    STAND = UF.ok(await UF.rpc('umfrage_konto_aendern', { p_id: S.id, p_pw: S.pw, p_name_eltern: $('kName').value, p_name_kind: $('kKind').value, p_neues_pw: pw }));
+    if (pw) { S.pw = pw; merkeSitzung(); }
+    $('kPw').value = $('kPw2').value = ''; m.textContent = 'Gespeichert.'; m.className = 'msg gut';
+  } catch (err) { m.textContent = err.message; m.classList.remove('hidden'); }
+}
+async function kontoLoeschen() {
+  if (!confirm('Konto „' + STAND.konto.benutzer + '“ und alle Abgaben mit Namen endgültig löschen?')) return;
+  try {
+    UF.ok(await UF.rpc('umfrage_konto_loeschen', { p_id: S.id, p_pw: S.pw }));
+    STAND.runden.forEach(r => loescheEntwurf(r.id)); S = null; merkeSitzung(); modus(true); zeigeLogin();
+    $('lMsg').textContent = 'Ihr Konto wurde gelöscht.'; $('lMsg').className = 'msg gut';
+  } catch (err) { alert(err.fehlt ? 'Das Löschen ist gerade nicht möglich. Bitte wenden Sie sich an den Klassenlehrer.' : err.message); }
+}
+
+/* ---------- Start ---------- */
+(async function () {
+  S = ladeSitzung(); modus(!S);
+  if (!S) { try { if (localStorage.getItem(LS + '-hatte-konto')) modus(false); } catch (e) { } return zeigeLogin(); }
+  $('app').classList.remove('hidden'); $('app').innerHTML = '<p class="muted" style="text-align:center;padding:30px">Lade …</p>';
+  try { const r = await neuLaden(); if (r) angemeldet(r, false); }
+  catch (e) { $('app').innerHTML = '<div class="card"><h2>Keine Verbindung</h2><p class="muted">Die Umfragen konnten nicht geladen werden. Bitte prüfen Sie Ihre Internetverbindung.</p><button class="btn" onclick="location.reload()">Neu laden</button></div>'; }
+})();
+</script>
+</body>
+</html>

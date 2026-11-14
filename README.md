@@ -85,3 +85,16 @@ Begleit-App für das Betriebspraktikum (Woche ab 16.11.2026). Link: `https://rat
 - Lehrkraft 9b: `https://ratpoison-de.github.io/pags-app/praktikum/9b/lehrer.html` – Anmeldung mit Benutzername und Kennwort. Mit den Startdaten muss die Lehrkraft beim ersten Anmelden eigene Zugangsdaten und ihren Namen festlegen; später über „Zugangsdaten ändern“.
 - Die Lehrkraft der 9b sieht nur die 9b. Der Hauptschlüssel der Graduierung (`praktikum/lehrer.html`) sieht nur Klassen ohne eigenen Zugang; Klassenschlüssel der Graduierung (z. B. Klasse 5) öffnen das Praktikum nicht.
 - Weitere Klassen: Zeile in `public.praktikum_lehrer` anlegen (siehe `supabase/praktikum.sql`), Link `praktikum/?klasse=9c` bzw. `praktikum/lehrer.html?klasse=9c`.
+
+## Elternumfrage (`elternumfrage/`)
+
+Umfrage-App für Eltern (zuerst Klasse 9a, „Die ersten acht Wochen in der 9a“). Link: `https://ratpoison-de.github.io/pags-app/elternumfrage/` · QR-Code: `elternumfrage/qr-elternumfrage.png`
+
+- **Eltern** (`elternumfrage/index.html`): Konto mit frei gewähltem Benutzernamen und Kennwort (keine E-Mail nötig). Umfrage in Schritten (ein Abschnitt pro Schritt), Zwischenstand bleibt im Gerät. Am Ende wählen die Eltern **mit Namen** (Name, optional Name des Kindes) oder **anonym**. Abgaben mit Namen und die Rückmeldungen des Lehrers sind im Konto sichtbar. „Mein Konto“: Namen, Kennwort ändern, Konto löschen. Andere Klassen: `elternumfrage/?klasse=9b`.
+- **Lehrer** (`elternumfrage/lehrer.html`): Zugang mit dem Hauptschlüssel der Graduierung.
+  - *Auswertung:* Kennzahlen (Abgaben, mit Namen/anonym, Rücklauf, Ø Zufriedenheit), „Auf einen Blick“ für alle Skalenfragen, Gesprächswünsche, jede Frage mit Balken bzw. Freitexten; Filter alle/mit Namen/anonym; Vergleich mit der vorherigen Runde (gleiche Frage-ID); Drucken/PDF.
+  - *Abgaben:* Liste mit Suche und Filtern (offen, Gesprächswunsch …), Einzelansicht in der Seitenleiste, **Rückmeldung an die Eltern** (nur bei Abgabe mit Namen), Haken „erledigt“, Drucken, CSV für Excel.
+  - *Umfragen:* öffnen/schließen, bearbeiten (Fragetypen: Skala 1–5, eine Antwort, mehrere Antworten, Freitext, Abschnitte), **als neue Runde kopieren** zum Wiederverwenden, Elternlink kopieren. Fragen sind gesperrt, sobald es Abgaben gibt.
+  - *Elternkonten:* Kennwort zurücksetzen, Konto löschen.
+- **Anonymität:** Bei anonymer Abgabe speichert die Datenbank weder Konto noch Namen noch Uhrzeit (nur das Datum). Dass ein Konto teilgenommen hat, steht getrennt und ohne Verweis in `umfrage_teilnahme` (verhindert doppelte Abgaben, auch für den Lehrerzugang nicht lesbar).
+- Technik: Tabellen `public.umfrage_*` und Funktionen `umfrage_*` in `supabase/elternumfrage.sql` (Projekt pags-lernplaner, eingerichtet). Die Löschfunktionen stehen in `supabase/elternumfrage_loeschen.sql` und müssen einmal im SQL Editor ausgeführt werden. Gemeinsame Hilfen: `elternumfrage/umfrage.js`.

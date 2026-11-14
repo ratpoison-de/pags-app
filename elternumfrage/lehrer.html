@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Elternumfrage – Lehrerbereich</title>
+<link rel="icon" href="../icon.png">
+<script src="../config.js?v=20261108"></script>
+<script src="umfrage.js?v=20261114"></script>
+<style>
+/* Aufbau wie der Lehrerbereich von Graduierung und Praktikum: roter Kopf, Filterkarte, Tabelle, Seitenleiste zum Lesen */
+:root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;--tint:#FFF4F2}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.45}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+header{background:var(--red);color:#fff;padding:14px 16px}
+header .in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:38px;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.1rem;margin:0}
+header p{margin:0;font-size:.82rem;opacity:.9}
+header .sp{flex:1}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+main{max-width:1100px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.card>h2{margin:0 0 10px;font-size:1.05rem}
+input,select,textarea{font:inherit;padding:9px 11px;border:1px solid #ccc;border-radius:8px;background:#fff;color:var(--text)}
+textarea{width:100%;min-height:90px;resize:vertical;line-height:1.45}
+.btn{padding:10px 14px;font:inherit;font-weight:600;border-radius:8px;border:0;cursor:pointer;background:var(--red);color:#fff}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.klein{padding:6px 10px;font-size:.84rem}
+.btn[disabled]{opacity:.5;cursor:default}
+.leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.leiste input[type=search]{flex:1 1 180px}
+.info{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+.klein{color:var(--muted);font-size:.78rem}
+.hidden{display:none!important}
+.msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px}
+.msg.gut{background:#E9F6EC;color:#14562B}
+.umschalt{display:flex;gap:6px;flex-wrap:wrap}
+.umschalt button{flex:1 1 auto;font:inherit;font-size:.88rem;padding:8px 12px;border:1.5px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.umschalt button[aria-pressed=true]{border-color:var(--red);background:var(--tint);font-weight:700;color:var(--red)}
+.umschalt.klein button{flex:0 0 auto;font-size:.8rem;padding:5px 10px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.76rem;text-transform:uppercase;color:var(--muted);letter-spacing:.03em;white-space:nowrap}
+tbody tr[data-id]{cursor:pointer}
+tbody tr[data-id]:hover td{background:#FAFAFA}
+tr.aktiv td{background:var(--tint)!important}
+td.name b{display:block}
+.st{display:inline-block;border-radius:12px;padding:1px 9px;font-size:.78rem;font-weight:700;background:#EEE;color:#555;white-space:nowrap}
+.st.gut{background:#E9F6EC;color:#14562B}
+.st.mittel{background:#FFF3DC;color:#7A4A00}
+.st.rot{background:#FDECEA;color:#8A1C1C}
+.akt{white-space:nowrap;text-align:right}
+.akt button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer;font:inherit;font-size:.82rem}
+.akt button.del{color:var(--red)}
+.leer{text-align:center;color:var(--muted);padding:30px}
+.feld{display:block;margin:0 0 10px}
+.feld span{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}
+.feld small{display:block;color:var(--muted);font-size:.78rem;font-weight:400}
+/* Auswertung */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-size:1.8rem;line-height:1.1;color:var(--red)}
+.kpi span{font-size:.82rem;color:var(--muted)}
+.kpi input{width:70px;padding:3px 6px;font-size:.82rem}
+.abschnitt{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:22px 2px 8px;font-weight:700}
+.frage h3{margin:0 0 4px;font-size:.98rem}
+.frage .meta{font-size:.8rem;color:var(--muted);margin:0 0 10px}
+.zeile{display:grid;grid-template-columns:minmax(110px,32%) 1fr 74px;gap:10px;align-items:center;margin:5px 0;font-size:.88rem}
+.zeile .bar{height:20px;background:#F0EEEB;border-radius:5px;overflow:hidden}
+.zeile .bar i{display:block;height:100%;background:var(--red);border-radius:5px}
+.zeile .w{text-align:right;color:var(--muted);font-size:.82rem;white-space:nowrap}
+.schnitt{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.schnitt b{font-size:1.9rem;color:var(--red);line-height:1}
+.delta{font-size:.82rem;font-weight:700}
+.delta.plus{color:var(--ok)}.delta.minus{color:var(--red)}.delta.null{color:var(--muted)}
+.blick .zeile{grid-template-columns:minmax(140px,45%) 1fr 110px}
+.blick .bar i.g{background:var(--ok)}.blick .bar i.m{background:var(--warn)}.blick .bar i.s{background:var(--red)}
+.texte{list-style:none;margin:0;padding:0}
+.texte li{border-left:3px solid var(--line);padding:6px 10px;margin:0 0 8px;background:#FAFAFA;border-radius:0 8px 8px 0;font-size:.92rem;white-space:pre-wrap}
+.texte li small{display:block;color:var(--muted);font-size:.76rem;margin-top:2px;white-space:normal}
+.texte li small a{color:var(--red);cursor:pointer}
+.zweispalt{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.zweispalt>.card{margin:0}
+/* Seitenleiste */
+#panel{position:fixed;top:0;right:0;bottom:0;width:min(48vw,640px);background:#fff;border-left:1px solid var(--line);box-shadow:-6px 0 24px rgba(0,0,0,.12);display:flex;flex-direction:column;transform:translateX(105%);transition:transform .2s;z-index:20}
+#panel.offen{transform:none}
+body.panel-offen main{margin-right:min(48vw,640px);max-width:none}
+body.panel-offen header{padding-right:calc(min(48vw,640px) + 16px)}
+body.panel-offen .nurbreit{display:none}
+.pkopf{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);background:#fafafa}
+.pkopf b{flex:1;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pkopf button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 10px;font:inherit;font-size:.85rem;cursor:pointer}
+#pInhalt{flex:1;overflow:auto;padding:16px 18px 40px}
+.steck{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:.88rem;background:#F7F7F7;border-radius:10px;padding:10px 12px;margin:0 0 14px}
+.steck dt{color:var(--muted)}.steck dd{margin:0}
+#pInhalt h3{color:var(--red);font-size:1rem;border-bottom:2px solid var(--red);padding-bottom:3px;margin:20px 0 8px}
+dl.antw{margin:0}
+dl.antw dt{font-weight:600;font-size:.88rem;margin-top:10px}
+dl.antw dd{margin:2px 0 0;white-space:pre-wrap;font-size:.93rem}
+dl.antw dd.ohne{color:var(--muted);font-style:italic}
+.rueckbox{border:1.5px solid var(--ok);background:#F4FBF6;border-radius:10px;padding:12px;margin:0 0 6px}
+.rueckbox label{font-weight:700;font-size:.88rem;display:block;margin-bottom:6px}
+.haken{display:flex;align-items:center;gap:8px;font-size:.9rem;margin:10px 0 0;cursor:pointer}
+.haken input{width:18px;height:18px;accent-color:var(--red)}
+@media (max-width:800px){#panel{width:100vw}body.panel-offen main{margin-right:0}}
+/* Umfragen verwalten */
+.runde{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.runde:first-child{border-top:0}
+.runde h3{margin:0;font-size:1rem}
+.runde .knoepfe{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.edfrage{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px;background:#FCFCFC}
+.edfrage.abs{background:var(--tint);border-color:#F3D3CD}
+.edfrage .ek{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.edfrage .ek b{font-size:.8rem;color:var(--muted);min-width:22px}
+.edfrage .ek select{padding:5px 8px;font-size:.85rem}
+.edfrage .ek .sp{flex:1}
+.edfrage .ek button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:4px 8px;cursor:pointer;font:inherit;font-size:.8rem}
+.edfrage input[type=text]{width:100%;margin-bottom:6px}
+.edfrage textarea{min-height:70px;font-size:.88rem}
+.edfrage .reihe{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.nurdruck,.nurdruckI{display:none}
+@media print{
+  .nurdruckI{display:inline}
+  @page{size:A4;margin:14mm}
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10pt}
+  header,#tor,#steuer,#panel,.akt,.keindruck,#vUmfragen,#vKonten{display:none!important}
+  main,body.panel-offen main{margin:0!important;padding:0;max-width:none}
+  .nurdruck{display:block;font-size:14pt;margin:0 0 8pt;color:#000}
+  .card,.kpi{border:1px solid #ddd;break-inside:avoid;padding:10px!important}
+  .zweispalt{display:block}.zweispalt>.card{margin:0 0 8pt}
+  body.druck-einzel main{display:none}
+  body.druck-einzel #panel{display:flex!important;position:static;transform:none;width:auto;box-shadow:none;border:0}
+  body.druck-einzel .pkopf button,body.druck-einzel .rueckbox,body.druck-einzel .keindruck{display:none!important}
+  body.druck-einzel #pInhalt{overflow:visible;padding:0}
+}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim">
+  <div><h1>Elternumfrage – Lehrerbereich</h1><p>Abgaben, Auswertung und Umfragen</p></div>
+  <span class="sp"></span>
+  <a id="elternLink" class="hidden" href="./" target="_blank" rel="noopener" style="color:#fff;font-size:.8rem;margin-right:6px">Elternansicht ↗</a>
+  <button id="abmelden" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section class="card" id="tor">
+    <h2 style="margin:0 0 6px;font-size:1.05rem">Zugang</h2>
+    <p class="klein" style="margin:0 0 10px">Es gilt derselbe Zugangsschlüssel wie im Lehrerbereich der Graduierung und des Praktikums.</p>
+    <form id="torForm" class="leiste">
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" required style="flex:1 1 220px">
+      <button class="btn" type="submit">Öffnen</button>
+    </form>
+    <div id="torMsg" class="msg hidden" role="alert"></div>
+  </section>
+
+  <div id="bereich" class="hidden">
+    <section class="card" id="steuer">
+      <div class="leiste" style="margin-bottom:12px">
+        <label for="rundeSel" style="font-weight:600;font-size:.9rem">Umfrage</label>
+        <select id="rundeSel" style="flex:1 1 260px"></select>
+        <button class="btn sec" id="neuLaden" type="button">↻ Aktualisieren</button>
+      </div>
+      <div class="umschalt" role="tablist">
+        <button type="button" data-v="Auswertung" aria-pressed="true">📊 Auswertung</button>
+        <button type="button" data-v="Abgaben" aria-pressed="false">📝 Abgaben</button>
+        <button type="button" data-v="Umfragen" aria-pressed="false">⚙️ Umfragen</button>
+        <button type="button" data-v="Konten" aria-pressed="false">👤 Elternkonten</button>
+      </div>
+    </section>
+
+    <!-- Auswertung -->
+    <div id="vAuswertung">
+      <div class="leiste keindruck" style="margin:0 0 12px">
+        <div class="umschalt klein" id="artFilter">
+          <button type="button" data-f="" aria-pressed="true">Alle Abgaben</button>
+          <button type="button" data-f="name" aria-pressed="false">Nur mit Namen</button>
+          <button type="button" data-f="anonym" aria-pressed="false">Nur anonym</button>
+        </div>
+        <span style="flex:1"></span>
+        <button class="btn sec klein" id="auswDruck" type="button">🖨 Auswertung drucken / als PDF</button>
+      </div>
+      <h2 class="nurdruck" id="auswTitel"></h2>
+      <div id="auswertung"></div>
+    </div>
+
+    <!-- Abgaben -->
+    <div id="vAbgaben" class="hidden">
+      <section class="card">
+        <div class="leiste">
+          <input type="search" id="suche" placeholder="Name oder Text suchen …">
+          <select id="abFilter" title="Filter">
+            <option value="">Alle Abgaben</option><option value="name">Mit Namen</option><option value="anonym">Anonym</option>
+            <option value="offen">Noch nicht bearbeitet</option><option value="gespraech">Gesprächswunsch</option>
+          </select>
+          <button class="btn sec" id="csvBtn" type="button">⬇ Tabelle (CSV für Excel)</button>
+        </div>
+        <p class="info" id="abZahl"></p>
+      </section>
+      <section class="card" style="padding:6px 16px"><div class="tw">
+        <table>
+          <thead><tr><th>Abgegeben</th><th>Von</th><th title="Gesamtzufriedenheit">Zufrieden</th><th class="nurbreit">Gespräch</th><th>Rückmeldung</th><th></th></tr></thead>
+          <tbody id="abListe"></tbody>
+        </table>
+      </div></section>
+      <p class="klein">Anonyme Abgaben tragen nur das Datum, keine Uhrzeit. Rückmeldungen sind nur bei Abgaben mit Namen möglich; die Eltern sehen sie in ihrer App.</p>
+    </div>
+
+    <!-- Umfragen -->
+    <div id="vUmfragen" class="hidden">
+      <section class="card" id="rundenKarte">
+        <div class="leiste" style="margin-bottom:6px"><h2 style="margin:0;font-size:1.05rem;flex:1">Umfragen</h2><button class="btn klein" id="neuRunde" type="button">+ Neue leere Umfrage</button></div>
+        <p class="klein" style="margin:0 0 6px">Eine Umfrage wiederverwenden: „Als neue Runde kopieren“. Die Fragen bleiben gleich, die Auswertung zeigt dann den Vergleich zur vorherigen Runde. Eltern sehen nur geöffnete Umfragen ihrer Klasse.</p>
+        <div id="rundenListe"></div>
+      </section>
+      <section class="card hidden" id="editor"></section>
+    </div>
+
+    <!-- Konten -->
+    <div id="vKonten" class="hidden">
+      <section class="card">
+        <div class="leiste"><input type="search" id="kSuche" placeholder="Benutzername oder Name suchen …"></div>
+        <p class="info" id="kZahl"></p>
+      </section>
+      <section class="card" style="padding:6px 16px"><div class="tw">
+        <table>
+          <thead><tr><th>Benutzername</th><th>Name (Eltern / Kind)</th><th>Klasse</th><th class="nurbreit">Angelegt</th><th title="Abgaben mit Namen">Mit Namen</th><th></th></tr></thead>
+          <tbody id="kListe"></tbody>
+        </table>
+      </div></section>
+      <p class="klein">Ob ein Konto anonym teilgenommen hat, wird hier bewusst nicht angezeigt. Namen im Konto stammen aus der letzten Abgabe mit Namen oder aus „Mein Konto“.</p>
+    </div>
+  </div>
+</main>
+
+<aside id="panel" aria-label="Abgabe lesen">
+  <div class="pkopf">
+    <b id="ptitel">Abgabe</b>
+    <button id="pDruck" type="button">🖨 Drucken</button>
+    <button id="pZu" type="button" title="Schließen">✕</button>
+  </div>
+  <div id="pInhalt"></div>
+</aside>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = UF.esc;
+const SK = 'pags-elternumfrage-lehrer';
+let KEY = null, D = { runden: [], abgaben: [], konten: [] }, RUNDE = null, VIEW = 'Auswertung', ART = '', AKTIV = null, EDIT = null;
+
+function merk(v) { try { if (v === null) sessionStorage.removeItem(SK); else if (v === undefined) return sessionStorage.getItem(SK); else sessionStorage.setItem(SK, v); } catch (e) { return null; } }
+const lokal = (k, v) => { try { if (v === undefined) return localStorage.getItem(SK + '-' + k); localStorage.setItem(SK + '-' + k, v); } catch (e) { return null; } };
+
+/* ---------- Laden ---------- */
+async function laden() {
+  const r = UF.ok(await UF.rpc('umfrage_lehrer_daten', { schluessel: KEY }));
+  D = r;
+  const sel = $('rundeSel'), alt = RUNDE;
+  sel.innerHTML = D.runden.length ? D.runden.map(x => '<option value="' + x.id + '">' + esc(x.titel) + ' · ' + esc(x.klasse) + ' · ' + (x.offen ? 'offen' : 'geschlossen') + ' · ' + abgabenVon(x.id).length + ' Abgaben</option>').join('') : '<option value="">Noch keine Umfrage</option>';
+  RUNDE = D.runden.some(x => x.id === alt) ? alt : (D.runden[0] || {}).id || null;
+  sel.value = RUNDE || '';
+  alles();
+  if (AKTIV) { const a = D.abgaben.find(x => x.id === AKTIV); if (a) lesen(a); else zu(); }
+}
+const runde = id => D.runden.find(x => x.id === id);
+const abgabenVon = id => D.abgaben.filter(a => a.runde_id === id);
+function alles() { auswertung(); abgabenListe(); rundenListe(); konten(); }
+
+/* ---------- Ansicht wechseln ---------- */
+document.querySelector('#steuer .umschalt').addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (b) zeigeView(b.dataset.v); });
+function zeigeView(v) {
+  VIEW = v; document.querySelectorAll('#steuer .umschalt button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+  ['Auswertung', 'Abgaben', 'Umfragen', 'Konten'].forEach(n => $('v' + n).classList.toggle('hidden', n !== v));
+  $('rundeSel').disabled = v === 'Konten' || v === 'Umfragen';
+  if (v !== 'Abgaben' && v !== 'Auswertung') zu();
+}
+$('rundeSel').onchange = () => { RUNDE = $('rundeSel').value; zu(); auswertung(); abgabenListe(); };
+$('neuLaden').onclick = () => laden().catch(e => alert(e.message));
+
+/* ---------- Auswertung ---------- */
+$('artFilter').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; ART = b.dataset.f; $('artFilter').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); auswertung(); });
+$('auswDruck').onclick = () => window.print();
+function gefiltertArt(l) { return l.filter(a => !ART || (ART === 'anonym') === a.anonym); }
+const mittel = l => l.length ? l.reduce((s, v) => s + v, 0) / l.length : null;
+function skalaWerte(abg, fid) { return abg.map(a => a.antworten[fid]).filter(v => typeof v === 'number' && v >= 1 && v <= 5); }
+/* Vorherige Runde derselben Klasse, in der es diese Frage (gleiche ID) mit Antworten gab */
+function vorher(r, fid) {
+  const fr = D.runden.filter(x => x.klasse === r.klasse && x.id !== r.id && new Date(x.created_at) < new Date(r.created_at)).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  for (const x of fr) { const w = skalaWerte(gefiltertArt(abgabenVon(x.id)), fid); if (w.length && (x.fragen || []).some(f => f.id === fid)) return { runde: x, mittel: mittel(w), n: w.length }; }
+  return null;
+}
+function deltaHtml(jetzt, v) {
+  if (!v || jetzt == null) return '';
+  const d = jetzt - v.mittel, k = Math.abs(d) < 0.05 ? 'null' : d > 0 ? 'plus' : 'minus';
+  return '<span class="delta ' + k + '" title="Vorher: Ø ' + UF.zahl(v.mittel, 1) + ' (' + v.n + ' Antworten) in „' + esc(v.runde.titel) + '“">' + (k === 'null' ? '± 0' : (d > 0 ? '▲ +' : '▼ ') + UF.zahl(d, 1)) + ' ggü. vorher</span>';
+}
+function balken(label, n, gesamt, extra) {
+  const p = gesamt ? n / gesamt * 100 : 0;
+  return '<div class="zeile"><span>' + label + '</span><span class="bar"><i style="width:' + p.toFixed(1) + '%"></i></span><span class="w">' + n + ' · ' + UF.zahl(p) + ' %' + (extra || '') + '</span></div>';
+}
+function hauptFrage(r) { const s = UF.fragen(r).filter(f => f.typ === 'skala'); return s.find(f => f.id === 'zufrieden') || s.find(f => f.pflicht) || s[0]; }
+function auswertung() {
+  const box = $('auswertung'), r = runde(RUNDE);
+  if (!r) { box.innerHTML = '<div class="card leer">Noch keine Umfrage angelegt. Unter „Umfragen“ können Sie eine anlegen.</div>'; return; }
+  const alle = abgabenVon(r.id), abg = gefiltertArt(alle), nName = alle.filter(a => !a.anonym).length;
+  const konten = D.konten.filter(k => k.klasse === r.klasse).length, familien = Number(lokal('familien-' + r.klasse)) || 0;
+  const hf = hauptFrage(r), hw = hf ? skalaWerte(abg, hf.id) : [], hm = mittel(hw);
+  $('auswTitel').textContent = 'Elternumfrage „' + r.titel + '“ · Klasse ' + r.klasse + (ART ? ' · ' + (ART === 'name' ? 'nur Abgaben mit Namen' : 'nur anonyme Abgaben') : '') + ' · Stand: ' + UF.zeitpunkt(new Date().toISOString());
+  let h = '<div class="kpis">' +
+    '<div class="kpi"><b>' + alle.length + '</b><span>Abgaben insgesamt</span></div>' +
+    '<div class="kpi"><b>' + nName + '</b><span>mit Namen</span></div>' +
+    '<div class="kpi"><b>' + (alle.length - nName) + '</b><span>anonym</span></div>' +
+    '<div class="kpi"><b>' + (familien ? UF.zahl(alle.length / familien * 100) + ' %' : '–') + '</b><span>Rücklauf bei <input type="number" min="1" max="60" id="familien" value="' + (familien || '') + '" placeholder="?" class="keindruck" title="Anzahl der Familien in der Klasse"><span class="nurdruckI">' + (familien || '?') + '</span> Familien · ' + konten + ' Konten</span></div>' +
+    (hf ? '<div class="kpi"><b>' + (hm == null ? '–' : 'Ø ' + UF.zahl(hm, 1)) + '</b><span>' + esc(hf.text.replace(/\?$/, '')) + ' (1–5)</span> ' + deltaHtml(hm, vorher(r, hf.id)) + '</div>' : '') +
+    '</div>';
+  if (!abg.length) { box.innerHTML = h + '<div class="card leer" style="margin-top:14px">' + (alle.length ? 'Keine Abgaben für diesen Filter.' : 'Noch keine Abgaben. ' + (r.offen ? 'Die Umfrage ist geöffnet – teilen Sie den Link mit den Eltern.' : 'Die Umfrage ist geschlossen. Öffnen Sie sie unter „Umfragen“.')) + '</div>'; bindeFamilien(r); return; }
+  /* Auf einen Blick: alle Skalenfragen */
+  const skalen = UF.fragen(r).filter(f => f.typ === 'skala');
+  if (skalen.length) {
+    h += '<div class="card blick" style="margin-top:14px"><h2>Auf einen Blick · Durchschnitt der Skalenfragen (1–5)</h2>' + skalen.map(f => {
+      const w = skalaWerte(abg, f.id), m = mittel(w), k = m == null ? '' : m >= 4 ? 'g' : m >= 3 ? 'm' : 's';
+      return '<div class="zeile"><span>' + esc(f.text) + '</span><span class="bar"><i class="' + k + '" style="width:' + (m == null ? 0 : (m / 5 * 100)).toFixed(1) + '%"></i></span><span class="w">' + (m == null ? '–' : 'Ø ' + UF.zahl(m, 1) + ' (' + w.length + ')') + '<br>' + deltaHtml(m, vorher(r, f.id)) + '</span></div>';
+    }).join('') + '<p class="klein" style="margin:8px 0 0">Grün ab 4,0 · Gelb ab 3,0 · Rot darunter. Der Vergleich bezieht sich auf die vorherige Runde mit derselben Frage.</p></div>';
+  }
+  /* Gesprächswünsche */
+  const gw = abg.filter(a => !a.anonym && /^ja/i.test(String(a.antworten.gespraech || '')));
+  const gwAnon = abg.filter(a => a.anonym && /^ja/i.test(String(a.antworten.gespraech || ''))).length;
+  if (gw.length || gwAnon) h += '<div class="card" style="border-left:5px solid var(--red)"><h2>Gesprächswünsche</h2>' +
+    (gw.length ? '<ul class="texte">' + gw.map(a => '<li><b>' + esc(a.name_eltern) + '</b>' + (a.name_kind ? ' (' + esc(a.name_kind) + ')' : '') + '<small>' + esc(UF.abgabeZeit(a)) + ' · ' + (a.erledigt ? '✓ erledigt' : 'offen') + ' · <a data-open="' + a.id + '">Abgabe öffnen</a></small></li>').join('') + '</ul>' : '') +
+    (gwAnon ? '<p class="klein" style="margin:6px 0 0">' + gwAnon + ' anonyme Abgabe' + (gwAnon > 1 ? 'n wünschen' : ' wünscht') + ' ebenfalls ein Gespräch – hier ist keine Kontaktaufnahme möglich. Ein allgemeines Gesprächsangebot an alle Eltern kann helfen.</p>' : '') + '</div>';
+  /* Fragen einzeln, nach Abschnitten */
+  UF.schritte(r).forEach(s => {
+    h += '<div class="abschnitt">' + esc(s.titel) + '</div><div class="zweispalt">';
+    s.fragen.forEach(f => {
+      const antw = abg.map(a => ({ a, v: a.antworten[f.id] })).filter(x => UF.beantwortet(x.v)), n = antw.length;
+      let inhalt = '';
+      if (f.typ === 'skala') {
+        const w = antw.map(x => x.v), m = mittel(w);
+        inhalt = '<div class="schnitt"><b>' + (m == null ? '–' : 'Ø ' + UF.zahl(m, 1)) + '</b>' + deltaHtml(m, vorher(r, f.id)) + '</div>' +
+          [5, 4, 3, 2, 1].map(z => balken(z + (z === 5 && f.rechts ? ' · ' + esc(f.rechts) : z === 1 && f.links ? ' · ' + esc(f.links) : ''), w.filter(v => v === z).length, n)).join('');
+      } else if (f.typ === 'wahl' || f.typ === 'mehrfach') {
+        const opt = (f.optionen || []).slice(); antw.forEach(x => [].concat(x.v).forEach(o => { if (!opt.includes(o)) opt.push(o); }));
+        inhalt = opt.map(o => balken(esc(o), antw.filter(x => [].concat(x.v).includes(o)).length, n)).join('') + (f.typ === 'mehrfach' ? '<p class="klein" style="margin:6px 0 0">Mehrfachnennung: Prozent bezogen auf ' + n + ' Antwortende.</p>' : '');
+      } else {
+        inhalt = n ? '<ul class="texte">' + antw.map(x => '<li>' + esc(x.v) + '<small>' + (x.a.anonym ? 'anonym' : esc(x.a.name_eltern)) + ' · ' + esc(UF.datum(x.a.abgegeben_am)) + ' · <a data-open="' + x.a.id + '">Abgabe öffnen</a></small></li>').join('') + '</ul>' : '<p class="klein">Keine Antworten.</p>';
+      }
+      h += '<div class="card frage"><h3>' + esc(f.text) + '</h3><p class="meta">' + esc(UF.TYPEN[f.typ] || f.typ) + ' · ' + n + ' von ' + abg.length + ' haben geantwortet</p>' + inhalt + '</div>';
+    });
+    h += '</div>';
+  });
+  box.innerHTML = h; bindeFamilien(r);
+}
+function bindeFamilien(r) { const i = $('familien'); if (i) i.onchange = () => { lokal('familien-' + r.klasse, i.value); auswertung(); }; }
+document.addEventListener('click', e => { const a = e.target.closest('[data-open]'); if (!a) return; const x = D.abgaben.find(y => y.id === a.dataset.open); if (x) lesen(x); });
+
+/* ---------- Abgaben ---------- */
+const istOffen = a => !a.erledigt && !(a.antwort_lehrer);
+function abgabenGefiltert() {
+  const q = $('suche').value.trim().toLowerCase(), f = $('abFilter').value;
+  return abgabenVon(RUNDE).filter(a => (!f || (f === 'name' && !a.anonym) || (f === 'anonym' && a.anonym) || (f === 'offen' && istOffen(a)) || (f === 'gespraech' && /^ja/i.test(String(a.antworten.gespraech || ''))))
+    && (!q || ((a.name_eltern || '') + ' ' + (a.name_kind || '') + ' ' + Object.values(a.antworten).flat().join(' ')).toLowerCase().includes(q)));
+}
+function abgabenListe() {
+  const r = runde(RUNDE), l = r ? abgabenGefiltert() : [], hf = r && hauptFrage(r);
+  $('abZahl').textContent = r ? l.length + ' von ' + abgabenVon(RUNDE).length + ' Abgaben · ' + abgabenVon(RUNDE).filter(istOffen).length + ' noch nicht bearbeitet' : '';
+  $('csvBtn').disabled = !l.length;
+  if (!l.length) { $('abListe').innerHTML = '<tr><td colspan="6" class="leer">' + (r && abgabenVon(RUNDE).length ? 'Keine Treffer.' : 'Noch keine Abgaben.') + '</td></tr>'; return; }
+  $('abListe').innerHTML = l.map(a => {
+    const z = hf ? a.antworten[hf.id] : null, g = a.antworten.gespraech;
+    const st = a.anonym ? (a.erledigt ? '<span class="st gut">✓ gelesen</span>' : '<span class="st">anonym</span>') : a.antwort_lehrer ? '<span class="st gut">beantwortet ' + esc(UF.datum(a.antwort_am)) + '</span>' : a.erledigt ? '<span class="st gut">✓ erledigt</span>' : '<span class="st mittel">offen</span>';
+    return '<tr data-id="' + a.id + '" class="' + (a.id === AKTIV ? 'aktiv' : '') + '"><td class="klein" style="white-space:nowrap">' + esc(UF.abgabeZeit(a)) + '</td>' +
+      '<td class="name">' + (a.anonym ? '<b style="color:var(--muted)">Anonym</b>' : '<b>' + esc(a.name_eltern) + '</b>' + (a.name_kind ? '<span class="klein">Kind: ' + esc(a.name_kind) + '</span>' : '')) + '</td>' +
+      '<td>' + (typeof z === 'number' ? '<b>' + z + '</b> / 5' : '–') + '</td><td class="nurbreit">' + (/^ja/i.test(String(g || '')) ? '<span class="st rot">gewünscht</span>' : '') + '</td><td>' + st + '</td>' +
+      '<td class="akt"><button data-a="lesen">Lesen</button> <button class="del" data-a="del" title="Löschen">✕</button></td></tr>';
+  }).join('');
+}
+['suche', 'abFilter'].forEach(i => $(i).addEventListener('input', abgabenListe));
+$('abListe').addEventListener('click', async e => {
+  const tr = e.target.closest('tr[data-id]'); if (!tr) return; const a = D.abgaben.find(x => x.id === tr.dataset.id); if (!a) return;
+  const b = e.target.closest('button[data-a]');
+  if (b && b.dataset.a === 'del') return abgabeLoeschen(a);
+  lesen(a);
+});
+async function abgabeLoeschen(a) {
+  if (!confirm('Diese Abgabe' + (a.anonym ? ' (anonym, ' + UF.datum(a.abgegeben_am) + ')' : ' von ' + a.name_eltern) + ' endgültig löschen? Die Eltern können in dieser Runde nicht erneut abgeben.')) return;
+  try { UF.ok(await UF.rpc('umfrage_abgabe_loeschen', { schluessel: KEY, p_id: a.id })); if (AKTIV === a.id) zu(); await laden(); }
+  catch (err) { alert(err.fehlt ? 'Die Löschfunktion ist in der Datenbank noch nicht eingerichtet (siehe supabase/elternumfrage_loeschen.sql).' : err.message); }
+}
+function csv() {
+  const r = runde(RUNDE), fr = UF.fragen(r), zelle = v => { v = String(v == null ? '' : v); if (/^[=+\-@\t]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+  const kopf = ['Abgegeben', 'Art', 'Name Eltern', 'Name Kind'].concat(fr.map(f => f.text), ['Rückmeldung', 'Rückmeldung am', 'Erledigt']);
+  const zeilen = abgabenGefiltert().map(a => [UF.abgabeZeit(a), a.anonym ? 'anonym' : 'mit Namen', a.name_eltern, a.name_kind].concat(fr.map(f => { const v = a.antworten[f.id]; return Array.isArray(v) ? v.join(', ') : v; }), [a.antwort_lehrer, UF.zeitpunkt(a.antwort_am), a.erledigt ? 'ja' : '']));
+  const text = '﻿' + [kopf].concat(zeilen).map(z => z.map(zelle).join(';')).join('\r\n');
+  const el = document.createElement('a'); el.href = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+  el.download = 'Elternumfrage_' + r.klasse + '_' + r.titel.replace(/[^\wäöüÄÖÜß-]+/g, '_').slice(0, 40) + '.csv';
+  document.body.appendChild(el); el.click(); el.remove(); setTimeout(() => URL.revokeObjectURL(el.href), 2000);
+}
+$('csvBtn').onclick = csv;
+
+/* ---------- Seitenleiste: eine Abgabe ---------- */
+function lesen(a) {
+  AKTIV = a.id; const r = runde(a.runde_id);
+  $('ptitel').textContent = a.anonym ? 'Anonyme Abgabe · ' + UF.datum(a.abgegeben_am) : a.name_eltern + (a.name_kind ? ' · ' + a.name_kind : '');
+  const zeile = (k, v) => v ? '<dt>' + k + '</dt><dd>' + esc(v) + '</dd>' : '';
+  let h = '<dl class="steck">' + zeile('Umfrage', r ? r.titel : '') + zeile('Abgabe', a.anonym ? 'anonym' : 'mit Namen') + zeile('Eltern', a.name_eltern) + zeile('Kind', a.name_kind) + zeile('Abgegeben', UF.abgabeZeit(a)) + '</dl>';
+  if (!a.anonym) h += '<div class="rueckbox"><label for="rText">Rückmeldung an ' + esc(a.name_eltern) + '</label><textarea id="rText" maxlength="4000" placeholder="Die Eltern sehen diese Nachricht in ihrer App, sobald sie sich anmelden.">' + esc(a.antwort_lehrer || '') + '</textarea>' +
+    '<div class="leiste" style="margin-top:8px"><button class="btn klein" id="rSpeichern" type="button">Rückmeldung speichern</button><span class="klein" id="rStand">' + (a.antwort_am ? 'Zuletzt gesendet: ' + esc(UF.zeitpunkt(a.antwort_am)) : 'Noch keine Rückmeldung') + '</span></div></div>';
+  h += '<label class="haken keindruck"><input type="checkbox" id="rErledigt"' + (a.erledigt ? ' checked' : '') + '> ' + (a.anonym ? 'Gelesen' : 'Erledigt (z. B. Gespräch geführt)') + '</label>';
+  if (r) h += UF.schritte(r).map(s => '<h3>' + esc(s.titel) + '</h3><dl class="antw">' + s.fragen.map(f => { const t = UF.text(f, a.antworten[f.id]); return '<dt>' + esc(f.text) + '</dt><dd' + (t ? '' : ' class="ohne"') + '>' + esc(t || 'keine Angabe') + '</dd>'; }).join('') + '</dl>').join('');
+  h += '<p class="keindruck" style="margin-top:24px"><button class="btn sec klein" id="pLoeschen" type="button">Abgabe löschen</button></p>';
+  $('pInhalt').innerHTML = h;
+  $('panel').classList.add('offen'); document.body.classList.add('panel-offen'); $('pInhalt').scrollTop = 0;
+  document.querySelectorAll('#abListe tr').forEach(tr => tr.classList.toggle('aktiv', tr.dataset.id === a.id));
+  if ($('rSpeichern')) $('rSpeichern').onclick = () => rueckmelden(a, $('rText').value, null);
+  $('rErledigt').onchange = () => rueckmelden(a, a.antwort_lehrer || '', $('rErledigt').checked);
+  $('pLoeschen').onclick = () => abgabeLoeschen(a);
+}
+async function rueckmelden(a, text, erledigt) {
+  try {
+    UF.ok(await UF.rpc('umfrage_rueckmeldung', { schluessel: KEY, abgabe: a.id, p_text: text, p_erledigt: erledigt }));
+    await laden();
+    if (erledigt == null && $('rStand')) $('rStand').textContent = text.trim() ? '✓ Gespeichert – die Eltern sehen die Rückmeldung in ihrer App.' : 'Rückmeldung entfernt.';
+  } catch (err) { alert(err.message); }
+}
+function zu() { AKTIV = null; $('panel').classList.remove('offen'); document.body.classList.remove('panel-offen'); document.querySelectorAll('#abListe tr.aktiv').forEach(tr => tr.classList.remove('aktiv')); }
+$('pZu').onclick = zu;
+$('pDruck').onclick = () => { document.body.classList.add('druck-einzel'); window.print(); };
+addEventListener('afterprint', () => document.body.classList.remove('druck-einzel'));
+
+/* ---------- Umfragen verwalten ---------- */
+function rundenListe() {
+  $('rundenListe').innerHTML = D.runden.length ? D.runden.map(r => {
+    const n = abgabenVon(r.id).length;
+    return '<div class="runde" data-id="' + r.id + '"><div><h3>' + esc(r.titel) + '</h3><span class="klein">Klasse ' + esc(r.klasse) + ' · ' + UF.fragen(r).length + ' Fragen · ' + n + ' Abgaben · angelegt ' + esc(UF.datum(r.created_at)) + '</span> ' +
+      (r.offen ? '<span class="st gut">offen für Eltern</span>' : '<span class="st">geschlossen</span>') + '</div>' +
+      '<div class="knoepfe"><button class="btn klein' + (r.offen ? ' sec' : '') + '" data-a="umschalten">' + (r.offen ? 'Schließen' : 'Öffnen') + '</button>' +
+      '<button class="btn sec klein" data-a="bearbeiten">Bearbeiten</button><button class="btn sec klein" data-a="kopieren">Als neue Runde kopieren</button>' +
+      '<button class="btn sec klein" data-a="link" title="Link für die Eltern kopieren">🔗 Elternlink</button><button class="btn sec klein" data-a="loeschen" title="Umfrage mit allen Abgaben löschen">✕</button></div></div>';
+  }).join('') : '<p class="leer">Noch keine Umfrage.</p>';
+}
+function elternLink(kl) { return new URL('./' + (kl && kl !== '9a' ? '?klasse=' + kl : ''), location.href).href; }
+$('rundenListe').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-a]'); if (!b) return; const r = runde(b.closest('.runde').dataset.id); if (!r) return;
+  try {
+    if (b.dataset.a === 'umschalten') { UF.ok(await UF.rpc('umfrage_runde_speichern', { schluessel: KEY, p_id: r.id, p_titel: r.titel, p_einleitung: r.einleitung, p_fragen: r.fragen, p_offen: !r.offen, p_klasse: r.klasse })); await laden(); }
+    else if (b.dataset.a === 'bearbeiten') editor(Object.assign({}, r, { fragen: JSON.parse(JSON.stringify(r.fragen)) }));
+    else if (b.dataset.a === 'kopieren') editor({ id: null, titel: r.titel + ' (Wiederholung)', einleitung: r.einleitung, klasse: r.klasse, offen: false, fragen: JSON.parse(JSON.stringify(r.fragen)) });
+    else if (b.dataset.a === 'link') { const l = elternLink(r.klasse); try { await navigator.clipboard.writeText(l); alert('Link kopiert:\n' + l); } catch (x) { prompt('Link für die Eltern:', l); } }
+    else if (b.dataset.a === 'loeschen') {
+      const n = abgabenVon(r.id).length;
+      if (!confirm('Umfrage „' + r.titel + '“' + (n ? ' mit allen ' + n + ' Abgaben' : '') + ' endgültig löschen?')) return;
+      if (n && prompt('Zur Sicherheit bitte LÖSCHEN eintippen:') !== 'LÖSCHEN') return;
+      UF.ok(await UF.rpc('umfrage_runde_loeschen', { schluessel: KEY, p_id: r.id })); await laden();
+    }
+  } catch (err) { alert(err.fehlt ? 'Die Löschfunktion ist in der Datenbank noch nicht eingerichtet (siehe supabase/elternumfrage_loeschen.sql).' : err.message); }
+});
+$('neuRunde').onclick = () => editor({ id: null, titel: '', einleitung: '', klasse: '9a', offen: false, fragen: [{ id: neueId(), typ: 'abschnitt', text: 'Abschnitt 1' }, { id: neueId(), typ: 'skala', text: '', links: 'trifft nicht zu', rechts: 'trifft voll zu' }] });
+function neueId() { return 'f' + Math.random().toString(36).slice(2, 8); }
+
+function editor(r) {
+  EDIT = r; EDIT.gesperrt = !!(r.id && abgabenVon(r.id).length);
+  $('editor').classList.remove('hidden'); zeichneEditor(); $('editor').scrollIntoView({ behavior: 'smooth' });
+}
+function zeichneEditor() {
+  const e = EDIT, g = e.gesperrt;
+  let nr = 0;
+  $('editor').innerHTML = '<h2>' + (e.id ? 'Umfrage bearbeiten' : 'Neue Umfrage') + '</h2>' +
+    (g ? '<div class="msg" style="margin:0 0 12px">Zu dieser Umfrage gibt es schon Abgaben. Titel, Einleitung und Status lassen sich ändern, die Fragen nicht mehr. Für geänderte Fragen: „Als neue Runde kopieren“.</div>' : '') +
+    '<label class="feld"><span>Titel</span><input type="text" data-k="titel" maxlength="120" value="' + esc(e.titel) + '" style="width:100%"></label>' +
+    '<label class="feld"><span>Einleitung für die Eltern<small>Erscheint über der Umfrage. Kurz: Wozu, wie lange, Hinweis auf anonym oder mit Namen.</small></span><textarea data-k="einleitung" maxlength="2000">' + esc(e.einleitung) + '</textarea></label>' +
+    '<div class="leiste" style="margin-bottom:14px"><label class="feld" style="margin:0"><span>Klasse</span><input type="text" data-k="klasse" maxlength="3" value="' + esc(e.klasse) + '" style="width:80px"></label>' +
+    '<label class="haken" style="margin:18px 0 0"><input type="checkbox" data-k="offen"' + (e.offen ? ' checked' : '') + '> Für Eltern geöffnet</label></div>' +
+    '<h2 style="font-size:.95rem;margin:6px 0 8px">Fragen</h2>' +
+    e.fragen.map((f, i) => {
+      if (f.typ !== 'abschnitt') nr++;
+      const ab = f.typ === 'abschnitt', d = g ? ' disabled' : '';
+      return '<div class="edfrage' + (ab ? ' abs' : '') + '" data-i="' + i + '"><div class="ek"><b>' + (ab ? '§' : nr) + '</b><select data-f="typ"' + d + '>' + Object.keys(UF.TYPEN).map(t => '<option value="' + t + '"' + (t === f.typ ? ' selected' : '') + '>' + UF.TYPEN[t] + '</option>').join('') + '</select>' +
+        (ab ? '' : '<label class="klein" style="display:flex;gap:4px;align-items:center"><input type="checkbox" data-f="pflicht"' + (f.pflicht ? ' checked' : '') + d + '> Pflicht</label>') + '<span class="sp"></span>' +
+        (g ? '' : '<button type="button" data-m="hoch" title="Nach oben">↑</button><button type="button" data-m="runter" title="Nach unten">↓</button><button type="button" data-m="weg" title="Entfernen" style="color:var(--red)">✕</button>') + '</div>' +
+        '<input type="text" data-f="text" maxlength="300" placeholder="' + (ab ? 'Überschrift des Abschnitts' : 'Frage') + '" value="' + esc(f.text) + '"' + d + '>' +
+        (ab ? '' : '<input type="text" data-f="hilfe" maxlength="300" placeholder="Hinweis unter der Frage (freiwillig)" value="' + esc(f.hilfe || '') + '"' + d + '>') +
+        (f.typ === 'skala' ? '<div class="reihe"><input type="text" data-f="links" maxlength="40" placeholder="Beschriftung 1, z. B. trifft nicht zu" value="' + esc(f.links || '') + '"' + d + '><input type="text" data-f="rechts" maxlength="40" placeholder="Beschriftung 5, z. B. trifft voll zu" value="' + esc(f.rechts || '') + '"' + d + '></div>' : '') +
+        (f.typ === 'wahl' || f.typ === 'mehrfach' ? '<textarea data-f="optionen" placeholder="Antwortmöglichkeiten – eine pro Zeile"' + d + '>' + esc((f.optionen || []).join('\n')) + '</textarea>' : '') + '</div>';
+    }).join('') +
+    (g ? '' : '<div class="leiste" style="margin:4px 0 14px"><button type="button" class="btn sec klein" data-neu="frage">+ Frage</button><button type="button" class="btn sec klein" data-neu="abschnitt">+ Abschnitt</button></div>') +
+    '<div class="leiste" style="margin-top:10px"><button type="button" class="btn" id="edSpeichern">Speichern</button><button type="button" class="btn sec" id="edAbbruch">Abbrechen</button></div><div id="edMsg" class="msg hidden" role="alert"></div>';
+}
+$('editor').addEventListener('input', e => {
+  const t = e.target, k = t.dataset.k, f = t.dataset.f;
+  if (k) EDIT[k] = t.type === 'checkbox' ? t.checked : t.value;
+  else if (f) {
+    const q = EDIT.fragen[t.closest('.edfrage').dataset.i];
+    if (f === 'optionen') q.optionen = t.value.split('\n').map(s => s.trim()).filter(Boolean);
+    else if (f === 'pflicht') q.pflicht = t.checked;
+    else if (f === 'typ') { q.typ = t.value; if (t.value === 'skala' && !q.links) { q.links = 'trifft nicht zu'; q.rechts = 'trifft voll zu'; } if ((t.value === 'wahl' || t.value === 'mehrfach') && !q.optionen) q.optionen = []; zeichneEditor(); }
+    else q[f] = t.value;
+  }
+});
+$('editor').addEventListener('click', async e => {
+  const m = e.target.closest('[data-m]'), n = e.target.closest('[data-neu]');
+  if (m) { const i = Number(m.closest('.edfrage').dataset.i), F = EDIT.fragen;
+    if (m.dataset.m === 'weg') { if (F[i].text && !confirm('„' + F[i].text + '“ entfernen?')) return; F.splice(i, 1); }
+    else { const j = m.dataset.m === 'hoch' ? i - 1 : i + 1; if (j < 0 || j >= F.length) return; [F[i], F[j]] = [F[j], F[i]]; }
+    return zeichneEditor(); }
+  if (n) { EDIT.fragen.push(n.dataset.neu === 'abschnitt' ? { id: neueId(), typ: 'abschnitt', text: '' } : { id: neueId(), typ: 'skala', text: '', links: 'trifft nicht zu', rechts: 'trifft voll zu' }); zeichneEditor(); const l = $('editor').querySelectorAll('.edfrage input[data-f=text]'); l[l.length - 1].focus(); return; }
+  if (e.target.id === 'edAbbruch') { EDIT = null; $('editor').classList.add('hidden'); return; }
+  if (e.target.id === 'edSpeichern') {
+    const msg = $('edMsg'), fehler = t => { msg.textContent = t; msg.classList.remove('hidden'); }; msg.classList.add('hidden');
+    const kl = String(EDIT.klasse || '').trim().toLowerCase();
+    if ((EDIT.titel || '').trim().length < 2) return fehler('Bitte einen Titel eingeben.');
+    if (!/^([1-9]|10)[a-d]$/.test(kl)) return fehler('Klasse bitte wie „9a“ angeben.');
+    const fr = EDIT.fragen.filter(f => f.typ !== 'abschnitt');
+    if (!fr.length) return fehler('Die Umfrage braucht mindestens eine Frage.');
+    const leer = EDIT.fragen.find(f => !(f.text || '').trim()); if (leer) return fehler('Bitte alle Fragen und Abschnitte beschriften (oder leere entfernen).');
+    const opt = fr.find(f => (f.typ === 'wahl' || f.typ === 'mehrfach') && (f.optionen || []).length < 2); if (opt) return fehler('„' + opt.text + '“ braucht mindestens zwei Antwortmöglichkeiten.');
+    const sauber = EDIT.fragen.map(f => { const o = { id: f.id, typ: f.typ, text: f.text.trim() };
+      if (f.typ !== 'abschnitt') { if ((f.hilfe || '').trim()) o.hilfe = f.hilfe.trim(); if (f.pflicht) o.pflicht = true; }
+      if (f.typ === 'skala') { o.links = (f.links || '').trim(); o.rechts = (f.rechts || '').trim(); }
+      if (f.typ === 'wahl' || f.typ === 'mehrfach') o.optionen = f.optionen; return o; });
+    try {
+      const alt = EDIT.id && runde(EDIT.id);
+      const res = UF.ok(await UF.rpc('umfrage_runde_speichern', { schluessel: KEY, p_id: EDIT.id, p_titel: EDIT.titel.trim(), p_einleitung: EDIT.einleitung || '', p_fragen: EDIT.gesperrt && alt ? alt.fragen : sauber, p_offen: !!EDIT.offen, p_klasse: kl }));
+      EDIT = null; $('editor').classList.add('hidden'); RUNDE = res.id; await laden();
+    } catch (err) { fehler(err.message); }
+  }
+});
+
+/* ---------- Elternkonten ---------- */
+function konten() {
+  const q = $('kSuche').value.trim().toLowerCase(), l = D.konten.filter(k => !q || (k.benutzer + ' ' + k.name_eltern + ' ' + k.name_kind).toLowerCase().includes(q));
+  $('kZahl').textContent = D.konten.length + ' Konten angelegt';
+  $('kListe').innerHTML = l.length ? l.map(k => {
+    const n = D.abgaben.filter(a => a.konto_id === k.id).length;
+    return '<tr data-k="' + k.id + '"><td><b>' + esc(k.benutzer) + '</b></td><td>' + esc(k.name_eltern || '–') + (k.name_kind ? '<br><span class="klein">' + esc(k.name_kind) + '</span>' : '') + '</td><td>' + esc(k.klasse) + '</td><td class="nurbreit klein">' + esc(UF.datum(k.created_at)) + '</td><td>' + (n || '–') + '</td>' +
+      '<td class="akt"><button data-a="pw" title="Kennwort zurücksetzen">🔑 Kennwort</button> <button class="del" data-a="del" title="Konto löschen">✕</button></td></tr>';
+  }).join('') : '<tr><td colspan="6" class="leer">' + (D.konten.length ? 'Keine Treffer.' : 'Noch hat sich niemand angemeldet.') + '</td></tr>';
+}
+$('kSuche').addEventListener('input', konten);
+$('kListe').addEventListener('click', async e => {
+  const b = e.target.closest('button[data-a]'); if (!b) return; const k = D.konten.find(x => x.id === b.closest('tr').dataset.k); if (!k) return;
+  try {
+    if (b.dataset.a === 'pw') {
+      const neu = prompt('Neues Kennwort für „' + k.benutzer + '“ (mindestens 6 Zeichen).\nTeilen Sie es den Eltern mit; sie können es danach unter „Mein Konto“ ändern.'); if (neu === null) return;
+      UF.ok(await UF.rpc('umfrage_pw_neu', { schluessel: KEY, konto: k.id, neues_pw: neu.trim() })); alert('Das Kennwort von „' + k.benutzer + '“ wurde geändert.');
+    } else {
+      if (!confirm('Konto „' + k.benutzer + '“ und dessen Abgaben mit Namen endgültig löschen? Anonyme Abgaben bleiben erhalten.')) return;
+      UF.ok(await UF.rpc('umfrage_konto_entfernen', { schluessel: KEY, konto: k.id })); await laden();
+    }
+  } catch (err) { alert(err.fehlt ? 'Die Löschfunktion ist in der Datenbank noch nicht eingerichtet (siehe supabase/elternumfrage_loeschen.sql).' : err.message); }
+});
+
+/* ---------- Zugang ---------- */
+async function oeffnen(s) {
+  KEY = s; const m = $('torMsg'); m.classList.add('hidden');
+  try {
+    await laden(); merk(s);
+    $('tor').classList.add('hidden'); $('bereich').classList.remove('hidden'); $('abmelden').classList.remove('hidden'); $('elternLink').classList.remove('hidden');
+  } catch (e) { KEY = null; merk(null); $('tor').classList.remove('hidden'); m.textContent = e.grund ? e.message : 'Die Daten konnten nicht geladen werden: ' + e.message; m.classList.remove('hidden'); }
+}
+$('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
+$('abmelden').onclick = () => { merk(null); location.reload(); };
+(function () { const s = merk(); if (s) oeffnen(s); })();
+</script>
+</body>
+</html>
