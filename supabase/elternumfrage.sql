@@ -7,7 +7,7 @@
 -- als Zeitpunkt nur das Datum (ohne Uhrzeit). Dass ein Konto teilgenommen hat, steht getrennt in
 -- umfrage_teilnahme (ohne Zeitpunkt, ohne Verweis auf die Abgabe) – nur damit niemand doppelt abgibt.
 -- umfrage_teilnahme ist auch über den Lehrerzugang nicht lesbar.
--- Die Löschfunktionen stehen in supabase/elternumfrage_loeschen.sql.
+-- Die Löschfunktionen stehen in supabase/elternumfrage_loeschen.sql (eingerichtet).
 
 create table public.umfrage_konten (
   id uuid primary key default gen_random_uuid(),

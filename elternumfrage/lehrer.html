@@ -7,7 +7,7 @@
 <title>Elternumfrage – Lehrerbereich</title>
 <link rel="icon" href="../icon.png">
 <script src="../config.js?v=20261108"></script>
-<script src="umfrage.js?v=20261114"></script>
+<script src="umfrage.js?v=20261114b"></script>
 <style>
 /* Aufbau wie der Lehrerbereich von Graduierung und Praktikum: roter Kopf, Filterkarte, Tabelle, Seitenleiste zum Lesen */
 :root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;--tint:#FFF4F2}
@@ -56,6 +56,10 @@ td.name b{display:block}
 .akt{white-space:nowrap;text-align:right}
 .akt button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer;font:inherit;font-size:.82rem}
 .akt button.del{color:var(--red)}
+td.wahlz,th.wahlz{width:34px;padding-right:0}
+td.wahlz input,th.wahlz input{width:18px;height:18px;accent-color:var(--red);cursor:pointer;margin:0}
+.btn.gefahr{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.gefahr:not([disabled]):hover{background:var(--red);color:#fff}
 .leer{text-align:center;color:var(--muted);padding:30px}
 .feld{display:block;margin:0 0 10px}
 .feld span{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}
@@ -106,6 +110,8 @@ dl.antw dd.ohne{color:var(--muted);font-style:italic}
 .rueckbox label{font-weight:700;font-size:.88rem;display:block;margin-bottom:6px}
 .haken{display:flex;align-items:center;gap:8px;font-size:.9rem;margin:10px 0 0;cursor:pointer}
 .haken input{width:18px;height:18px;accent-color:var(--red)}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#222;color:#fff;padding:10px 16px;border-radius:10px;font-size:.9rem;opacity:0;pointer-events:none;transition:.2s;z-index:40;max-width:90vw}
+#toast.zeigen{opacity:1;transform:translate(-50%,0)}
 @media (max-width:800px){#panel{width:100vw}body.panel-offen main{margin-right:0}}
 /* Umfragen verwalten */
 .runde{display:grid;grid-template-columns:1fr auto;gap:6px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
@@ -199,12 +205,13 @@ dl.antw dd.ohne{color:var(--muted);font-style:italic}
             <option value="offen">Noch nicht bearbeitet</option><option value="gespraech">Gesprächswunsch</option>
           </select>
           <button class="btn sec" id="csvBtn" type="button">⬇ Tabelle (CSV für Excel)</button>
+          <button class="btn gefahr" id="abDel" type="button" disabled>🗑 Ausgewählte löschen</button>
         </div>
         <p class="info" id="abZahl"></p>
       </section>
       <section class="card" style="padding:6px 16px"><div class="tw">
         <table>
-          <thead><tr><th>Abgegeben</th><th>Von</th><th title="Gesamtzufriedenheit">Zufrieden</th><th class="nurbreit">Gespräch</th><th>Rückmeldung</th><th></th></tr></thead>
+          <thead><tr><th class="wahlz"><input type="checkbox" id="abAlle" title="Alle angezeigten auswählen"></th><th>Abgegeben</th><th>Von</th><th title="Gesamtzufriedenheit">Zufrieden</th><th class="nurbreit">Gespräch</th><th>Rückmeldung</th><th></th></tr></thead>
           <tbody id="abListe"></tbody>
         </table>
       </div></section>
@@ -224,16 +231,16 @@ dl.antw dd.ohne{color:var(--muted);font-style:italic}
     <!-- Konten -->
     <div id="vKonten" class="hidden">
       <section class="card">
-        <div class="leiste"><input type="search" id="kSuche" placeholder="Benutzername oder Name suchen …"></div>
+        <div class="leiste"><input type="search" id="kSuche" placeholder="Benutzername oder Name suchen …"><button class="btn gefahr" id="kDel" type="button" disabled>🗑 Ausgewählte Konten löschen</button></div>
         <p class="info" id="kZahl"></p>
       </section>
       <section class="card" style="padding:6px 16px"><div class="tw">
         <table>
-          <thead><tr><th>Benutzername</th><th>Name (Eltern / Kind)</th><th>Klasse</th><th class="nurbreit">Angelegt</th><th title="Abgaben mit Namen">Mit Namen</th><th></th></tr></thead>
+          <thead><tr><th class="wahlz"><input type="checkbox" id="kAlle" title="Alle angezeigten auswählen"></th><th>Benutzername</th><th>Name (Eltern / Kind)</th><th>Klasse</th><th class="nurbreit">Angelegt</th><th title="Abgaben mit Namen">Mit Namen</th><th></th></tr></thead>
           <tbody id="kListe"></tbody>
         </table>
       </div></section>
-      <p class="klein">Ob ein Konto anonym teilgenommen hat, wird hier bewusst nicht angezeigt. Namen im Konto stammen aus der letzten Abgabe mit Namen oder aus „Mein Konto“.</p>
+      <p class="klein">Beim Löschen eines Kontos werden auch dessen Abgaben mit Namen gelöscht; anonyme Abgaben bleiben in der Auswertung. Ob ein Konto anonym teilgenommen hat, wird hier bewusst nicht angezeigt. Namen im Konto stammen aus der letzten Abgabe mit Namen oder aus „Mein Konto“.</p>
     </div>
   </div>
 </main>
@@ -251,6 +258,7 @@ dl.antw dd.ohne{color:var(--muted);font-style:italic}
 'use strict';
 const $ = id => document.getElementById(id), esc = UF.esc;
 const SK = 'pags-elternumfrage-lehrer';
+const SEL_A = new Set(), SEL_K = new Set();
 let KEY = null, D = { runden: [], abgaben: [], konten: [] }, RUNDE = null, VIEW = 'Auswertung', ART = '', AKTIV = null, EDIT = null;
 
 function merk(v) { try { if (v === null) sessionStorage.removeItem(SK); else if (v === undefined) return sessionStorage.getItem(SK); else sessionStorage.setItem(SK, v); } catch (e) { return null; } }
@@ -369,11 +377,12 @@ function abgabenListe() {
   const r = runde(RUNDE), l = r ? abgabenGefiltert() : [], hf = r && hauptFrage(r);
   $('abZahl').textContent = r ? l.length + ' von ' + abgabenVon(RUNDE).length + ' Abgaben · ' + abgabenVon(RUNDE).filter(istOffen).length + ' noch nicht bearbeitet' : '';
   $('csvBtn').disabled = !l.length;
-  if (!l.length) { $('abListe').innerHTML = '<tr><td colspan="6" class="leer">' + (r && abgabenVon(RUNDE).length ? 'Keine Treffer.' : 'Noch keine Abgaben.') + '</td></tr>'; return; }
+  [...SEL_A].forEach(id => { if (!l.some(a => a.id === id)) SEL_A.delete(id); }); auswahlA(l);
+  if (!l.length) { $('abListe').innerHTML = '<tr><td colspan="7" class="leer">' + (r && abgabenVon(RUNDE).length ? 'Keine Treffer.' : 'Noch keine Abgaben.') + '</td></tr>'; return; }
   $('abListe').innerHTML = l.map(a => {
     const z = hf ? a.antworten[hf.id] : null, g = a.antworten.gespraech;
     const st = a.anonym ? (a.erledigt ? '<span class="st gut">✓ gelesen</span>' : '<span class="st">anonym</span>') : a.antwort_lehrer ? '<span class="st gut">beantwortet ' + esc(UF.datum(a.antwort_am)) + '</span>' : a.erledigt ? '<span class="st gut">✓ erledigt</span>' : '<span class="st mittel">offen</span>';
-    return '<tr data-id="' + a.id + '" class="' + (a.id === AKTIV ? 'aktiv' : '') + '"><td class="klein" style="white-space:nowrap">' + esc(UF.abgabeZeit(a)) + '</td>' +
+    return '<tr data-id="' + a.id + '" class="' + (a.id === AKTIV ? 'aktiv' : '') + '"><td class="wahlz"><input type="checkbox" data-sel="1"' + (SEL_A.has(a.id) ? ' checked' : '') + ' aria-label="Auswählen"></td><td class="klein" style="white-space:nowrap">' + esc(UF.abgabeZeit(a)) + '</td>' +
       '<td class="name">' + (a.anonym ? '<b style="color:var(--muted)">Anonym</b>' : '<b>' + esc(a.name_eltern) + '</b>' + (a.name_kind ? '<span class="klein">Kind: ' + esc(a.name_kind) + '</span>' : '')) + '</td>' +
       '<td>' + (typeof z === 'number' ? '<b>' + z + '</b> / 5' : '–') + '</td><td class="nurbreit">' + (/^ja/i.test(String(g || '')) ? '<span class="st rot">gewünscht</span>' : '') + '</td><td>' + st + '</td>' +
       '<td class="akt"><button data-a="lesen">Lesen</button> <button class="del" data-a="del" title="Löschen">✕</button></td></tr>';
@@ -382,15 +391,32 @@ function abgabenListe() {
 ['suche', 'abFilter'].forEach(i => $(i).addEventListener('input', abgabenListe));
 $('abListe').addEventListener('click', async e => {
   const tr = e.target.closest('tr[data-id]'); if (!tr) return; const a = D.abgaben.find(x => x.id === tr.dataset.id); if (!a) return;
+  if (e.target.closest('td.wahlz')) { const c = tr.querySelector('input[data-sel]'); if (e.target !== c) c.checked = !c.checked; c.checked ? SEL_A.add(a.id) : SEL_A.delete(a.id); return auswahlA(abgabenGefiltert()); }
   const b = e.target.closest('button[data-a]');
-  if (b && b.dataset.a === 'del') return abgabeLoeschen(a);
+  if (b && b.dataset.a === 'del') return abgabenLoeschen([a]);
   lesen(a);
 });
-async function abgabeLoeschen(a) {
-  if (!confirm('Diese Abgabe' + (a.anonym ? ' (anonym, ' + UF.datum(a.abgegeben_am) + ')' : ' von ' + a.name_eltern) + ' endgültig löschen? Die Eltern können in dieser Runde nicht erneut abgeben.')) return;
-  try { UF.ok(await UF.rpc('umfrage_abgabe_loeschen', { schluessel: KEY, p_id: a.id })); if (AKTIV === a.id) zu(); await laden(); }
-  catch (err) { alert(err.fehlt ? 'Die Löschfunktion ist in der Datenbank noch nicht eingerichtet (siehe supabase/elternumfrage_loeschen.sql).' : err.message); }
+function auswahlA(l) {
+  const n = SEL_A.size, alle = $('abAlle');
+  $('abDel').disabled = !n; $('abDel').textContent = '🗑 Ausgewählte löschen' + (n ? ' (' + n + ')' : '');
+  alle.checked = !!l.length && l.every(a => SEL_A.has(a.id)); alle.indeterminate = n > 0 && !alle.checked;
 }
+$('abAlle').onchange = () => { const l = abgabenGefiltert(); if ($('abAlle').checked) l.forEach(a => SEL_A.add(a.id)); else SEL_A.clear(); abgabenListe(); };
+$('abDel').onclick = () => abgabenLoeschen(D.abgaben.filter(a => SEL_A.has(a.id)));
+/* Abgaben löschen – bei Abgaben mit Namen kann der Lehrer erlauben, dass die Eltern erneut abgeben */
+async function abgabenLoeschen(l) {
+  if (!l.length) return;
+  const named = l.filter(a => !a.anonym), wer = l.length === 1 ? 'die Abgabe ' + (l[0].anonym ? '(anonym, ' + UF.datum(l[0].abgegeben_am) + ')' : 'von ' + l[0].name_eltern) : l.length + ' Abgaben (' + named.length + ' mit Namen, ' + (l.length - named.length) + ' anonym)';
+  if (!confirm('Wirklich ' + wer + ' endgültig löschen?\n\nDas lässt sich nicht rückgängig machen.')) return;
+  let neu = false;
+  if (named.length) neu = confirm('Sollen ' + (named.length === 1 ? named[0].name_eltern : 'die ' + named.length + ' Eltern mit Namen') + ' die Umfrage danach erneut ausfüllen dürfen?\n\nOK = ja, erneut abgeben erlaubt\nAbbrechen = nein' + (l.length > named.length ? '\n\nHinweis: Bei anonymen Abgaben ist das nicht möglich, weil sie keinem Konto zugeordnet sind.' : ''));
+  try {
+    const r = UF.ok(await UF.rpc('umfrage_abgaben_loeschen', { schluessel: KEY, p_ids: l.map(a => a.id), p_neu_erlauben: neu }));
+    l.forEach(a => SEL_A.delete(a.id)); if (l.some(a => a.id === AKTIV)) zu(); await laden();
+    meldung(r.anzahl + (r.anzahl === 1 ? ' Abgabe' : ' Abgaben') + ' gelöscht' + (neu ? ' – die Eltern können erneut abgeben.' : '.'));
+  } catch (err) { alert(err.message); }
+}
+function meldung(t) { let m = $('toast'); if (!m) { m = document.createElement('div'); m.id = 'toast'; m.setAttribute('role', 'status'); document.body.appendChild(m); } m.textContent = t; m.className = 'zeigen'; clearTimeout(meldung.t); meldung.t = setTimeout(() => m.className = '', 3500); }
 function csv() {
   const r = runde(RUNDE), fr = UF.fragen(r), zelle = v => { v = String(v == null ? '' : v); if (/^[=+\-@\t]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
   const kopf = ['Abgegeben', 'Art', 'Name Eltern', 'Name Kind'].concat(fr.map(f => f.text), ['Rückmeldung', 'Rückmeldung am', 'Erledigt']);
@@ -418,7 +444,7 @@ function lesen(a) {
   document.querySelectorAll('#abListe tr').forEach(tr => tr.classList.toggle('aktiv', tr.dataset.id === a.id));
   if ($('rSpeichern')) $('rSpeichern').onclick = () => rueckmelden(a, $('rText').value, null);
   $('rErledigt').onchange = () => rueckmelden(a, a.antwort_lehrer || '', $('rErledigt').checked);
-  $('pLoeschen').onclick = () => abgabeLoeschen(a);
+  $('pLoeschen').onclick = () => abgabenLoeschen([a]);
 }
 async function rueckmelden(a, text, erledigt) {
   try {
@@ -457,7 +483,7 @@ $('rundenListe').addEventListener('click', async e => {
       if (n && prompt('Zur Sicherheit bitte LÖSCHEN eintippen:') !== 'LÖSCHEN') return;
       UF.ok(await UF.rpc('umfrage_runde_loeschen', { schluessel: KEY, p_id: r.id })); await laden();
     }
-  } catch (err) { alert(err.fehlt ? 'Die Löschfunktion ist in der Datenbank noch nicht eingerichtet (siehe supabase/elternumfrage_loeschen.sql).' : err.message); }
+  } catch (err) { alert(err.message); }
 });
 $('neuRunde').onclick = () => editor({ id: null, titel: '', einleitung: '', klasse: '9a', offen: false, fragen: [{ id: neueId(), typ: 'abschnitt', text: 'Abschnitt 1' }, { id: neueId(), typ: 'skala', text: '', links: 'trifft nicht zu', rechts: 'trifft voll zu' }] });
 function neueId() { return 'f' + Math.random().toString(36).slice(2, 8); }
@@ -534,24 +560,45 @@ $('editor').addEventListener('click', async e => {
 function konten() {
   const q = $('kSuche').value.trim().toLowerCase(), l = D.konten.filter(k => !q || (k.benutzer + ' ' + k.name_eltern + ' ' + k.name_kind).toLowerCase().includes(q));
   $('kZahl').textContent = D.konten.length + ' Konten angelegt';
+  [...SEL_K].forEach(id => { if (!l.some(k => k.id === id)) SEL_K.delete(id); }); auswahlK(l);
   $('kListe').innerHTML = l.length ? l.map(k => {
     const n = D.abgaben.filter(a => a.konto_id === k.id).length;
-    return '<tr data-k="' + k.id + '"><td><b>' + esc(k.benutzer) + '</b></td><td>' + esc(k.name_eltern || '–') + (k.name_kind ? '<br><span class="klein">' + esc(k.name_kind) + '</span>' : '') + '</td><td>' + esc(k.klasse) + '</td><td class="nurbreit klein">' + esc(UF.datum(k.created_at)) + '</td><td>' + (n || '–') + '</td>' +
+    return '<tr data-k="' + k.id + '"><td class="wahlz"><input type="checkbox" data-sel="1"' + (SEL_K.has(k.id) ? ' checked' : '') + ' aria-label="Auswählen"></td><td><b>' + esc(k.benutzer) + '</b></td><td>' + esc(k.name_eltern || '–') + (k.name_kind ? '<br><span class="klein">' + esc(k.name_kind) + '</span>' : '') + '</td><td>' + esc(k.klasse) + '</td><td class="nurbreit klein">' + esc(UF.datum(k.created_at)) + '</td><td>' + (n || '–') + '</td>' +
       '<td class="akt"><button data-a="pw" title="Kennwort zurücksetzen">🔑 Kennwort</button> <button class="del" data-a="del" title="Konto löschen">✕</button></td></tr>';
-  }).join('') : '<tr><td colspan="6" class="leer">' + (D.konten.length ? 'Keine Treffer.' : 'Noch hat sich niemand angemeldet.') + '</td></tr>';
+  }).join('') : '<tr><td colspan="7" class="leer">' + (D.konten.length ? 'Keine Treffer.' : 'Noch hat sich niemand angemeldet.') + '</td></tr>';
 }
 $('kSuche').addEventListener('input', konten);
+function kGefiltert() { const q = $('kSuche').value.trim().toLowerCase(); return D.konten.filter(k => !q || (k.benutzer + ' ' + k.name_eltern + ' ' + k.name_kind).toLowerCase().includes(q)); }
+function auswahlK(l) {
+  const n = SEL_K.size, alle = $('kAlle');
+  $('kDel').disabled = !n; $('kDel').textContent = '🗑 Ausgewählte Konten löschen' + (n ? ' (' + n + ')' : '');
+  alle.checked = !!l.length && l.every(k => SEL_K.has(k.id)); alle.indeterminate = n > 0 && !alle.checked;
+}
+$('kAlle').onchange = () => { const l = kGefiltert(); if ($('kAlle').checked) l.forEach(k => SEL_K.add(k.id)); else SEL_K.clear(); konten(); };
+$('kDel').onclick = () => kontenLoeschen(D.konten.filter(k => SEL_K.has(k.id)));
+/* Konten löschen: Konto, Teilnahmevermerke und alle Abgaben mit Namen. Anonyme Abgaben bleiben (sie gehören zu keinem Konto). */
+async function kontenLoeschen(l) {
+  if (!l.length) return;
+  const nAbg = D.abgaben.filter(a => l.some(k => k.id === a.konto_id)).length;
+  const wer = l.length === 1 ? 'das Konto „' + l[0].benutzer + '“' + (l[0].name_eltern ? ' (' + l[0].name_eltern + ')' : '') : 'diese ' + l.length + ' Konten:\n' + l.slice(0, 12).map(k => '• ' + k.benutzer + (k.name_eltern ? ' (' + k.name_eltern + ')' : '')).join('\n') + (l.length > 12 ? '\n• …' : '');
+  if (!confirm('Wirklich ' + wer + '\nendgültig löschen?\n\nDabei werden auch ' + (nAbg === 1 ? '1 Abgabe' : nAbg + ' Abgaben') + ' mit Namen gelöscht. Anonyme Abgaben bleiben in der Auswertung erhalten.\nDas lässt sich nicht rückgängig machen.')) return;
+  if (l.length >= 5 && prompt('Zur Sicherheit bitte LÖSCHEN eintippen:') !== 'LÖSCHEN') return;
+  try {
+    const r = UF.ok(await UF.rpc('umfrage_konten_entfernen', { schluessel: KEY, p_ids: l.map(k => k.id) }));
+    l.forEach(k => SEL_K.delete(k.id)); if (AKTIV && !D.abgaben.some(a => a.id === AKTIV && !l.some(k => k.id === a.konto_id))) zu(); await laden();
+    meldung(r.anzahl + (r.anzahl === 1 ? ' Konto' : ' Konten') + ' gelöscht.');
+  } catch (err) { alert(err.message); }
+}
 $('kListe').addEventListener('click', async e => {
-  const b = e.target.closest('button[data-a]'); if (!b) return; const k = D.konten.find(x => x.id === b.closest('tr').dataset.k); if (!k) return;
+  const tr = e.target.closest('tr[data-k]'); if (!tr) return;
+  if (e.target.closest('td.wahlz')) { const c = tr.querySelector('input[data-sel]'); if (e.target !== c) c.checked = !c.checked; c.checked ? SEL_K.add(tr.dataset.k) : SEL_K.delete(tr.dataset.k); return auswahlK(kGefiltert()); }
+  const b = e.target.closest('button[data-a]'); if (!b) return; const k = D.konten.find(x => x.id === tr.dataset.k); if (!k) return;
   try {
     if (b.dataset.a === 'pw') {
       const neu = prompt('Neues Kennwort für „' + k.benutzer + '“ (mindestens 6 Zeichen).\nTeilen Sie es den Eltern mit; sie können es danach unter „Mein Konto“ ändern.'); if (neu === null) return;
       UF.ok(await UF.rpc('umfrage_pw_neu', { schluessel: KEY, konto: k.id, neues_pw: neu.trim() })); alert('Das Kennwort von „' + k.benutzer + '“ wurde geändert.');
-    } else {
-      if (!confirm('Konto „' + k.benutzer + '“ und dessen Abgaben mit Namen endgültig löschen? Anonyme Abgaben bleiben erhalten.')) return;
-      UF.ok(await UF.rpc('umfrage_konto_entfernen', { schluessel: KEY, konto: k.id })); await laden();
-    }
-  } catch (err) { alert(err.fehlt ? 'Die Löschfunktion ist in der Datenbank noch nicht eingerichtet (siehe supabase/elternumfrage_loeschen.sql).' : err.message); }
+    } else return kontenLoeschen([k]);
+  } catch (err) { alert(err.message); }
 });
 
 /* ---------- Zugang ---------- */

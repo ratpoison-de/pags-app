@@ -1,9 +1,6 @@
--- Elternumfrage – Löschfunktionen (Konto löschen, Abgabe löschen, Umfrage löschen).
--- Noch NICHT im Projekt eingerichtet: Einmal im Supabase-Dashboard → SQL Editor einfügen und ausführen.
--- Solange sie fehlen, funktioniert die App normal; nur die Löschen-Knöpfe melden „noch nicht eingerichtet“.
+-- Elternumfrage – Löschfunktionen. Im Projekt pags-lernplaner eingerichtet (Migration „elternumfrage_loeschen“, 14.11.2026).
 
--- Konto löschen: Konto, Teilnahmevermerke und Abgaben MIT Namen werden gelöscht.
--- Anonyme Abgaben bleiben (sie sind keinem Konto zugeordnet und lassen sich nicht finden).
+-- Eltern: eigenes Konto löschen (Konto, Teilnahmevermerke, Abgaben mit Namen; anonyme Abgaben bleiben)
 create function public.umfrage_konto_loeschen(p_id uuid, p_pw text) returns jsonb
 language plpgsql security definer set search_path to '' as $$
 declare s text;
@@ -14,6 +11,7 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
+-- Lehrer: Umfrage mit allen Abgaben löschen
 create function public.umfrage_runde_loeschen(schluessel text, p_id uuid) returns jsonb
 language plpgsql security definer set search_path to '' as $$
 begin
@@ -22,19 +20,28 @@ begin
   return jsonb_build_object('ok', true);
 end $$;
 
-create function public.umfrage_abgabe_loeschen(schluessel text, p_id uuid) returns jsonb
+-- Lehrer: Abgaben löschen (eine oder mehrere). p_neu_erlauben: bei Abgaben mit Namen darf das Konto danach erneut abgeben.
+create function public.umfrage_abgaben_loeschen(schluessel text, p_ids uuid[], p_neu_erlauben boolean default false) returns jsonb
 language plpgsql security definer set search_path to '' as $$
+declare n int;
 begin
   if not public.umfrage_lehrer_ok(schluessel) then return jsonb_build_object('ok', false, 'grund', 'zugang'); end if;
-  delete from public.umfrage_abgaben where id = p_id;   -- Teilnahmevermerk bleibt: keine zweite Abgabe in dieser Runde
-  return jsonb_build_object('ok', true);
+  if coalesce(p_neu_erlauben, false) then
+    delete from public.umfrage_teilnahme t using public.umfrage_abgaben a
+     where a.id = any(p_ids) and a.konto_id is not null and t.konto_id = a.konto_id and t.runde_id = a.runde_id;
+  end if;
+  delete from public.umfrage_abgaben where id = any(p_ids);
+  get diagnostics n = row_count;
+  return jsonb_build_object('ok', true, 'anzahl', n);
 end $$;
 
-create function public.umfrage_konto_entfernen(schluessel text, konto uuid) returns jsonb
+-- Lehrer: Elternkonten löschen (eines oder mehrere): Konto, Teilnahmevermerke und Abgaben mit Namen.
+create function public.umfrage_konten_entfernen(schluessel text, p_ids uuid[]) returns jsonb
 language plpgsql security definer set search_path to '' as $$
+declare n int;
 begin
   if not public.umfrage_lehrer_ok(schluessel) then return jsonb_build_object('ok', false, 'grund', 'zugang'); end if;
-  delete from public.umfrage_konten where id = konto;
-  return jsonb_build_object('ok', true);
+  delete from public.umfrage_konten where id = any(p_ids);
+  get diagnostics n = row_count;
+  return jsonb_build_object('ok', true, 'anzahl', n);
 end $$;
-
