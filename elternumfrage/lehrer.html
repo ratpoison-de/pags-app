@@ -75,14 +75,46 @@ td.wahlz input,th.wahlz input{width:18px;height:18px;accent-color:var(--red);cur
 .frage .meta{font-size:.8rem;color:var(--muted);margin:0 0 10px}
 .zeile{display:grid;grid-template-columns:minmax(110px,32%) 1fr 74px;gap:10px;align-items:center;margin:5px 0;font-size:.88rem}
 .zeile .bar{height:20px;background:#F0EEEB;border-radius:5px;overflow:hidden}
-.zeile .bar i{display:block;height:100%;background:var(--red);border-radius:5px}
+.zeile .bar i{display:block;height:100%;background:var(--serie);border-radius:0 4px 4px 0}
 .zeile .w{text-align:right;color:var(--muted);font-size:.82rem;white-space:nowrap}
 .schnitt{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
 .schnitt b{font-size:1.9rem;color:var(--red);line-height:1}
 .delta{font-size:.82rem;font-weight:700}
 .delta.plus{color:var(--ok)}.delta.minus{color:var(--red)}.delta.null{color:var(--muted)}
-.blick .zeile{grid-template-columns:minmax(140px,45%) 1fr 110px}
-.blick .bar i.g{background:var(--ok)}.blick .bar i.m{background:var(--warn)}.blick .bar i.s{background:var(--red)}
+:root{--neg2:#c0392f;--neg1:#e58f84;--neu:#d6d3cc;--pos1:#86b6ef;--pos2:#1c5cab;--serie:#2a78d6}
+.zeile .bar i.z1{background:var(--neg2)}.zeile .bar i.z2{background:var(--neg1)}.zeile .bar i.z3{background:var(--neu)}.zeile .bar i.z4{background:var(--pos1)}.zeile .bar i.z5{background:var(--pos2)}
+.legende{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--muted);margin:0 0 10px;align-items:center}
+.legende i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.legende i.ring{background:#fff;border:2px solid var(--serie);border-radius:50%}
+.legende i.punkt{background:var(--serie);border-radius:50%}
+.likert .lz{display:grid;grid-template-columns:minmax(140px,38%) 1fr 104px;gap:10px;align-items:center;margin:6px 0;font-size:.86rem}
+.likert .plot{position:relative;height:24px}
+.likert .plot::after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#8a8a8a;z-index:0}
+.likert .segs{position:absolute;top:0;bottom:0;display:flex;z-index:1}
+.likert .segs i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.72rem;font-weight:700;border-left:1px solid #fff;border-right:1px solid #fff;overflow:hidden;min-width:0}
+.likert .segs i:first-child{border-radius:4px 0 0 4px}.likert .segs i:last-child{border-radius:0 4px 4px 0}.likert .segs i:only-child{border-radius:4px}
+.likert .s1{background:var(--neg2);color:#fff}.likert .s2{background:var(--neg1);color:#3a1410}.likert .s3{background:var(--neu);color:#333}.likert .s4{background:var(--pos1);color:#0d2b52}.likert .s5{background:var(--pos2);color:#fff}
+.likert .w{text-align:right;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.likert .w b{color:var(--text);font-size:.95rem}
+.likert .achse{display:grid;grid-template-columns:minmax(140px,38%) 1fr 104px;gap:10px;font-size:.74rem;color:var(--muted);margin-top:2px}
+.likert .achse div{display:flex;justify-content:space-between}
+.likert .gruppe{font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin:14px 0 2px}
+.punkte .pz{display:grid;grid-template-columns:minmax(110px,40%) 1fr 96px;gap:10px;align-items:center;margin:4px 0;font-size:.86rem}
+.punkte .spur{position:relative;height:26px;margin:0 9px;background:repeating-linear-gradient(to right,#dedbd6 0 1px,transparent 1px 25%);border-right:1px solid #dedbd6}
+.punkte .spur::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#ebe9e5}
+.punkte .spur i{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--serie);box-shadow:0 0 0 2px #fff}
+.punkte .spur i.alt{background:#fff;border:2px solid var(--serie);box-shadow:none}
+.punkte .w{text-align:right;font-size:.82rem;color:var(--muted);white-space:nowrap}.punkte .w b{color:var(--text);font-size:.95rem}
+.punkte .skala{display:grid;grid-template-columns:minmax(110px,40%) 1fr 96px;gap:10px;font-size:.74rem;color:var(--muted)}
+.punkte .skala div{display:flex;justify-content:space-between;margin:0 5px}
+.tage{display:flex;align-items:flex-end;gap:2px;height:150px;border-bottom:1px solid #cfccc6;padding-top:18px}
+.tage .t{flex:1 1 0;max-width:44px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+.tage .t b{font-size:.74rem;color:var(--text);font-weight:600;margin-bottom:2px}
+.tage .t i{display:block;width:100%;max-width:26px;background:var(--serie);border-radius:4px 4px 0 0;min-height:0}
+.tagex{display:flex;gap:2px;font-size:.72rem;color:var(--muted);margin-top:3px}
+.tagex span{flex:1 1 0;max-width:44px;text-align:center;min-width:0;white-space:nowrap;overflow:visible}
+#tip{position:fixed;z-index:50;background:#222;color:#fff;font-size:.8rem;padding:6px 9px;border-radius:7px;pointer-events:none;max-width:280px;line-height:1.35;display:none;white-space:pre-line}
+[data-tip]{cursor:default}
 .texte{list-style:none;margin:0;padding:0}
 .texte li{border-left:3px solid var(--line);padding:6px 10px;margin:0 0 8px;background:#FAFAFA;border-radius:0 8px 8px 0;font-size:.92rem;white-space:pre-wrap}
 .texte li small{display:block;color:var(--muted);font-size:.76rem;margin-top:2px;white-space:normal}
@@ -133,7 +165,7 @@ dl.antw dd.ohne{color:var(--muted);font-style:italic}
   .nurdruckI{display:inline}
   @page{size:A4;margin:14mm}
   body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:10pt}
-  header,#tor,#steuer,#panel,.akt,.keindruck,#vUmfragen,#vKonten{display:none!important}
+  header,#tor,#steuer,#panel,#tip,.akt,.keindruck,#vUmfragen,#vKonten{display:none!important}
   main,body.panel-offen main{margin:0!important;padding:0;max-width:none}
   .nurdruck{display:block;font-size:14pt;margin:0 0 8pt;color:#000}
   .card,.kpi{border:1px solid #ddd;break-inside:avoid;padding:10px!important}
@@ -307,10 +339,68 @@ function deltaHtml(jetzt, v) {
   const d = jetzt - v.mittel, k = Math.abs(d) < 0.05 ? 'null' : d > 0 ? 'plus' : 'minus';
   return '<span class="delta ' + k + '" title="Vorher: Ø ' + UF.zahl(v.mittel, 1) + ' (' + v.n + ' Antworten) in „' + esc(v.runde.titel) + '“">' + (k === 'null' ? '± 0' : (d > 0 ? '▲ +' : '▼ ') + UF.zahl(d, 1)) + ' ggü. vorher</span>';
 }
-function balken(label, n, gesamt, extra) {
+function balken(label, n, gesamt, extra, cls) {
   const p = gesamt ? n / gesamt * 100 : 0;
-  return '<div class="zeile"><span>' + label + '</span><span class="bar"><i style="width:' + p.toFixed(1) + '%"></i></span><span class="w">' + n + ' · ' + UF.zahl(p) + ' %' + (extra || '') + '</span></div>';
+  return '<div class="zeile" data-tip="' + label + ': ' + n + ' von ' + gesamt + ' (' + UF.zahl(p) + ' %)"><span>' + label + '</span><span class="bar"><i' + (cls ? ' class="' + cls + '"' : '') + ' style="width:' + p.toFixed(1) + '%"></i></span><span class="w">' + n + ' · ' + UF.zahl(p) + ' %' + (extra || '') + '</span></div>';
 }
+/* ---------- Schaubilder ---------- */
+/* 1) Stimmungsbild: alle Skalenfragen als gestapelte Balken, an der Mitte (3) ausgerichtet */
+function likertZeile(f, w, r) {
+  const n = w.length, m = mittel(w);
+  if (!n) return '<div class="lz"><span>' + esc(f.text) + '</span><span class="plot"></span><span class="w">–</span></div>';
+  const z = [1, 2, 3, 4, 5].map(k => w.filter(v => v === k).length), p = z.map(k => k / n * 100);
+  const links = p[0] + p[1] + p[2] / 2;
+  const segs = z.map((k, i) => k ? '<i class="s' + (i + 1) + '" style="width:' + (p[i] / (p.reduce((x, y) => x + y, 0)) * 100).toFixed(2) + '%" data-tip="' + esc(f.text) + '\nAntwort ' + (i + 1) + (i === 0 && f.links ? ' (' + esc(f.links) + ')' : i === 4 && f.rechts ? ' (' + esc(f.rechts) + ')' : '') + ': ' + k + ' von ' + n + ' (' + UF.zahl(p[i]) + ' %)">' + (p[i] >= 12 ? k : '') + '</i>' : '').join('');
+  return '<div class="lz"><span>' + esc(f.text) + '</span><span class="plot"><span class="segs" style="left:' + ((100 - links) / 2).toFixed(2) + '%;width:50%">' + segs + '</span></span>' +
+    '<span class="w"><b>Ø ' + UF.zahl(m, 1) + '</b> · ' + n + '<br>' + deltaHtml(m, vorher(r, f.id)) + '</span></div>';
+}
+function schaubilder(r, abg) {
+  let h = '';
+  const schritte = UF.schritte(r).map(s => ({ titel: s.titel, skalen: s.fragen.filter(f => f.typ === 'skala') })).filter(s => s.skalen.length);
+  if (schritte.length) {
+    h += '<div class="card likert" style="margin-top:14px"><h2>Stimmungsbild · alle Skalenfragen</h2>' +
+      '<div class="legende"><span><i style="background:var(--neg2)"></i>1</span><span><i style="background:var(--neg1)"></i>2</span><span><i style="background:var(--neu)"></i>3 (neutral)</span><span><i style="background:var(--pos1)"></i>4</span><span><i style="background:var(--pos2)"></i>5</span><span>· Zahlen im Balken = Anzahl der Antworten</span></div>' +
+      schritte.map(s => '<div class="gruppe">' + esc(s.titel) + '</div>' + s.skalen.map(f => likertZeile(f, skalaWerte(abg, f.id), r)).join('')).join('') +
+      '<div class="achse"><span></span><div><span>← kritisch (1–2)</span><span>Mitte</span><span>positiv (4–5) →</span></div><span></span></div>' +
+      '<p class="klein" style="margin:8px 0 0">Jeder Balken zeigt, wie sich die Antworten verteilen. Je weiter er nach rechts reicht, desto positiver das Bild. Rechts: Durchschnitt · Zahl der Antworten' + (schritte.some(s => s.skalen.some(f => vorher(r, f.id))) ? ' · Vergleich mit der vorherigen Runde' : '') + '.</p></div>';
+  }
+  h += '<div class="zweispalt" style="margin-bottom:14px">';
+  /* 2) Durchschnitt je Themenbereich als Punkte auf der Skala 1–5 (mit vorheriger Runde, falls vorhanden) */
+  const ber = schritte.map(s => {
+    const ms = s.skalen.map(f => mittel(skalaWerte(abg, f.id))).filter(m => m != null), vs = s.skalen.map(f => vorher(r, f.id)).filter(Boolean).map(v => v.mittel);
+    return { titel: s.titel, m: mittel(ms), v: mittel(vs), n: s.skalen.length };
+  }).filter(b => b.m != null);
+  if (ber.length >= 2) {
+    const hatAlt = ber.some(b => b.v != null), pos = m => ((m - 1) / 4 * 100).toFixed(1);
+    h += '<div class="card punkte"><h2>Durchschnitt je Themenbereich</h2>' +
+      (hatAlt ? '<div class="legende"><span><i class="punkt"></i>diese Runde</span><span><i class="ring"></i>vorherige Runde</span></div>' : '') +
+      ber.map(b => '<div class="pz" data-tip="' + esc(b.titel) + '\nØ ' + UF.zahl(b.m, 2) + ' aus ' + b.n + (b.n === 1 ? ' Skalenfrage' : ' Skalenfragen') + (b.v != null ? '\nvorherige Runde: Ø ' + UF.zahl(b.v, 2) : '') + '"><span>' + esc(b.titel) + '</span><span class="spur">' +
+        (b.v != null ? '<i class="alt" style="left:' + pos(b.v) + '%"></i>' : '') + '<i style="left:' + pos(b.m) + '%"></i></span><span class="w"><b>Ø ' + UF.zahl(b.m, 1) + '</b>' + (b.v != null ? ' <span class="klein">(' + UF.zahl(b.v, 1) + ')</span>' : '') + '</span></div>').join('') +
+      '<div class="skala"><span></span><div><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div><span></span></div>' +
+      '<p class="klein" style="margin:8px 0 0">Mittelwert der Skalenfragen eines Abschnitts (jede Frage zählt gleich).</p></div>';
+  }
+  /* 3) Abgaben pro Tag */
+  const tag = a => { const d = new Date(a.abgegeben_am); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); };
+  const tage = abg.map(tag).sort((x, y) => x - y);
+  if (tage.length) {
+    const T = 864e5, ende = tage[tage.length - 1]; let start = Math.max(tage[0], ende - 20 * T); if (ende - start < 6 * T) start = ende - 6 * T;
+    const liste = []; for (let t = start; t <= ende + T / 2; t += T) { const d = new Date(t + T / 4); const k = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); liste.push({ d, n: tage.filter(x => x === k).length }); }
+    const max = Math.max(1, ...liste.map(x => x.n)), frueher = tage.filter(x => x < start - T / 2).length, jedes = liste.length > 10 ? 2 : 1;
+    const dm = d => d.getDate() + '.' + (d.getMonth() + 1) + '.';
+    h += '<div class="card"><h2>Abgaben pro Tag</h2><div class="tage">' + liste.map(x => '<div class="t" data-tip="' + dm(x.d) + ': ' + x.n + (x.n === 1 ? ' Abgabe' : ' Abgaben') + '">' + (x.n ? '<b>' + x.n + '</b>' : '') + '<i style="height:' + (x.n / max * 100).toFixed(1) + '%"></i></div>').join('') + '</div>' +
+      '<div class="tagex">' + liste.map((x, i) => '<span>' + ((liste.length - 1 - i) % jedes === 0 ? dm(x.d) : '') + '</span>').join('') + '</div>' +
+      '<p class="klein" style="margin:8px 0 0">' + (frueher ? frueher + ' frühere Abgaben sind nicht dargestellt. ' : '') + 'Hilft zu erkennen, wann eine Erinnerung an die Eltern sinnvoll ist.</p></div>';
+  }
+  return h + '</div>';
+}
+/* Tooltip für alle Schaubilder */
+(function () {
+  const tip = document.createElement('div'); tip.id = 'tip'; document.body.appendChild(tip);
+  const zeig = e => { const el = e.target.closest && e.target.closest('[data-tip]'); if (!el) { tip.style.display = 'none'; return; }
+    tip.textContent = el.dataset.tip; tip.style.display = 'block';
+    const b = tip.getBoundingClientRect(); tip.style.left = Math.max(6, Math.min(e.clientX + 12, innerWidth - b.width - 6)) + 'px'; tip.style.top = (e.clientY + 16 + b.height > innerHeight ? e.clientY - b.height - 10 : e.clientY + 16) + 'px'; };
+  document.addEventListener('mousemove', zeig); document.addEventListener('click', zeig); document.addEventListener('scroll', () => tip.style.display = 'none', true);
+})();
 function hauptFrage(r) { const s = UF.fragen(r).filter(f => f.typ === 'skala'); return s.find(f => f.id === 'zufrieden') || s.find(f => f.pflicht) || s[0]; }
 function auswertung() {
   const box = $('auswertung'), r = runde(RUNDE);
@@ -327,14 +417,7 @@ function auswertung() {
     (hf ? '<div class="kpi"><b>' + (hm == null ? '–' : 'Ø ' + UF.zahl(hm, 1)) + '</b><span>' + esc(hf.text.replace(/\?$/, '')) + ' (1–5)</span> ' + deltaHtml(hm, vorher(r, hf.id)) + '</div>' : '') +
     '</div>';
   if (!abg.length) { box.innerHTML = h + '<div class="card leer" style="margin-top:14px">' + (alle.length ? 'Keine Abgaben für diesen Filter.' : 'Noch keine Abgaben. ' + (r.offen ? 'Die Umfrage ist geöffnet – teilen Sie den Link mit den Eltern.' : 'Die Umfrage ist geschlossen. Öffnen Sie sie unter „Umfragen“.')) + '</div>'; bindeFamilien(r); return; }
-  /* Auf einen Blick: alle Skalenfragen */
-  const skalen = UF.fragen(r).filter(f => f.typ === 'skala');
-  if (skalen.length) {
-    h += '<div class="card blick" style="margin-top:14px"><h2>Auf einen Blick · Durchschnitt der Skalenfragen (1–5)</h2>' + skalen.map(f => {
-      const w = skalaWerte(abg, f.id), m = mittel(w), k = m == null ? '' : m >= 4 ? 'g' : m >= 3 ? 'm' : 's';
-      return '<div class="zeile"><span>' + esc(f.text) + '</span><span class="bar"><i class="' + k + '" style="width:' + (m == null ? 0 : (m / 5 * 100)).toFixed(1) + '%"></i></span><span class="w">' + (m == null ? '–' : 'Ø ' + UF.zahl(m, 1) + ' (' + w.length + ')') + '<br>' + deltaHtml(m, vorher(r, f.id)) + '</span></div>';
-    }).join('') + '<p class="klein" style="margin:8px 0 0">Grün ab 4,0 · Gelb ab 3,0 · Rot darunter. Der Vergleich bezieht sich auf die vorherige Runde mit derselben Frage.</p></div>';
-  }
+  h += schaubilder(r, abg);
   /* Gesprächswünsche */
   const gw = abg.filter(a => !a.anonym && /^ja/i.test(String(a.antworten.gespraech || '')));
   const gwAnon = abg.filter(a => a.anonym && /^ja/i.test(String(a.antworten.gespraech || ''))).length;
@@ -350,7 +433,7 @@ function auswertung() {
       if (f.typ === 'skala') {
         const w = antw.map(x => x.v), m = mittel(w);
         inhalt = '<div class="schnitt"><b>' + (m == null ? '–' : 'Ø ' + UF.zahl(m, 1)) + '</b>' + deltaHtml(m, vorher(r, f.id)) + '</div>' +
-          [5, 4, 3, 2, 1].map(z => balken(z + (z === 5 && f.rechts ? ' · ' + esc(f.rechts) : z === 1 && f.links ? ' · ' + esc(f.links) : ''), w.filter(v => v === z).length, n)).join('');
+          [5, 4, 3, 2, 1].map(z => balken(z + (z === 5 && f.rechts ? ' · ' + esc(f.rechts) : z === 1 && f.links ? ' · ' + esc(f.links) : ''), w.filter(v => v === z).length, n, '', 'z' + z)).join('');
       } else if (f.typ === 'wahl' || f.typ === 'mehrfach') {
         const opt = (f.optionen || []).slice(); antw.forEach(x => [].concat(x.v).forEach(o => { if (!opt.includes(o)) opt.push(o); }));
         inhalt = opt.map(o => balken(esc(o), antw.filter(x => [].concat(x.v).includes(o)).length, n)).join('') + (f.typ === 'mehrfach' ? '<p class="klein" style="margin:6px 0 0">Mehrfachnennung: Prozent bezogen auf ' + n + ' Antwortende.</p>' : '');
