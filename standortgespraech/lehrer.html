@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Standortgespräche – Lehrerbereich</title>
+<link rel="icon" href="../icon.png">
+<script src="../config.js?v=20261108"></script>
+<script src="gespraech.js?v=20261115"></script>
+<style>
+/* Aufbau wie der Lehrerbereich von Elternumfrage, Graduierung und Praktikum: roter Kopf, Karten, Reiter */
+:root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;--tint:#FFF4F2}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);line-height:1.45}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+header{background:var(--red);color:#fff;padding:14px 16px}
+header .in{max-width:1000px;margin:0 auto;display:flex;align-items:center;gap:12px}
+header img{height:38px;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.1rem;margin:0}
+header p{margin:0;font-size:.82rem;opacity:.9}
+header .sp{flex:1;min-width:0;overflow:hidden}
+header h1,header p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header button{white-space:nowrap}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 10px;font:inherit;font-size:.8rem;cursor:pointer}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.card>h2{margin:0 0 10px;font-size:1.05rem}
+input,select,textarea{font:inherit;padding:9px 11px;border:1px solid #ccc;border-radius:8px;background:#fff;color:var(--text);max-width:100%}
+textarea{width:100%;min-height:90px;resize:vertical;line-height:1.45}
+.btn{padding:10px 14px;font:inherit;font-weight:600;border-radius:8px;border:0;cursor:pointer;background:var(--red);color:#fff}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.klein{padding:6px 10px;font-size:.84rem}
+.btn[disabled]{opacity:.5;cursor:default}
+.leiste{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.info{color:var(--muted);font-size:.85rem;margin:10px 0 0}
+.klein{color:var(--muted);font-size:.8rem}
+.hidden{display:none!important}
+.msg{padding:10px 12px;border-radius:8px;background:#FDECEA;color:#8A1C1C;margin-top:10px}
+.msg.gut{background:#E9F6EC;color:#14562B}
+.umschalt{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.umschalt button{flex:1 1 auto;font:inherit;font-size:.9rem;padding:9px 12px;border:1.5px solid var(--line);background:#fff;border-radius:8px;cursor:pointer}
+.umschalt button[aria-pressed=true]{border-color:var(--red);background:var(--tint);font-weight:700;color:var(--red)}
+.zahl{display:inline-block;min-width:20px;padding:0 6px;border-radius:10px;background:var(--red);color:#fff;font-size:.76rem;font-weight:700;margin-left:4px}
+.st{display:inline-block;border-radius:12px;padding:1px 9px;font-size:.78rem;font-weight:700;background:#EEE;color:#555;white-space:nowrap}
+.st.gut{background:#E9F6EC;color:#14562B}
+.st.mittel{background:#FFF3DC;color:#7A4A00}
+.st.rot{background:#FDECEA;color:#8A1C1C}
+.feld{display:block;margin:0 0 10px}
+.feld span{display:block;font-weight:600;font-size:.88rem;margin-bottom:3px}
+.feld small{color:var(--muted);font-size:.78rem;font-weight:400}
+.feld input[type=text],.feld input[type=tel]{width:100%}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-size:1.8rem;line-height:1.1;color:var(--red)}
+.kpi span{font-size:.82rem;color:var(--muted)}
+#neuBanner{display:flex;align-items:center;gap:10px;background:#FFF3DC;border:1px solid #F0D49A;color:#5E3A00;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-weight:600}
+#neuBanner span{flex:1}
+#neuBanner .btn{color:#fff;background:var(--red)}
+/* Sprechzeit anlegen */
+.fenster{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.fenster label{display:grid;gap:3px;font-size:.84rem;font-weight:600}
+.vorschau{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 0}
+.vorschau i{font-style:normal;font-size:.8rem;border:1px solid var(--line);border-radius:6px;padding:2px 7px;background:#FAFAFA}
+/* Tage und Termine */
+.tagkopf{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:8px}
+.tagkopf h2{margin:0;font-size:1.05rem;flex:1 1 auto}
+.zeile{display:grid;grid-template-columns:58px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.zeile .uhr{font-weight:700;font-variant-numeric:tabular-nums}
+.zeile .wer b{display:block}
+.zeile .wer small{display:block;color:var(--muted);font-size:.82rem;white-space:pre-wrap}
+.zeile.frei .wer{color:var(--muted);font-size:.9rem}
+.zeile.vorbei{opacity:.6}
+.akt{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+.akt button{border:1px solid var(--line);background:#fff;border-radius:6px;padding:5px 8px;cursor:pointer;font:inherit;font-size:.82rem}
+.akt button.del{color:var(--red)}
+/* Meldungen */
+.meld{list-style:none;margin:0;padding:0}
+.meld li{display:grid;grid-template-columns:28px 1fr;gap:8px;padding:10px 8px;border-top:1px solid var(--line);font-size:.93rem}
+.meld li:first-child{border-top:0}
+.meld li.neu{background:#FFF9EC}
+.meld li small{display:block;color:var(--muted);font-size:.78rem;margin-top:1px}
+.leer{text-align:center;color:var(--muted);padding:26px 10px}
+/* Übersicht */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.76rem;text-transform:uppercase;color:var(--muted);letter-spacing:.03em;white-space:nowrap}
+td.z{white-space:nowrap;font-weight:700;font-variant-numeric:tabular-nums}
+td.frei{color:var(--muted);font-style:italic}
+#uebInhalt h3{margin:18px 0 4px;font-size:1rem;color:var(--red)}
+#uebInhalt h3:first-of-type{margin-top:6px}
+dialog{border:0;border-radius:14px;padding:0;width:min(520px,calc(100vw - 24px));color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{padding:18px}
+dialog h2{font-size:1.1rem;margin:0 0 4px}
+dialog select{width:100%}
+.wann{background:var(--tint);border-left:4px solid var(--red);border-radius:0 8px 8px 0;padding:7px 12px;margin:8px 0 14px;font-weight:600}
+footer{max-width:1000px;margin:0 auto;padding:4px 16px 24px;color:var(--muted);font-size:.76rem;text-align:center}
+@media (max-width:560px){header{padding:12px}header .in{gap:8px}header img{height:28px}header h1{font-size:.98rem}header button{font-size:.72rem;padding:5px 7px}.zeile{grid-template-columns:52px 1fr}.zeile .akt{grid-column:2;justify-content:flex-start}}
+@media print{
+  header,footer,.umschalt,.nodruck,#neuBanner,section:not(#tabUebersicht){display:none!important}
+  body{background:#fff}main{padding:0;max-width:none}.card{border:0;padding:0}
+  #tabUebersicht{display:block!important}th,td{padding:5px 6px}tr{break-inside:avoid}h3{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim">
+  <div class="sp"><h1>Standortgespräche</h1><p id="wer">Lehrerbereich · Klasse 9a</p></div>
+  <button id="neuLadenBtn" class="hidden" type="button" title="Aktualisieren">↻ Laden</button>
+  <button id="abmeldenBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="tor" class="card hidden">
+    <h2>Lehrerzugang</h2>
+    <p class="info" style="margin:0 0 12px">Bitte den Zugangsschlüssel eingeben – derselbe wie bei Elternumfrage, Graduierung und Praktikum.</p>
+    <form id="torForm" class="leiste">
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" required style="flex:1 1 220px">
+      <button class="btn" type="submit">Öffnen</button>
+    </form>
+    <div id="torMsg" class="msg hidden" role="alert"></div>
+  </section>
+
+  <div id="innen" class="hidden">
+    <div id="neuBanner" class="hidden" role="status"><span id="neuText"></span><button class="btn klein" type="button" id="neuZeigen">Ansehen</button></div>
+    <div class="umschalt" role="tablist">
+      <button type="button" data-tab="Termine" aria-pressed="true">Termine</button>
+      <button type="button" data-tab="Meldungen" aria-pressed="false">Meldungen<span id="meldZahl" class="zahl hidden"></span></button>
+      <button type="button" data-tab="Uebersicht" aria-pressed="false">Übersicht</button>
+      <button type="button" data-tab="Einstellungen" aria-pressed="false">Einstellungen</button>
+    </div>
+    <div id="meldung" class="msg hidden" role="status" style="margin:0 0 14px"></div>
+
+    <!-- Termine -->
+    <section id="tabTermine">
+      <div id="kpis" class="kpis"></div>
+      <div class="card">
+        <h2>Sprechzeit anlegen</h2>
+        <p class="info" style="margin:0 0 12px">Tag und Zeitfenster wählen – daraus werden automatisch Termine zu je einer Viertelstunde. Für einen Tag können Sie mehrere Zeitfenster nacheinander anlegen (z. B. 13:00–14:30 und 16:00–18:00).</p>
+        <form id="fensterForm" class="fenster">
+          <label>Tag<input type="date" id="fTag" required></label>
+          <label>von<input type="time" id="fVon" value="14:00" step="300" required></label>
+          <label>bis<input type="time" id="fBis" value="17:00" step="300" required></label>
+          <button class="btn" type="submit" id="fBtn">Viertelstunden anlegen</button>
+        </form>
+        <div id="fVorschau" class="vorschau"></div>
+        <p id="fInfo" class="info"></p>
+      </div>
+      <div id="tage"></div>
+    </section>
+
+    <!-- Meldungen -->
+    <section id="tabMeldungen" class="hidden">
+      <div class="card">
+        <div class="tagkopf"><h2>Buchungen und Änderungen</h2><button class="btn sec klein" type="button" id="gelesenBtn">Alle als gelesen markieren</button></div>
+        <p class="info" style="margin:0 0 8px">Jede Buchung, Verlegung, Änderung und Absage der Eltern erscheint hier. Die Seite schaut alle 30 Sekunden nach Neuem.</p>
+        <ul id="meldListe" class="meld"></ul>
+      </div>
+    </section>
+
+    <!-- Übersicht -->
+    <section id="tabUebersicht" class="hidden">
+      <div class="card">
+        <div class="leiste nodruck" style="margin-bottom:10px">
+          <button class="btn" type="button" id="pdfBtn">PDF herunterladen</button>
+          <button class="btn sec" type="button" id="druckBtn">Drucken</button>
+          <button class="btn sec" type="button" id="kopierBtn">Als Text kopieren (für Claude)</button>
+          <button class="btn sec" type="button" id="csvBtn">CSV für Excel</button>
+        </div>
+        <label class="nodruck klein" style="display:block;margin-bottom:6px"><input type="checkbox" id="uebFrei" style="padding:0;vertical-align:-2px"> auch freie Termine zeigen</label>
+        <div id="uebInhalt"></div>
+      </div>
+    </section>
+
+    <!-- Einstellungen -->
+    <section id="tabEinstellungen" class="hidden">
+      <div class="card">
+        <h2>Einstellungen für die Eltern</h2>
+        <form id="einstForm">
+          <label class="feld"><span>Buchung</span><select id="eOffen"><option value="1">geöffnet – Eltern können buchen</option><option value="0">geschlossen – Eltern sehen nur ihren Termin</option></select></label>
+          <label class="feld"><span>Titel</span><input type="text" id="eTitel" maxlength="120" required></label>
+          <label class="feld"><span>Ort <small>(z. B. Raum 2.04, Klassenzimmer 9a)</small></span><input type="text" id="eOrt" maxlength="120"></label>
+          <label class="feld"><span>Hinweis für die Eltern <small>(erscheint über den Terminen)</small></span><textarea id="eHinweis" maxlength="2000"></textarea></label>
+          <button class="btn" type="submit">Speichern</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Link für die Eltern</h2>
+        <div class="leiste"><input type="text" id="elternLink" readonly style="flex:1 1 260px"><button class="btn sec" type="button" id="linkBtn">Kopieren</button></div>
+        <p class="info">Eltern legen dort selbst ein Konto an. Wer schon ein Konto aus der Elternumfrage hat, meldet sich damit an. Kennwörter setzen Sie im Lehrerbereich der Elternumfrage zurück (Reiter „Elternkonten“).</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+<footer>Standortgespräche der PAGS Külsheim · entwickelt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = G.esc;
+const KLASSE = ((new URLSearchParams(location.search).get('klasse')) || '9a').toLowerCase().replace(/[^0-9a-d]/g, '') || '9a';
+const SK = 'pags-gespraech-lehrer';
+let KEY = '', D = null, TAB = 'Termine', BEKANNT = null;
+$('wer').textContent = 'Lehrerbereich · Klasse ' + KLASSE;
+$('elternLink').value = new URL('./' + (KLASSE === '9a' ? '' : '?klasse=' + KLASSE), location.href).href.replace(/lehrer\.html.*$/, '');
+
+function merk(v) { try { if (v === null) sessionStorage.removeItem(SK); else if (v === undefined) return sessionStorage.getItem(SK); else sessionStorage.setItem(SK, v); } catch (e) { return null; } }
+function meldung(text, fehler) { const m = $('meldung'); m.textContent = text || ''; m.classList.toggle('hidden', !text); m.classList.toggle('gut', !fehler); if (text) m.scrollIntoView({ block: 'nearest' }); }
+const vorbei = t => new Date(t.beginn) <= new Date();
+const ungelesen = () => D.meldungen.filter(m => !m.gelesen);
+
+/* ---------- Laden ---------- */
+async function laden(still) {
+  const r = G.ok(await G.rpc('gespraech_lehrer_daten', { schluessel: KEY, p_klasse: KLASSE }));
+  const neu = BEKANNT != null ? r.meldungen.filter(m => !m.gelesen && m.id > BEKANNT) : [];
+  D = r; BEKANNT = r.meldungen.reduce((x, m) => Math.max(x, m.id), BEKANNT || 0);
+  zeichne();
+  if (still && neu.length) { $('neuText').textContent = '🔔 ' + (neu.length === 1 ? 'Neue Meldung: ' + meldText(neu[0], true) : neu.length + ' neue Meldungen von Eltern'); $('neuBanner').classList.remove('hidden'); }
+  return r;
+}
+async function oeffnen(schluessel) {
+  KEY = schluessel; const m = $('torMsg'); m.classList.add('hidden');
+  try {
+    await laden();
+    merk(KEY); $('tor').classList.add('hidden'); $('innen').classList.remove('hidden'); $('neuLadenBtn').classList.remove('hidden'); $('abmeldenBtn').classList.remove('hidden');
+    const E = D.einstellung; $('eOffen').value = E.offen ? '1' : '0'; $('eTitel').value = E.titel; $('eOrt').value = E.ort; $('eHinweis').value = E.hinweis;
+    const n = ungelesen().filter(x => x.von !== 'lehrer').length;
+    if (n) { $('neuText').textContent = '🔔 ' + n + (n === 1 ? ' ungelesene Meldung' : ' ungelesene Meldungen') + ' von Eltern'; $('neuBanner').classList.remove('hidden'); }
+  } catch (e) { KEY = ''; merk(null); $('tor').classList.remove('hidden'); $('innen').classList.add('hidden'); if (schluessel) { m.textContent = e.grund ? e.message : 'Keine Verbindung zur Datenbank.'; m.classList.remove('hidden'); } }
+}
+$('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
+$('abmeldenBtn').onclick = () => { merk(null); location.reload(); };
+$('neuLadenBtn').onclick = async () => { try { await laden(); meldung('Aktualisiert.'); setTimeout(() => meldung(''), 1500); } catch (e) { meldung('Keine Verbindung zur Datenbank.', true); } };
+setInterval(() => { if (KEY && D && !document.hidden && !$('dlg').open) laden(true).catch(() => { }); }, 30000);
+document.addEventListener('visibilitychange', () => { if (KEY && D && !document.hidden && !$('dlg').open) laden(true).catch(() => { }); });
+
+/* ---------- Reiter ---------- */
+function tab(name) {
+  TAB = name;
+  document.querySelectorAll('.umschalt button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === name));
+  ['Termine', 'Meldungen', 'Uebersicht', 'Einstellungen'].forEach(t => $('tab' + t).classList.toggle('hidden', t !== name));
+  if (name === 'Meldungen') $('neuBanner').classList.add('hidden');
+  meldung('');
+}
+document.querySelector('.umschalt').onclick = e => { const b = e.target.closest('button'); if (b) tab(b.dataset.tab); };
+$('neuZeigen').onclick = () => tab('Meldungen');
+
+function zeichne() {
+  const T = D.termine, geb = T.filter(t => t.buchung), frei = T.filter(t => !t.buchung && !vorbei(t)), n = ungelesen().filter(m => m.von !== 'lehrer').length;
+  $('meldZahl').textContent = n; $('meldZahl').classList.toggle('hidden', !n);
+  document.title = (n ? '(' + n + ') ' : '') + 'Standortgespräche – Lehrerbereich';
+  $('kpis').innerHTML = '<div class="kpi"><b>' + geb.length + '</b><span>gebuchte Termine</span></div><div class="kpi"><b>' + frei.length + '</b><span>freie Termine</span></div>' +
+    '<div class="kpi"><b>' + D.konten + '</b><span>Elternkonten der ' + esc(KLASSE) + '</span></div>' +
+    '<div class="kpi"><b style="font-size:1.1rem;padding:6px 0 5px">' + (D.einstellung.offen ? '<span class="st gut">geöffnet</span>' : '<span class="st rot">geschlossen</span>') + '</b><span>Buchung für Eltern · <a href="#" id="offenUm">' + (D.einstellung.offen ? 'schließen' : 'öffnen') + '</a></span></div>';
+  zeichneTage(); zeichneMeldungen(); zeichneUebersicht();
+}
+
+/* ---------- Termine ---------- */
+function zeichneTage() {
+  const tage = G.tage(D.termine);
+  if (!tage.length) { $('tage').innerHTML = '<div class="card leer">Noch keine Sprechzeiten. Legen Sie oben den ersten Tag an.</div>'; return; }
+  $('tage').innerHTML = tage.map(tg => {
+    const l = tg.termine, g = l.filter(t => t.buchung).length;
+    return '<div class="card"><div class="tagkopf"><h2>' + esc(G.tagLang(l[0].beginn)) + '</h2><span class="klein">' + esc(G.uhr(l[0].beginn)) + '–' + esc(G.uhr(G.ende(l[l.length - 1]))) + ' Uhr · ' + g + ' von ' + l.length + ' gebucht</span>' +
+      '<button class="btn sec klein" type="button" data-a="tagWeg" data-k="' + tg.key + '">Tag löschen</button></div>' +
+      l.map(t => {
+        const b = t.buchung, alt = vorbei(t);
+        return '<div class="zeile ' + (b ? 'gebucht' : 'frei') + (alt ? ' vorbei' : '') + '" data-t="' + t.id + '"><span class="uhr">' + esc(G.uhr(t.beginn)) + '</span><span class="wer">' +
+          (b ? '<b>' + esc(b.name_eltern) + ' <span class="st ' + (b.vom_lehrer ? '' : 'gut') + '">' + (b.vom_lehrer ? 'von mir eingetragen' : 'gebucht') + '</span></b><small>Kind: ' + esc(b.name_kind) + (b.telefon ? ' · Tel. ' + esc(b.telefon) : '') + (b.benutzer ? ' · Konto: ' + esc(b.benutzer) : '') + '</small>' + (b.notiz ? '<small>„' + esc(b.notiz) + '“</small>' : '')
+             : (alt ? 'vorbei, nicht gebucht' : 'frei')) + '</span><span class="akt">' +
+          (b ? '<button type="button" data-a="bearb">Bearbeiten</button><button type="button" data-a="verlegen">Verlegen</button><button type="button" class="del" data-a="absagen">Absagen</button>'
+             : '<button type="button" data-a="eintragen">Eintragen</button><button type="button" class="del" data-a="weg" title="Termin löschen">Löschen</button>') + '</span></div>';
+      }).join('') + '</div>';
+  }).join('');
+}
+
+function vorschau() {
+  const [vh, vm] = ($('fVon').value || '0:0').split(':').map(Number), [bh, bm] = ($('fBis').value || '0:0').split(':').map(Number);
+  const n = Math.floor((bh * 60 + bm - vh * 60 - vm) / 15), z = [];
+  for (let i = 0; i < n && i < 60; i++) { const m = vh * 60 + vm + i * 15; z.push(String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0')); }
+  $('fVorschau').innerHTML = z.map(x => '<i>' + x + '</i>').join('');
+  $('fInfo').textContent = n > 0 ? 'Ergibt ' + n + (n === 1 ? ' Termin' : ' Termine') + ' zu je 15 Minuten' + (n ? ' (letzter endet um ' + (() => { const m = vh * 60 + vm + n * 15; return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); })() + ' Uhr).' : '.') : 'Das Ende muss mindestens 15 Minuten nach dem Anfang liegen.';
+  $('fBtn').disabled = n <= 0;
+}
+$('fVon').oninput = $('fBis').oninput = vorschau;
+$('fTag').min = G.tagKey(new Date()); vorschau();
+$('fensterForm').onsubmit = async e => {
+  e.preventDefault(); $('fBtn').disabled = true;
+  try {
+    const r = G.ok(await G.rpc('gespraech_fenster', { schluessel: KEY, p_klasse: KLASSE, p_tag: $('fTag').value, p_von: $('fVon').value, p_bis: $('fBis').value }));
+    await laden();
+    meldung(r.angelegt + (r.angelegt === 1 ? ' Termin' : ' Termine') + ' angelegt' + (r.uebersprungen ? ' (' + r.uebersprungen + ' übersprungen, weil es dort schon Termine gibt)' : '') + '.' + (D.einstellung.offen ? '' : ' Die Buchung ist noch geschlossen – öffnen Sie sie, sobald alles passt.'), !r.angelegt);
+  } catch (err) { meldung(err.grund ? err.message : 'Keine Verbindung zur Datenbank.', true); }
+  finally { vorschau(); }
+};
+
+async function loeschen(ids, frage) {
+  if (!confirm(frage)) return;
+  let r = await G.rpc('gespraech_termine_loeschen', { schluessel: KEY, p_ids: ids, p_auch_gebuchte: false });
+  if (!r.ok && r.grund === 'gebucht') {
+    if (!confirm('Achtung: ' + r.anzahl + (r.anzahl === 1 ? ' Termin ist' : ' Termine sind') + ' schon gebucht. Wirklich löschen? Die Buchungen entfallen – bitte informieren Sie die Eltern selbst.')) return;
+    r = await G.rpc('gespraech_termine_loeschen', { schluessel: KEY, p_ids: ids, p_auch_gebuchte: true });
+  }
+  G.ok(r); await laden(); meldung(r.anzahl + (r.anzahl === 1 ? ' Termin' : ' Termine') + ' gelöscht.');
+}
+
+let DLG = null;
+function dialogBuchung(t) {
+  const b = t.buchung || {};
+  DLG = { art: 'buchen', t };
+  $('dlgForm').innerHTML = '<h2>' + (t.buchung ? 'Buchung bearbeiten' : 'Selbst eintragen') + '</h2><div class="wann">' + esc(G.termin(t)) + '</div>' +
+    '<label class="feld"><span>Name der Eltern</span><input type="text" id="dName" maxlength="80" minlength="2" required value="' + esc(b.name_eltern) + '"></label>' +
+    '<label class="feld"><span>Name des Kindes</span><input type="text" id="dKind" maxlength="80" minlength="2" required value="' + esc(b.name_kind) + '"></label>' +
+    '<label class="feld"><span>Telefon <small>(freiwillig)</small></span><input type="tel" id="dTel" maxlength="40" value="' + esc(b.telefon) + '"></label>' +
+    '<label class="feld"><span>Anliegen / Notiz <small>(freiwillig)</small></span><textarea id="dNotiz" maxlength="1000">' + esc(b.notiz) + '</textarea></label>' +
+    '<div id="dMsg" class="msg hidden" role="alert"></div><div class="leiste" style="justify-content:space-between;margin-top:12px"><button class="btn sec" type="button" id="dAbbr">Abbrechen</button><button class="btn" type="submit">Speichern</button></div>';
+  $('dAbbr').onclick = () => $('dlg').close(); $('dlg').showModal();
+}
+function dialogVerlegen(t) {
+  const frei = D.termine.filter(x => !x.buchung && !vorbei(x));
+  DLG = { art: 'verlegen', t };
+  $('dlgForm').innerHTML = '<h2>Termin verlegen</h2><div class="wann">' + esc(t.buchung.name_eltern) + ' · bisher ' + esc(G.termin(t)) + '</div>' +
+    (frei.length ? '<label class="feld"><span>Neuer Termin</span><select id="dZiel" required>' + frei.map(x => '<option value="' + x.id + '">' + esc(G.tagKurz(x.beginn)) + ', ' + esc(G.zeitraum(x)) + '</option>').join('') + '</select></label>' : '<p class="info">Es gibt keinen freien Termin.</p>') +
+    '<p class="info">Bitte informieren Sie die Eltern selbst über die Verlegung.</p><div id="dMsg" class="msg hidden" role="alert"></div>' +
+    '<div class="leiste" style="justify-content:space-between;margin-top:12px"><button class="btn sec" type="button" id="dAbbr">Abbrechen</button><button class="btn" type="submit"' + (frei.length ? '' : ' disabled') + '>Verlegen</button></div>';
+  $('dAbbr').onclick = () => $('dlg').close(); $('dlg').showModal();
+}
+$('dlgForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('dMsg'); m.classList.add('hidden');
+  try {
+    if (DLG.art === 'buchen') G.ok(await G.rpc('gespraech_lehrer_buchen', { schluessel: KEY, p_termin: DLG.t.id, p_name_eltern: $('dName').value, p_name_kind: $('dKind').value, p_telefon: $('dTel').value, p_notiz: $('dNotiz').value }));
+    else G.ok(await G.rpc('gespraech_lehrer_verlegen', { schluessel: KEY, p_buchung: DLG.t.buchung.id, p_termin: $('dZiel').value }));
+    $('dlg').close(); await laden(); meldung(DLG.art === 'buchen' ? 'Gespeichert.' : 'Der Termin wurde verlegt.');
+  } catch (err) { m.textContent = err.grund ? err.message : 'Keine Verbindung zur Datenbank.'; m.classList.remove('hidden'); if (err.grund === 'belegt') laden().catch(() => { }); }
+};
+
+$('tabTermine').addEventListener('click', async e => {
+  if (e.target.id === 'offenUm') { e.preventDefault(); const E = D.einstellung; try { G.ok(await G.rpc('gespraech_einstellung_speichern', { schluessel: KEY, p_klasse: KLASSE, p_titel: E.titel, p_hinweis: E.hinweis, p_ort: E.ort, p_offen: !E.offen })); await laden(); $('eOffen').value = D.einstellung.offen ? '1' : '0'; meldung(D.einstellung.offen ? 'Die Buchung ist jetzt geöffnet.' : 'Die Buchung ist jetzt geschlossen.'); } catch (err) { meldung(err.grund ? err.message : 'Keine Verbindung zur Datenbank.', true); } return; }
+  const b = e.target.closest('[data-a]'); if (!b) return;
+  const z = b.closest('.zeile'), t = z && D.termine.find(x => x.id === z.dataset.t), a = b.dataset.a;
+  try {
+    if (a === 'tagWeg') { const l = D.termine.filter(x => G.tagKey(x.beginn) === b.dataset.k); await loeschen(l.map(x => x.id), 'Alle ' + l.length + ' Termine am ' + G.tagLang(l[0].beginn) + ' löschen?'); }
+    else if (a === 'weg') await loeschen([t.id], 'Den Termin am ' + G.termin(t) + ' löschen?');
+    else if (a === 'eintragen' || a === 'bearb') dialogBuchung(t);
+    else if (a === 'verlegen') dialogVerlegen(t);
+    else if (a === 'absagen') {
+      if (!confirm('Die Buchung von ' + t.buchung.name_eltern + ' am ' + G.termin(t) + ' absagen? Der Termin wird wieder frei. Bitte informieren Sie die Eltern selbst.')) return;
+      G.ok(await G.rpc('gespraech_lehrer_absagen', { schluessel: KEY, p_buchung: t.buchung.id })); await laden(); meldung('Die Buchung wurde abgesagt, der Termin ist wieder frei.');
+    }
+  } catch (err) { meldung(err.grund ? err.message : 'Keine Verbindung zur Datenbank.', true); }
+});
+
+/* ---------- Meldungen ---------- */
+function meldText(m, kurz) {
+  const wer = m.name_eltern + (kurz ? '' : ' (Kind: ' + m.name_kind + ')'), wann = x => G.tagKurz(x) + ', ' + G.uhr(x) + ' Uhr';
+  if (m.von === 'konto') return 'Der Termin von ' + wer + ' am ' + wann(m.beginn) + ' entfällt – das Elternkonto wurde gelöscht.';
+  const ich = m.von === 'lehrer';
+  if (m.art === 'gebucht') return ich ? 'Sie haben ' + wer + ' für ' + wann(m.beginn) + ' eingetragen.' : wer + ' hat ' + wann(m.beginn) + ' gebucht.';
+  if (m.art === 'verlegt') return (ich ? 'Sie haben den Termin von ' + wer : wer + ' hat den Termin') + ' verlegt: von ' + wann(m.beginn_alt) + ' auf ' + wann(m.beginn) + '.';
+  if (m.art === 'geaendert') return (ich ? 'Sie haben die Angaben von ' + wer : wer + ' hat die Angaben') + ' zum Termin am ' + wann(m.beginn) + ' geändert.';
+  return (ich ? 'Sie haben den Termin von ' + wer : wer + ' hat den Termin') + ' am ' + wann(m.beginn) + ' abgesagt.';
+}
+function zeichneMeldungen() {
+  const sym = { gebucht: '✅', verlegt: '🔁', geaendert: '✏️', abgesagt: '❌' };
+  $('gelesenBtn').disabled = !ungelesen().length;
+  $('meldListe').innerHTML = D.meldungen.length ? D.meldungen.map(m => '<li class="' + (m.gelesen ? '' : 'neu') + '"><span aria-hidden="true">' + sym[m.art] + '</span><span>' + (m.gelesen ? '' : '<span class="st mittel">Neu</span> ') + esc(meldText(m)) +
+    '<small>' + esc(G.zeitpunkt(m.am)) + '</small></span></li>').join('') : '<li class="leer" style="display:block">Noch keine Buchungen.</li>';
+}
+$('gelesenBtn').onclick = async () => {
+  try { G.ok(await G.rpc('gespraech_meldungen_gelesen', { schluessel: KEY, p_klasse: KLASSE, p_bis: D.meldungen.reduce((x, m) => Math.max(x, m.id), 0) })); await laden(); $('neuBanner').classList.add('hidden'); }
+  catch (err) { meldung(err.grund ? err.message : 'Keine Verbindung zur Datenbank.', true); }
+};
+
+/* ---------- Übersicht: in der App, als PDF, als Text, als CSV ---------- */
+function uebDaten() {
+  const mitFrei = $('uebFrei').checked;
+  return G.tage(D.termine.filter(t => t.buchung || mitFrei)).map(tg => ({ tag: G.tagLang(tg.termine[0].beginn), zeilen: tg.termine.map(t => ({ zeit: G.uhr(t.beginn) + '–' + G.uhr(G.ende(t)), b: t.buchung })) }));
+}
+const uebKopf = () => D.einstellung.titel + ' · Klasse ' + KLASSE;
+const uebStand = () => { const g = D.termine.filter(t => t.buchung).length; return g + (g === 1 ? ' gebuchter Termin' : ' gebuchte Termine') + ' von ' + D.termine.length + (D.einstellung.ort ? ' · Ort: ' + D.einstellung.ort : '') + ' · Stand: ' + G.zeitpunkt(new Date()); };
+function zeichneUebersicht() {
+  const tage = uebDaten();
+  $('uebInhalt').innerHTML = '<h2 style="margin:0;font-size:1.15rem">' + esc(uebKopf()) + '</h2><p class="klein" style="margin:2px 0 0">' + esc(uebStand()) + '</p>' +
+    (tage.length ? tage.map(tg => '<h3>' + esc(tg.tag) + '</h3><div class="tw"><table><thead><tr><th>Zeit</th><th>Eltern</th><th>Kind</th><th>Telefon</th><th>Anliegen</th></tr></thead><tbody>' +
+      tg.zeilen.map(z => z.b ? '<tr><td class="z">' + esc(z.zeit) + '</td><td>' + esc(z.b.name_eltern) + '</td><td>' + esc(z.b.name_kind) + '</td><td>' + esc(z.b.telefon) + '</td><td style="white-space:pre-wrap">' + esc(z.b.notiz) + '</td></tr>'
+        : '<tr><td class="z">' + esc(z.zeit) + '</td><td class="frei" colspan="4">frei</td></tr>').join('') + '</tbody></table></div>').join('')
+      : '<p class="leer">Noch keine gebuchten Termine.</p>');
+}
+$('uebFrei').onchange = zeichneUebersicht;
+$('druckBtn').onclick = () => print();
+
+function herunterladen(name, typ, inhalt) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([inhalt], { type: typ })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 20000);
+}
+const dateiName = () => 'Standortgespraeche_' + KLASSE + '_' + G.tagKey(new Date());
+
+$('kopierBtn').onclick = async () => {
+  const z = s => String(s || '').replace(/\s*\n\s*/g, ' ').replace(/\|/g, '/');
+  const text = '# ' + uebKopf() + '\n' + uebStand() + '\n\n' + uebDaten().map(tg => '## ' + tg.tag + '\n| Zeit | Eltern | Kind | Telefon | Anliegen |\n|---|---|---|---|---|\n' +
+    tg.zeilen.map(x => x.b ? '| ' + [x.zeit, z(x.b.name_eltern), z(x.b.name_kind), z(x.b.telefon), z(x.b.notiz)].join(' | ') + ' |' : '| ' + x.zeit + ' | frei | | | |').join('\n')).join('\n\n') + '\n';
+  try { await navigator.clipboard.writeText(text); meldung('Die Übersicht ist kopiert. Fügen Sie sie in Claude ein.'); }
+  catch (e) { herunterladen(dateiName() + '.md', 'text/markdown;charset=utf-8', text); meldung('Kopieren war nicht möglich – die Übersicht wurde als Textdatei heruntergeladen.'); }
+};
+$('csvBtn').onclick = () => {
+  const q = s => '"' + String(s || '').replace(/"/g, '""') + '"';
+  const csv = '﻿' + ['Tag;Zeit;Eltern;Kind;Telefon;Anliegen'].concat(uebDaten().flatMap(tg => tg.zeilen.map(x => [q(tg.tag), q(x.zeit), q(x.b ? x.b.name_eltern : 'frei'), q(x.b && x.b.name_kind), q(x.b && x.b.telefon), q(x.b && x.b.notiz)].join(';')))).join('\r\n');
+  herunterladen(dateiName() + '.csv', 'text/csv;charset=utf-8', csv);
+};
+
+/* PDF ohne Zusatzbibliothek: A4 hoch, Helvetica, Tabelle pro Tag mit Zeilenumbruch und Seitenzahlen */
+function pdfBauen() {
+  const W = 595.28, H = 841.89, L = 42, R = W - 42, UNTEN = H - 52;
+  const SP = [{ x: L, w: 72 }, { x: L + 72, w: 118 }, { x: L + 190, w: 100 }, { x: L + 290, w: 80 }, { x: L + 370, w: R - L - 370 }];
+  const CP = { '€': 128, '‚': 130, '„': 132, '…': 133, '‘': 145, '’': 146, '“': 147, '”': 148, '•': 149, '–': 150, '—': 151 };
+  const cv = document.createElement('canvas').getContext('2d');
+  const breite = (s, gr, fett) => { cv.font = (fett ? 'bold ' : '') + gr + 'px Arial, Helvetica, sans-serif'; return cv.measureText(s).width * 1.03; };
+  const enc = s => { let o = ''; for (const ch of String(s)) { let c = CP[ch] || ch.charCodeAt(0); if (c > 255 || c < 32) c = 63; const z = String.fromCharCode(c); o += (z === '(' || z === ')' || z === '\\') ? '\\' + z : z; } return o; };
+  const umbruch = (s, max, gr) => {
+    const aus = [];
+    String(s || '').split(/\n/).forEach(abs => {
+      let z = '';
+      abs.split(/\s+/).filter(Boolean).forEach(w => {
+        while (breite(w, gr) > max) { let i = w.length - 1; while (i > 1 && breite(w.slice(0, i), gr) > max) i--; if (z) { aus.push(z); z = ''; } aus.push(w.slice(0, i)); w = w.slice(i); }
+        if (!z) z = w; else if (breite(z + ' ' + w, gr) <= max) z += ' ' + w; else { aus.push(z); z = w; }
+      });
+      if (z) aus.push(z);
+    });
+    return aus.length ? aus : [''];
+  };
+  const seiten = []; let s, y;
+  const ROT = [0.66, 0.06, 0.06], farbe = (c, strich) => Array.isArray(c) ? c.join(' ') + (strich ? ' RG ' : ' rg ') : (c || 0) + (strich ? ' G ' : ' g ');
+  const text = (x, yy, str, gr, fett, grau) => s.push(farbe(grau) + 'BT /F' + (fett ? 2 : 1) + ' ' + gr + ' Tf ' + x.toFixed(2) + ' ' + (H - yy).toFixed(2) + ' Td (' + enc(str) + ') Tj ET');
+  const linie = (yy, w, grau) => s.push(farbe(grau == null ? 0.78 : grau, true) + (w || 0.5) + ' w ' + L + ' ' + (H - yy).toFixed(2) + ' m ' + R + ' ' + (H - yy).toFixed(2) + ' l S');
+  const flaeche = (yy, h, g) => s.push(g + ' g ' + L + ' ' + (H - yy - h).toFixed(2) + ' ' + (R - L) + ' ' + h + ' re f');
+  const seite = () => { s = []; seiten.push(s); y = 46; };
+  const spaltenkopf = () => { flaeche(y, 16, 0.93); ['Zeit', 'Eltern', 'Kind', 'Telefon', 'Anliegen'].forEach((t, i) => text(SP[i].x + 4, y + 11.5, t, 8, true, 0.3)); y += 16; };
+  const tagkopf = (t, forts) => { if (y + 60 > UNTEN) seite(); y += 14; text(L, y, t + (forts ? ' (Fortsetzung)' : ''), 12, true, ROT); y += 7; spaltenkopf(); };
+  seite();
+  text(L, y + 6, uebKopf(), 17, true); y += 24;
+  text(L, y, 'Pater-Alois-Grimm-Schule Külsheim', 9.5, false, 0.35); y += 13;
+  text(L, y, uebStand(), 9.5, false, 0.35); y += 9; linie(y, 1.2, ROT); y += 4;
+  const tage = uebDaten();
+  if (!tage.length) { y += 22; text(L, y, 'Noch keine gebuchten Termine.', 11, false, 0.35); }
+  tage.forEach(tg => {
+    tagkopf(tg.tag);
+    tg.zeilen.forEach(z => {
+      const b = z.b, gr = 9.5, zh = 12;
+      const sp = b ? [[z.zeit], umbruch(b.name_eltern, SP[1].w - 8, gr), umbruch(b.name_kind, SP[2].w - 8, gr), umbruch(b.telefon, SP[3].w - 8, gr), umbruch(b.notiz, SP[4].w - 8, gr)] : [[z.zeit], ['frei']];
+      const h = Math.max(...sp.map(x => x.length)) * zh + 8;
+      if (y + h > UNTEN) { seite(); y -= 14; tagkopf(tg.tag, true); }
+      sp.forEach((zeilen, i) => zeilen.forEach((t, j) => text(SP[i].x + 4, y + 13 + j * zh, t, gr, i === 0, !b && i === 1 ? 0.55 : 0)));
+      y += h; linie(y, 0.5);
+    });
+  });
+  seiten.forEach((p, i) => { s = p; text(L, H - 30, 'Standortgespräche · Klasse ' + KLASSE + ' · PAGS Külsheim', 8, false, 0.45); const t = 'Seite ' + (i + 1) + ' von ' + seiten.length; text(R - breite(t, 8), H - 30, t, 8, false, 0.45); });
+
+  /* Datei zusammensetzen (alle Zeichen < 256, deshalb Zeichenzahl = Bytezahl) */
+  const obj = [null, '<< /Type /Catalog /Pages 2 0 R >>', '', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'];
+  const kids = [];
+  seiten.forEach(p => {
+    const strom = p.join('\n');
+    obj.push('<< /Length ' + strom.length + ' >>\nstream\n' + strom + '\nendstream');
+    obj.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + W + ' ' + H + '] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ' + (obj.length - 1) + ' 0 R >>');
+    kids.push((obj.length - 1) + ' 0 R');
+  });
+  obj[2] = '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + kids.length + ' >>';
+  let aus = '%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'; const pos = [];
+  for (let i = 1; i < obj.length; i++) { pos[i] = aus.length; aus += i + ' 0 obj\n' + obj[i] + '\nendobj\n'; }
+  const x = aus.length;
+  aus += 'xref\n0 ' + obj.length + '\n0000000000 65535 f \n' + pos.slice(1).map(p => String(p).padStart(10, '0') + ' 00000 n \n').join('') + 'trailer\n<< /Size ' + obj.length + ' /Root 1 0 R >>\nstartxref\n' + x + '\n%%EOF\n';
+  const bytes = new Uint8Array(aus.length); for (let i = 0; i < aus.length; i++) bytes[i] = aus.charCodeAt(i) & 255;
+  return bytes;
+}
+$('pdfBtn').onclick = () => { try { herunterladen(dateiName() + '.pdf', 'application/pdf', pdfBauen()); meldung('Das PDF wurde erstellt.'); } catch (e) { meldung('Das PDF konnte nicht erstellt werden. Bitte „Drucken“ wählen und dort als PDF sichern.', true); } };
+
+/* ---------- Einstellungen ---------- */
+$('einstForm').onsubmit = async e => {
+  e.preventDefault();
+  try { G.ok(await G.rpc('gespraech_einstellung_speichern', { schluessel: KEY, p_klasse: KLASSE, p_titel: $('eTitel').value, p_hinweis: $('eHinweis').value, p_ort: $('eOrt').value, p_offen: $('eOffen').value === '1' })); await laden(); meldung('Die Einstellungen wurden gespeichert.'); }
+  catch (err) { meldung(err.grund ? err.message : 'Keine Verbindung zur Datenbank.', true); }
+};
+$('linkBtn').onclick = async () => { try { await navigator.clipboard.writeText($('elternLink').value); meldung('Der Link ist kopiert.'); } catch (e) { $('elternLink').select(); } };
+
+/* ---------- Start ---------- */
+(function () { const k = merk(); if (k) oeffnen(k); else $('tor').classList.remove('hidden'); })();
+</script>
+</body>
+</html>

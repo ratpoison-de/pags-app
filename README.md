@@ -99,3 +99,15 @@ Umfrage-App für Eltern (zuerst Klasse 9a, „Die ersten acht Wochen in der 9a�
 - **Ergebnisse für Eltern:** Unter *Umfragen* lässt sich je Umfrage „Ergebnisse für Eltern freigeben“ (Standard: aus). Eltern, die teilgenommen haben, sehen dann in ihrer App Schaubilder der Klasse zu Skalen- und Auswahlfragen – ohne Freitexte, Namen, Einzelabgaben und Gesprächswunsch, erst ab 5 Abgaben (`supabase/elternumfrage_ergebnisse.sql`, eingerichtet).
 - **Anonymität:** Bei anonymer Abgabe speichert die Datenbank weder Konto noch Namen noch Uhrzeit (nur das Datum). Dass ein Konto teilgenommen hat, steht getrennt und ohne Verweis in `umfrage_teilnahme` (verhindert doppelte Abgaben, auch für den Lehrerzugang nicht lesbar).
 - Technik: Tabellen `public.umfrage_*` und Funktionen `umfrage_*` in `supabase/elternumfrage.sql` (Projekt pags-lernplaner, eingerichtet). Die Löschfunktionen stehen in `supabase/elternumfrage_loeschen.sql` (ebenfalls eingerichtet). Gemeinsame Hilfen: `elternumfrage/umfrage.js`.
+
+## Standortgespräche (`standortgespraech/`)
+
+Terminbuchung für die Standortgespräche (zuerst Klasse 9a). Link für Eltern: `https://ratpoison-de.github.io/pags-app/standortgespraech/`
+
+- **Eltern** (`standortgespraech/index.html`): Konto mit Benutzername und Kennwort – dasselbe Konto wie bei der Elternumfrage. Freie Viertelstunden-Termine antippen und buchen (Name, Name des Kindes, freiwillig Telefon und Anliegen). Belegte Termine sind für alle gesperrt und ohne Namen als „belegt“ sichtbar. Den eigenen Termin können Eltern verlegen, die Angaben ändern oder absagen. Ein Termin pro Konto. Andere Klassen: `standortgespraech/?klasse=9b`.
+- **Lehrer** (`standortgespraech/lehrer.html`): Zugang mit dem Hauptschlüssel der Graduierung.
+  - *Termine:* Sprechzeit anlegen (Tag + Zeitfenster von/bis → automatisch Viertelstunden-Termine; mehrere Fenster pro Tag möglich), einzelne Termine oder ganze Tage löschen, Eltern selbst eintragen, Buchungen bearbeiten, verlegen, absagen. Buchung für Eltern öffnen/schließen.
+  - *Meldungen:* jede Buchung, Verlegung, Änderung und Absage; Zähler am Reiter, Hinweisbanner, Abfrage alle 30 Sekunden.
+  - *Übersicht:* Tabelle nach Tagen; als PDF herunterladen (ohne Zusatzbibliothek erzeugt), drucken, als Text für Claude kopieren, CSV.
+  - *Einstellungen:* Titel, Ort, Hinweis für die Eltern, Elternlink.
+- Technik: Tabellen `public.gespraech_*` und Funktionen `gespraech_*` in `supabase/standortgespraech.sql` (Projekt pags-lernplaner, eingerichtet am 15.11.2026). Doppelbuchungen verhindert die Datenbank (eindeutiger Schlüssel auf dem Termin). Meldungen schreibt ein Trigger. Gemeinsame Hilfen: `standortgespraech/gespraech.js`.

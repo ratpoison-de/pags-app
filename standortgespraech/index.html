@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Standortgespräche – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<script src="../config.js?v=20261108"></script>
+<script src="gespraech.js?v=20261115"></script>
+<style>
+/* Aufbau wie Elternumfrage und Praktikums-App: roter Kopf mit Logo, Inhalt als Karten */
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
+p{margin:0 0 10px}
+a{color:var(--red)}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;position:sticky;top:0;z-index:10}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:36px;width:auto;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.02rem;white-space:nowrap}
+header p{margin:0;font-size:.78rem;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1;min-width:0;overflow:hidden}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:5px 9px;font:inherit;font-size:.8rem;cursor:pointer;white-space:nowrap}
+main{max-width:760px;margin:0 auto;padding:14px 14px 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{font-size:1.08rem;margin-bottom:8px}
+.card h3{font-size:1rem;margin:0 0 2px}
+.muted{color:var(--muted);font-size:.86rem}
+.lead{font-size:.95rem}
+label.f{display:block;margin:0 0 12px}
+label.f>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px}
+label.f small{color:var(--muted);font-size:.8rem;font-weight:400}
+label.f>small{display:block;margin-top:1px}
+input[type=text],input[type=password],input[type=tel],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #C9C9C9;border-radius:10px;background:#fff;color:var(--text)}
+textarea{min-height:76px;resize:vertical;line-height:1.45}
+input:focus,textarea:focus{border-color:var(--red);outline:2px solid rgba(168,16,16,.18)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;font:inherit;font-weight:600;border-radius:10px;border:0;cursor:pointer;background:var(--red);color:#fff;text-decoration:none}
+.btn:hover{background:var(--red-dark)}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.sec:hover{background:var(--tint)}
+.btn.klein{min-height:38px;padding:6px 12px;font-size:.86rem}
+.btn[disabled]{opacity:.55;cursor:default}
+.knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.knoepfe.zwei{justify-content:space-between}
+.msg{padding:10px 12px;border-radius:10px;background:#FDECEA;color:#8A1C1C;margin:10px 0 0;font-size:.9rem}
+.msg.gut{background:#E9F6EC;color:#14562B}
+main>.msg{margin:0 0 12px}
+.wahl{display:flex;flex-wrap:wrap;gap:6px}
+.wahl button{font:inherit;min-height:42px;padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--text);text-align:left}
+.wahl button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff;font-weight:600}
+.hero{background:linear-gradient(135deg,var(--red),#C62A1E);color:#fff;border:0}
+.hero h2{font-size:1.25rem}
+.hero .gross{font-size:1.35rem;font-weight:700;line-height:1.25;margin:6px 0 2px}
+.hero .btn{background:#fff;color:var(--red)}
+.hero .btn:hover{background:var(--tint)}
+.hero .btn.sec{background:transparent;color:#fff;border-color:rgba(255,255,255,.75)}
+.hero .btn.sec:hover{background:rgba(255,255,255,.12)}
+details.info{background:#F7F7F7;border-radius:10px;padding:8px 12px;font-size:.85rem;color:#555;margin-top:12px}
+details.info summary{cursor:pointer;font-weight:600}
+/* Termine: ein Knopf pro Viertelstunde */
+.legende{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.82rem;color:var(--muted);margin:0 0 12px}
+.legende i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:5px;vertical-align:-2px;border:1.5px solid var(--red);background:#fff}
+.legende i.b{border-color:#DDD;background:#EFEFEF}
+.legende i.m{background:var(--red)}
+.tagzahl{font-size:.84rem;color:var(--muted);margin:0 0 10px}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.slot{font:inherit;min-height:56px;border-radius:10px;border:1.5px solid var(--red);background:#fff;color:var(--red);cursor:pointer;display:grid;place-content:center;text-align:center;padding:4px;line-height:1.2}
+.slot b{font-size:1.05rem}
+.slot span{font-size:.72rem;font-weight:600}
+.slot:hover{background:var(--tint)}
+.slot.belegt,.slot.vorbei{border-color:#E3E3E3;background:#F1F1F1;color:#9A9A9A;cursor:default}
+.slot.belegt b,.slot.vorbei b{text-decoration:line-through;font-weight:600}
+.slot.meins{background:var(--red);color:#fff;cursor:pointer}
+dialog{border:0;border-radius:16px;padding:0;width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 24px);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{padding:18px}
+dialog h2{font-size:1.12rem;margin-bottom:4px}
+.wann{background:var(--tint);border-left:4px solid var(--red);border-radius:0 10px 10px 0;padding:8px 12px;margin:10px 0 14px;font-weight:600}
+.wann small{display:block;font-weight:400;color:var(--muted);font-size:.82rem}
+footer{max-width:760px;margin:0 auto;padding:6px 16px 22px;color:var(--muted);font-size:.76rem;text-align:center}
+@media (max-width:480px){header{padding-left:12px;padding-right:12px}header .in{gap:7px}header img{height:28px}header h1{font-size:.95rem}header button{font-size:.72rem;padding:4px 7px}.slots{grid-template-columns:repeat(3,1fr)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Standortgespräche</h1><p id="wer">Klasse 9a · PAGS Külsheim</p></div>
+  <button id="kontoBtn" class="hidden" type="button">Mein Konto</button>
+  <button id="abmeldenBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="login" class="hidden">
+    <div class="card">
+      <h2>Willkommen!</h2>
+      <p class="lead">Hier buchen Sie Ihren Termin für das Standortgespräch der Klasse <b class="klasseText">9a</b>. Sie können den Termin später selbst verlegen oder absagen.</p>
+      <div class="wahl" style="margin:12px 0 14px" role="group" aria-label="Anmeldeart">
+        <button type="button" id="modusNeu" aria-pressed="true">Neues Konto anlegen</button>
+        <button type="button" id="modusAlt" aria-pressed="false">Anmelden</button>
+      </div>
+      <p class="muted" id="lSchon">Sie haben schon ein Konto aus der <b>Elternumfrage</b>? Dann tippen Sie auf „Anmelden“ – es gilt auch hier.</p>
+      <form id="loginForm" autocomplete="on">
+        <label class="f"><span>Benutzername</span><input type="text" id="lBenutzer" maxlength="60" required autocapitalize="none" autocomplete="username">
+          <small id="lBenHinweis">Frei wählbar, z. B. Ihre E-Mail-Adresse oder ein Spitzname.</small></label>
+        <label class="f"><span id="lPwLabel">Kennwort ausdenken</span><input type="password" id="lPw" minlength="6" maxlength="72" required autocomplete="new-password">
+          <small id="lPwHinweis">Mindestens 6 Zeichen. Damit kommen Sie auf jedem Gerät wieder zu Ihrem Termin.</small></label>
+        <label class="f" id="lPw2Feld"><span>Kennwort wiederholen</span><input type="password" id="lPw2" minlength="6" maxlength="72" autocomplete="new-password"></label>
+        <button class="btn" type="submit" id="lBtn">Konto anlegen</button>
+        <div id="lMsg" class="msg hidden" role="alert"></div>
+      </form>
+      <details class="info">
+        <summary>Was wird gespeichert?</summary>
+        <p style="margin:8px 0 0">Für das Konto Benutzername und Kennwort (verschlüsselt). Für den Termin Ihr Name, der Name Ihres Kindes und – wenn Sie möchten – eine Telefonnummer und Ihr Anliegen. Diese Angaben sieht nur der Klassenlehrer. Andere Eltern sehen lediglich, dass ein Termin belegt ist. Die Daten liegen in einer passwortgeschützten Datenbank mit Serverstandort in Deutschland (Frankfurt).</p>
+      </details>
+    </div>
+    <p class="muted" style="text-align:center">Kennwort vergessen? Der Klassenlehrer kann es zurücksetzen.</p>
+  </section>
+
+  <div id="hinweis" class="msg gut hidden" role="status"></div>
+  <div id="app" class="hidden"></div>
+</main>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+
+<footer>Standortgespräche der PAGS Külsheim · entwickelt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = G.esc;
+const KLASSE = ((new URLSearchParams(location.search).get('klasse')) || '9a').toLowerCase().replace(/[^0-9a-d]/g, '') || '9a';
+const LS = 'pags-standortgespraech-v1', LS_UMFRAGE = 'pags-elternumfrage-v1';
+let S = null;          // Sitzung {id, pw, benutzer}
+let STAND = null;      // {konto, einstellung, termine, buchung}
+let ANSICHT = 'start', NEU = true, VERLEGEN = false;
+
+document.querySelectorAll('.klasseText').forEach(e => e.textContent = KLASSE);
+$('wer').textContent = 'Klasse ' + KLASSE + ' · PAGS Külsheim';
+
+/* ---------- Gerät ---------- */
+function ladeSitzung() {
+  for (const k of [LS, LS_UMFRAGE]) { try { const s = JSON.parse(localStorage.getItem(k) || 'null'); if (s && s.id && s.pw) return s; } catch (e) { } }
+  return null;
+}
+function merkeSitzung() { try { if (S) localStorage.setItem(LS, JSON.stringify(S)); else localStorage.removeItem(LS); } catch (e) { } }
+
+/* ---------- Anmeldung ---------- */
+function modus(neu) {
+  NEU = neu; $('modusNeu').setAttribute('aria-pressed', neu); $('modusAlt').setAttribute('aria-pressed', !neu);
+  $('lPwLabel').textContent = neu ? 'Kennwort ausdenken' : 'Kennwort';
+  $('lPwHinweis').classList.toggle('hidden', !neu); $('lBenHinweis').classList.toggle('hidden', !neu); $('lSchon').classList.toggle('hidden', !neu);
+  $('lPw2Feld').classList.toggle('hidden', !neu); $('lPw2').required = neu;
+  $('lPw').autocomplete = neu ? 'new-password' : 'current-password';
+  $('lBtn').textContent = neu ? 'Konto anlegen' : 'Anmelden'; $('lMsg').classList.add('hidden');
+}
+$('modusNeu').onclick = () => modus(true);
+$('modusAlt').onclick = () => modus(false);
+function zeigeLogin(hinweis) {
+  $('login').classList.remove('hidden'); $('app').classList.add('hidden'); $('hinweis').classList.add('hidden');
+  $('kontoBtn').classList.add('hidden'); $('abmeldenBtn').classList.add('hidden');
+  if (hinweis) { $('lMsg').textContent = hinweis; $('lMsg').classList.remove('hidden'); }
+}
+$('loginForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('lMsg'); m.classList.add('hidden');
+  const b = $('lBenutzer').value.trim(), pw = $('lPw').value;
+  if (NEU && pw !== $('lPw2').value) { m.textContent = 'Die beiden Kennwörter stimmen nicht überein.'; m.classList.remove('hidden'); return; }
+  $('lBtn').disabled = true;
+  try {
+    const k = G.ok(await G.rpc('umfrage_anmelden', { p_benutzer: b, p_pw: pw, p_neu: NEU, p_klasse: KLASSE }));
+    S = { id: k.konto.id, pw, benutzer: k.konto.benutzer }; merkeSitzung();
+    const r = G.ok(await G.rpc('gespraech_laden', { p_id: S.id, p_pw: S.pw }));
+    $('lPw').value = $('lPw2').value = '';
+    angemeldet(r, NEU ? 'Ihr Konto ist angelegt. Merken Sie sich Benutzername und Kennwort gut.' : '');
+  } catch (err) { m.textContent = err.grund ? err.message : 'Keine Verbindung zur Datenbank. Bitte später noch einmal versuchen.'; m.classList.remove('hidden'); }
+  finally { $('lBtn').disabled = false; }
+};
+function angemeldet(r, text) {
+  STAND = r; $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  $('kontoBtn').classList.remove('hidden'); $('abmeldenBtn').classList.remove('hidden');
+  $('wer').textContent = 'Klasse ' + r.konto.klasse + ' · PAGS Külsheim';
+  zeige('start', text);
+}
+$('abmeldenBtn').onclick = () => { if (!confirm('Abmelden? Ihr Termin bleibt gebucht.')) return; S = null; STAND = null; merkeSitzung(); try { localStorage.removeItem(LS_UMFRAGE); } catch (e) { } modus(false); zeigeLogin(); };
+$('kontoBtn').onclick = () => zeige(ANSICHT === 'konto' ? 'start' : 'konto', '');
+
+async function neuLaden() {
+  const r = await G.rpc('gespraech_laden', { p_id: S.id, p_pw: S.pw });
+  if (!r.ok) { if (['pw', 'unbekannt'].includes(r.grund)) { S = null; merkeSitzung(); zeigeLogin(r.grund === 'pw' ? 'Ihr Kennwort wurde geändert. Bitte melden Sie sich neu an.' : 'Ihr Konto wurde nicht mehr gefunden.'); return null; } G.ok(r); }
+  STAND = r; return r;
+}
+
+/* ---------- Ansichten ---------- */
+function hinweis(text, fehler) { const h = $('hinweis'); h.textContent = text || ''; h.classList.toggle('hidden', !text); h.classList.toggle('gut', !fehler); }
+function zeige(a, text, fehler) {
+  ANSICHT = a; $('app').innerHTML = a === 'konto' ? kontoAnsicht() : startAnsicht();
+  $('kontoBtn').textContent = a === 'konto' ? '‹ Termine' : 'Mein Konto';
+  if (text !== undefined) { hinweis(text, fehler); scrollTo(0, 0); }
+}
+const vorbei = t => new Date(t.beginn) <= new Date();
+
+function startAnsicht() {
+  const k = STAND.konto, E = STAND.einstellung, b = STAND.buchung, T = STAND.termine;
+  const frei = T.filter(t => t.status === 'frei').length;
+  let h = '';
+  if (b) {
+    const alt = vorbei(b);
+    h += '<div class="card hero"><h2>' + (alt ? 'Ihr Termin war am' : 'Ihr Termin') + '</h2><p class="gross">' + esc(G.tagLang(b.beginn)) + '<br>' + esc(G.zeitraum(b)) + '</p>' +
+      '<p style="margin:6px 0 0">' + (E.ort ? 'Ort: ' + esc(E.ort) + ' · ' : '') + esc(b.name_eltern) + ' · Kind: ' + esc(b.name_kind) + '</p>' +
+      (alt ? '' : '<div class="knoepfe"><button class="btn" data-a="verlegen">Termin verlegen</button><button class="btn sec" data-a="angaben">Angaben ändern</button><button class="btn sec" data-a="absagen">Absagen</button></div>') + '</div>';
+  } else {
+    h += '<div class="card hero"><h2>Hallo' + (k.name_eltern ? ' ' + esc(k.name_eltern) : '') + '!</h2><p style="margin:6px 0 0">' +
+      (!E.offen ? 'Die Terminbuchung ist zurzeit noch nicht geöffnet.' : frei ? 'Bitte wählen Sie unten einen freien Termin für das Standortgespräch. Ein Gespräch dauert eine Viertelstunde.' : 'Im Moment sind leider keine Termine frei.') + '</p></div>';
+  }
+  if (E.hinweis || (E.ort && !b)) h += '<div class="card"><h2>' + esc(E.titel) + '</h2>' + (E.hinweis ? '<p style="white-space:pre-wrap;margin:0 0 6px">' + esc(E.hinweis) + '</p>' : '') + (E.ort ? '<p class="muted" style="margin:0">Ort: ' + esc(E.ort) + '</p>' : '') + '</div>';
+  if (VERLEGEN && b) h += '<div class="msg gut" style="margin:0 0 12px">Tippen Sie auf einen freien Termin, um Ihr Gespräch dorthin zu verlegen. <a href="#" data-a="verlegenAus">Abbrechen</a></div>';
+  const tage = G.tage(T.filter(t => t.status !== 'vorbei' || T.some(x => x.status !== 'vorbei' && G.tagKey(x.beginn) === G.tagKey(t.beginn))));
+  if (!tage.length) h += '<div class="card"><h2>Noch keine Termine</h2><p class="muted" style="margin:0">Der Klassenlehrer hat noch keine Sprechzeiten eingetragen. Schauen Sie bitte später noch einmal vorbei.</p></div>';
+  else h += '<div class="legende" id="liste"><span><i></i>frei</span><span><i class="b"></i>belegt</span>' + (b ? '<span><i class="m"></i>Ihr Termin</span>' : '') + '</div>';
+  h += tage.map(tg => {
+    const f = tg.termine.filter(t => t.status === 'frei').length;
+    return '<div class="card"><h3>' + esc(G.tagLang(tg.termine[0].beginn)) + '</h3><p class="tagzahl">' + (f ? f + (f === 1 ? ' Termin frei' : ' Termine frei') : 'alle Termine belegt') + '</p><div class="slots">' +
+      tg.termine.map(t => '<button type="button" class="slot ' + t.status + '" data-t="' + t.id + '"' + (t.status === 'belegt' || t.status === 'vorbei' || (t.status === 'frei' && !E.offen) ? ' disabled' : '') +
+        ' aria-label="' + esc(G.uhr(t.beginn)) + ' Uhr, ' + ({ frei: 'frei', belegt: 'belegt', meins: 'Ihr Termin', vorbei: 'vorbei' }[t.status]) + '"><b>' + esc(G.uhr(t.beginn)) + '</b>' +
+        (t.status === 'belegt' ? '<span>belegt</span>' : t.status === 'meins' ? '<span>Ihr Termin</span>' : t.status === 'vorbei' ? '<span>vorbei</span>' : '') + '</button>').join('') + '</div></div>';
+  }).join('');
+  return h + '<p class="muted" style="text-align:center">Die Liste aktualisiert sich von selbst. Belegte Termine sind sofort für alle gesperrt.</p>';
+}
+
+function kontoAnsicht() {
+  return '<div class="card"><h2>Mein Konto</h2><p>Benutzername: <b>' + esc(STAND.konto.benutzer) + '</b> · Klasse ' + esc(STAND.konto.klasse) + '</p>' +
+    '<p class="muted">Dieses Konto gilt für die Standortgespräche und für die Elternumfrage.</p>' +
+    '<form id="pwForm"><label class="f"><span>Neues Kennwort</span><input type="password" id="pNeu" minlength="6" maxlength="72" required autocomplete="new-password"></label>' +
+    '<label class="f"><span>Neues Kennwort wiederholen</span><input type="password" id="pNeu2" minlength="6" maxlength="72" required autocomplete="new-password"></label>' +
+    '<button class="btn" type="submit">Kennwort ändern</button><div id="pMsg" class="msg hidden" role="alert"></div></form></div>' +
+    '<div class="knoepfe"><button class="btn sec" data-a="start">‹ Zu den Terminen</button></div>';
+}
+
+/* ---------- Buchen, verlegen, ändern ---------- */
+let ZIEL = null;
+function dialog(t) {
+  const b = STAND.buchung, k = STAND.konto, eigen = b && b.termin_id === t.id, umzug = b && !eigen;
+  ZIEL = t;
+  $('dlgForm').innerHTML = '<h2>' + (eigen ? 'Angaben ändern' : umzug ? 'Termin verlegen' : 'Termin buchen') + '</h2>' +
+    '<div class="wann">' + esc(G.tagLang(t.beginn)) + ', ' + esc(G.zeitraum(t)) + (umzug ? '<small>Ihr bisheriger Termin (' + esc(G.tagKurz(b.beginn)) + ', ' + esc(G.uhr(b.beginn)) + ' Uhr) wird dadurch wieder frei.</small>' : '') + '</div>' +
+    '<label class="f"><span>Ihr Name</span><input type="text" id="dName" maxlength="80" required minlength="2" autocomplete="name" value="' + esc(b ? b.name_eltern : k.name_eltern) + '"></label>' +
+    '<label class="f"><span>Name Ihres Kindes</span><input type="text" id="dKind" maxlength="80" required minlength="2" value="' + esc(b ? b.name_kind : k.name_kind) + '"></label>' +
+    '<label class="f"><span>Telefon <small>(freiwillig, für Rückfragen)</small></span><input type="tel" id="dTel" maxlength="40" autocomplete="tel" value="' + esc(b ? b.telefon : '') + '"></label>' +
+    '<label class="f"><span>Worüber möchten Sie sprechen? <small>(freiwillig)</small></span><textarea id="dNotiz" maxlength="1000">' + esc(b ? b.notiz : '') + '</textarea></label>' +
+    '<div id="dMsg" class="msg hidden" role="alert"></div>' +
+    '<div class="knoepfe zwei"><button class="btn sec" type="button" id="dAbbr">Abbrechen</button><button class="btn" type="submit" id="dOk">' + (eigen ? 'Speichern' : umzug ? 'Termin verlegen' : 'Verbindlich buchen') + '</button></div>';
+  $('dAbbr').onclick = () => $('dlg').close();
+  $('dlg').showModal();
+}
+$('dlgForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('dMsg'), t = ZIEL, b = STAND.buchung; m.classList.add('hidden');
+  const eigen = b && b.termin_id === t.id, umzug = b && !eigen;
+  $('dOk').disabled = true;
+  try {
+    const r = await G.rpc('gespraech_buchen', { p_id: S.id, p_pw: S.pw, p_termin: t.id, p_name_eltern: $('dName').value, p_name_kind: $('dKind').value, p_telefon: $('dTel').value, p_notiz: $('dNotiz').value });
+    if (!r.ok && ['belegt', 'termin', 'vorbei', 'zu'].includes(r.grund)) {
+      $('dlg').close(); await neuLaden(); if (S) zeige('start', G.GRUND[r.grund], true); return;
+    }
+    G.ok(r); STAND = r; VERLEGEN = false; $('dlg').close();
+    zeige('start', eigen ? 'Ihre Angaben wurden gespeichert.' : (umzug ? 'Ihr Termin wurde verlegt: ' : 'Ihr Termin ist gebucht: ') + G.termin(r.buchung) + '.');
+  } catch (err) { m.textContent = err.grund ? err.message : 'Keine Verbindung zur Datenbank. Bitte noch einmal versuchen.'; m.classList.remove('hidden'); }
+  finally { const o = $('dOk'); if (o) o.disabled = false; }
+};
+
+$('app').addEventListener('click', async e => {
+  const s = e.target.closest('.slot'), a = e.target.closest('[data-a]');
+  if (s && !s.disabled) { const t = STAND.termine.find(x => x.id === s.dataset.t); if (t) dialog(t); return; }
+  if (!a) return;
+  const was = a.dataset.a; if (a.tagName === 'A') e.preventDefault();
+  if (was === 'start') zeige('start', '');
+  else if (was === 'verlegen') { VERLEGEN = true; zeige('start'); const l = $('liste'); if (l) l.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  else if (was === 'verlegenAus') { VERLEGEN = false; zeige('start'); }
+  else if (was === 'angaben') { const t = STAND.termine.find(x => x.id === STAND.buchung.termin_id); if (t) dialog(t); }
+  else if (was === 'absagen') {
+    if (!confirm('Möchten Sie Ihren Termin am ' + G.termin(STAND.buchung) + ' wirklich absagen? Er wird dann wieder für andere Eltern frei.')) return;
+    try {
+      const r = await G.rpc('gespraech_absagen', { p_id: S.id, p_pw: S.pw });
+      if (!r.ok) { await neuLaden(); if (S) zeige('start', G.GRUND[r.grund] || 'Das hat nicht geklappt.', true); return; }
+      STAND = r; VERLEGEN = false; zeige('start', 'Ihr Termin wurde abgesagt. Sie können jederzeit einen neuen buchen.');
+    } catch (err) { zeige('start', 'Keine Verbindung zur Datenbank. Bitte noch einmal versuchen.', true); }
+  }
+});
+$('app').addEventListener('submit', async e => {
+  if (e.target.id !== 'pwForm') return;
+  e.preventDefault(); const m = $('pMsg'), neu = $('pNeu').value; m.classList.remove('gut');
+  if (neu !== $('pNeu2').value) { m.textContent = 'Die beiden Kennwörter stimmen nicht überein.'; m.classList.remove('hidden'); return; }
+  try {
+    G.ok(await G.rpc('umfrage_konto_aendern', { p_id: S.id, p_pw: S.pw, p_name_eltern: STAND.konto.name_eltern, p_name_kind: STAND.konto.name_kind, p_neues_pw: neu }));
+    S.pw = neu; merkeSitzung(); try { if (localStorage.getItem(LS_UMFRAGE)) localStorage.setItem(LS_UMFRAGE, JSON.stringify(S)); } catch (x) { }
+    e.target.reset(); m.textContent = 'Ihr Kennwort wurde geändert.'; m.classList.add('gut'); m.classList.remove('hidden');
+  } catch (err) { m.textContent = err.grund ? err.message : 'Keine Verbindung zur Datenbank.'; m.classList.remove('hidden'); }
+});
+
+/* Liste aktuell halten: alle 30 Sekunden und wenn die Seite wieder sichtbar wird */
+async function auffrischen() {
+  if (!S || !STAND || ANSICHT !== 'start' || $('dlg').open || document.hidden) return;
+  const alt = JSON.stringify(STAND);
+  try { const r = await neuLaden(); if (r && JSON.stringify(r) !== alt) zeige('start'); } catch (e) { }
+}
+setInterval(auffrischen, 30000);
+document.addEventListener('visibilitychange', auffrischen);
+
+/* ---------- Start ---------- */
+(async function () {
+  S = ladeSitzung();
+  if (!S) { let hatte = false; try { hatte = !!localStorage.getItem(LS_UMFRAGE + '-hatte-konto'); } catch (e) { } modus(!hatte); zeigeLogin(); return; }
+  try { const r = await neuLaden(); if (r) { merkeSitzung(); angemeldet(r); } }
+  catch (e) { modus(false); zeigeLogin('Keine Verbindung zur Datenbank. Bitte später noch einmal versuchen.'); }
+})();
+</script>
+</body>
+</html>
