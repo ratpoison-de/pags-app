@@ -102,7 +102,7 @@ Umfrage-App für Eltern (zuerst Klasse 9a, „Die ersten acht Wochen in der 9a�
 
 ## Standortgespräche (`standortgespraech/`)
 
-Terminbuchung für die Standortgespräche (zuerst Klasse 9a). Link für Eltern: `https://ratpoison-de.github.io/pags-app/standortgespraech/`
+Terminbuchung für die Standortgespräche (zuerst Klasse 9a). Link für Eltern: `https://ratpoison-de.github.io/pags-app/standortgespraech/` · QR-Code: `standortgespraech/qr-standortgespraech.png`
 
 - **Eltern** (`standortgespraech/index.html`): Konto mit Benutzername und Kennwort – dasselbe Konto wie bei der Elternumfrage. Freie Viertelstunden-Termine antippen und buchen (Name, Name des Kindes, freiwillig Telefon und Anliegen). Belegte Termine sind für alle gesperrt und ohne Namen als „belegt“ sichtbar. Den eigenen Termin können Eltern verlegen, die Angaben ändern oder absagen. Ein Termin pro Konto. Andere Klassen: `standortgespraech/?klasse=9b`.
 - **Lehrer** (`standortgespraech/lehrer.html`): Zugang mit dem Hauptschlüssel der Graduierung.
