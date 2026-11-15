@@ -58,7 +58,7 @@
     doppelt: 'Für diese Umfrage wurde von Ihrem Konto schon eine Abgabe gemacht.', zugross: 'Die Antworten sind zu lang.',
     name: 'Bitte geben Sie für die Abgabe mit Namen Ihren Namen an (2 bis 80 Zeichen).',
     zugang: 'Der Zugangsschlüssel stimmt nicht.', hat_abgaben: 'Zu dieser Umfrage gibt es schon Abgaben. Die Fragen lassen sich nicht mehr ändern – kopieren Sie die Umfrage als neue Runde.',
-    fehlt: 'Der Eintrag wurde nicht gefunden.', zulang: 'Die Rückmeldung ist zu lang (höchstens 4000 Zeichen).'
+    fehlt: 'Der Eintrag wurde nicht gefunden.', nichtfrei: 'Die Ergebnisse sind (noch) nicht freigegeben.', zuwenig: 'Es gibt noch zu wenige Abgaben, um Ergebnisse zu zeigen.', zulang: 'Die Rückmeldung ist zu lang (höchstens 4000 Zeichen).'
   };
   UF.ok = function (r) {
     if (!r || !r.ok) { const f = new Error(UF.GRUND[r && r.grund] || 'Das hat nicht geklappt.'); f.grund = (r && r.grund) || 'fehler'; throw f; }

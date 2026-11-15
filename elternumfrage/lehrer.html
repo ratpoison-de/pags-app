@@ -7,7 +7,7 @@
 <title>Elternumfrage – Lehrerbereich</title>
 <link rel="icon" href="../icon.png">
 <script src="../config.js?v=20261108"></script>
-<script src="umfrage.js?v=20261114b"></script>
+<script src="umfrage.js?v=20261115"></script>
 <style>
 /* Aufbau wie der Lehrerbereich von Graduierung und Praktikum: roter Kopf, Filterkarte, Tabelle, Seitenleiste zum Lesen */
 :root{--red:#A81010;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;--tint:#FFF4F2}
@@ -546,9 +546,10 @@ function rundenListe() {
   $('rundenListe').innerHTML = D.runden.length ? D.runden.map(r => {
     const n = abgabenVon(r.id).length;
     return '<div class="runde" data-id="' + r.id + '"><div><h3>' + esc(r.titel) + '</h3><span class="klein">Klasse ' + esc(r.klasse) + ' · ' + UF.fragen(r).length + ' Fragen · ' + n + ' Abgaben · angelegt ' + esc(UF.datum(r.created_at)) + '</span> ' +
-      (r.offen ? '<span class="st gut">offen für Eltern</span>' : '<span class="st">geschlossen</span>') + '</div>' +
+      (r.offen ? '<span class="st gut">offen für Eltern</span>' : '<span class="st">geschlossen</span>') + (r.ergebnisse_frei ? ' <span class="st mittel">Ergebnisse für Eltern sichtbar</span>' : '') + '</div>' +
       '<div class="knoepfe"><button class="btn klein' + (r.offen ? ' sec' : '') + '" data-a="umschalten">' + (r.offen ? 'Schließen' : 'Öffnen') + '</button>' +
       '<button class="btn sec klein" data-a="bearbeiten">Bearbeiten</button><button class="btn sec klein" data-a="kopieren">Als neue Runde kopieren</button>' +
+      '<button class="btn sec klein" data-a="frei" title="Eltern, die teilgenommen haben, sehen die Schaubilder der Klasse">' + (r.ergebnisse_frei ? '📊 Freigabe beenden' : '📊 Ergebnisse für Eltern freigeben') + '</button>' +
       '<button class="btn sec klein" data-a="link" title="Link für die Eltern kopieren">🔗 Elternlink</button><button class="btn sec klein" data-a="loeschen" title="Umfrage mit allen Abgaben löschen">✕</button></div></div>';
   }).join('') : '<p class="leer">Noch keine Umfrage.</p>';
 }
@@ -557,6 +558,11 @@ $('rundenListe').addEventListener('click', async e => {
   const b = e.target.closest('button[data-a]'); if (!b) return; const r = runde(b.closest('.runde').dataset.id); if (!r) return;
   try {
     if (b.dataset.a === 'umschalten') { UF.ok(await UF.rpc('umfrage_runde_speichern', { schluessel: KEY, p_id: r.id, p_titel: r.titel, p_einleitung: r.einleitung, p_fragen: r.fragen, p_offen: !r.offen, p_klasse: r.klasse })); await laden(); }
+    else if (b.dataset.a === 'frei') {
+      if (!r.ergebnisse_frei && !confirm('Ergebnisse von „' + r.titel + '“ für die Eltern freigeben?\n\nEltern, die selbst teilgenommen haben, sehen dann in ihrer App Schaubilder zu den Skalen- und Auswahlfragen der ganzen Klasse.\n\nNicht gezeigt werden: Freitexte, Namen, einzelne Abgaben und die Frage zum Gesprächswunsch. Die Anzeige erscheint erst ab 5 Abgaben.')) return;
+      UF.ok(await UF.rpc('umfrage_ergebnisse_freigeben', { schluessel: KEY, p_id: r.id, p_frei: !r.ergebnisse_frei })); await laden();
+      meldung(r.ergebnisse_frei ? 'Freigabe beendet.' : 'Ergebnisse sind jetzt für die Eltern sichtbar.');
+    }
     else if (b.dataset.a === 'bearbeiten') editor(Object.assign({}, r, { fragen: JSON.parse(JSON.stringify(r.fragen)) }));
     else if (b.dataset.a === 'kopieren') editor({ id: null, titel: r.titel + ' (Wiederholung)', einleitung: r.einleitung, klasse: r.klasse, offen: false, fragen: JSON.parse(JSON.stringify(r.fragen)) });
     else if (b.dataset.a === 'link') { const l = elternLink(r.klasse); try { await navigator.clipboard.writeText(l); alert('Link kopiert:\n' + l); } catch (x) { prompt('Link für die Eltern:', l); } }

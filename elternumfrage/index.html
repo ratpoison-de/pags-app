@@ -9,7 +9,7 @@
 <link rel="icon" href="../icon.png">
 <link rel="apple-touch-icon" href="../icon.png">
 <script src="../config.js?v=20261108"></script>
-<script src="umfrage.js?v=20261114"></script>
+<script src="umfrage.js?v=20261115"></script>
 <style>
 /* Aufbau wie die Praktikums-App: roter Kopf mit Logo, Inhalt als Karten, Umfrage in Schritten */
 :root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;color-scheme:light}
@@ -89,6 +89,27 @@ dl.antw dd{margin:2px 0 0;white-space:pre-wrap;font-size:.92rem}
 dl.antw dd.ohne{color:var(--muted);font-style:italic}
 details.info{background:#F7F7F7;border-radius:10px;padding:8px 12px;font-size:.85rem;color:#555;margin-top:12px}
 details.info summary{cursor:pointer;font-weight:600}
+/* Ergebnisse der Klasse (Schaubilder) */
+:root{--neg2:#c0392f;--neg1:#e58f84;--neu:#d6d3cc;--pos1:#86b6ef;--pos2:#1c5cab;--serie:#2a78d6}
+.legende{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;color:var(--muted);margin:0 0 4px;align-items:center}
+.legende i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.lk{padding:10px 0;border-top:1px solid var(--line)}
+.lk:first-of-type{border-top:0}
+.lk p{margin:0 0 6px;font-size:.9rem;font-weight:600}
+.lk .reihe{display:grid;grid-template-columns:1fr 54px;gap:10px;align-items:center}
+.lk .plot{position:relative;height:24px}
+.lk .plot::after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#8a8a8a;z-index:0}
+.lk .segs{position:absolute;top:0;bottom:0;display:flex;width:50%;z-index:1}
+.lk .segs i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.72rem;font-weight:700;border-left:1px solid #fff;border-right:1px solid #fff;overflow:hidden;min-width:0}
+.lk .segs i:first-child{border-radius:4px 0 0 4px}.lk .segs i:last-child{border-radius:0 4px 4px 0}.lk .segs i:only-child{border-radius:4px}
+.s1{background:var(--neg2);color:#fff}.s2{background:var(--neg1);color:#3a1410}.s3{background:var(--neu);color:#333}.s4{background:var(--pos1);color:#0d2b52}.s5{background:var(--pos2);color:#fff}
+.lk .schnitt{text-align:right;font-weight:700;font-size:.95rem;white-space:nowrap}
+.lk .enden{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin:3px 64px 0 0}
+.bz{display:grid;grid-template-columns:minmax(90px,38%) 1fr 64px;gap:8px;align-items:center;margin:5px 0;font-size:.84rem}
+.bz .bar{height:18px;background:#F0EEEB;border-radius:0 4px 4px 0;overflow:hidden}
+.bz .bar i{display:block;height:100%;background:var(--serie);border-radius:0 4px 4px 0}
+.bz .w{text-align:right;color:var(--muted);font-size:.78rem;white-space:nowrap}
+.abt{color:var(--red);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;font-weight:700;margin:0 0 4px}
 footer{max-width:760px;margin:0 auto;padding:6px 16px 22px;color:var(--muted);font-size:.76rem;text-align:center}
 @media (max-width:480px){header{padding-left:12px;padding-right:12px}header .in{gap:7px}header img{height:28px}header h1{font-size:.95rem}header button{font-size:.72rem;padding:4px 7px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -203,7 +224,7 @@ async function neuLaden() {
 }
 
 /* ---------- Ansichten ---------- */
-function zeige(a) { ANSICHT = a; const f = { start: startAnsicht, umfrage: umfrageAnsicht, antworten: antwortenAnsicht, danke: dankeAnsicht, konto: kontoAnsicht }[a.name]; $('app').innerHTML = f(a); scrollTo(0, 0); nachZeigen(a); }
+function zeige(a) { ANSICHT = a; const f = { start: startAnsicht, umfrage: umfrageAnsicht, antworten: antwortenAnsicht, danke: dankeAnsicht, konto: kontoAnsicht, ergebnisse: ergebnisAnsicht }[a.name]; $('app').innerHTML = f(a); scrollTo(0, 0); nachZeigen(a); }
 function runde(id) { return STAND.runden.find(r => r.id === id); }
 
 function startAnsicht(a) {
@@ -227,6 +248,7 @@ function startAnsicht(a) {
     else if (!r.offen) { st = '<span class="status">Geschlossen</span>'; knopf = ''; }
     else { st = beantw ? '<span class="status mittel">Angefangen · ' + beantw + ' von ' + n + ' Fragen</span>' : '<span class="status">Noch nicht ausgefüllt</span>';
       knopf = '<button class="btn" data-a="start" data-r="' + r.id + '">' + (beantw ? 'Weiter ausfüllen' : 'Umfrage starten') + '</button>'; }
+    if (r.teilnahme && r.ergebnisse_frei) knopf = '<button class="btn klein" data-a="ergebnisse" data-r="' + r.id + '">📊 Ergebnisse der Klasse ansehen</button>' + knopf;
     return '<div class="card runde"><h3>' + esc(r.titel) + '</h3><div>' + st + '</div>' + (r.einleitung && !r.teilnahme ? '<p class="muted" style="margin:4px 0 0;white-space:pre-wrap">' + esc(r.einleitung) + '</p>' : '') + '<div class="knoepfe" style="margin-top:6px">' + knopf + '</div></div>';
   }).join('');
   return h;
@@ -280,6 +302,27 @@ function antwortenAnsicht(a) {
     (ab.antwort_lehrer ? '<div class="card rueck"><p class="von">Rückmeldung des Klassenlehrers vom ' + esc(UF.datum(ab.antwort_am)) + '</p><p class="t">' + esc(ab.antwort_lehrer) + '</p></div>' : '') +
     '<div class="card">' + antwortListe(r, ab.antworten) + '</div><div class="knoepfe"><button class="btn sec" data-a="uebersicht">‹ Zur Übersicht</button></div>';
 }
+/* Ergebnisse der Klasse: nur Verteilungen, keine Freitexte und keine Namen (vom Lehrer freigegeben, ab 5 Abgaben) */
+function ergebnisAnsicht(a) {
+  const r = runde(a.runde), E = a.daten;
+  let h = '<div class="card"><h2>Ergebnisse der Klasse</h2><p class="muted" style="margin:0">' + esc(r.titel) + ' · ' + E.anzahl + ' Abgaben. Sie sehen, wie alle Eltern zusammen geantwortet haben. Einzelne Antworten, Namen und Freitexte werden nicht gezeigt.</p></div>';
+  const leg = '<div class="legende"><span><i class="s1"></i>1</span><span><i class="s2"></i>2</span><span><i class="s3"></i>3</span><span><i class="s4"></i>4</span><span><i class="s5"></i>5</span><span>· Zahl im Balken = Anzahl</span></div>';
+  UF.schritte(r).forEach(s => {
+    const teile = s.fragen.map(f => {
+      const e = E.fragen[f.id]; if (!e || !e.n) return '';
+      if (f.typ === 'skala') {
+        const z = e.z, n = e.n, p = z.map(k => k / n * 100), links = p[0] + p[1] + p[2] / 2, m = z.reduce((x, k, i) => x + k * (i + 1), 0) / n;
+        return '<div class="lk"><p>' + esc(f.text) + '</p><div class="reihe"><div class="plot"><span class="segs" style="left:' + ((100 - links) / 2).toFixed(2) + '%">' +
+          z.map((k, i) => k ? '<i class="s' + (i + 1) + '" style="width:' + p[i].toFixed(2) + '%" title="Antwort ' + (i + 1) + ': ' + k + ' von ' + n + '">' + (p[i] >= 14 ? k : '') + '</i>' : '').join('') + '</span></div>' +
+          '<span class="schnitt">Ø ' + UF.zahl(m, 1) + '</span></div><div class="enden"><span>← ' + esc(f.links || 'niedrig') + '</span><span>' + esc(f.rechts || 'hoch') + ' →</span></div></div>';
+      }
+      return '<div class="lk"><p>' + esc(f.text) + '</p>' + e.o.map(o => '<div class="bz"><span>' + esc(o[0]) + '</span><span class="bar"><i style="width:' + (o[1] / e.n * 100).toFixed(1) + '%"></i></span><span class="w">' + o[1] + ' · ' + UF.zahl(o[1] / e.n * 100) + ' %</span></div>').join('') +
+        (f.typ === 'mehrfach' ? '<p class="muted" style="font-weight:400;font-size:.76rem;margin:4px 0 0">Mehrere Antworten waren möglich.</p>' : '') + '</div>';
+    }).join('');
+    if (teile) h += '<div class="card"><p class="abt">' + esc(s.titel) + '</p>' + (s.fragen.some(f => f.typ === 'skala' && E.fragen[f.id] && E.fragen[f.id].n) ? leg : '') + teile + '</div>';
+  });
+  return h + '<p class="muted" style="text-align:center">Balken bei Skalenfragen: Rot nach links = kritisch, Blau nach rechts = positiv, die Linie markiert die Mitte.</p><div class="knoepfe"><button class="btn sec" data-a="uebersicht">‹ Zur Übersicht</button></div>';
+}
 function dankeAnsicht(a) {
   return '<div class="card hero"><h2>Vielen Dank!</h2><p style="margin:6px 0 0">' + (a.anonym ? 'Ihre Antworten wurden anonym abgegeben.' : 'Ihre Antworten wurden mit Ihrem Namen abgegeben. Wenn der Klassenlehrer Ihnen antwortet, sehen Sie die Rückmeldung hier in der App.') + '</p></div>' +
     '<div class="knoepfe"><button class="btn" data-a="uebersicht">Zur Übersicht</button></div>';
@@ -329,6 +372,11 @@ $('app').addEventListener('click', async ev => {
   const act = b.dataset.a;
   if (act === 'start') zeige({ name: 'umfrage', runde: b.dataset.r });
   else if (act === 'antworten') zeige({ name: 'antworten', runde: b.dataset.r });
+  else if (act === 'ergebnisse') {
+    b.disabled = true;
+    try { const d = UF.ok(await UF.rpc('umfrage_ergebnisse', { p_id: S.id, p_pw: S.pw, p_runde: b.dataset.r })); zeige({ name: 'ergebnisse', runde: b.dataset.r, daten: d }); }
+    catch (err) { b.disabled = false; alert(err.grund === 'zuwenig' ? 'Es gibt noch zu wenige Abgaben. Die Ergebnisse werden ab 5 Abgaben angezeigt – bitte schauen Sie später noch einmal vorbei.' : err.grund ? err.message : 'Keine Verbindung. Bitte später noch einmal versuchen.'); }
+  }
   else if (act === 'uebersicht') zeige({ name: 'start' });
   else if (act === 'zurueck') { if (ANSICHT.schritt === 0) zeige({ name: 'start' }); else zeige({ name: 'umfrage', runde: ANSICHT.runde, schritt: ANSICHT.schritt - 1 }); }
   else if (act === 'weiter') {
