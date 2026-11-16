@@ -1,0 +1,9 @@
+{
+  "name": "IT-Start für neue Lehrkräfte – PAGS",
+  "short_name": "IT-Start",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#F7F7F6",
+  "theme_color": "#AD120D",
+  "icons": [{ "src": "../icon.png", "sizes": "512x512", "type": "image/png" }]
+}

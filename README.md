@@ -141,3 +141,9 @@ Link: `https://ratpoison-de.github.io/pags-app/berufewahl/` · QR-Code: `berufew
 
 - Datenbank: Supabase-Projekt pags-lernplaner, Tabelle `public.berufewahl_stimmen` (per RLS gesperrt), Abgabe nur über `berufewahl_abstimmen()`. SQL: `supabase/berufewahl.sql`
 - Auswertung: `select public.berufewahl_ergebnis();` (nur mit Service-Zugang) → JSON in `berufewahl/auswertung.py` geben → PDF mit Stimmen je Beruf (Reihenfolge der Liste) und Rangliste.
+
+## Lehrkräfte: IT-Start für neue Lehrkräfte
+
+`it-start/index.html` – Checkliste für neue Kolleginnen und Kollegen auf Grundlage des Medienkonzepts: 24 Punkte in fünf Bereichen (Zugänge, Unterricht, Datenschutz, Kommunikation, Medienkonzept). Abhaken mit automatischem Datum, Notizen je Punkt, Fortschrittsanzeige, Filter, Drucken/PDF, „Stand kopieren“ als Text sowie Sicherung als Datei speichern und laden (Gerätewechsel). Der Fortschritt bleibt im Browser des Geräts, es gibt keinen Server.
+Link: `https://ratpoison-de.github.io/pags-app/it-start/` · QR-Code: `apps/qr/it-start.png`
+Die Punkte stehen im Skript im Array `ITEMS`, die Bereiche in `CATS`.

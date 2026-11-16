@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT-Start für neue Lehrkräfte – PAGS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#AD120D">
+<link rel="icon" href="../apps/img/pags-logo.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{
+    --bg:#F7F7F6; --card:#ffffff; --ink:#2A2A2B; --muted:#6C6C70; --line:#E2E2DF;
+    --accent:#AD120D; --accent-soft:#FBEDEC;
+    --c-zug:#1B2A6B; --c-unt:#2f8a4f; --c-dat:#c0392b; --c-kom:#b8860b; --c-med:#7b4bb5;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#141414; --card:#1f1f21; --ink:#f2f2f2; --muted:#a0a0a6; --line:#2e2e31; --accent:#e0544f; --accent-soft:#3a1d1c; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Source Sans 3','Segoe UI',Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+  header h1{font-family:Archivo,'Arial Black',Arial,sans-serif;font-weight:900;text-transform:uppercase;font-size:26px;line-height:1.05;margin:6px 0 6px;letter-spacing:-.01em}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .top img{height:44px;width:auto}
+  .top a{font-size:14px;color:var(--muted);text-decoration:none}
+  .kicker{font-family:Archivo,Arial,sans-serif;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  @media print{.filters,.actions,.more,.top a,.modal,.toast{display:none!important} section.closed .items{display:block!important} body{background:#fff}}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:16px 0;display:flex;gap:18px;align-items:center}
+  .ring{position:relative;width:84px;height:84px;flex:none}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:20px}
+  .ring .num small{font-size:11px;font-weight:500;color:var(--muted)}
+  .hero-body{flex:1;min-width:0}
+  .hero-body label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+  .hero-body input{width:100%;font:inherit;font-size:16px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+  .status{font-size:13px;color:var(--muted);margin-top:8px}
+  .filters{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+  .filters button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer}
+  .filters button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  section{margin-bottom:14px}
+  .sec-head{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:8px 2px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+  .dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .sec-head h2{font-size:15px;margin:0;flex:1}
+  .sec-head .cnt{font-size:13px;color:var(--muted)}
+  .sec-head .chev{transition:transform .2s;color:var(--muted)}
+  section.closed .chev{transform:rotate(-90deg)}
+  section.closed .items{display:none}
+  .bar{height:4px;background:var(--line);border-radius:4px;overflow:hidden;margin:0 2px 8px}
+  .bar i{display:block;height:100%;border-radius:4px;transition:width .3s}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:8px;overflow:hidden}
+  .row{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;cursor:pointer}
+  .chk{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:.15s}
+  .item.done .chk{background:var(--accent);border-color:var(--accent)}
+  .chk svg{opacity:0}
+  .item.done .chk svg{opacity:1}
+  .txt{flex:1;min-width:0}
+  .txt b{display:block;font-weight:600;font-size:15px;line-height:1.35}
+  .item.done .txt b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted)}
+  .txt span{display:block;font-size:13px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .meta{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .tag{font-size:11.5px;padding:3px 8px;border-radius:999px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+  .tag.date{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+  .more{background:none;border:0;color:var(--muted);font-size:18px;padding:0 4px;cursor:pointer;flex:none}
+  .note{display:none;padding:0 14px 13px 50px}
+  .item.open .note{display:block}
+  .note textarea{width:100%;min-height:60px;font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);resize:vertical}
+  .note small{color:var(--muted);font-size:12px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+  .actions button{font:inherit;font-size:14px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+  .actions .danger{color:#c0392b}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:30px 0}
+  footer{margin-top:28px;font-size:12px;color:var(--muted);text-align:center;line-height:1.6}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}
+  .modal.show{display:flex}
+  .modal div{background:var(--card);border-radius:16px;padding:20px;max-width:340px;width:100%}
+  .modal h3{margin:0 0 8px;font-size:17px}
+  .modal p{margin:0 0 16px;color:var(--muted);font-size:14px}
+  .modal .btns{display:flex;gap:8px;justify-content:flex-end}
+  .modal button{font:inherit;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+  .modal .red{background:#c0392b;color:#fff;border-color:#c0392b}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;transition:transform .25s;z-index:11}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .celebrate{background:var(--accent-soft);color:var(--accent);border-radius:14px;padding:14px;text-align:center;font-weight:600;margin-bottom:14px;display:none}
+  .celebrate.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img src="../apps/img/pags-logo.png" alt="PAGS Gemeinschaftsschule Külsheim"><a href="../apps/#lehrer">← Alle Apps</a></div>
+  <header>
+    <p class="kicker">Für Lehrkräfte · Medienkonzept</p>
+    <h1>IT-Start für neue Lehrkräfte</h1>
+    <p>Schritt für Schritt startklar mit iPad, Apple TV und IServ.</p>
+  </header>
+
+  <div class="hero">
+    <div class="ring">
+      <svg width="84" height="84" viewBox="0 0 84 84">
+        <circle cx="42" cy="42" r="36" fill="none" stroke="var(--line)" stroke-width="8"/>
+        <circle id="ringFg" cx="42" cy="42" r="36" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="226.2" style="transition:stroke-dashoffset .4s"/>
+      </svg>
+      <div class="num"><span id="pct">0 %</span><small id="frac">0 / 0</small></div>
+    </div>
+    <div class="hero-body">
+      <label for="name">Name der Lehrkraft</label>
+      <input id="name" placeholder="Vor- und Nachname" autocomplete="name">
+      <div class="status" id="status">Wird geladen …</div>
+    </div>
+  </div>
+
+  <div class="celebrate" id="celebrate">Alles erledigt – du bist startklar! 🎉</div>
+
+  <div class="filters" id="filters">
+    <button data-f="all" class="on">Alle</button>
+    <button data-f="open">Offen</button>
+    <button data-f="done">Erledigt</button>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="actions">
+    <button id="copyBtn">Stand kopieren</button>
+    <button id="expandBtn">Alle aufklappen</button>
+    <button id="printBtn">Drucken / PDF</button>
+    <button id="exportBtn">Sicherung speichern</button>
+    <button id="importBtn">Sicherung laden</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+    <button id="resetBtn" class="danger">Zurücksetzen</button>
+  </div>
+
+  <footer>
+    Dein Fortschritt bleibt nur auf diesem Gerät im Browser. Zum Gerätewechsel „Sicherung speichern“ und dort „Sicherung laden“.<br>
+    Grundlage: Medienkonzept der PAGS · www.pags-kuelsheim.de<br>
+    Erstellung: Thorsten von Plotho-Kettner
+  </footer>
+</div>
+
+<div class="modal" id="modal"><div>
+  <h3>Alles zurücksetzen?</h3>
+  <p>Alle Häkchen, Daten und Notizen werden gelöscht.</p>
+  <div class="btns"><button id="mNo">Abbrechen</button><button id="mYes" class="red">Zurücksetzen</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS = [
+  {id:"zug", name:"Zugänge", color:"var(--c-zug)"},
+  {id:"unt", name:"Unterricht", color:"var(--c-unt)"},
+  {id:"dat", name:"Datenschutz", color:"var(--c-dat)"},
+  {id:"kom", name:"Kommunikation", color:"var(--c-kom)"},
+  {id:"med", name:"Medienkonzept", color:"var(--c-med)"}
+];
+const ITEMS = [
+  ["z1","zug","Dienst-iPad abholen und Empfang quittieren","Seriennummer notieren, Gerät mit Code sperren.","Netzwerkbetreuung"],
+  ["z2","zug","IServ-Account aktivieren","Startpasswort sofort ändern.","IServ-Administration"],
+  ["z3","zug","IServ-App auf dem Dienst-iPad einrichten","Mail, Kalender und Push-Benachrichtigungen aktivieren.","selbst"],
+  ["z4","zug","WLAN-Zugang zum Schulnetz einrichten","Zugangsdaten nicht an Schüler weitergeben.","Netzwerkbetreuung"],
+  ["z5","zug","Passwortmanager und Bildschirmsperre einrichten","Code mind. 6-stellig, automatische Sperre nach kurzer Zeit.","selbst"],
+  ["u1","unt","Apple TV im eigenen Klassenraum testen","Bildschirmsynchronisierung über das Kontrollzentrum, Code am TV eingeben.","selbst"],
+  ["u2","unt","Classroom-App bzw. MDM-Klassen einrichten","Eigene Klassen eingetragen? Apps sperren und Seiten für alle öffnen ausprobieren.","Netzwerkbetreuung"],
+  ["u3","unt","Apple Pencil koppeln, Notiz-App für Tafelbilder wählen","z. B. GoodNotes oder Notability, sofern freigegeben.","selbst"],
+  ["u4","unt","Notfall-Adapter USB-C auf HDMI klären","Wo liegt einer, falls das Apple TV ausfällt?","Netzwerkbetreuung"],
+  ["u5","unt","iPad-Regeln für Schüler kennen","Kl. 7–10: eigenes iPad im Alltag; Kl. 1–6: Ausleihe, auch als Klassensatz.","Medienkonzept"],
+  ["u6","unt","Ausleihe des Klassensatzes (Kl. 1–6) kennen","Buchung, Abholung, Rückgabe, Laden.","Netzwerkbetreuung"],
+  ["u7","unt","IServ-Aufgabenmodul ausprobieren","Testaufgabe anlegen und von der Klasse abgeben lassen.","selbst"],
+  ["u8","unt","Kurs „iPad für Schüler“ kennen","Über QR-Code aufrufen; mit der Klasse zu Schuljahresbeginn durchgehen.","Medienkonzept"],
+  ["d1","dat","VwV Datenschutz an öffentlichen Schulen lesen","Verpflichtungserklärung unterschreiben.","Schulleitung"],
+  ["d2","dat","Genehmigung für private Geräte einholen","Nur nötig, wenn Schülerdaten auch privat verarbeitet werden.","Schulleitung"],
+  ["d3","dat","Noten und Schülerdaten sicher ablegen","Nur auf dem Dienstgerät oder verschlüsselt, keine private Cloud.","selbst"],
+  ["d4","dat","Ablage pro Klasse anlegen und sichern","Ordnerstruktur in IServ, regelmäßig sichern.","selbst"],
+  ["k1","kom","IServ-Gruppen der eigenen Klassen prüfen","Fehlt jemand? Ist man selbst in allen Gruppen?","IServ-Administration"],
+  ["k2","kom","Wege der Elternkommunikation klären","Was läuft über IServ, was per Elternbrief?","Schulleitung"],
+  ["k3","kom","Schulhomepage kennen","www.pags-kuelsheim.de","selbst"],
+  ["m1","med","Medienkonzept der PAGS lesen","Vor allem den Praxisteil.","Schulleitung"],
+  ["m2","med","Leitfaden für Lehrkräfte lesen","PDF mit Praxisteil.","Medienkonzept"],
+  ["m3","med","Lehrkräfte-Kurs (Web-App) durcharbeiten","Über QR-Code aufrufen.","selbst"],
+  ["m4","med","Ansprechpartner für Technik und Medien notieren","Name und Erreichbarkeit unten in der Notiz eintragen.","selbst"]
+].map(a=>({id:a[0],cat:a[1],title:a[2],hint:a[3],who:a[4]}));
+
+const LS_KEY = "pags-it-start-v1";
+let state = {name:"", done:{}, notes:{}};
+let filter = "all";
+const closed = new Set();
+const openNotes = new Set();
+let store = null; // {save(state)}
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today = () => new Date().toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"});
+
+function render(){
+  const total = ITEMS.length, n = ITEMS.filter(i=>state.done[i.id]).length;
+  const p = Math.round(n/total*100);
+  $("#pct").textContent = p + " %";
+  $("#frac").textContent = n + " / " + total;
+  $("#ringFg").style.strokeDashoffset = 226.2*(1-n/total);
+  $("#celebrate").classList.toggle("show", n===total);
+  if (document.activeElement !== $("#name")) $("#name").value = state.name || "";
+
+  let html = "";
+  for (const c of CATS){
+    const items = ITEMS.filter(i=>i.cat===c.id);
+    const dn = items.filter(i=>state.done[i.id]).length;
+    const vis = items.filter(i=> filter==="all" || (filter==="done") === !!state.done[i.id]);
+    if (!vis.length) continue;
+    html += `<section class="${closed.has(c.id)?"closed":""}" data-cat="${c.id}">
+      <button class="sec-head" data-toggle="${c.id}">
+        <span class="dot" style="background:${c.color}"></span>
+        <h2>${c.name}</h2><span class="cnt">${dn}/${items.length}</span>
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="bar"><i style="width:${dn/items.length*100}%;background:${c.color}"></i></div>
+      <div class="items">`;
+    for (const i of vis){
+      const d = state.done[i.id], note = state.notes[i.id] || "";
+      html += `<div class="item ${d?"done":""} ${openNotes.has(i.id)?"open":""}" data-id="${i.id}">
+        <div class="row" data-check="${i.id}">
+          <div class="chk"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="txt"><b>${esc(i.title)}</b><span>${esc(i.hint)}</span>
+            <div class="meta"><span class="tag">${esc(i.who)}</span>${d?`<span class="tag date">erledigt am ${esc(d)}</span>`:""}${note?`<span class="tag">📝 Notiz</span>`:""}</div>
+          </div>
+          <button class="more" data-note="${i.id}" aria-label="Notiz">✎</button>
+        </div>
+        <div class="note"><textarea data-notefield="${i.id}" placeholder="Notiz, z. B. Ansprechpartner, Raum, Zugangsweg …">${esc(note)}</textarea><small>Wird automatisch gespeichert.</small></div>
+      </div>`;
+    }
+    html += `</div></section>`;
+  }
+  $("#list").innerHTML = html || `<div class="empty">${filter==="done"?"Noch nichts erledigt.":"Alles erledigt!"}</div>`;
+}
+
+let saveTimer = null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{ if (store) store.save(state); }, 400);
+}
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
+
+document.addEventListener("click", e=>{
+  const note = e.target.closest("[data-note]");
+  if (note){ e.stopPropagation(); const id=note.dataset.note; openNotes.has(id)?openNotes.delete(id):openNotes.add(id); render(); if(openNotes.has(id)){const f=document.querySelector(`[data-notefield="${id}"]`); f&&f.focus();} return; }
+  const chk = e.target.closest("[data-check]");
+  if (chk){ const id=chk.dataset.check; if(state.done[id]) delete state.done[id]; else state.done[id]=today(); render(); save(); return; }
+  const tog = e.target.closest("[data-toggle]");
+  if (tog){ const id=tog.dataset.toggle; closed.has(id)?closed.delete(id):closed.add(id); render(); return; }
+  const f = e.target.closest("[data-f]");
+  if (f){ filter=f.dataset.f; document.querySelectorAll("#filters button").forEach(b=>b.classList.toggle("on",b===f)); render(); }
+});
+document.addEventListener("input", e=>{
+  if (e.target.id==="name"){ state.name=e.target.value; save(); }
+  const nf = e.target.dataset && e.target.dataset.notefield;
+  if (nf){ const v=e.target.value; if(v) state.notes[nf]=v; else delete state.notes[nf]; save(); }
+});
+document.addEventListener("focusout", e=>{ if (e.target.dataset && e.target.dataset.notefield) render(); });
+
+$("#expandBtn").onclick = ()=>{ if(closed.size){closed.clear(); $("#expandBtn").textContent="Alle zuklappen";} else {CATS.forEach(c=>closed.add(c.id)); $("#expandBtn").textContent="Alle aufklappen";} render(); };
+$("#resetBtn").onclick = ()=> $("#modal").classList.add("show");
+$("#mNo").onclick = ()=> $("#modal").classList.remove("show");
+$("#mYes").onclick = ()=>{ state={name:state.name,done:{},notes:{}}; openNotes.clear(); $("#modal").classList.remove("show"); render(); save(); toast("Zurückgesetzt"); };
+$("#printBtn").onclick = ()=>{ closed.clear(); render(); window.print(); };
+$("#exportBtn").onclick = ()=>{
+  const blob = new Blob([JSON.stringify({app:"pags-it-start",v:1,state},null,2)],{type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "IT-Start-PAGS" + (state.name?"-"+state.name.replace(/[^\wäöüÄÖÜß-]+/g,"_"):"") + ".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast("Sicherung gespeichert");
+};
+$("#importBtn").onclick = ()=> $("#importFile").click();
+$("#importFile").onchange = e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{ try{ const d=JSON.parse(r.result); const s=d.state||d; if(!s.done) throw 0; state=Object.assign({name:"",done:{},notes:{}},s); render(); store.save(state); toast("Sicherung geladen"); }catch(_){ toast("Datei passt nicht"); } };
+  r.readAsText(f); e.target.value="";
+};
+$("#copyBtn").onclick = async ()=>{
+  const n = ITEMS.filter(i=>state.done[i.id]).length;
+  let t = `IT-Start PAGS – ${state.name||"ohne Namen"}\nStand: ${n} von ${ITEMS.length} erledigt\n`;
+  for (const c of CATS){
+    t += `\n${c.name}\n`;
+    for (const i of ITEMS.filter(x=>x.cat===c.id)) t += `${state.done[i.id]?"[x]":"[ ]"} ${i.title}${state.done[i.id]?" ("+state.done[i.id]+")":""}${state.notes[i.id]?" – "+state.notes[i.id].replace(/\n/g," "):""}\n`;
+  }
+  try { await navigator.clipboard.writeText(t); toast("Stand kopiert"); } catch(_){ toast("Kopieren nicht möglich"); }
+};
+
+// Speicher: lokal im Browser (localStorage)
+function localStore(){
+  return { save(s){ try{ localStorage.setItem(LS_KEY, JSON.stringify(s)); }catch(_){} } };
+}
+try { const raw = localStorage.getItem(LS_KEY); if (raw) state = Object.assign({name:"",done:{},notes:{}}, JSON.parse(raw)); } catch(_){}
+store = localStore();
+$("#status").textContent = "Wird automatisch auf diesem Gerät gespeichert.";
+render();
+
+
+</script>
+</body>
+</html>
