@@ -127,3 +127,9 @@ Trainer für die 98 unregelmäßigen Verben aus der „List of irregular verbs�
 - **Lernstufen** (Leitner): neu → noch unsicher → geübt → gefestigt → sicher → Profi. Falsche Antworten kommen in derselben Runde noch einmal dran.
 - Verbliste mit Suche, Musterfilter und Sprachausgabe (britisches Englisch); Fortschritt je Paket, Tage in Folge, Verlauf der Probetests.
 - Verbdaten und Beispielsätze: `englisch/irregular-verbs/verbs.js`. Datenbank: `supabase/irregular-verbs.sql`.
+
+## Landing Page aller Schul-Apps (`apps/`)
+
+`https://ratpoison-de.github.io/pags-app/apps/` · QR-Code: `apps/qr/landing.png`
+
+Alle Web-Apps für die PAGS auf einer Seite, getrennt nach **Schülern**, **Lehrkräften** und **Eltern** (auch die Apps aus `pags-lernplaner`, `lerntagebuch`, `unterrichtsplaner` und `tag-der-berufe`). Jede Karte hat „Öffnen“, wo vorhanden „Anleitung“ und einen QR-Code zum Zeigen über das Apple TV (`apps/qr/*.png`). Mit Suchfeld.

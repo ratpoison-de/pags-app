@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PAGS Apps – Schüler, Lehrkräfte, Eltern</title>
+<meta name="description" content="Alle Web-Apps der Pater-Alois-Grimm-Schule Külsheim, sortiert nach Schülern, Lehrkräften und Eltern. Entwickelt von Thorsten von Plotho-Kettner.">
+<meta name="author" content="Thorsten von Plotho-Kettner">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="img/pags-logo.png">
+<link rel="apple-touch-icon" href="img/pags-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#F7F7F6; --card:#FFFFFF; --ink:#2A2A2B; --mute:#6C6C70; --line:#E2E2DF; --chip:#F0F0EE;
+  --red:#AD120D; --red-soft:#FBEDEC; --navy:#1B2A6B; --green:#2F6B3A; --dark:#383838;
+  --f-display:"Archivo","Arial Black",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px;border-radius:6px}
+
+header.top{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.topbar img{height:48px;width:auto}
+.topnav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.topnav a{text-decoration:none;font-weight:700;font-size:15px;color:var(--mute);padding:8px 12px;border-radius:8px}
+.topnav a:hover{background:var(--chip);color:var(--ink)}
+
+.hero{padding-block:44px 30px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.kicker{font-family:var(--f-display);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(34px,6vw,60px);line-height:1;letter-spacing:-.01em;text-transform:uppercase;margin:10px 0 16px;text-wrap:balance}
+.lead{font-size:clamp(18px,2.2vw,21px);color:var(--mute);max-width:60ch;margin:0}
+.dots{height:6px;margin-top:26px;background:radial-gradient(circle,var(--ink) 2px,transparent 2.5px) 0 50%/11px 6px repeat-x;opacity:.75;max-width:420px}
+.heroqr{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 12px;text-align:center;width:200px}
+.heroqr img{width:168px;height:168px;margin:0 auto}
+.heroqr b{display:block;font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-top:8px}
+.heroqr span{font-size:13px;color:var(--mute)}
+
+/* Zielgruppen-Kacheln */
+.aud{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+.aud a{--c:var(--red);display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:14px;padding:16px 18px}
+.aud a:hover{border-color:var(--c)}
+.aud svg{width:30px;height:30px;flex:none;stroke:var(--c);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.aud b{display:block;font-family:var(--f-display);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.01em}
+.aud small{color:var(--mute);font-size:14px}
+
+.tools{display:flex;gap:12px;align-items:center;margin-top:26px}
+.search{flex:1;max-width:420px;position:relative}
+.search input{width:100%;font:inherit;font-size:16px;padding:11px 14px 11px 40px;border:1.5px solid var(--line);border-radius:12px;background:var(--card)}
+.search input:focus{outline:none;border-color:var(--ink)}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2}
+.hint{font-size:14px;color:var(--mute)}
+
+section.group{padding-block:40px 6px;scroll-margin-top:80px}
+.ghead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.gbar{width:12px;height:28px;background:var(--c);border-radius:3px}
+.ghead h2{font-family:var(--f-display);font-weight:800;font-size:26px;text-transform:uppercase;margin:0;letter-spacing:.01em}
+.ghead p{margin:0;color:var(--mute);font-size:16px}
+.cnt{margin-left:auto;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;display:grid;grid-template-columns:62px 1fr;min-width:0;overflow:hidden}
+.card.hide{display:none}
+.ico{background:var(--c);display:flex;justify-content:center;padding-top:20px}
+.ico svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.body{padding:16px 18px 16px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--chip);color:var(--mute)}
+.tag.login{background:var(--red-soft);color:var(--red)}
+.card h3{font-family:var(--f-display);font-weight:800;font-size:20px;line-height:1.15;margin:2px 0 0}
+.card p{margin:0;color:var(--mute);font-size:15.5px}
+.more{display:flex;flex-wrap:wrap;gap:6px}
+.mini{font-size:13.5px;font-weight:700;text-decoration:none;color:var(--c);border:1.5px solid var(--line);border-radius:999px;padding:3px 10px}
+.mini:hover{border-color:var(--c)}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:8px}
+.btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font:inherit;font-weight:700;font-size:15px;padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);white-space:nowrap;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--c);border-color:var(--c);color:#fff}
+.btn.primary:hover{filter:brightness(.88)}
+.btn svg{width:17px;height:17px;flex:none}
+.btn.qrb{padding:9px 11px;margin-left:auto}
+.empty{display:none;padding:30px 0;color:var(--mute)}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding-block:46px 6px}
+.note{border-left:4px solid var(--red);padding:2px 0 2px 16px}
+.note h3{font-family:var(--f-display);font-size:17px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px}
+.note p{margin:0;color:var(--mute);font-size:15.5px}
+
+footer{margin-top:56px;background:var(--card);border-top:1px solid var(--line)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding-block:28px 36px;align-items:center}
+.dev{display:flex;flex-direction:column;gap:2px}
+.dev .k{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.dev b{font-family:var(--f-display);font-size:22px;font-weight:800}
+.dev span{color:var(--mute);font-size:15px}
+.foot img{height:44px;width:auto}
+
+/* QR-Fenster */
+dialog{border:none;border-radius:20px;padding:26px;max-width:min(440px,92vw);text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(30,30,32,.55)}
+dialog img{width:min(320px,70vw);height:auto;margin:0 auto}
+dialog h3{font-family:var(--f-display);font-weight:800;font-size:22px;margin:0 0 4px}
+dialog .u{font-size:13px;color:var(--mute);overflow-wrap:anywhere;margin:10px 0 16px}
+dialog .actions{justify-content:center;--c:var(--red)}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .heroqr{display:none}
+  .aud{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .body{padding:14px}
+  .topbar img{height:40px}
+  .topnav{display:none}
+  .hero{padding-block:28px 18px}
+  .cnt{display:none}
+  .gbar{display:none}
+  .ghead h2{font-size:22px}
+  .card{grid-template-columns:52px 1fr}
+  .ico svg{width:26px;height:26px}
+}
+@media print{
+  header.top{position:static}
+  .tools,.actions,.aud,dialog{display:none!important}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap topbar">
+    <a href="https://pags-kuelsheim.de" target="_blank" rel="noopener"><img src="img/pags-logo.png" alt="PAGS Gemeinschaftsschule Külsheim" width="101" height="48"></a>
+    <nav class="topnav" aria-label="Bereiche">
+      <a href="#schueler">Schüler</a><a href="#lehrer">Lehrkräfte</a><a href="#eltern">Eltern</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="kicker">Pater-Alois-Grimm-Schule Külsheim</div>
+      <h1>Apps für die PAGS</h1>
+      <p class="lead">25 Web-Apps an einem Ort – zum Lernen, Organisieren und Informieren. Sortiert nach Schülern, Lehrkräften und Eltern. Alles läuft im Browser auf iPad, Handy und Computer.</p>
+      <div class="dots" aria-hidden="true"></div>
+    </div>
+    <div class="heroqr"><img src="qr/landing.png" alt="QR-Code zu dieser Seite" width="168" height="168"><b>Diese Seite</b><span>scannen und mitnehmen</span></div>
+  </div>
+
+  <nav class="aud" aria-label="Zielgruppen">
+    <a href="#schueler" style="--c:var(--red)"><svg viewBox="0 0 24 24"><path d="M22 9 12 4 2 9l10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5M22 9v6"/></svg><span><b>Schüler</b><small>11 Apps zum Planen und Üben</small></span></a>
+    <a href="#lehrer" style="--c:var(--navy)"><svg viewBox="0 0 24 24"><path d="M2 4h20v12H2z"/><path d="M8 20h8M12 16v4M6 8h6M6 12h9"/></svg><span><b>Lehrkräfte</b><small>9 Werkzeuge und Lehrerbereiche</small></span></a>
+    <a href="#eltern" style="--c:var(--green)"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1"/><circle cx="18" cy="10" r="2.5"/><path d="M16.5 15H18a4 4 0 0 1 4 4v2"/></svg><span><b>Eltern</b><small>5 Angebote für Familien</small></span></a>
+  </nav>
+
+  <div class="tools">
+    <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="q" type="search" placeholder="App suchen, z. B. Englisch, Praktikum …" aria-label="App suchen"></label>
+    <span class="hint" id="hint"></span>
+  </div>
+
+<section class="group" id="schueler" style="--c:var(--red)">
+  <div class="ghead"><span class="gbar"></span><h2>Für Schülerinnen und Schüler</h2><p>Planen, lernen, üben – auf dem iPad oder Handy</p><span class="cnt">11 Apps</span></div>
+  <div class="grid">
+<article class="card" style="--c:var(--red)" data-s="pags lernplaner aufgaben, il-stunden und klassenarbeiten im blick: tag planen, woche verteilen, lernplan für arbeiten. mit anmeldung handy">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h4M7 17h7"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Mit Anmeldung</span><span class="tag">Handy</span></div>
+    <h3>PAGS Lernplaner</h3>
+    <p>Aufgaben, IL-Stunden und Klassenarbeiten im Blick: Tag planen, Woche verteilen, Lernplan für Arbeiten.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-PAGS-Lernplaner.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/lernplaner.png" data-t="PAGS Lernplaner" data-u="https://ratpoison-de.github.io/pags-lernplaner/" aria-label="QR-Code für PAGS Lernplaner zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="wochenstapel die nächsten sieben tage untereinander: aufgaben abhaken, verschieben, wiederholen. gleiches konto wie der lernplaner. mit anmeldung">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 10-5z"/><path d="m2 13 10 5 10-5"/><path d="m2 17.5 10 5 10-5"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Mit Anmeldung</span></div>
+    <h3>Wochenstapel</h3>
+    <p>Die nächsten sieben Tage untereinander: Aufgaben abhaken, verschieben, wiederholen. Gleiches Konto wie der Lernplaner.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Wochenstapel.apk" target="_blank" rel="noopener">Für Android</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/wochenstapel/" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-Wochenstapel-Online.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/wochenstapel.png" data-t="Wochenstapel" data-u="https://ratpoison-de.github.io/pags-lernplaner/wochenstapel/" aria-label="QR-Code für Wochenstapel zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="lerntagebuch das lerntagebuch der pags digital: wochenplanung, ziele und rückblick wie im gedruckten planer. handy tablet">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/><path d="M9 7h7M9 11h5"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Handy</span><span class="tag">Tablet</span></div>
+    <h3>Lerntagebuch</h3>
+    <p>Das Lerntagebuch der PAGS digital: Wochenplanung, Ziele und Rückblick wie im gedruckten Planer.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/lerntagebuch/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/lerntagebuch.png" data-t="Lerntagebuch" data-u="https://ratpoison-de.github.io/lerntagebuch/" aria-label="QR-Code für Lerntagebuch zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="graduierung – selbstbewertung wöchentliche selbsteinschätzung für walker, hiker, climber und freeclimber. punkte wählen und abgeben. wöchentlich">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="m3 20 6.5-11 4 6.5L16 12l5 8z"/><path d="m8 11.5 1.5 1.5 1.5-1.5"/><circle cx="17.5" cy="5.5" r="1.8"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Wöchentlich</span></div>
+    <h3>Graduierung – Selbstbewertung</h3>
+    <p>Wöchentliche Selbsteinschätzung für Walker, Hiker, Climber und Freeclimber. Punkte wählen und abgeben.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-app/graduierung/?stufe=walker" target="_blank" rel="noopener">Walker</a><a class="mini" href="https://ratpoison-de.github.io/pags-app/graduierung/?stufe=hiker" target="_blank" rel="noopener">Hiker</a><a class="mini" href="https://ratpoison-de.github.io/pags-app/graduierung/?stufe=climber" target="_blank" rel="noopener">Climber</a><a class="mini" href="https://ratpoison-de.github.io/pags-app/graduierung/?stufe=freeclimber" target="_blank" rel="noopener">Freeclimber</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/graduierung/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/graduierung.png" data-t="Graduierung – Selbstbewertung" data-u="https://ratpoison-de.github.io/pags-app/graduierung/" aria-label="QR-Code für Graduierung – Selbstbewertung zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="vokabeltrainer buchseite fotografieren, vokabeln erkennen lassen und mit dem 5-fächer-system lernen. mit sprachausgabe. daten nur im gerät">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="14" height="15" rx="2"/><path d="M6 2h14a2 2 0 0 1 2 2v13"/><path d="M6 12h6M6 16h4"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Daten nur im Gerät</span></div>
+    <h3>Vokabeltrainer</h3>
+    <p>Buchseite fotografieren, Vokabeln erkennen lassen und mit dem 5-Fächer-System lernen. Mit Sprachausgabe.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-lernplaner/vokabeln/installieren.html" target="_blank" rel="noopener">Installieren</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/vokabeln/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/vokabeln.png" data-t="Vokabeltrainer" data-u="https://ratpoison-de.github.io/pags-lernplaner/vokabeln/" aria-label="QR-Code für Vokabeltrainer zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="irregular verbs trainer alle unregelmäßigen verben aus dem englischbuch: karteikarten, lückensätze, schnellquiz und probetest mit note. englisch mit anmeldung">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h10M9 6v12M17 10l-3 8M17 10l3 8M15 15h4"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Englisch</span><span class="tag login">Mit Anmeldung</span></div>
+    <h3>Irregular Verbs Trainer</h3>
+    <p>Alle unregelmäßigen Verben aus dem Englischbuch: Karteikarten, Lückensätze, Schnellquiz und Probetest mit Note.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/englisch/irregular-verbs/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/verbs.png" data-t="Irregular Verbs Trainer" data-u="https://ratpoison-de.github.io/pags-app/englisch/irregular-verbs/" aria-label="QR-Code für Irregular Verbs Trainer zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="english 9 · unit 1 modal verbs, comparison und letter of application – üben in kleinen schritten. englisch klasse 9">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M2 4h20v12H2z"/><path d="M8 20h8M12 16v4M6 8h6M6 12h9"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Englisch</span><span class="tag">Klasse 9</span></div>
+    <h3>English 9 · Unit 1</h3>
+    <p>Modal verbs, comparison und letter of application – üben in kleinen Schritten.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/englisch/unit1.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/unit1.png" data-t="English 9 · Unit 1" data-u="https://ratpoison-de.github.io/pags-app/englisch/unit1.html" aria-label="QR-Code für English 9 · Unit 1 zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="decode – operation rhetorik agenten-adventure: in fünf zonen 30 stilmittel in echten texten aufspüren und die ki voxa besiegen. deutsch klasse 9 spiel">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M7 12h10M7 9h5M7 15h7"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Deutsch</span><span class="tag">Klasse 9</span><span class="tag">Spiel</span></div>
+    <h3>DECODE – Operation Rhetorik</h3>
+    <p>Agenten-Adventure: In fünf Zonen 30 Stilmittel in echten Texten aufspüren und die KI VOXA besiegen.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/deutsch/stilmittel.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/decode.png" data-t="DECODE – Operation Rhetorik" data-u="https://ratpoison-de.github.io/pags-app/deutsch/stilmittel.html" aria-label="QR-Code für DECODE – Operation Rhetorik zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="villa kauderwelsch point-and-click-abenteuer zu rechtschreibung, wortarten, satzgliedern und kommas – passend zu „sprache untersuchen“. deutsch klasse 9 spiel">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12z"/><path d="M9 21v-6h6v6M11 9h2"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Deutsch</span><span class="tag">Klasse 9</span><span class="tag">Spiel</span></div>
+    <h3>Villa Kauderwelsch</h3>
+    <p>Point-and-Click-Abenteuer zu Rechtschreibung, Wortarten, Satzgliedern und Kommas – passend zu „Sprache untersuchen“.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/deutsch/villa-kauderwelsch.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/villa.png" data-t="Villa Kauderwelsch" data-u="https://ratpoison-de.github.io/pags-app/deutsch/villa-kauderwelsch.html" aria-label="QR-Code für Villa Kauderwelsch zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="mein praktikum vorbereiten, tagesberichte schreiben, betrieb erkunden – und daraus den praktikumsbericht erstellen. klasse 9 mit anmeldung">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 13h20M11 13v2h2v-2"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Klasse 9</span><span class="tag login">Mit Anmeldung</span></div>
+    <h3>Mein Praktikum</h3>
+    <p>Vorbereiten, Tagesberichte schreiben, Betrieb erkunden – und daraus den Praktikumsbericht erstellen.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-app/praktikum/9b/" target="_blank" rel="noopener">Klasse 9b</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/praktikum/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/praktikum.png" data-t="Mein Praktikum" data-u="https://ratpoison-de.github.io/pags-app/praktikum/" aria-label="QR-Code für Mein Praktikum zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--red)" data-s="tag der berufe digitaler laufzettel für den tag der berufe in hardheim. berufsorientierung">
+  <div class="ico"><svg viewBox="0 0 24 24"><circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Berufsorientierung</span></div>
+    <h3>Tag der Berufe</h3>
+    <p>Digitaler Laufzettel für den Tag der Berufe in Hardheim.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/tag-der-berufe/" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-Tag-der-Berufe.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/tdb.png" data-t="Tag der Berufe" data-u="https://ratpoison-de.github.io/tag-der-berufe/" aria-label="QR-Code für Tag der Berufe zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+  </div>
+</section>
+<section class="group" id="lehrer" style="--c:var(--navy)">
+  <div class="ghead"><span class="gbar"></span><h2>Für Lehrkräfte</h2><p>Organisieren, auswerten, Kontakt zu Familien</p><span class="cnt">9 Apps</span></div>
+  <div class="grid">
+<article class="card" style="--c:var(--navy)" data-s="lernbegleiter mein tag in vier abschnitten: vorbereitung, drucken, einsammeln, erledigen. wichtiges mit stern. mit anmeldung">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Mit Anmeldung</span></div>
+    <h3>Lernbegleiter</h3>
+    <p>Mein Tag in vier Abschnitten: Vorbereitung, Drucken, Einsammeln, Erledigen. Wichtiges mit Stern.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/lernbegleiter/" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-Lernbegleiter-App.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/lernbegleiter.png" data-t="Lernbegleiter" data-u="https://ratpoison-de.github.io/pags-lernplaner/lernbegleiter/" aria-label="QR-Code für Lernbegleiter zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="korrekturtabelle punkte eintragen, noten und notenspiegel werden automatisch berechnet. klassenarbeiten">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Klassenarbeiten</span></div>
+    <h3>Korrekturtabelle</h3>
+    <p>Punkte eintragen, Noten und Notenspiegel werden automatisch berechnet.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/korrektur/" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-Korrekturtabelle.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/korrektur.png" data-t="Korrekturtabelle" data-u="https://ratpoison-de.github.io/pags-lernplaner/korrektur/" aria-label="QR-Code für Korrekturtabelle zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="unterrichtsplaner stunden und unterrichtseinheiten planen und im überblick behalten. planung">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Planung</span></div>
+    <h3>Unterrichtsplaner</h3>
+    <p>Stunden und Unterrichtseinheiten planen und im Überblick behalten.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/unterrichtsplaner/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/unterrichtsplaner.png" data-t="Unterrichtsplaner" data-u="https://ratpoison-de.github.io/unterrichtsplaner/" aria-label="QR-Code für Unterrichtsplaner zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="fachschaften gemeinsame ablage für alle 23 fächer der pags: termine, beschlüsse, material, stoffverteilung. kollegium">
+  <div class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3.5"/><path d="M2 21v-1a6 6 0 0 1 6-6h2a6 6 0 0 1 6 6v1"/><path d="M16 3.5a3.5 3.5 0 0 1 0 7M18.5 14a6 6 0 0 1 3.5 5.5V21"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Kollegium</span></div>
+    <h3>Fachschaften</h3>
+    <p>Gemeinsame Ablage für alle 23 Fächer der PAGS: Termine, Beschlüsse, Material, Stoffverteilung.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-lernplaner/fachschaft/?fach=deutsch" target="_blank" rel="noopener">Fachschaft Deutsch</a><a class="mini" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Leitfaden-Fachschaftsleitung.pdf" target="_blank" rel="noopener">Leitfaden</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/fachschaft/" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-Fachschaften.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/fachschaften.png" data-t="Fachschaften" data-u="https://ratpoison-de.github.io/pags-lernplaner/fachschaft/" aria-label="QR-Code für Fachschaften zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="graduierung – lehrerbereich abgaben bewerten, bemerkungen ergänzen, bögen als pdf drucken und als csv exportieren. papierbögen per qr-code erfassen. zugangsschlüssel">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="m3 20 6.5-11 4 6.5L16 12l5 8z"/><path d="m8 11.5 1.5 1.5 1.5-1.5"/><circle cx="17.5" cy="5.5" r="1.8"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Zugangsschlüssel</span></div>
+    <h3>Graduierung – Lehrerbereich</h3>
+    <p>Abgaben bewerten, Bemerkungen ergänzen, Bögen als PDF drucken und als CSV exportieren. Papierbögen per QR-Code erfassen.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-app/graduierung/erfassen.html" target="_blank" rel="noopener">Bögen erfassen</a><a class="mini" href="https://ratpoison-de.github.io/pags-app/graduierung/QR-Codes_Graduierung.pdf" target="_blank" rel="noopener">QR-Codes (PDF)</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/graduierung/lehrer.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/grad-lehrer.png" data-t="Graduierung – Lehrerbereich" data-u="https://ratpoison-de.github.io/pags-app/graduierung/lehrer.html" aria-label="QR-Code für Graduierung – Lehrerbereich zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="praktikum – lehrerbereich tagesberichte und praktikumsberichte aller schüler lesen, als pdf laden, drucken, kennwörter zurücksetzen. zugangsschlüssel">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 13h20M11 13v2h2v-2"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Zugangsschlüssel</span></div>
+    <h3>Praktikum – Lehrerbereich</h3>
+    <p>Tagesberichte und Praktikumsberichte aller Schüler lesen, als PDF laden, drucken, Kennwörter zurücksetzen.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-app/praktikum/9b/lehrer.html" target="_blank" rel="noopener">Lehrkraft 9b</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/praktikum/lehrer.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/prak-lehrer.png" data-t="Praktikum – Lehrerbereich" data-u="https://ratpoison-de.github.io/pags-app/praktikum/lehrer.html" aria-label="QR-Code für Praktikum – Lehrerbereich zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="elternumfrage – auswertung schaubilder und kennzahlen, rückmeldungen an eltern, umfragen bearbeiten und als neue runde kopieren. zugangsschlüssel">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Zugangsschlüssel</span></div>
+    <h3>Elternumfrage – Auswertung</h3>
+    <p>Schaubilder und Kennzahlen, Rückmeldungen an Eltern, Umfragen bearbeiten und als neue Runde kopieren.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/elternumfrage/lehrer.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/umfrage-lehrer.png" data-t="Elternumfrage – Auswertung" data-u="https://ratpoison-de.github.io/pags-app/elternumfrage/lehrer.html" aria-label="QR-Code für Elternumfrage – Auswertung zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="standortgespräche – sprechzeiten sprechzeiten in viertelstunden anlegen, buchungen und meldungen sehen, übersicht als pdf. zugangsschlüssel">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m9 15 2 2 4-4"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag login">Zugangsschlüssel</span></div>
+    <h3>Standortgespräche – Sprechzeiten</h3>
+    <p>Sprechzeiten in Viertelstunden anlegen, Buchungen und Meldungen sehen, Übersicht als PDF.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/standortgespraech/lehrer.html" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/gespraech-lehrer.png" data-t="Standortgespräche – Sprechzeiten" data-u="https://ratpoison-de.github.io/pags-app/standortgespraech/lehrer.html" aria-label="QR-Code für Standortgespräche – Sprechzeiten zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--navy)" data-s="konten verwalten konten von lernplaner, wochenstapel und lernbegleiter: passwörter zurücksetzen, konten löschen. lehrkräfte">
+  <div class="ico"><svg viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M17 6l3 3M14.5 8.5l2 2"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Lehrkräfte</span></div>
+    <h3>Konten verwalten</h3>
+    <p>Konten von Lernplaner, Wochenstapel und Lernbegleiter: Passwörter zurücksetzen, Konten löschen.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-lernplaner/lehrkraft.html" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-lernplaner/apps/downloads/Anleitung-Lernplaner-Lehrkraft-Seite.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/lehrkraft.png" data-t="Konten verwalten" data-u="https://ratpoison-de.github.io/pags-lernplaner/lehrkraft.html" aria-label="QR-Code für Konten verwalten zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+  </div>
+</section>
+<section class="group" id="eltern" style="--c:var(--green)">
+  <div class="ghead"><span class="gbar"></span><h2>Für Eltern</h2><p>Informieren, Termine buchen, Rückmeldung geben</p><span class="cnt">5 Apps</span></div>
+  <div class="grid">
+<article class="card" style="--c:var(--green)" data-s="pags kennenlernen die schule auf einen blick: konzept, grundschule, sekundarstufe, abschlüsse, ganztag und anmeldung. für neue familien">
+  <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.5"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Für neue Familien</span></div>
+    <h3>PAGS kennenlernen</h3>
+    <p>Die Schule auf einen Blick: Konzept, Grundschule, Sekundarstufe, Abschlüsse, Ganztag und Anmeldung.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/kennenlernen.html" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-app/PAGS-App_Leitfaden.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/kennenlernen.png" data-t="PAGS kennenlernen" data-u="https://ratpoison-de.github.io/pags-app/kennenlernen.html" aria-label="QR-Code für PAGS kennenlernen zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--green)" data-s="pags im alltag sekretariat, krankmeldung, mensa, ferien und kontakte – dazu eigene termine und notizen. täglich">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/><circle cx="12" cy="15.5" r="2"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Täglich</span></div>
+    <h3>PAGS im Alltag</h3>
+    <p>Sekretariat, Krankmeldung, Mensa, Ferien und Kontakte – dazu eigene Termine und Notizen.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/alltag.html" target="_blank" rel="noopener">Öffnen</a><a class="btn" href="https://ratpoison-de.github.io/pags-app/PAGS-App_Leitfaden.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>Anleitung</a>
+      <button class="btn qrb" type="button" data-qr="qr/alltag.png" data-t="PAGS im Alltag" data-u="https://ratpoison-de.github.io/pags-app/alltag.html" aria-label="QR-Code für PAGS im Alltag zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--green)" data-s="standortgespräche buchen freien termin antippen und buchen, später verlegen oder absagen. ein konto mit der elternumfrage. klasse 9a mit anmeldung">
+  <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><path d="m9 15 2 2 4-4"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Klasse 9a</span><span class="tag login">Mit Anmeldung</span></div>
+    <h3>Standortgespräche buchen</h3>
+    <p>Freien Termin antippen und buchen, später verlegen oder absagen. Ein Konto mit der Elternumfrage.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/standortgespraech/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/standort.png" data-t="Standortgespräche buchen" data-u="https://ratpoison-de.github.io/pags-app/standortgespraech/" aria-label="QR-Code für Standortgespräche buchen zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--green)" data-s="elternumfrage rückmeldung zu den ersten wochen geben – mit namen oder anonym. freigegebene ergebnisse als schaubilder. klasse 9a mit anmeldung">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">Klasse 9a</span><span class="tag login">Mit Anmeldung</span></div>
+    <h3>Elternumfrage</h3>
+    <p>Rückmeldung zu den ersten Wochen geben – mit Namen oder anonym. Freigegebene Ergebnisse als Schaubilder.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/elternumfrage/" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/umfrage.png" data-t="Elternumfrage" data-u="https://ratpoison-de.github.io/pags-app/elternumfrage/" aria-label="QR-Code für Elternumfrage zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+<article class="card" style="--c:var(--green)" data-s="elterninfo praktikums-app so begleitet die app ihr kind durchs betriebspraktikum – mit hinweisen zum datenschutz. pdf klasse 9">
+  <div class="ico"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></div>
+  <div class="body">
+    <div class="tags"><span class="tag">PDF</span><span class="tag">Klasse 9</span></div>
+    <h3>Elterninfo Praktikums-App</h3>
+    <p>So begleitet die App Ihr Kind durchs Betriebspraktikum – mit Hinweisen zum Datenschutz.</p><div class="more"><a class="mini" href="https://ratpoison-de.github.io/pags-app/praktikum/" target="_blank" rel="noopener">Zur App</a></div>
+    <div class="actions">
+      <a class="btn primary" href="https://ratpoison-de.github.io/pags-app/praktikum/Elterninformation_Praktikums-App.pdf" target="_blank" rel="noopener">Öffnen</a>
+      <button class="btn qrb" type="button" data-qr="qr/prak-eltern.png" data-t="Elterninfo Praktikums-App" data-u="https://ratpoison-de.github.io/pags-app/praktikum/Elterninformation_Praktikums-App.pdf" aria-label="QR-Code für Elterninfo Praktikums-App zeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg></button>
+    </div>
+  </div>
+</article>
+  </div>
+</section>
+  <p class="empty" id="empty">Keine App gefunden.</p>
+
+  <div class="notes">
+    <div class="note"><h3>QR-Codes</h3><p>Zu jeder App gibt es einen QR-Code: auf „QR“ tippen und über das Apple TV zeigen – die Klasse scannt mit dem iPad.</p></div>
+    <div class="note"><h3>Anmeldung</h3><p>Rot markierte Apps speichern Daten in einem Konto. Schüler und Eltern legen ihren Zugang selbst an, ohne E-Mail-Adresse.</p></div>
+    <div class="note"><h3>Datenschutz</h3><p>Gespeichert wird auf Servern in der EU, jede Person sieht nur ihre eigenen Daten. Einige Apps speichern nur im eigenen Gerät.</p></div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="dev"><span class="k">Entwickelt von</span><b>Thorsten von Plotho-Kettner</b><span>Pater-Alois-Grimm-Schule Külsheim · <a href="mailto:t.von.plotho-kettner@pagskuelsheim.de">t.von.plotho-kettner@pagskuelsheim.de</a></span></div>
+    <a href="https://pags-kuelsheim.de" target="_blank" rel="noopener"><img src="img/pags-logo.png" alt="PAGS Külsheim" width="92" height="44"></a>
+  </div>
+</footer>
+
+<dialog id="dlg" aria-labelledby="dt">
+  <h3 id="dt"></h3>
+  <img id="di" alt="">
+  <div class="u" id="du"></div>
+  <div class="actions">
+    <a class="btn primary" id="dd" download>Herunterladen</a>
+    <button class="btn" type="button" id="dc">Schließen</button>
+  </div>
+</dialog>
+
+<script>
+(function(){
+  var dlg=document.getElementById('dlg');
+  document.querySelectorAll('.qrb').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.getElementById('dt').textContent=b.dataset.t;
+      var i=document.getElementById('di');i.src=b.dataset.qr;i.alt='QR-Code für '+b.dataset.t;
+      document.getElementById('du').textContent=b.dataset.u;
+      var d=document.getElementById('dd');d.href=b.dataset.qr;d.setAttribute('download','QR '+b.dataset.t+'.png');
+      if(dlg.showModal)dlg.showModal();else window.open(b.dataset.qr);
+    });
+  });
+  document.getElementById('dc').addEventListener('click',function(){dlg.close()});
+  dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
+
+  var q=document.getElementById('q'),cards=document.querySelectorAll('.card'),groups=document.querySelectorAll('section.group');
+  q.addEventListener('input',function(){
+    var t=q.value.trim().toLowerCase(),n=0;
+    cards.forEach(function(c){var ok=!t||c.dataset.s.indexOf(t)>-1;c.classList.toggle('hide',!ok);if(ok)n++;});
+    groups.forEach(function(g){g.style.display=g.querySelector('.card:not(.hide)')?'':'none';});
+    document.getElementById('empty').style.display=n?'none':'block';
+    document.getElementById('hint').textContent=t?n+' gefunden':'';
+  });
+})();
+</script>
+</body>
+</html>
