@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Villa Kauderwelsch – Klasse 9a PAGS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --W:min(100vw, calc((100vh - 200px) * 1.7778));
+  --ink:#f3e9c6; --verb:#4fd0d8; --verbOn:#ffe066; --panel:#160d29; --line:#5b3f8c;
+  --ok:#5be27a; --no:#ff5b6e; --accent:#ff7ad9;
+}
+@supports (height:100dvh){ :root{ --W:min(100vw, calc((100dvh - 200px) * 1.7778)); } }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:var(--ink);font-family:'VT323',monospace;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;overflow:hidden;overscroll-behavior:none}
+button{font-family:inherit;touch-action:manipulation;cursor:pointer}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#stage{position:relative;width:var(--W);aspect-ratio:16/9;background:#000;overflow:hidden}
+#scene{width:100%;height:100%;display:block;shape-rendering:crispEdges}
+#fade{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .25s}
+#fade.on{opacity:1}
+#say{position:absolute;left:3%;right:3%;top:2.5%;text-align:center;font-size:max(20px,calc(var(--W)*.034));line-height:1.05;
+  text-shadow:2px 0 #000,-2px 0 #000,0 2px #000,0 -2px #000,2px 2px #000,-2px -2px #000;opacity:0;transition:opacity .15s;pointer-events:none}
+#say.on{opacity:1}
+#say small{display:block;font-size:.7em;opacity:.85;letter-spacing:.05em}
+#roomname{position:absolute;right:1.5%;bottom:2%;font-family:'Press Start 2P',monospace;font-size:max(9px,calc(var(--W)*.011));color:#ffffffaa;text-shadow:1px 1px #000;pointer-events:none}
+#hud{width:var(--W);background:#120a22;border-top:3px solid #2a1a48;padding:4px 10px 10px;flex:0 0 auto}
+#sentence{display:flex;align-items:center;gap:8px;min-height:34px}
+#sentence .txt{flex:1;text-align:center;color:#d9a6ff;font-size:max(22px,calc(var(--W)*.026))}
+.tool{background:#2a1a48;color:var(--ink);border:2px solid var(--line);border-radius:6px;font-size:20px;padding:2px 10px;min-height:34px}
+.tool:active{background:#3d2668}
+#controls{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:12px;margin-top:4px}
+#verbs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.verb{background:#1b1032;border:2px solid #2c1d4e;color:var(--verb);font-size:max(22px,calc(var(--W)*.027));padding:4px 2px;border-radius:5px;min-height:44px}
+.verb.on{color:var(--verbOn);border-color:#8a6a1a;background:#2a1d10}
+#inv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;align-content:start}
+.slot{background:#1b1032;border:2px solid #2c1d4e;border-radius:5px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2px;color:var(--ink);font-size:15px;line-height:1}
+.slot svg{width:28px;height:28px;shape-rendering:crispEdges}
+.slot.sel{border-color:var(--verbOn);background:#2a1d10}
+.slot.empty{opacity:.35}
+/* modal */
+#modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;z-index:20;padding:10px}
+#modal.on{display:flex}
+.pz{position:relative;width:min(900px,100%);max-height:100%;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--panel);border:4px solid var(--line);
+  box-shadow:0 0 0 4px #0a0614,0 0 0 8px #3a2766;border-radius:4px;padding:16px 20px 20px;font-size:26px}
+.pzhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:2px dashed #3a2766;padding-bottom:8px;margin-bottom:8px}
+.pztopic{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--accent);margin-bottom:6px}
+.pztitle{font-size:30px;color:#fff}
+.pzbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sbtn{background:#2a1a48;border:2px solid var(--line);color:var(--ink);font-size:20px;padding:4px 10px;border-radius:5px;min-height:40px}
+.pzprog{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:4px 0 10px;font-size:20px;color:#bfa8e6}
+.pzprog i{width:14px;height:14px;background:#2c1d4e;border:2px solid #4b3580;display:inline-block}
+.pzprog i.on{background:var(--ok);border-color:#2f8a46}
+.pzprog span{margin-left:6px}
+.q{font-size:30px;line-height:1.15;margin:6px 0 14px;color:#fff}
+.q u{text-decoration:none;background:#ffe06633;border-bottom:3px solid var(--verbOn);padding:0 3px}
+.q .gap{display:inline-block;min-width:1.4em;border-bottom:3px solid var(--verbOn);text-align:center;color:var(--verbOn)}
+.q .src{display:block;background:#0e0820;border-left:4px solid var(--verb);padding:6px 10px;margin:6px 0}
+.q .hint{display:block;font-size:22px;color:#bfa8e6;margin-top:4px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.one{grid-template-columns:1fr}
+.opt{background:#22143f;border:3px solid #4b3580;color:#fff;font-size:26px;padding:10px 12px;border-radius:6px;min-height:58px;text-align:left;line-height:1.05}
+.opt:active{background:#33205e}
+.opt.right{border-color:var(--ok);background:#173a24}
+.opt.wrong{border-color:var(--no);background:#3d1520}
+.opt:disabled{opacity:1;color:#fff}
+.fb{margin-top:12px}
+.fbbox{padding:10px 12px;border-radius:6px;font-size:24px;line-height:1.15}
+.fbbox.ok{background:#173a24;border:2px solid var(--ok)}
+.fbbox.no{background:#3d1520;border:2px solid var(--no)}
+.fbbox .h{display:block;font-size:26px;font-weight:bold;margin-bottom:2px}
+.next,.big{display:block;margin:12px 0 0 auto;background:#3a2a0a;border:3px solid #b88a1a;color:var(--verbOn);font-size:28px;padding:8px 22px;border-radius:6px;min-height:52px}
+.big{margin:12px auto 0;width:min(420px,100%)}
+.pzrule{position:absolute;inset:0;background:#0c0718;padding:18px 22px;overflow:auto;font-size:24px;line-height:1.2;border-radius:2px}
+.pzrule.hidden{display:none}
+.pzrule h3{font-family:'Press Start 2P',monospace;font-size:14px;color:var(--accent);margin:0 0 10px}
+.pzrule ul{margin:0;padding-left:22px}.pzrule li{margin:4px 0}
+.pzrule table{border-collapse:collapse;font-size:22px;margin:6px 0}
+.pzrule td,.pzrule th{border:1px solid #3a2766;padding:2px 8px;text-align:left}
+.ftext{font-size:30px;line-height:1.55;background:#0e0820;padding:12px 14px;border-radius:6px}
+.ftext .w{padding:1px 2px;border-radius:3px;cursor:pointer}
+.ftext .w.miss{background:#3d1520;animation:shake .3s}
+.ftext .w.fixed{background:#173a24;color:var(--ok)}
+.ftext .w.act{background:#5a4a10;color:#fff}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.ksent{font-size:32px;line-height:2.1;background:#0e0820;padding:10px 12px;border-radius:6px;color:#fff}
+.kgap{display:inline-block;min-width:30px;height:38px;vertical-align:middle;border:2px dashed #4b3580;border-radius:5px;background:#1b1032;color:var(--verbOn);font-size:30px;padding:0;margin:0 3px;line-height:30px}
+.kgap.on{border-style:solid;border-color:var(--verbOn);background:#3a2a0a}
+.kgap.good{border-color:var(--ok);background:#173a24;color:var(--ok)}
+.kgap.bad{border-color:var(--no);background:#3d1520;color:var(--no)}
+.done{text-align:center;padding:10px}
+.done h2{font-family:'Press Start 2P',monospace;font-size:20px;color:var(--ok);line-height:1.5}
+/* title */
+#title{position:fixed;inset:0;z-index:30;background:#05020c;display:flex;align-items:center;justify-content:safe center;flex-direction:column;padding:16px;overflow:auto}
+#title.off{display:none}
+#title svg{width:min(720px,94vw,(100vh - 540px)*1.7778);aspect-ratio:16/9;height:auto;flex:0 0 auto;shape-rendering:crispEdges;border:4px solid #2a1a48}
+.logo{font-family:'Press Start 2P',monospace;font-size:clamp(18px,3.4vw,36px);color:#7cff9a;text-shadow:3px 3px 0 #2a1a48,6px 6px 0 #000;margin:14px 0 4px;text-align:center;line-height:1.3}
+.sub{font-size:26px;color:#d9a6ff;margin-bottom:12px;text-align:center}
+.tbtns{display:flex;flex-direction:column;gap:10px;width:min(420px,92vw)}
+.tbtns input{font-family:inherit;font-size:28px;padding:8px 12px;background:#120a22;color:#fff;border:3px solid var(--line);border-radius:6px;-webkit-user-select:text;user-select:text}
+.tbtns button{background:#1b1032;border:3px solid var(--line);color:var(--verb);font-size:30px;padding:8px;border-radius:6px;min-height:54px}
+.tbtns button.main{color:var(--verbOn);border-color:#b88a1a;background:#2a1d10}
+.credit{font-size:18px;color:#7a6aa0;margin-top:12px;text-align:center}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.list button{background:#22143f;border:3px solid #4b3580;color:#fff;font-size:24px;padding:10px;border-radius:6px;text-align:left;min-height:56px}
+.list button small{display:block;color:#bfa8e6;font-size:19px}
+.stats{width:100%;border-collapse:collapse;font-size:22px}
+.stats td,.stats th{border-bottom:1px solid #3a2766;padding:4px 6px;text-align:left}
+.stats .bar{height:10px;background:#2c1d4e;position:relative;min-width:80px}
+.stats .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--ok)}
+.cert{text-align:center}
+.cert h2{font-family:'Press Start 2P',monospace;color:var(--verbOn);font-size:18px;line-height:1.6;margin:6px 0}
+.cert .nm{font-size:44px;color:#fff;border-bottom:3px solid var(--line);display:inline-block;padding:0 20px;margin:6px 0}
+@media (orientation:portrait){
+  :root{--W:100vw}
+  #hud{padding-bottom:20px}
+  .verb{min-height:56px}
+  .slot{min-height:56px}
+  .opts{grid-template-columns:1fr}
+  .list{grid-template-columns:1fr}
+}
+/* svg anims */
+.bob{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.blink{animation:blink 1.1s steps(2,jump-none) infinite}
+@keyframes blink{50%{opacity:.2}}
+.flick{animation:flick .35s steps(2,jump-none) infinite}
+@keyframes flick{50%{opacity:.55}}
+.swing{transform-box:fill-box;transform-origin:50% 0;animation:swing 1.1s ease-in-out infinite alternate}
+@keyframes swing{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.suck{animation:suck 2s linear infinite}
+@keyframes suck{0%{transform:translateY(-14px);opacity:0}30%{opacity:1}100%{transform:translateY(22px);opacity:0}}
+.lbl{font-family:'VT323',monospace}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <svg id="scene" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="say"></div>
+    <div id="roomname"></div>
+    <div id="fade"></div>
+  </div>
+  <div id="hud">
+    <div id="sentence">
+      <button class="tool" id="bShow" title="Alles zeigen">🔍</button>
+      <div class="txt" id="sTxt">Gehe zu</div>
+      <button class="tool" id="bHint">💡 Tipp</button>
+      <button class="tool" id="bMenu">☰</button>
+    </div>
+    <div id="controls">
+      <div id="verbs"></div>
+      <div id="inv"></div>
+    </div>
+  </div>
+</div>
+<div id="modal"></div>
+<div id="title"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   VILLA KAUDERWELSCH – Ein Grammatik-Adventure für Klasse 9
+   Themen: Rechtschreibung (Fehlertext, Getrennt-/Zusammen-
+   schreibung, Strategien), Wortarten, Tempora, Aktiv/Passiv,
+   Synonyme/Antonyme, Satzglieder, Kommasetzung
+   ========================================================= */
+const $=s=>document.querySelector(s);
+const R=(x,y,w,h,c,e='')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}" ${e}/>`;
+const T=(x,y,t,s=4,c='#fff',a='middle',e='')=>`<text x="${x}" y="${y}" font-size="${s}" fill="${c}" text-anchor="${a}" font-family="'Press Start 2P',monospace" ${e}>${t}</text>`;
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const TEST=location.hash==='#test';
+
+/* ---------------- Zustand ---------------- */
+const SAVE_KEY='villaKauderwelsch_v1';
+let S;
+function freshState(name){return {name:name||'',room:'garten',px:160,dir:1,inv:[],flags:{},stats:{},sound:true,started:Date.now(),played:0};}
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}}
+function load(){try{const s=localStorage.getItem(SAVE_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+let verb='gehe', selItem=null, busy=false;
+
+const TOPICS={
+  fehler:'Rechtschreibung · Fehlertext',
+  gz:'Getrennt- und Zusammenschreibung',
+  strat:'Rechtschreibstrategien',
+  wortart:'Wortarten',
+  tempus:'Tempora (Zeitformen)',
+  passiv:'Aktiv und Passiv',
+  syn:'Synonyme und Antonyme',
+  satz:'Satzglieder',
+  komma:'Kommasetzung'
+};
+const TOPIC_FLAG={fehler:'brief',gz:'butler',strat:'kuehl',wortart:'regal',tempus:'uhr',passiv:'maschine',syn:'spiegel',satz:'strom',komma:'sieg'};
+const TOPIC_PLACE={fehler:'Briefkasten (Vorgarten)',gz:'Butler-Gespenst (Halle)',strat:'Kühlschrank (Küche)',wortart:'Bücherregal (Bibliothek)',tempus:'Standuhr (Bibliothek)',passiv:'Umformer 3000 (Labor)',syn:'Zauberspiegel',satz:'Sicherungskasten (Keller)',komma:'Sprachvernichter (Turm)'};
+function stat(t,ok){S.stats[t]=S.stats[t]||{r:0,w:0};ok?S.stats[t].r++:S.stats[t].w++;}
+
+/* ---------------- Sound ---------------- */
+let actx=null;
+function beep(f,d,type='square',vol=.06,when=0){
+  if(!S||!S.sound)return;
+  try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=f;g.gain.value=vol;
+    o.connect(g);g.connect(actx.destination);const t=actx.currentTime+when;o.start(t);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.stop(t+d+.02);}catch(e){}
+}
+const sfx={
+  ok(){beep(660,.09);beep(880,.09,'square',.06,.09);beep(1320,.14,'square',.05,.18);},
+  no(){beep(200,.18,'sawtooth',.05);beep(150,.25,'sawtooth',.05,.15);},
+  item(){[523,659,784,1046].forEach((f,i)=>beep(f,.1,'square',.05,i*.08));},
+  click(){beep(900,.03,'square',.03);},
+  door(){beep(140,.12,'triangle',.08);beep(110,.15,'triangle',.08,.1);},
+  win(){[523,523,659,784,659,784,1046].forEach((f,i)=>beep(f,.16,'square',.05,i*.15));}
+};
+
+/* ---------------- Gegenstände ---------------- */
+const keyIcon=c=>`<svg viewBox="0 0 16 16">${R(1,5,6,6,c)}${R(3,7,2,2,'#1b1032')}${R(7,7,8,2,c)}${R(12,9,2,3,c)}${R(9,9,2,2,c)}</svg>`;
+const ITEMS={
+  hausschluessel:{name:'Haustürschlüssel',icon:keyIcon('#ffd75e'),desc:'Ein schwerer, goldener Schlüssel. Passt bestimmt zur Haustür.'},
+  kaese:{name:'Käse',icon:`<svg viewBox="0 0 16 16"><polygon points="1,12 15,12 15,5" fill="#ffd75e"/>${R(1,12,14,2,'#e0b030')}${R(11,8,2,2,'#c99a20')}${R(8,10,2,1,'#c99a20')}</svg>`,desc:'Ein Stück Käse mit Löchern. Riecht ziemlich streng.'},
+  bibschluessel:{name:'kleiner Schlüssel',icon:keyIcon('#d8dde6'),desc:'Ein kleiner Schlüssel mit Bissspuren. Auf dem Anhänger steht: BIBLIOTHEK.'},
+  aufzieh:{name:'Aufziehschlüssel',icon:`<svg viewBox="0 0 16 16">${R(2,3,5,5,'#d9a43a')}${R(9,3,5,5,'#d9a43a')}${R(7,5,2,2,'#d9a43a')}${R(7,7,2,7,'#b8862a')}</svg>`,desc:'Ein Schlüssel zum Aufziehen. Für eine Uhr vielleicht?'},
+  eisenschluessel:{name:'eiserner Schlüssel',icon:keyIcon('#9aa0aa'),desc:'Groß, schwer und rostig. Passt zu einem großen Schloss.'},
+  sicherung:{name:'Sicherung',icon:`<svg viewBox="0 0 16 16">${R(4,2,8,12,'#d8dde6')}${R(4,2,8,2,'#c87a3a')}${R(4,12,8,2,'#c87a3a')}${R(6,6,4,4,'#ff5b6e')}</svg>`,desc:'Eine Sicherung. Auf dem Etikett steht: „Ersatzteil Keller“.'},
+  kellerschluessel:{name:'Kellerschlüssel',icon:keyIcon('#c8743a'),desc:'Ein rostiger Schlüssel. Er riecht nach Keller und Spinnen.'}
+};
+function addItem(id){if(!S.inv.includes(id))S.inv.push(id);sfx.item();renderInv();save();}
+function removeItem(id){S.inv=S.inv.filter(x=>x!==id);if(selItem===id)selItem=null;renderInv();save();}
+const has=id=>S.inv.includes(id);
+
+/* ---------------- Sprechen ---------------- */
+const WHO={p:{c:'#ffffff'},erz:{c:'#c9b8ff',n:'Erzähler'},butler:{c:'#9fd8ff',n:'Bertram, das Butler-Gespenst'},prof:{c:'#ff7ad9',n:'Professor Kauderwelsch'},spiegel:{c:'#ffd75e',n:'Zauberspiegel'},uhr:{c:'#ffb36b',n:'Standuhr'},masch:{c:'#7cff9a',n:'Umformer 3000'},maus:{c:'#e0e0e0',n:'Maus'}};
+let sayDone=null,sayTimer=null;
+function say(text,who='p'){
+  return new Promise(res=>{
+    if(sayDone)sayDone();
+    const el=$('#say'),w=WHO[who]||WHO.p;
+    const nm=(who==='p')?(S.name||'Du'):w.n;
+    el.innerHTML=`<small style="color:${w.c}">${nm}:</small>`;el.appendChild(document.createTextNode(text));
+    el.style.color=w.c;el.classList.add('on');
+    sayDone=()=>{clearTimeout(sayTimer);el.classList.remove('on');sayDone=null;res();};
+    sayTimer=setTimeout(()=>sayDone&&sayDone(),Math.max(2400,text.length*62));
+  });
+}
+async function talkSeq(lines){for(const [w,t] of lines)await say(t,w);}
+
+/* ---------------- Figuren ---------------- */
+function playerSVG(f){
+  const J='#2f4f8f',H='#d23b45',SK='#f2c39b',SH='#1a1a1a';
+  let legs;
+  if(f===1)legs=R(-6,-12,3,10,J)+R(2,-12,3,10,J)+R(-7,-2,4,2,SH)+R(2,-2,4,2,SH);
+  else if(f===2)legs=R(-3,-12,3,10,J)+R(0,-12,3,10,J)+R(-3,-2,4,2,SH)+R(0,-2,4,2,SH);
+  else legs=R(-4,-12,3,10,J)+R(1,-12,3,10,J)+R(-5,-2,4,2,SH)+R(1,-2,4,2,SH);
+  const arm=f===1?R(-7,-22,2,9,H)+R(5,-23,2,8,H)+R(-7,-13,2,2,SK)+R(5,-15,2,2,SK):R(-7,-23,2,10,H)+R(5,-23,2,10,H)+R(-7,-13,2,2,SK)+R(5,-13,2,2,SK);
+  return R(-8,-24,3,10,'#2a6a3a')+legs+R(-5,-24,10,13,H)+R(-3,-17,6,3,'#b02a35')+arm+
+    R(-4,-32,8,8,SK)+R(-5,-35,10,4,'#4a2a12')+R(-5,-32,2,5,'#4a2a12')+R(1,-29,1,2,'#222')+R(2,-26,2,1,'#b06a5a');
+}
+function profSVG(x,y,sad){
+  return `<g transform="translate(${x},${y})">`+
+    R(-5,-12,4,11,'#2a2a3a')+R(1,-12,4,11,'#2a2a3a')+R(-6,-2,5,2,'#111')+R(1,-2,5,2,'#111')+
+    R(-8,-34,16,24,'#6a2c8a')+R(-2,-34,4,10,'#e8e8f0')+R(-1,-32,2,6,'#c22')+R(-10,-32,3,16,'#6a2c8a')+R(7,-32,3,16,'#6a2c8a')+R(-10,-17,3,3,'#f2c39b')+R(7,-17,3,3,'#f2c39b')+
+    R(-5,-45,10,11,'#f2c39b')+`<polygon points="-8,-44 -4,-52 0,-46 4,-53 8,-44 10,-48 6,-40 -6,-40 -10,-48" fill="#7cff9a"/>`+
+    `<circle cx="2.5" cy="-40.5" r="2.4" fill="none" stroke="#ffd75e" stroke-width=".8"/>`+R(-3,-41,1,1,'#111')+R(2,-41,1,1,'#111')+
+    (sad?R(-6,-36,12,2,'#5a5a5a'):R(-9,-37,18,2,'#3a3a3a')+R(-10,-38,3,2,'#3a3a3a')+R(7,-38,3,2,'#3a3a3a'))+`</g>`;
+}
+
+/* ---------------- Räume ---------------- */
+const win=(x,y,c)=>R(x,y,22,26,'#1a1028')+R(x+2,y+2,18,22,c)+R(x+10,y+2,2,22,'#1a1028')+R(x+2,y+12,18,2,'#1a1028');
+const door=(x,y,w,h,c)=>R(x-2,y-2,w+4,h+2,'#2a1420')+R(x,y,w,h,c)+R(x+3,y+5,w/2-5,h/3,'#00000022')+R(x+w/2+2,y+5,w/2-5,h/3,'#00000022')+R(x+w-6,y+h/2,3,3,'#ffd75e');
+function exitDoor(o){
+  const h=Object.assign({look:'Eine Tür.'},o);
+  h.go=async()=>{
+    if(!o.isOpen||o.isOpen())return goRoom(o.to,o.tx);
+    if(o.lockedFn)return o.lockedFn();
+    sfx.door();return say(o.locked||'Abgeschlossen.');
+  };
+  h.open=h.go;
+  if(o.key){h.useWith={[o.key]:async()=>{removeItem(o.key);o.onUnlock();sfx.door();render();await say(o.unlockMsg||'Klick! Die Tür ist jetzt offen.');}};}
+  return h;
+}
+
+const ROOMS={};
+/* ---- Vorgarten ---- */
+ROOMS.garten={name:'Vorgarten',floorY:170,
+  art(){const f=S.flags;let s=R(0,0,320,180,'#120a2e');
+    [[20,12],[48,30],[90,8],[130,20],[175,6],[300,52],[12,60],[248,6],[60,46],[110,36],[196,40],[318,20]].forEach(([x,y])=>s+=R(x,y,1,1,'#fff'));
+    s+=`<circle cx="282" cy="28" r="12" fill="#f4eebf"/><circle cx="278" cy="25" r="2" fill="#d9d29b"/><circle cx="287" cy="32" r="3" fill="#d9d29b"/>`;
+    s+=R(205,4,40,40,'#3a2a52')+`<polygon points="200,6 225,-14 250,6" fill="#22163a"/>`+R(218,14,14,18,'#7cff9a','class="blink"');
+    s+=R(70,40,180,110,'#3a2a52')+`<polygon points="60,42 160,8 260,42" fill="#22163a"/>`;
+    s+=win(88,56,'#f7d35c')+win(212,56,'#f7d35c')+win(88,100,'#1a1440')+win(212,100,'#f7d35c');
+    s+=R(136,86,48,64,'#20142c');
+    if(f.haustuer)s+=R(140,90,40,60,'#0a0510')+R(140,90,6,60,'#6b4226')+R(150,140,20,10,'#f7d35c33');
+    else s+=R(140,90,40,60,'#6b4226')+R(144,96,14,20,'#5a361e')+R(162,96,14,20,'#5a361e')+R(144,122,14,22,'#5a361e')+R(162,122,14,22,'#5a361e')+R(173,119,3,3,'#ffd75e');
+    s+=R(156,78,8,6,'#ffd75e','class="flick"');
+    s+=R(0,148,320,32,'#1d3d24');
+    for(let x=4;x<320;x+=13)s+=R(x,150+(x%3)*7,2,3,'#2f5f38');
+    s+=`<polygon points="136,150 184,150 214,180 106,180" fill="#5c4a3a"/>`+R(130,147,60,4,'#77707f');
+    for(let x=0;x<74;x+=10)s+=R(x,126,4,24,'#c8c2d6');
+    s+=R(0,132,74,3,'#c8c2d6')+R(0,142,74,3,'#c8c2d6');
+    for(let x=246;x<320;x+=10)s+=R(x,126,4,24,'#c8c2d6');
+    s+=R(246,132,74,3,'#c8c2d6')+R(246,142,74,3,'#c8c2d6');
+    s+=R(44,118,4,32,'#4a3020')+R(32,104,28,16,'#b3262e')+R(32,104,28,3,'#d6404a')+R(36,110,14,2,'#1a0a0a');
+    s+=f.brief?R(60,114,7,2,'#ffd75e'):R(60,98,2,14,'#4a3020')+R(60,98,7,5,'#ffd75e');
+    if(!f.brief)s+=R(38,106,10,4,'#f4eebf');
+    s+=R(262,128,3,22,'#4a3020')+R(248,112,34,18,'#c9a86a')+T(265,119,'BETRETEN',3.4,'#3a1a0a')+T(265,126,'VERBOTEN',3.4,'#3a1a0a');
+    s+=R(284,140,10,10,'#2f6fd0')+R(285,134,8,6,'#f2c39b')+`<polygon points="284,137 294,137 289,147" fill="#fff"/><polygon points="283,134 295,134 289,121" fill="#d0302f"/>`+R(282,150,14,2,'#111');
+    return s;},
+  hs(){const f=S.flags;return[
+    {id:'briefkasten',name:'Briefkasten',x:30,y:96,w:40,h:54,wx:58,
+      look:()=>say(f.brief?'Leer. Den Brief habe ich ordentlich korrigiert.':'Im Briefkasten steckt ein Brief. Die Fahne ist oben.'),
+      open:()=>puzzleBrief(),use:()=>puzzleBrief(),take:()=>puzzleBrief()},
+    exitDoor({id:'tuer',name:'Haustür',x:136,y:86,w:48,h:64,wx:160,to:'halle',tx:24,isOpen:()=>f.haustuer,
+      locked:'Abgeschlossen. Ich brauche einen Schlüssel.',key:'hausschluessel',onUnlock:()=>{f.haustuer=1;},unlockMsg:'Klick! Die Haustür springt quietschend auf.',
+      look:()=>say(f.haustuer?'Die Haustür steht offen. Drinnen ist es dunkel … und spannend.':'Eine schwere Holztür. Natürlich abgeschlossen.')}),
+    {id:'schild',name:'Schild',x:246,y:110,w:38,h:40,wx:256,look:'Darauf steht: „BETRETEN VERBOTEN – besonders für Leute, die Kommas mögen.“',take:'Das Schild ist festgeschraubt.'},
+    {id:'zwerg',name:'Gartenzwerg',x:280,y:118,w:20,h:34,wx:276,look:'Ein Gartenzwerg. Auf seinem Bauch steht: „Ich bin ein Nomen. Schreib mich groß!“',take:'Der ist festgeklebt. Typisch Professor.',talk:'Ich rede nicht mit Gartenzwergen. Die verraten einen sofort.'},
+    {id:'fenster',name:'Fenster',x:86,y:54,w:26,h:30,wx:100,look:'Drinnen brennt Licht. Ein Schatten mit wilden Haaren huscht vorbei.',open:'Die Fenster sind vergittert.'},
+    {id:'turm',name:'Turmfenster',x:214,y:10,w:22,h:26,wx:225,look:'Oben im Turm flackert grünes Licht. Eine Maschine brummt bedrohlich.'},
+    {id:'mond',name:'Mond',x:268,y:14,w:28,h:28,wx:270,look:'Vollmond. Natürlich. Was auch sonst.',take:'Mein Arm ist dafür etwas zu kurz.'}
+  ];}
+};
+/* ---- Eingangshalle ---- */
+ROOMS.halle={name:'Eingangshalle',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,142,'#4b2340');
+    for(let x=0;x<320;x+=16)s+=R(x,0,6,110,'#55294a');
+    s+=R(0,110,320,32,'#3a1a2c')+R(0,108,320,3,'#7a4a3a');
+    for(let j=0;j<4;j++)for(let i=0;i<16;i++)s+=R(i*20,142+j*10,20,10,(i+j)%2?'#d8c8a4':'#2a1a26');
+    s+=R(80,152,176,20,'#7a1e2e')+R(84,155,168,14,'#8a2a3a')+R(84,155,168,1,'#c9a227')+R(84,168,168,1,'#c9a227');
+    s+=door(6,72,26,70,'#6b4226');
+    s+=door(48,78,26,64,'#7a5a3a')+T(61,73,'KÜCHE',3.2,'#ffd75e');
+    s+=R(118,20,44,54,'#c9a227')+R(122,24,36,46,'#2b3a2a')+R(126,52,28,18,'#6a2c8a')+R(133,34,14,16,'#f2c39b')+`<polygon points="128,36 132,26 138,32 142,24 148,32 152,26 152,38 146,34 134,34" fill="#7cff9a"/>`+R(131,45,18,2,'#3a3a3a')+`<circle cx="143" cy="40" r="2.2" fill="none" stroke="#ffd75e" stroke-width=".7"/>`+R(136,40,1,1,'#111');
+    s+=R(159,0,2,10,'#888')+R(146,10,28,3,'#c9a227');
+    [148,156,164,171].forEach(x=>s+=R(x,6,2,4,'#fff')+R(x,4,2,2,'#ffd75e','class="flick"'));
+    s+=R(169,134,8,8,'#0a0508')+R(170,133,6,1,'#0a0508');
+    if(!f.maus)s+=R(171,137,1,1,'#ffff60','class="blink"')+R(174,137,1,1,'#ffff60','class="blink"');
+    s+=R(194,96,30,46,'#2a1420')+R(197,99,24,43,'#3d2a1e')+R(197,108,24,2,'#555')+R(197,128,24,2,'#555')+R(216,118,3,3,'#888')+T(209,93,'KELLER',3,'#c8c2d6');
+    s+=door(234,74,26,68,'#5a3a22')+T(247,68,'BIBLIOTHEK',2.6,'#ffd75e');
+    for(let i=0;i<10;i++)s+=R(266+i*6,132-i*9,320-(266+i*6),10,i%2?'#6b3b2a':'#7a4a33');
+    s+=`<line x1="266" y1="112" x2="320" y2="30" stroke="#c9a227" stroke-width="2"/>`;
+    if(!f.gitter){for(let x=268;x<318;x+=5)s+=R(x,88,1.5,54,'#9aa0aa');s+=R(266,88,54,2,'#9aa0aa')+R(266,114,54,2,'#9aa0aa')+R(289,110,7,9,'#c9a227')+R(291,113,3,3,'#3a2a0a');}
+    else s+=R(266,88,8,54,'#9aa0aa55');
+    s+=`<g class="bob" opacity=".86">`+R(104,92,14,14,'#e6efff')+R(107,97,2,2,'#203')+R(113,97,2,2,'#203')+R(109,102,4,1,'#203')+
+       R(102,106,18,24,'#e6efff')+`<polygon points="102,130 120,130 118,140 114,134 110,140 106,134 103,140" fill="#e6efff"/>`+R(108,107,6,3,'#111')+R(110,110,2,14,'#c8d4ee')+
+       R(120,112,10,2,'#e6efff')+R(124,108,14,2,'#c0c0c0')+R(130,104,3,4,'#9fd8ff')+`</g>`;
+    return s;},
+  hs(){const f=S.flags;return[
+    exitDoor({id:'haustuer',name:'Haustür',x:4,y:70,w:30,h:72,wx:22,to:'garten',tx:160,look:'Die Haustür. Dahinter liegt der Vorgarten.'}),
+    exitDoor({id:'kueche',name:'Küchentür',x:46,y:66,w:30,h:76,wx:61,to:'kueche',tx:24,isOpen:()=>f.butler,
+      lockedFn:()=>say('Halt! Ohne meine Erlaubnis betritt niemand die Küche!','butler'),look:'Eine Tür mit der Aufschrift KÜCHE.'}),
+    {id:'portrait',name:'Porträt',x:118,y:20,w:44,h:54,wx:140,look:'Ein Porträt von Professor Kauderwelsch. Darunter steht: „Regeln sind was für Langweiler.“',take:'Das ist mir zu gruselig.'},
+    {id:'leuchter',name:'Kronleuchter',x:144,y:0,w:32,h:16,wx:160,look:'Ein Kronleuchter mit echten Kerzen. Sehr brandschutzwidrig.'},
+    {id:'butler',name:'Butler-Gespenst',x:100,y:88,w:40,h:54,wx:150,
+      look:'Ein durchsichtiger Butler. Er balanciert ein Tablett mit einer Tasse Gespenster-Tee.',
+      take:'Man kann Gespenster nicht mitnehmen. Meine Hand geht einfach durch.',
+      talk:()=>talkButler(),use:()=>talkButler()},
+    {id:'mauseloch',name:'Mauseloch',x:162,y:126,w:22,h:18,wx:176,
+      look:()=>say(f.maus?'Ein Mauseloch. Drinnen schmatzt es zufrieden.':'Ein Mauseloch. Darin leuchten zwei kleine Augen … und etwas glitzert.'),
+      take:'Meine Hand passt da nicht rein.',talk:()=>say(f.maus?'Mampf, mampf.':'Piep! (Ich spreche leider kein Mäusisch.)',f.maus?'maus':'p'),
+      useWith:{kaese:async()=>{removeItem('kaese');S.flags.maus=1;render();await say('Eine Maus flitzt heraus, schnappt sich den Käse …','erz');await say('… und lässt dafür einen kleinen Schlüssel fallen!','erz');addItem('bibschluessel');await say('Danke, kleine Maus!');}}},
+    exitDoor({id:'keller',name:'Kellertür',x:194,y:90,w:30,h:52,wx:209,to:'keller',tx:34,isOpen:()=>f.kellerOpen,
+      locked:'Die Kellertür ist verschlossen. Von unten kommt ein kalter Hauch.',key:'kellerschluessel',onUnlock:()=>{f.kellerOpen=1;},unlockMsg:'Knarz! Die Kellertür ist offen.',look:'Eine Kellertür mit Eisenbeschlägen.'}),
+    exitDoor({id:'bib',name:'Bibliothekstür',x:232,y:64,w:30,h:78,wx:247,to:'bib',tx:300,isOpen:()=>f.bibOpen,
+      locked:'Die Bibliothek ist abgeschlossen. Der Schlüssel fehlt.',key:'bibschluessel',onUnlock:()=>{f.bibOpen=1;},unlockMsg:'Klick! Die Bibliothek ist offen.',look:'Eine Tür mit der Aufschrift BIBLIOTHEK.'}),
+    exitDoor({id:'treppe',name:'Treppe',x:266,y:40,w:54,h:102,wx:288,to:'labor',tx:30,isOpen:()=>f.gitter,
+      locked:'Ein eisernes Gitter versperrt die Treppe. Es hat ein großes, rostiges Schloss.',key:'eisenschluessel',onUnlock:()=>{f.gitter=1;},unlockMsg:'Mit lautem Quietschen schwingt das Gitter auf. Die Treppe ist frei!',
+      look:()=>say(f.gitter?'Die Treppe führt nach oben ins Labor.':'Die Treppe nach oben. Ein eisernes Gitter mit Schloss versperrt den Weg.')})
+  ];}
+};
+/* ---- Küche ---- */
+ROOMS.kueche={name:'Küche',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,140,'#2e5b50');
+    for(let y=0;y<140;y+=10)s+=R(0,y,320,1,'#28504a');for(let x=0;x<320;x+=10)s+=R(x,0,1,140,'#28504a');
+    s+=R(0,140,320,40,'#5b4334');for(let y=146;y<180;y+=8)s+=R(0,y,320,1,'#4a3628');
+    s+=door(8,70,26,70,'#7a5a3a');
+    s+=R(138,22,44,36,'#3a2a1a')+R(141,25,38,30,'#1a1440')+R(159,25,2,30,'#3a2a1a')+R(141,39,38,2,'#3a2a1a')+R(170,28,4,4,'#f4eebf');
+    s+=R(56,92,50,48,'#2b2b2f')+R(60,90,16,3,'#555')+R(84,90,16,3,'#555')+R(62,104,38,26,'#1a1a1d')+R(66,108,30,10,'#ff7a2a','class="flick" opacity=".55"');
+    s+=R(66,74,30,16,'#7a7f8a')+R(64,74,34,2,'#9aa0aa')+R(68,71,26,4,'#6aff5a');
+    s+=`<circle cx="74" cy="68" r="2" fill="#6aff5a" class="blink"/><circle cx="86" cy="64" r="1.5" fill="#6aff5a" class="blink" style="animation-delay:.4s"/>`;
+    s+=R(120,100,70,40,'#8a6a4a')+R(118,98,74,4,'#c8c8c8')+R(136,98,30,3,'#555')+R(150,88,2,10,'#aaa')+R(150,88,8,2,'#aaa')+R(126,112,24,22,'#7a5a3a')+R(160,112,24,22,'#7a5a3a');
+    s+=R(174,88,4,10,'#8ae')+R(180,90,4,8,'#e8a')+R(186,86,3,12,'#aea');
+    if(!f.kuehl){s+=R(226,54,40,86,'#dfe8e8')+R(226,84,40,2,'#a8b4b4')+R(258,60,3,18,'#888')+R(258,92,3,30,'#888')+R(238,70,14,12,'#c9a227')+R(241,73,8,6,'#3a2a0a')+T(245,78,'ABC',2.4,'#ffd75e')+R(232,96,16,18,'#fff8b0')+R(234,99,12,1,'#888')+R(234,102,10,1,'#888')+R(234,105,12,1,'#888');}
+    else{s+=R(226,54,40,86,'#9aa8a8')+R(229,57,34,80,'#f2f8f8')+R(229,80,34,2,'#c8d4d4')+R(229,104,34,2,'#c8d4d4')+R(234,70,14,4,'#3a9a3a')+R(236,69,2,1,'#fff')+R(266,54,14,86,'#dfe8e8')+R(268,62,2,18,'#888');
+      if(!S.flags.kaeseWeg)s+=`<polygon points="236,100 256,100 256,92" fill="#ffd75e"/>`;}
+    return s;},
+  hs(){const f=S.flags;return[
+    exitDoor({id:'tuer',name:'Tür zur Halle',x:6,y:66,w:30,h:74,wx:24,to:'halle',tx:61,look:'Die Tür zurück in die Eingangshalle.'}),
+    {id:'fenster',name:'Fenster',x:138,y:20,w:44,h:38,wx:160,look:'Draußen scheint der Mond. Drinnen blubbert der Schleim.',open:'Das Fenster klemmt.'},
+    {id:'herd',name:'Topf mit Schleim',x:54,y:60,w:54,h:80,wx:82,look:'Im Topf blubbert grüner Schleim. Es riecht nach Grammatikfehlern.',take:'Iiih. Nein. Auf keinen Fall.',use:'Ich koche heute lieber nicht.',open:'Im Ofen liegt ein verkohltes Wörterbuch. Armes Ding.'},
+    {id:'spuele',name:'Spüle',x:116,y:84,w:76,h:56,wx:155,look:'Ein Berg dreckiger Reagenzgläser.',use:'Abwaschen? Jetzt? Ich rette gerade die deutsche Sprache!',open:'Im Schrank: nur Putzmittel und eine Gummiente.'},
+    {id:'kuehl',name:'Kühlschrank',x:224,y:52,w:56,h:88,wx:218,
+      look:()=>say(f.kuehl?'Der Kühlschrank ist offen.':'Am Kühlschrank hängt ein Buchstabenschloss. Daneben klebt ein Zettel mit Lückenwörtern.'),
+      open:()=>puzzleKuehl(),use:()=>puzzleKuehl(),
+      take:()=>{if(f.kuehl&&!f.kaeseWeg){f.kaeseWeg=1;addItem('kaese');render();return say('Ich nehme den Käse mit. Wer weiß, wofür der gut ist.');}return say(f.kuehl?'Da ist nur noch eine Gurke. Die starrt mich an.':'Der ist zu schwer.');}}
+  ];}
+};
+/* ---- Bibliothek ---- */
+ROOMS.bib={name:'Bibliothek',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,140,'#3a2418');
+    for(let x=0;x<320;x+=40)s+=R(x,0,2,140,'#2e1c12');
+    s+=R(0,140,320,40,'#4a2c20')+R(56,150,200,20,'#7a1e2e')+R(60,153,192,14,'#8a2a3a')+R(60,153,192,1,'#c9a227')+R(60,166,192,1,'#c9a227');
+    s+=R(10,20,130,120,'#5a3618');
+    const cols=['#a33','#36a','#3a6','#cc8a2a','#7a3aa0','#2a8a8a','#b85a2a','#ddd'];
+    [46,74,102,130].forEach((by,row)=>{s+=R(12,by,126,3,'#2a180a');let x=14,k=0;
+      while(x<134){const w=3+((x*7+row*13)%4),h=16+((x*3+row*5)%9);
+        if(!(f.regal&&row===1&&k===6))s+=R(x,by-h,w,h,cols[(x+row*3)%cols.length])+R(x,by-h+3,w,1,'#ffffff33');x+=w+1;k++;}});
+    s+=R(150,96,32,20,'#7a2434')+R(148,110,36,24,'#6a1e2a')+R(146,108,6,22,'#7a2434')+R(180,108,6,22,'#7a2434')+R(150,134,3,6,'#2a1a0a')+R(179,134,3,6,'#2a1a0a');
+    s+=R(194,36,30,6,'#2a180a')+R(196,40,26,100,'#5a3418')+`<circle cx="209" cy="58" r="10" fill="#f2e8c8"/><circle cx="209" cy="58" r="10" fill="none" stroke="#c9a227" stroke-width="1.2"/>`;
+    s+=f.uhr?`<line x1="209" y1="58" x2="209" y2="50" stroke="#222" stroke-width="1.2"/><line x1="209" y1="58" x2="214" y2="58" stroke="#222" stroke-width="1"/>`:`<line x1="209" y1="58" x2="204" y2="53" stroke="#222" stroke-width="1.2"/><line x1="209" y1="58" x2="212" y2="64" stroke="#222" stroke-width="1"/>`;
+    s+=R(203,76,12,44,'#2a1a10')+`<g ${f.uhr?'class="swing"':''}>`+R(208,78,2,30,'#c9a227')+`<circle cx="209" cy="110" r="4" fill="#c9a227"/></g>`;
+    if(f.uhr)s+=R(200,126,18,8,'#1a0e08');
+    s+=R(226,78,60,5,'#4a4a52')+R(230,83,52,57,'#6a6a72')+R(240,96,32,44,'#1a1012');
+    s+=`<g class="flick"><polygon points="244,140 252,116 258,130 262,112 268,140" fill="#ff7a2a"/><polygon points="250,140 255,126 259,134 263,124 264,140" fill="#ffd75e"/></g>`;
+    s+=door(290,70,24,70,'#5a3a22');
+    return s;},
+  hs(){const f=S.flags;return[
+    {id:'regal',name:'Bücherregal',x:10,y:20,w:130,h:120,wx:82,
+      look:()=>say(f.regal?'Lauter Bücher über Grammatik. Eins fehlt – das habe ich herausgezogen.':'Hunderte Bücher – aber jemand hat sie völlig durcheinandergebracht! Auf jedem Buchrücken steht ein Satz.'),
+      use:()=>puzzleRegal(),take:()=>puzzleRegal(),open:()=>puzzleRegal()},
+    {id:'sessel',name:'Ohrensessel',x:144,y:94,w:44,h:46,wx:166,look:'Ein gemütlicher Ohrensessel. Auf dem Kissen liegt ein Krümel Käse.',use:'Keine Zeit zum Ausruhen!',take:'Der passt nicht in meinen Rucksack.'},
+    {id:'uhr',name:'Standuhr',x:192,y:34,w:34,h:106,wx:200,
+      look:()=>say(f.uhr?'Die Standuhr läuft wieder. Tick, tack.':'Eine Standuhr. Sie ist stehen geblieben. Seitlich ist ein Loch für einen Aufziehschlüssel.'),
+      open:()=>say(f.uhr?'Das Geheimfach ist leer.':'Die Uhr ist fest verschlossen. Vielleicht muss man sie erst aufziehen?'),
+      use:()=>say(f.uhr?'Die Uhr läuft schon.':'Ich bräuchte einen Aufziehschlüssel.'),
+      talk:()=>say(f.uhr?'Tick … tack … es ist kurz vor sechs!':'…','uhr'),
+      useWith:{aufzieh:()=>puzzleUhr()}},
+    {id:'kamin',name:'Kamin',x:226,y:76,w:60,h:64,wx:256,look:'Ein knisterndes Feuer. Im Rauch formen sich Buchstaben.',take:'Autsch! Heiß!',use:'Mir ist warm genug.'},
+    exitDoor({id:'tuer',name:'Tür zur Halle',x:288,y:66,w:30,h:74,wx:300,to:'halle',tx:247,look:'Die Tür zurück in die Halle.'})
+  ];}
+};
+/* ---- Labor ---- */
+ROOMS.labor={name:'Labor (Obergeschoss)',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,140,'#1e2e36');
+    s+=R(0,18,320,4,'#3a5560')+R(0,26,320,2,'#2c4450');for(let x=6;x<320;x+=24)s+=R(x,8,2,2,'#4a6a78');
+    s+=R(0,140,320,40,'#26262c');for(let x=0;x<320;x+=8)s+=R(x,140,1,40,'#1c1c22');
+    s+=R(4,136,50,10,'#0a0a0e')+R(4,110,2,28,'#888')+R(4,110,50,2,'#888')+R(52,110,2,28,'#888')+T(29,106,'TREPPE',3,'#aaa');
+    s+=R(58,84,38,3,'#5a4a3a')+R(62,72,5,12,'#ff5ad8')+R(70,68,5,16,'#5aff8a')+R(78,74,5,10,'#5ac8ff')+R(86,70,5,14,'#ffd75e');
+    s+=R(104,20,14,32,'#8ae','opacity=".8"')+R(158,20,14,32,'#e8a','opacity=".8"')+R(102,18,18,3,'#888')+R(156,18,18,3,'#888')+T(111,16,'AKTIV',3,'#8ae')+T(165,16,'PASSIV',3,'#e8a');
+    s+=`<circle cx="111" cy="34" r="2" fill="#fff" class="blink"/><circle cx="165" cy="40" r="2" fill="#fff" class="blink" style="animation-delay:.5s"/>`;
+    s+=R(100,50,76,90,'#5a6a7a')+R(108,58,60,28,'#20242c')+T(138,75,f.maschine?'OK':'FEHLER',6,f.maschine?'#7cff9a':'#ff5b6e','middle',f.maschine?'':'class="blink"')+T(138,98,'UMFORMER 3000',3.4,'#d8dde6');
+    s+=`<circle cx="116" cy="114" r="5" fill="#2a2a32"/><circle cx="160" cy="114" r="5" fill="#2a2a32"/>`+R(116,110,1,4,'#ffd75e')+R(160,110,4,1,'#ffd75e')+R(130,118,16,4,'#111')+R(98,132,80,8,'#4a5a6a');
+    s+=R(194,50,48,90,'#888')+R(198,56,20,84,'#a0a8b0')+R(220,56,20,84,'#a0a8b0')+R(218,56,2,84,'#666')+R(214,44,8,5,f.strom?'#5f5':'#f44',f.strom?'':'class="blink"')+T(218,40,'TURM',3,'#ddd');
+    s+=door(268,70,28,70,'#6a3a7a')+T(282,66,'PRIVAT',3,'#ffd75e');
+    return s;},
+  hs(){const f=S.flags;return[
+    exitDoor({id:'treppe',name:'Treppe nach unten',x:2,y:100,w:56,h:46,wx:30,to:'halle',tx:282,look:'Die Treppe zurück nach unten in die Halle.'}),
+    {id:'flaschen',name:'Flaschen',x:56,y:62,w:42,h:28,wx:78,look:'Bunte Flüssigkeiten. Auf einer steht: „Kommasaft – NICHT trinken!“',take:'Lieber nicht. Wer weiß, was die mit mir machen.',use:'Ich trinke doch nichts aus einem verrückten Labor!'},
+    {id:'maschine',name:'Umformer 3000',x:98,y:14,w:80,h:126,wx:140,
+      look:()=>say(f.maschine?'Die Maschine schnurrt zufrieden. Display: OK.':'Eine Maschine mit zwei Röhren: AKTIV und PASSIV. Das Display blinkt: FEHLER.'),
+      use:()=>puzzleMaschine(),talk:()=>puzzleMaschine(),open:'Die Wartungsklappe ist zugeschweißt.'},
+    exitDoor({id:'aufzug',name:'Aufzug zum Turm',x:192,y:40,w:52,h:100,wx:218,to:'turm',tx:290,isOpen:()=>f.strom,
+      locked:'Der Aufzug hat keinen Strom. Das Kabel führt nach unten – bis in den Keller.',look:()=>say(f.strom?'Der Aufzug hat Strom! Er fährt hoch in den Turm.':'Ein Aufzug in den Turm. Die Lampe leuchtet rot: kein Strom.')}),
+    exitDoor({id:'tuer',name:'Tür „Privat“',x:264,y:62,w:36,h:78,wx:282,to:'spiegel',tx:24,look:'Eine lila Tür mit dem Schild PRIVAT.'})
+  ];}
+};
+/* ---- Spiegelzimmer ---- */
+ROOMS.spiegel={name:'Schlafzimmer des Professors',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,140,'#3b1e4e');
+    for(let y=8;y<130;y+=18)for(let x=(y%36?10:20);x<320;x+=22)s+=R(x,y,2,2,'#4e2a66');
+    s+=R(0,140,320,40,'#43283a')+R(0,140,320,2,'#2a1424');
+    s+=door(8,70,26,70,'#6a3a7a');
+    s+=`<ellipse cx="155" cy="72" rx="37" ry="49" fill="#c9a227"/><ellipse cx="155" cy="72" rx="31" ry="43" fill="#5a7a9a"/><ellipse cx="155" cy="72" rx="31" ry="43" fill="#9fd8ff" opacity=".25" class="blink"/>`;
+    s+=R(132,40,3,20,'#ffffff55')+R(138,36,2,12,'#ffffff44');
+    if(f.spiegel)s+=R(142,66,8,2,'#2a1a40')+R(160,66,8,2,'#2a1a40')+R(150,84,10,2,'#2a1a40')+T(176,50,'Z',5,'#fff','middle','class="blink"');
+    else s+=R(142,62,8,8,'#fff')+R(145,64,3,4,'#111')+R(160,62,8,8,'#fff')+R(163,64,3,4,'#111')+R(146,82,18,6,'#2a1a40')+R(148,83,14,2,'#a33');
+    s+=R(296,80,10,60,'#5a3418')+R(210,108,90,20,'#e8e0f0')+R(210,112,70,18,'#7a3aa0')+R(282,100,16,9,'#fff')+R(212,128,4,12,'#3a2210')+R(292,128,4,12,'#3a2210');
+    s+=R(246,98,10,10,'#b8864a')+R(244,96,4,4,'#b8864a')+R(254,96,4,4,'#b8864a')+R(249,101,1,1,'#111')+R(252,101,1,1,'#111');
+    return s;},
+  hs(){const f=S.flags;return[
+    exitDoor({id:'tuer',name:'Tür zum Labor',x:6,y:66,w:30,h:74,wx:24,to:'labor',tx:282,look:'Die Tür zurück ins Labor.'}),
+    {id:'spiegel',name:'Zauberspiegel',x:116,y:20,w:78,h:104,wx:155,
+      look:()=>say(f.spiegel?'Der Spiegel schläft. Er schnarcht sogar.':'Ein goldener Spiegel. Darin erscheint ein Gesicht – und es schaut mich an!'),
+      talk:()=>puzzleSpiegel(),use:()=>puzzleSpiegel(),take:'Der ist an der Wand festgeschraubt. Und er beißt.'},
+    {id:'bett',name:'Himmelbett',x:208,y:78,w:100,h:62,wx:232,look:'Ein Himmelbett mit einem Teddy. Unter dem Kissen liegt ein Duden – der Professor liest ihn heimlich!',take:'Der Teddy bleibt hier. Er hat genug durchgemacht.',use:'Schlafen? Jetzt? Niemals!'}
+  ];}
+};
+/* ---- Keller ---- */
+ROOMS.keller={name:'Keller',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,140,'#2b2b33');
+    for(let y=0;y<140;y+=8)for(let x=((y/8)%2?-8:0);x<320;x+=16)s+=R(x,y,15,7,'#34343e');
+    s+=R(0,140,320,40,'#1c1c22');
+    for(let i=0;i<8;i++)s+=R(6,138-i*10,52-i*6,10,i%2?'#4a4a52':'#55555e');
+    s+=R(128,56,44,54,'#7a7f88')+R(130,58,40,50,'#6a6f78')+`<polygon points="150,60 156,70 144,70" fill="#ffd75e"/>`+T(150,69,'!',4,'#111');
+    [134,142,150,158].forEach((x,i)=>s+=R(x,76,6,12,(i===2&&!f.sicherungIn)?'#111':'#d8dde6'));
+    const cc=['#d33','#3c3','#36d','#dd3','#d3d'];
+    cc.forEach((c,i)=>{const x=136+i*7;s+=f.strom?R(x,110,2,30,c)+R(x,138,60-i*6,2,c):`<polyline points="${x},110 ${x+8},120 ${x-6},128 ${x+12},134 ${x+30+i*4},138" fill="none" stroke="${c}" stroke-width="1.6"/>`;});
+    s+=R(222,104,34,36,'#6a4a2a')+R(222,110,34,2,'#333')+R(222,130,34,2,'#333')+R(262,104,34,36,'#6a4a2a')+R(262,110,34,2,'#333')+R(262,130,34,2,'#333')+T(239,124,',,,',6,'#ffd75e')+T(279,124,',,,',6,'#ffd75e');
+    s+=`<g stroke="#bbb" stroke-width=".5" fill="none"><line x1="290" y1="0" x2="320" y2="30"/><line x1="300" y1="0" x2="320" y2="20"/><line x1="320" y1="0" x2="290" y2="10"/><path d="M296,6 Q306,10 312,4"/><path d="M294,14 Q306,18 316,10"/></g><circle cx="306" cy="22" r="3" fill="#111"/>`+R(302,18,8,1,'#111')+R(301,24,10,1,'#111');
+    if(!f.sicherungIn)s+=R(0,0,320,180,'#000','opacity=".62"')+`<circle cx="30" cy="100" r="44" fill="#ffd75e" opacity=".06"/>`;
+    return s;},
+  hs(){const f=S.flags;return[
+    exitDoor({id:'treppe',name:'Treppe nach oben',x:4,y:66,w:58,h:76,wx:34,to:'halle',tx:209,look:'Die Treppe nach oben in die Halle.'}),
+    {id:'kasten',name:'Sicherungskasten',x:124,y:52,w:52,h:90,wx:150,
+      look:()=>say(!f.sicherungIn?'Ein Sicherungskasten. Eine Sicherung fehlt – deshalb ist es so dunkel.':f.strom?'Alle Kabel sind richtig angeschlossen. Strom fließt!':'Die Kabel sind völlig durcheinander. Auf jedem steht ein Satzteil.'),
+      use:()=>f.sicherungIn?puzzleKabel():say('Ohne Sicherung tut sich hier gar nichts.'),open:()=>f.sicherungIn?puzzleKabel():say('Drinnen fehlt eine Sicherung.'),
+      useWith:{sicherung:async()=>{removeItem('sicherung');f.sicherungIn=1;render();sfx.door();await say('Licht! Aber … die Kabel sind völlig durcheinander.');await say('Auf jedem Kabel steht ein Satzteil. Ich muss sie richtig zuordnen.');}}},
+    {id:'faesser',name:'Fässer',x:218,y:98,w:82,h:42,wx:240,look:'Fässer voller geklauter Kommas! Der Professor hat sie aus allen Schulbüchern gesaugt.',take:'Viel zu schwer.',open:'Die Deckel sind festgenagelt.'},
+    {id:'spinne',name:'Spinne',x:286,y:0,w:34,h:34,wx:290,look:'Eine Spinne. Sie ist größer, als mir lieb ist.',talk:'Ich spreche nicht mit Spinnen. Grundsätzlich nicht.',take:'NEIN.'}
+  ];}
+};
+/* ---- Turm ---- */
+ROOMS.turm={name:'Turmzimmer',floorY:172,
+  art(){const f=S.flags;let s=R(0,0,320,140,'#1e1638');
+    for(let x=0;x<320;x+=32)s+=R(x,0,1,140,'#2a2048');for(let y=20;y<140;y+=20)s+=R(0,y,320,1,'#2a2048');
+    s+=R(0,140,320,40,'#2a2040');
+    s+=R(20,30,44,62,'#3a2a5a')+R(24,44,36,48,'#0b0620')+`<ellipse cx="42" cy="44" rx="18" ry="12" fill="#0b0620"/>`+R(30,56,1,1,'#fff')+R(50,48,1,1,'#fff')+R(44,70,1,1,'#fff')+`<circle cx="50" cy="60" r="5" fill="#f4eebf"/>`;
+    s+=`<polygon points="156,10 254,10 224,48 186,48" fill="${f.sieg?'#4a4a55':'#7a8a9a'}"/>`+R(170,48,80,92,f.sieg?'#3a3a44':'#5a5f6e')+R(180,58,60,40,'#20242c');
+    if(f.sieg){s+=T(210,82,'AUS',8,'#666');s+=`<circle cx="196" cy="6" r="6" fill="#777" class="blink"/><circle cx="214" cy="0" r="8" fill="#666" class="blink" style="animation-delay:.3s"/>`;}
+    else{s+=T(210,74,'SPRACH-',5,'#ff5b6e')+T(210,84,'VERNICHTER',4,'#ff5b6e')+T(210,93,'05:58',4,'#7cff9a','middle','class="blink"');
+      ['A',',','ß','Ä','?','.'].forEach((l,i)=>s+=`<g class="suck" style="animation-delay:${i*.33}s">${T(176+i*12,20,l,6,'#ffd75e')}</g>`);}
+    s+=`<circle cx="186" cy="114" r="6" fill="#2a2a32"/><circle cx="234" cy="114" r="6" fill="#2a2a32"/>`+R(206,104,8,26,'#c22')+R(204,102,12,4,'#ff5b6e');
+    s+=R(272,52,40,88,'#888')+R(276,58,16,82,'#a0a8b0')+R(294,58,16,82,'#a0a8b0');
+    s+=profSVG(122,172,f.sieg);
+    return s;},
+  hs(){const f=S.flags;return[
+    {id:'fenster',name:'Fenster',x:18,y:26,w:48,h:66,wx:44,look:'Ganz unten liegt das Dorf. Alle schlafen – und ahnen nichts.',open:'Viel zu hoch. Lieber nicht.'},
+    {id:'professor',name:'Professor Kauderwelsch',x:108,y:118,w:28,h:56,wx:98,
+      look:'Professor Kauderwelsch. Grüne Haare, Monokel, ein Schnurrbart, der vor Aufregung zittert.',
+      talk:()=>talkProf(),take:'Den will ich wirklich nicht mitnehmen.'},
+    {id:'maschine',name:'Sprachvernichter',x:150,y:8,w:112,h:132,wx:160,
+      look:()=>say(f.sieg?'Die Maschine ist aus. Endgültig.':'Ein Trichter saugt Buchstaben und Kommas ein. Auf dem Bedienfeld steht: KOMMA-REGELN EINGEBEN ZUM ABSCHALTEN.'),
+      use:()=>puzzleFinale(),open:()=>puzzleFinale(),talk:'BRRZZZT.'},
+    exitDoor({id:'aufzug',name:'Aufzug',x:270,y:50,w:44,h:90,wx:290,to:'labor',tx:218,look:'Der Aufzug nach unten ins Labor.'})
+  ];},
+  async onEnter(){if(!S.flags.turm){S.flags.turm=1;save();await talkSeq([['prof','WAS?! Ein Kind in meinem Turm?'],['prof','Zu spät! Um Punkt sechs Uhr löscht mein Sprachvernichter alle Regeln der deutschen Sprache!'],['p','Das lasse ich nicht zu!'],['prof','Ha! Die Maschine schaltet sich nur ab, wenn jemand die Kommaregeln kennt. Und die kennt NIEMAND!']]);}}
+};
+
+/* ---------------- Story-Rätsel ---------------- */
+async function puzzleBrief(){
+  if(S.flags.brief)return say('Da ist nichts mehr drin.');
+  await say('Ein Brief vom Professor! … Moment mal. Da wimmelt es ja von Rechtschreibfehlern!');
+  if(await runPuzzle('fehler')){S.flags.brief=1;render();await say('Geschafft! Und unter dem Brief klebte ein Schlüssel …');addItem('hausschluessel');await say('Der Professor ist wohl ziemlich vergesslich.');}
+}
+async function talkButler(){
+  const f=S.flags;
+  if(!f.butler){
+    await talkSeq([['butler','Guten Abend. Gäste sind hier nicht vorgesehen.'],['p','Ich will den Professor und seine Maschine aufhalten!'],['butler','Hmm. Endlich mal jemand mit Verstand. Ich habe genug vom Chaos in diesem Haus.'],['butler','Aber ich lasse nur jemanden durch, der weiß, was zusammengehört – und was getrennt bleibt.']]);
+    if(await runPuzzle('gz')){f.butler=1;render();await talkSeq([['butler','Ausgezeichnet! Ihr dürft in die Küche.'],['butler','Übrigens: Eine Maus hat den Bibliotheksschlüssel stibitzt. Mäuse lieben Käse, habe ich gehört.']]);}
+    else await say('Kommt wieder, wenn ihr bereit seid.','butler');
+  }else{
+    await say(pick(['Der Professor wohnt ganz oben im Turm. Seien Sie vorsichtig.','Haben Sie schon in der Küche nachgesehen? Im Kühlschrank liegt Käse.','Ich putze hier seit 200 Jahren. Und niemand bedankt sich.','Getrennt oder zusammen? Bei mir ist alles durchsichtig.']),'butler');
+  }
+}
+async function puzzleKuehl(){
+  if(S.flags.kuehl){if(!S.flags.kaeseWeg)return ROOMS.kueche.hs().find(h=>h.id==='kuehl').take();return say('Der Kühlschrank ist schon offen. Nur noch eine Gurke drin.');}
+  await say('Auf dem Zettel: „Nur wer die Strategien kennt, kommt an den Käse.“ Typisch.');
+  if(await runPuzzle('strat')){S.flags.kuehl=1;S.flags.kaeseWeg=1;render();await say('Das Schloss springt auf! Darin liegt ein großes Stück Käse.');addItem('kaese');}
+}
+async function puzzleRegal(){
+  if(S.flags.regal)return say('Die Bücher stehen jetzt ordentlich. Der Bibliothekar wäre stolz.');
+  await say('Auf jedem Buchrücken ist ein Wort markiert. Ich muss bestimmen, welche Wortart es ist.');
+  if(await runPuzzle('wortart')){S.flags.regal=1;render();await say('Ein Buch fällt heraus: „Wortarten für Fortgeschrittene“. Darin steckt ein Aufziehschlüssel!');addItem('aufzieh');}
+}
+async function puzzleUhr(){
+  if(S.flags.uhr)return say('Die Uhr läuft schon.');
+  await talkSeq([['erz','Du steckst den Schlüssel in die Uhr. Plötzlich öffnet sie die Augen!'],['uhr','Gähn! Wer weckt mich? Ich laufe nur wieder, wenn du die Zeitformen beherrschst!']]);
+  if(await runPuzzle('tempus')){S.flags.uhr=1;removeItem('aufzieh');render();await say('Dong! Dong! Unten springt eine Klappe auf – darin liegt ein eiserner Schlüssel!','erz');addItem('eisenschluessel');}
+  else await say('Die Uhr schläft wieder ein. Den Schlüssel behalte ich.');
+}
+async function puzzleMaschine(){
+  if(S.flags.maschine)return say('SYSTEM OK. DANKE.','masch');
+  await talkSeq([['masch','FEHLER! FEHLER! AKTIV UND PASSIV VERTAUSCHT!'],['masch','BITTE SÄTZE RICHTIG UMFORMEN. ZEITFORM BEACHTEN!']]);
+  if(await runPuzzle('passiv')){S.flags.maschine=1;render();await say('SYSTEM OK. ERSATZTEIL WIRD AUSGEGEBEN.','masch');addItem('sicherung');await say('Eine Sicherung! Auf dem Etikett steht „Keller“.');}
+}
+async function puzzleSpiegel(){
+  if(S.flags.spiegel)return say('Chrrr … pssss …','spiegel');
+  await talkSeq([['spiegel','Spieglein, Spieglein an der Wand … ach, vergiss es.'],['spiegel','Ich sage immer das Gegenteil. Oder dasselbe mit anderen Worten. Zeig mir, dass du das auch kannst!']]);
+  if(await runPuzzle('syn')){S.flags.spiegel=1;render();await say('Nicht schlecht! Hier, der Kellerschlüssel. Und jetzt lass mich schlafen.','spiegel');addItem('kellerschluessel');}
+}
+async function puzzleKabel(){
+  if(S.flags.strom)return say('Alles angeschlossen. Hier gibt es nichts mehr zu tun.');
+  await say('Ich muss jedem Kabel das richtige Satzglied zuordnen.');
+  if(await runPuzzle('satz')){S.flags.strom=1;render();sfx.door();await say('Bzzzt! Strom fließt! Oben im Labor brummt der Aufzug.','erz');}
+}
+async function talkProf(){
+  if(S.flags.sieg)return say('Ach … jetzt muss ich wohl wieder Diktate korrigieren …','prof');
+  await talkSeq([['prof','Stell dir vor: keine Diktate mehr! Keine Kommas! Keine Großschreibung! Nur noch FREIHEIT!'],['p','Und dann versteht keiner mehr irgendwen.'],['prof','… Details!']]);
+}
+async function puzzleFinale(){
+  if(S.flags.sieg)return say('Die Maschine ist aus.');
+  await say('KOMMA-REGELN EINGEBEN. SECHS SÄTZE. SONST: SPRACHE GELÖSCHT.','masch');
+  if(await runPuzzle('komma')){S.flags.sieg=1;render();sfx.win();
+    await talkSeq([['masch','REGELN ERKANNT. SPRACHVERNICHTER … WIRD … ABGESCHALTET.'],['prof','Neeeein! Meine wunderschöne Maschine!'],['prof','Woher kannst du das alles?'],['p','Aus dem Deutschunterricht. Ganz einfach.'],['butler','Bravo! Darf ich der Retterin oder dem Retter der Sprache einen Tee anbieten?']]);
+    showEnd();
+  }else await say('Die Uhr tickt … ich muss es nochmal versuchen!');
+}
+
+/* ---------------- Lerninhalte ---------------- */
+const FEHLERTEXTE=[
+  {title:'Ein Brief vom Professor',t:'Am {montag|Montag|montags} habe ich beschlossen, alle Regeln {ab zu schaffen|abzuschaffen|abschaffen zu}. Bald weiß niemand mehr, {das|dass|daß} man Nomen großschreibt. Beim {lesen|Lesen|Lessen} meiner Pläne werdet ihr {wiklich|wirklich|wierklich} staunen. Meine Maschine steht {Oben|oben|obén} im Turm und ist {fasst|fast|fahst} fertig. Wer mich {auf halten|aufhalten|aufhallten} will, muss {heute abend|heute Abend|Heute abend} kommen. Professor Kauderwelsch'},
+  {title:'Ein Brief vom Professor',t:'Seit {Jarhen|Jahren|Jaren} arbeite ich an meiner Maschine. Jeden {morgen|Morgen|Morgén} schraube ich an ihr herum, und {Abends|abends|abents} teste ich sie. Mein Butler ist {Ziemlich|ziemlich|zimlich} faul. Gestern habe ich ihn beim {schlafen|Schlafen|schlaffen} erwischt. Ich glaube, {das|dass|daß} er {vieleicht|vielleicht|fielleicht} heimlich Regeln mag. {Manch mal|Manchmal|Manch-mal} liest er sogar im Duden! Professor Kauderwelsch'},
+  {title:'Ein Brief vom Professor',t:'Heute war ein {Schrecklicher|schrecklicher|schreklicher} Tag. Mein Experiment ist {explodirt|explodiert|eksplodiert}, und überall lag grüner Schleim. Ich musste {stunden lang|stundenlang|Stundenlang} putzen. Zum {glück|Glück|Glük} hat mich niemand gesehen. Morgen will ich {nocheinmal|noch einmal|noch Einmal} von vorne anfangen. Diesmal wird alles {Besser|besser|beßer}. Ich {weis|weiß|weiss} genau, was zu tun ist. Die Welt wird {staunnen|staunen|stauhnen}! Professor Kauderwelsch'}
+];
+const GZ=[
+  ['Die Klasse soll sich vor der Turnhalle ___.','aufstellen','auf stellen','Vorsilbe (auf-, an-, vor-, ab- …) + Verb im Infinitiv schreibt man zusammen.'],
+  ['Meine Schwester möchte unbedingt ___ lernen.','Klavier spielen','klavierspielen','Nomen + Verb schreibt man in der Regel getrennt: Klavier spielen, Rad fahren.'],
+  ['Die Ärztin wird den Patienten ___. (= bescheinigen, dass er nicht arbeiten kann)','krankschreiben','krank schreiben','Entsteht eine neue, übertragene Bedeutung, schreibt man zusammen.'],
+  ['Er hat für das Geschenk ___ Geld ausgegeben.','zu viel','zuviel','„zu viel“ schreibt man immer getrennt – genau wie „zu wenig“.'],
+  ['Ich glaube, dass der Film um acht Uhr ___.','anfängt','an fängt','Im Nebensatz steht das Verb am Ende – die Vorsilbe bleibt dran.'],
+  ['Am Wochenende wollen wir ___.','Rad fahren','radfahren','Nomen + Verb: getrennt.'],
+  ['Wir wollen nach dem Essen noch am See ___.','spazieren gehen','spazierengehen','Verb + Verb schreibt man in der Regel getrennt.'],
+  ['Kommst du ___ mal mit ins Kino?','irgendwann','irgend wann','Wörter mit „irgend-“ schreibt man immer zusammen: irgendwann, irgendwo, irgendetwas.'],
+  ['Kannst du den Text bitte laut ___?','vorlesen','vor lesen','Vorsilbe + Verb im Infinitiv: zusammen.'],
+  ['Der Bus ist weg. Jetzt müssen wir ___.','zu Fuß gehen','zufußgehen','„zu Fuß“ ist eine Wortgruppe → getrennt.'],
+  ['Hast du ___ eine Idee, wo der Schlüssel ist?','irgendeine','irgend eine','„irgend-“ immer zusammen.'],
+  ['Im Winter möchte ich gern ___.','Ski fahren','skifahren','Nomen + Verb: getrennt.'],
+  ['Mia wird ihren Freund vom Bahnhof ___.','abholen','ab holen','Vorsilbe + Verb im Infinitiv: zusammen.'],
+  ['Der Professor will die Regeln ___.','abschaffen','ab schaffen','Vorsilbe + Verb im Infinitiv: zusammen.']
+];
+const STRAT_NAMES=['Verlängern','Ableiten','Ersatzprobe (welches/dieses)','Merkwort (nachschlagen)','Zerlegen'];
+const STRAT=[
+  ['Der Kor_ mit den Äpfeln steht in der Küche.','b','p','Verlängern','der Korb → die Kör<b>b</b>e. Beim Verlängern hörst du das b.'],
+  ['In der Scheune laufen zwei M_se herum.','äu','eu','Ableiten','Ableiten vom Wortstamm: die M<b>au</b>s → die M<b>äu</b>se.'],
+  ['Das Buch, da_ ich gerade lese, ist spannend.','s','ss','Ersatzprobe (welches/dieses)','„Das Buch, <b>welches</b> ich lese …“ klappt → das mit einem s.'],
+  ['Ich glaube, da_ es heute noch regnet.','ss','s','Ersatzprobe (welches/dieses)','„welches/dieses“ passt nicht → Konjunktion <b>dass</b>.'],
+  ['Der Ber_ ist über 2000 Meter hoch.','g','k','Verlängern','der Berg → die Ber<b>g</b>e.'],
+  ['Das Kin_ spielt im Garten.','d','t','Verlängern','das Kind → die Kin<b>d</b>er.'],
+  ['Sie wäscht sich die H_nde.','ä','e','Ableiten','die H<b>a</b>nd → die H<b>ä</b>nde.'],
+  ['Im Garten stehen alte B_me.','äu','eu','Ableiten','der B<b>au</b>m → die B<b>äu</b>me.'],
+  ['Der Hun_ bellt laut.','d','t','Verlängern','der Hund → die Hun<b>d</b>e.'],
+  ['Draußen ist es sehr kal_.','t','d','Verlängern','kalt → der kal<b>t</b>e Wind.'],
+  ['Auf dem Tisch steht eine _ase mit Blumen.','V','W','Merkwort (nachschlagen)','„Vase“ ist ein Merkwort: Das V klingt wie w. Im Zweifel nachschlagen!'],
+  ['Er hat sehr _iel Hunger.','v','f','Merkwort (nachschlagen)','„viel“ schreibt man mit v – ein Merkwort.'],
+  ['Er trocknet sich mit dem Han_tuch ab.','d','t','Zerlegen','Zerlegen: Hand + Tuch. Dann verlängern: die Hän<b>d</b>e.'],
+  ['Wir fahren mit dem Fahrra_ zur Schule.','d','t','Verlängern','das Fahrrad → die Fahrrä<b>d</b>er.']
+];
+const WORTART=[
+  ['<u>Sie</u> ist gestern mit ihrer Schwester gefahren.','Personalpronomen',['Possessivpronomen','bestimmter Artikel','Relativpronomen'],'„Sie“ steht stellvertretend für eine Person → Personalpronomen.'],
+  ['Sie <u>ist</u> gestern zur Schule gefahren.','Hilfsverb',['Vollverb','Modalverb','Adverb'],'„ist … gefahren“: „sein“ hilft beim Bilden des Perfekts → Hilfsverb.'],
+  ['Sie ist <u>gestern</u> zur Schule gefahren.','Adverb (der Zeit)',['Adjektiv','Präposition','Nomen'],'„gestern“ beantwortet „Wann?“ und ist unveränderlich → Temporaladverb.'],
+  ['Sie fuhr <u>mit</u> ihrer Schwester.','Präposition',['Konjunktion','Adverb','Artikel'],'„mit“ steht vor einem Nomen/Pronomen und verlangt den Dativ → Präposition.'],
+  ['Sie fuhr mit ihrer <u>älteren</u> Schwester.','Adjektiv (Komparativ)',['Adjektiv (Superlativ)','Adverb','Partizip'],'alt – älter – am ältesten: „älter“ ist die erste Steigerungsstufe → Komparativ.'],
+  ['Sie fuhr los, <u>obwohl</u> es stark regnete.','unterordnende Konjunktion',['nebenordnende Konjunktion','Präposition','Adverb'],'„obwohl“ leitet einen Nebensatz ein (Verb am Ende) → unterordnende Konjunktion.'],
+  ['<u>Der</u> Regen war sehr stark.','bestimmter Artikel',['unbestimmter Artikel','Relativpronomen','Demonstrativpronomen'],'„der“ begleitet das Nomen „Regen“ → bestimmter Artikel.'],
+  ['Der Junge, <u>der</u> dort steht, ist mein Bruder.','Relativpronomen',['bestimmter Artikel','Personalpronomen','Konjunktion'],'„der“ leitet einen Relativsatz ein und bezieht sich auf „Junge“ → Relativpronomen.'],
+  ['Sie fuhr mit <u>ihrer</u> Schwester.','Possessivpronomen',['Personalpronomen','bestimmter Artikel','Relativpronomen'],'„ihrer“ zeigt Zugehörigkeit (wessen Schwester?) → Possessivpronomen.'],
+  ['Wir <u>müssen</u> jetzt nach Hause gehen.','Modalverb',['Hilfsverb','Vollverb','Adverb'],'müssen, können, dürfen, sollen, wollen, mögen → Modalverben.'],
+  ['Ich lese ein Buch <u>und</u> du hörst Musik.','nebenordnende Konjunktion',['unterordnende Konjunktion','Präposition','Adverb'],'„und“ verbindet zwei gleichrangige Hauptsätze → nebenordnende Konjunktion.'],
+  ['Das <u>Lesen</u> macht mir großen Spaß.','Nomen (nominalisiertes Verb)',['Verb','Adjektiv','Adverb'],'Durch den Artikel „das“ wird das Verb „lesen“ zum Nomen → großschreiben!'],
+  ['<u>Ein</u> Gespenst schwebt durch die Halle.','unbestimmter Artikel',['bestimmter Artikel','Personalpronomen','Präposition'],'„ein“ begleitet ein nicht näher bestimmtes Nomen → unbestimmter Artikel.'],
+  ['<u>Dieser</u> Film ist wirklich spannend.','Demonstrativpronomen',['bestimmter Artikel','Relativpronomen','Possessivpronomen'],'„dieser“ weist auf etwas hin → Demonstrativpronomen.'],
+  ['Er kam <u>wegen</u> des Regens zu spät.','Präposition',['Konjunktion','Adverb','Nomen'],'„wegen“ steht vor einem Nomen und verlangt den Genitiv → Präposition.'],
+  ['Ich habe <u>drei</u> Geschwister.','Numerale (Zahlwort)',['Adjektiv','Artikel','Adverb'],'„drei“ gibt eine genaue Anzahl an → Zahlwort.'],
+  ['<u>Igitt</u>, hier ist alles voller Schleim!','Interjektion',['Adverb','Nomen','Konjunktion'],'Ausrufe wie „igitt“, „au“, „oh“ → Interjektion.'],
+  ['Die alte Villa ist <u>unheimlich</u>.','Adjektiv',['Adverb','Nomen','Verb'],'„unheimlich“ beschreibt, wie die Villa ist, und lässt sich steigern → Adjektiv.'],
+  ['Mia <u>öffnet</u> leise die Tür.','Vollverb',['Hilfsverb','Modalverb','Adjektiv'],'„öffnen“ trägt die Hauptbedeutung und steht allein → Vollverb.']
+];
+const TEMPORA=['Präsens','Präteritum','Perfekt','Plusquamperfekt','Futur I','Futur II'];
+const TEMPUS_DET=[
+  ['Ich werde dich morgen anrufen.','Futur I','werde + Infinitiv → Futur I.'],
+  ['Wir sind gestern ins Kino gegangen.','Perfekt','sind (Präsens von sein) + Partizip II → Perfekt.'],
+  ['Bis Montag wird sie die Arbeit beendet haben.','Futur II','wird + Partizip II + haben → Futur II.'],
+  ['Mein Vater liest jeden Morgen die Zeitung.','Präsens','„liest“ – einfache Gegenwartsform → Präsens.'],
+  ['Er hatte seinen Schlüssel vergessen.','Plusquamperfekt','hatte (Präteritum von haben) + Partizip II → Plusquamperfekt.'],
+  ['Die Vögel flogen im Herbst nach Süden.','Präteritum','„flogen“ – einfache Vergangenheitsform → Präteritum.'],
+  ['Der Professor hat die Maschine gebaut.','Perfekt','hat + Partizip II → Perfekt.'],
+  ['Das Gespenst schwebte durch die Halle.','Präteritum','„schwebte“ → Präteritum.'],
+  ['Morgen wird es bestimmt regnen.','Futur I','wird + Infinitiv → Futur I.'],
+  ['Bis zum Abend werden wir das Rätsel gelöst haben.','Futur II','werden + Partizip II + haben → Futur II.'],
+  ['Wir waren schon oft hier gewesen.','Plusquamperfekt','waren + Partizip II → Plusquamperfekt.'],
+  ['Ich renne zum Bus.','Präsens','„renne“ → Präsens.']
+];
+const TEMPUS_FORM=[
+  ['laufen','2. Person Singular Präteritum','du liefst',['du läufst','du laufst','du bist gelaufen']],
+  ['nehmen','1. Person Plural Perfekt','wir haben genommen',['wir nahmen','wir sind genommen','wir haben genehmt']],
+  ['kommen','3. Person Singular Futur II','er wird gekommen sein',['er wird gekommen haben','er wird kommen','er war gekommen']],
+  ['trinken','1. Person Singular Plusquamperfekt','ich hatte getrunken',['ich habe getrunken','ich trank','ich war getrunken']],
+  ['sprechen','3. Person Plural Futur I','sie werden sprechen',['sie werden gesprochen','sie sprachen','sie wird sprechen']],
+  ['helfen','2. Person Singular Präsens','du hilfst',['du helfst','du halfst','du hilfest']],
+  ['geben','2. Person Singular Präteritum','du gabst',['du gibst','du gebst','du hast gegeben']],
+  ['schwimmen','1. Person Singular Perfekt','ich bin geschwommen',['ich habe geschwommen','ich schwamm','ich bin geschwimmt']],
+  ['lesen','3. Person Singular Präsens','er liest',['er lest','er las','er lieset']],
+  ['gehen','1. Person Plural Plusquamperfekt','wir waren gegangen',['wir hatten gegangen','wir sind gegangen','wir gingen']],
+  ['schreiben','2. Person Plural Präteritum','ihr schriebt',['ihr schreibt','ihr schrieben','ihr habt geschrieben']],
+  ['fahren','3. Person Singular Futur II','sie wird gefahren sein',['sie wird gefahren haben','sie wird fahren','sie war gefahren']],
+  ['essen','2. Person Singular Präsens','du isst',['du esst','du aßt','du hast gegessen']],
+  ['sehen','3. Person Plural Präteritum','sie sahen',['sie sehten','sie sehen','sie haben gesehen']]
+];
+const PASSIV=[
+  ['Die Lehrerin korrigierte die Hefte.','Passiv','Die Hefte wurden von der Lehrerin korrigiert.',['Die Hefte werden von der Lehrerin korrigiert.','Die Hefte sind von der Lehrerin korrigiert worden.','Die Hefte wurden von der Lehrerin korrigiert worden.'],'Präteritum bleibt Präteritum: wurde(n) + Partizip II.'],
+  ['Das Hochwasser überflutet die Wiesen.','Passiv','Die Wiesen werden vom Hochwasser überflutet.',['Die Wiesen wurden vom Hochwasser überflutet.','Die Wiesen sind vom Hochwasser überflutet worden.','Die Wiesen werden das Hochwasser überflutet.'],'Präsens Passiv: werden + Partizip II.'],
+  ['Der Gärtner hatte die Hecke geschnitten.','Passiv','Die Hecke war vom Gärtner geschnitten worden.',['Die Hecke ist vom Gärtner geschnitten worden.','Die Hecke wurde vom Gärtner geschnitten.','Die Hecke hatte vom Gärtner geschnitten worden.'],'Plusquamperfekt Passiv: war + Partizip II + worden.'],
+  ['Das Tor ist vom Stürmer geschossen worden.','Aktiv','Der Stürmer hat das Tor geschossen.',['Der Stürmer schoss das Tor.','Der Stürmer hatte das Tor geschossen.','Der Stürmer ist das Tor geschossen.'],'„ist … worden“ = Perfekt → im Aktiv: hat … geschossen.'],
+  ['Der Professor baut eine Maschine.','Passiv','Eine Maschine wird vom Professor gebaut.',['Eine Maschine wurde vom Professor gebaut.','Eine Maschine ist vom Professor gebaut.','Eine Maschine wird vom Professor gebaut worden.'],'Präsens Passiv: wird + Partizip II.'],
+  ['Der Butler hat den Tisch gedeckt.','Passiv','Der Tisch ist vom Butler gedeckt worden.',['Der Tisch wurde vom Butler gedeckt.','Der Tisch hat vom Butler gedeckt worden.','Der Tisch ist vom Butler gedeckt geworden.'],'Perfekt Passiv: ist + Partizip II + worden (nicht „geworden“!).'],
+  ['Die Polizei wird den Dieb fangen.','Passiv','Der Dieb wird von der Polizei gefangen werden.',['Der Dieb wird von der Polizei gefangen.','Der Dieb wurde von der Polizei gefangen.','Der Dieb wird von der Polizei gefangen worden.'],'Futur I Passiv: wird + Partizip II + werden.'],
+  ['Die Briefe wurden vom Postboten gebracht.','Aktiv','Der Postbote brachte die Briefe.',['Der Postbote bringt die Briefe.','Der Postbote hat die Briefe gebracht.','Der Postbote wurde die Briefe gebracht.'],'„wurden … gebracht“ = Präteritum → im Aktiv: brachte.'],
+  ['Die Tür wird vom Hausmeister repariert.','Aktiv','Der Hausmeister repariert die Tür.',['Der Hausmeister reparierte die Tür.','Der Hausmeister wird die Tür reparieren.','Der Hausmeister hat die Tür repariert.'],'„wird … repariert“ = Präsens Passiv → im Aktiv: repariert.'],
+  ['Das Gespenst erschreckte die Gäste.','Passiv','Die Gäste wurden vom Gespenst erschreckt.',['Die Gäste werden vom Gespenst erschreckt.','Die Gäste sind vom Gespenst erschreckt worden.','Die Gäste wurden das Gespenst erschreckt.'],'Präteritum Passiv: wurden + Partizip II.'],
+  ['Der Kuchen war von Oma gebacken worden.','Aktiv','Oma hatte den Kuchen gebacken.',['Oma hat den Kuchen gebacken.','Oma backte den Kuchen.','Oma war den Kuchen gebacken.'],'„war … worden“ = Plusquamperfekt → im Aktiv: hatte … gebacken.']
+];
+const SYN_CTX=[
+  ['Heimlich ___ Jonas durch das Schlüsselloch ins Zimmer.','spähte',['gähnte','flüsterte','stolperte'],'„spähen“ = heimlich und aufmerksam schauen.'],
+  ['Vor Schreck ___ Sara mit weit aufgerissenen Augen auf die riesige Spinne.','starrte',['blinzelte','schmunzelte','nickte'],'„starren“ = lange und unbeweglich auf etwas schauen.'],
+  ['Kurz ___ Ben auf die Uhr, dann rannte er zum Bus.','blickte',['starrte','spähte','gaffte'],'„blicken“ passt zu einem kurzen Schauen. „Starren“ und „gaffen“ dauern länger.'],
+  ['Neugierig ___ das Kind die bunten Steine im Schaufenster.','betrachtete',['übersah','verschlief','vergaß'],'„betrachten“ = sich etwas genau ansehen.'],
+  ['Plötzlich ___ er im Dunkeln einen Schatten an der Wand.','erblickte',['verlor','versteckte','vergaß'],'„erblicken“ = etwas plötzlich sehen.']
+];
+const SYN_WORDS=[
+  ['leise','still','laut'],['klug','schlau','dumm'],['öffnen','aufmachen','schließen'],['reich','wohlhabend','arm'],
+  ['fleißig','eifrig','faul'],['die Freude','das Vergnügen','die Trauer'],['mutig','tapfer','ängstlich'],['beginnen','anfangen','beenden'],
+  ['schnell','rasch','langsam'],['der Anfang','der Beginn','das Ende'],['schwierig','kompliziert','einfach'],['fröhlich','heiter','traurig']
+];
+const SG=['Subjekt','Prädikat','Akkusativobjekt','Dativobjekt','Genitivobjekt','Präpositionalobjekt','Adverbiale der Zeit','Adverbiale des Ortes','Adverbiale des Grundes','Adverbiale der Art und Weise'];
+const SATZ=[
+  ['<u>Den Schlüssel</u> gab der Hausmeister dem Schüler.','Akkusativobjekt','Wen oder was gab der Hausmeister? → den Schlüssel.'],
+  ['Den Schlüssel <u>gab</u> der Hausmeister dem Schüler.','Prädikat','Das gebeugte Verb ist das Prädikat.'],
+  ['Den Schlüssel gab <u>der Hausmeister</u> dem Schüler.','Subjekt','Wer oder was gab den Schlüssel? → der Hausmeister (Nominativ).'],
+  ['Den Schlüssel gab der Hausmeister <u>dem Schüler</u>.','Dativobjekt','Wem gab er den Schlüssel? → dem Schüler.'],
+  ['Man beschuldigte den Mann <u>des Diebstahls</u>.','Genitivobjekt','Wessen beschuldigte man ihn? → des Diebstahls.'],
+  ['Wir freuen uns sehr <u>über das Geschenk</u>.','Präpositionalobjekt','Worüber freuen wir uns? „sich freuen über“ – die Präposition gehört fest zum Verb.'],
+  ['Der Butler wartet <u>auf den Professor</u>.','Präpositionalobjekt','Auf wen wartet er? „warten auf“ – die Präposition gehört fest zum Verb.'],
+  ['<u>Am Abend</u> schleicht Mia in den Keller.','Adverbiale der Zeit','Wann schleicht Mia in den Keller? → am Abend.'],
+  ['Am Abend schleicht Mia <u>in den Keller</u>.','Adverbiale des Ortes','Wohin schleicht Mia? → in den Keller.'],
+  ['Das Gespenst erschreckt <u>die Gäste</u>.','Akkusativobjekt','Wen erschreckt das Gespenst? → die Gäste.'],
+  ['Der Professor hilft <u>seinem Assistenten</u>.','Dativobjekt','Wem hilft der Professor? → seinem Assistenten.'],
+  ['Wir gedenken <u>der Verstorbenen</u>.','Genitivobjekt','Wessen gedenken wir? → der Verstorbenen.'],
+  ['<u>Wegen des Regens</u> bleiben wir drinnen.','Adverbiale des Grundes','Warum bleiben wir drinnen? Achtung: Kein Genitivobjekt – „wegen“ ist eine Präposition, die nicht fest zum Verb gehört.'],
+  ['<u>Mit großer Mühe</u> öffnete Ben die Tür.','Adverbiale der Art und Weise','Wie öffnete Ben die Tür? → mit großer Mühe.'],
+  ['Sie denkt oft <u>an ihre Oma</u>.','Präpositionalobjekt','An wen denkt sie? „denken an“ – feste Präposition.'],
+  ['<u>Die schwarze Katze</u> schläft auf dem Sofa.','Subjekt','Wer oder was schläft? → die schwarze Katze.'],
+  ['Die Katze schläft <u>auf dem Sofa</u>.','Adverbiale des Ortes','Wo schläft die Katze? → auf dem Sofa.'],
+  ['Der Hausmeister <u>repariert</u> die Heizung.','Prädikat','Das gebeugte Verb ist das Prädikat.'],
+  ['Ben schenkt <u>seiner Schwester</u> ein Buch.','Dativobjekt','Wem schenkt Ben ein Buch? → seiner Schwester.']
+];
+const KR={
+  NS:'Haupt- und Nebensatz werden durch ein Komma getrennt.',
+  REL:'Ein Relativsatz wird durch Komma(s) abgetrennt.',
+  APP:'Ein Beisatz (Apposition) wird durch Kommas eingeschlossen.',
+  INF:'Eine Infinitivgruppe mit um/ohne/anstatt … zu wird abgetrennt.',
+  AUF:'Aufzählung: Gleichrangige Wörter werden durch Komma getrennt – aber nicht vor „und/oder“.',
+  REDE:'Wörtliche Rede: Der Begleitsatz wird durch Kommas abgetrennt.',
+  GEG:'Vor entgegenstellenden Konjunktionen (aber, sondern, doch) steht ein Komma.',
+  ANREDE:'Eine Anrede wird durch Komma abgetrennt.',
+  UND:'Kein Komma: Zwei gleichrangige Satzteile sind mit „und“ verbunden.',
+  PRAEP:'Kein Komma: Am Satzanfang steht nur eine Wortgruppe, kein Nebensatz.'
+};
+const KOMMA=[
+  {w:'Wenn es morgen regnet bleiben wir zu Hause.',c:[3],r:'NS'},
+  {w:'Er kaufte sich ein Eis und setzte sich auf die Bank.',c:[],r:'UND'},
+  {w:'Herr Weber unser Hausmeister repariert die Heizung.',c:[1,3],r:'APP'},
+  {w:'Anstatt zu lernen spielte Tim den ganzen Nachmittag Computer.',c:[2],r:'INF'},
+  {w:'Der Hund war groß schwarz und sehr verspielt.',c:[3],r:'AUF'},
+  {w:'„Morgen“ sagte sie „fahren wir ans Meer.“',c:[0,2],r:'REDE'},
+  {w:'Ich trinke keinen Kaffee sondern Tee.',c:[3],r:'GEG'},
+  {w:'Der Professor der im Turm wohnt ist völlig verrückt.',c:[1,5],r:'REL'},
+  {w:'Ich weiß genau dass du das Rätsel lösen kannst.',c:[2],r:'NS'},
+  {w:'Mia rannte die Treppe hinauf aber die Tür war verschlossen.',c:[4],r:'GEG'},
+  {w:'Äpfel Birnen und Bananen liegen im Korb.',c:[0],r:'AUF'},
+  {w:'Nach dem Abendessen gingen wir noch spazieren.',c:[],r:'PRAEP'},
+  {w:'Ben komm sofort hierher!',c:[0],r:'ANREDE'},
+  {w:'Um das Rätsel zu lösen braucht Ben den Schlüssel.',c:[4],r:'INF'},
+  {w:'Das Gespenst schwebte durch die Halle und verschwand im Keller.',c:[],r:'UND'},
+  {w:'Der Butler der seit Jahren hier arbeitet putzt das Silber.',c:[1,6],r:'REL'},
+  {w:'Weil der Strom ausfiel war es plötzlich dunkel.',c:[3],r:'NS'},
+  {w:'Frau Klein unsere Nachbarin hat eine Katze.',c:[1,3],r:'APP'}
+];
+
+const RULES={
+  fehler:`<h3>MERKKASTEN: RECHTSCHREIBUNG</h3><ul><li><b>Nomen</b> und <b>Nominalisierungen</b> schreibt man groß: <i>beim Lesen, am Montag, heute Abend, zum Glück</i>.</li><li>Adjektive, Adverbien und Zeitangaben mit -s schreibt man klein: <i>oben, abends, ziemlich, schrecklich</i>.</li><li><b>das</b> (Artikel/Relativpronomen, ersetzbar durch „welches/dieses“) – <b>dass</b> (Konjunktion).</li><li>Vorsilbe + Verb im Infinitiv: zusammen (<i>aufhalten, abschaffen</i>).</li><li>Achte auf Dehnung und Schärfung: <i>vielleicht, fast, wirklich</i>.</li></ul>`,
+  gz:`<h3>MERKKASTEN: GETRENNT ODER ZUSAMMEN?</h3><ul><li><b>Zusammen:</b> Vorsilbe/Partikel + Verb im Infinitiv oder am Satzende: <i>aufstellen, anfängt, vorlesen</i>.</li><li><b>Zusammen:</b> wenn eine neue, übertragene Bedeutung entsteht: <i>krankschreiben</i>.</li><li><b>Zusammen:</b> Wörter mit „irgend-“: <i>irgendwann, irgendeine</i>.</li><li><b>Getrennt:</b> Nomen + Verb: <i>Klavier spielen, Rad fahren</i>.</li><li><b>Getrennt:</b> Verb + Verb: <i>spazieren gehen</i>.</li><li><b>Getrennt:</b> <i>zu viel, zu wenig, zu Fuß</i>.</li></ul>`,
+  strat:`<h3>MERKKASTEN: RECHTSCHREIBSTRATEGIEN</h3><ul><li><b>Verlängern:</b> b/p, d/t, g/k am Wortende? Plural oder Steigerung bilden: <i>Korb → Körbe</i>.</li><li><b>Ableiten:</b> ä oder e, äu oder eu? Verwandtes Wort mit a/au suchen: <i>Maus → Mäuse</i>.</li><li><b>Ersatzprobe:</b> das oder dass? Lässt sich „welches/dieses“ einsetzen → <i>das</i>, sonst → <i>dass</i>.</li><li><b>Zerlegen:</b> Zusammengesetzte Wörter in Teile zerlegen: <i>Hand + Tuch</i>.</li><li><b>Merkwort:</b> Keine Strategie hilft → merken oder nachschlagen: <i>Vase, viel</i>.</li></ul>`,
+  wortart:`<h3>MERKKASTEN: WORTARTEN</h3><table><tr><th>Wortart</th><th>Beispiele</th></tr><tr><td>Nomen</td><td>Schule, das Lesen</td></tr><tr><td>Verb (Voll-, Hilfs-, Modalverb)</td><td>laufen · sein, haben, werden · müssen, können</td></tr><tr><td>Adjektiv (steigerbar)</td><td>alt – älter – am ältesten</td></tr><tr><td>Artikel</td><td>der, die, das · ein, eine</td></tr><tr><td>Pronomen</td><td>Personal-: sie · Possessiv-: ihr · Relativ-: der, welcher · Demonstrativ-: dieser</td></tr><tr><td>Präposition</td><td>mit, wegen, auf, in</td></tr><tr><td>Konjunktion</td><td>nebenordnend: und, aber · unterordnend: weil, obwohl, dass</td></tr><tr><td>Adverb</td><td>gestern, hier, gern</td></tr><tr><td>Numerale / Interjektion</td><td>drei, viele · au, igitt</td></tr></table>`,
+  tempus:`<h3>MERKKASTEN: ZEITFORMEN</h3><table><tr><th>Tempus</th><th>Bildung</th><th>Beispiel</th></tr><tr><td>Präsens</td><td>Verbstamm + Endung</td><td>ich gehe</td></tr><tr><td>Präteritum</td><td>Vergangenheitsform</td><td>ich ging</td></tr><tr><td>Perfekt</td><td>haben/sein (Präsens) + Partizip II</td><td>ich bin gegangen</td></tr><tr><td>Plusquamperfekt</td><td>hatte/war + Partizip II</td><td>ich war gegangen</td></tr><tr><td>Futur I</td><td>werden + Infinitiv</td><td>ich werde gehen</td></tr><tr><td>Futur II</td><td>werden + Partizip II + haben/sein</td><td>ich werde gegangen sein</td></tr></table><p>Starke Verben ändern oft den Vokal: <i>helfen → du hilfst, er half</i>.</p>`,
+  passiv:`<h3>MERKKASTEN: AKTIV UND PASSIV</h3><p>Passiv = Form von <b>werden</b> + <b>Partizip II</b>. Das Akkusativobjekt wird zum Subjekt, der Handelnde steht mit „von“.</p><table><tr><th>Tempus</th><th>Passiv</th></tr><tr><td>Präsens</td><td>die Tür <b>wird</b> geöffnet</td></tr><tr><td>Präteritum</td><td>die Tür <b>wurde</b> geöffnet</td></tr><tr><td>Perfekt</td><td>die Tür <b>ist</b> geöffnet <b>worden</b></td></tr><tr><td>Plusquamperfekt</td><td>die Tür <b>war</b> geöffnet <b>worden</b></td></tr><tr><td>Futur I</td><td>die Tür <b>wird</b> geöffnet <b>werden</b></td></tr></table><p>Die Zeitform bleibt beim Umformen gleich!</p>`,
+  syn:`<h3>MERKKASTEN: SYNONYME UND ANTONYME</h3><ul><li><b>Synonym:</b> Wort mit gleicher oder ähnlicher Bedeutung: <i>klug – schlau</i>.</li><li><b>Antonym:</b> Gegenwort: <i>klug – dumm</i>.</li><li>Treffende Synonyme machen Texte abwechslungsreicher: statt „sah“ → <i>spähte, starrte, blickte, betrachtete, erblickte</i>.</li></ul>`,
+  satz:`<h3>MERKKASTEN: SATZGLIEDER</h3><table><tr><th>Satzglied</th><th>Frage</th></tr><tr><td>Subjekt</td><td>Wer oder was?</td></tr><tr><td>Prädikat</td><td>Was tut …? (gebeugtes Verb)</td></tr><tr><td>Akkusativobjekt</td><td>Wen oder was?</td></tr><tr><td>Dativobjekt</td><td>Wem?</td></tr><tr><td>Genitivobjekt</td><td>Wessen?</td></tr><tr><td>Präpositionalobjekt</td><td>Präposition + Frage: Worauf? Auf wen? Worüber? (Präposition gehört fest zum Verb)</td></tr><tr><td>Adverbiale</td><td>Wann? (Zeit) · Wo/Wohin? (Ort) · Warum? (Grund) · Wie? (Art und Weise)</td></tr></table><p>Tipp: Mit der <b>Umstellprobe</b> findest du die Grenzen der Satzglieder.</p>`,
+  komma:`<h3>MERKKASTEN: KOMMASETZUNG</h3><ul>${Object.keys(KR).filter(k=>!['UND','PRAEP'].includes(k)).map(k=>`<li>${KR[k]}</li>`).join('')}<li>Kein Komma vor „und/oder“, wenn gleichrangige Satzteile verbunden werden.</li></ul>`
+};
+
+const PRAISE=['Richtig!','Super!','Genau!','Stark!','Bingo!','Sehr gut!'];
+const OOPS=['Leider falsch.','Nicht ganz.','Hoppla!','Knapp daneben.'];
+
+/* Quiz-Generatoren: jedes Item hat steps:[{q,opts:[richtig,...falsch],ex}] */
+const QUIZ={
+  gz:()=>({title:'„Ich lasse nur durch, wer weiß, was zusammengehört!“',need:6,items:GZ.map(([q,a,b,ex])=>({steps:[{q:q.replace('___','<span class="gap">?</span>')+'<span class="hint">Wähle die richtige Schreibung.</span>',opts:[a,b],ex}]}))}),
+  strat:()=>({title:'Das Buchstabenschloss am Kühlschrank',need:5,items:STRAT.map(([s,a,b,st,ex])=>({steps:[
+    {q:s.replace('_','<span class="gap">?</span>')+'<span class="hint">Welche Buchstaben fehlen?</span>',opts:[a,b],ex:ex},
+    {q:'Mit welcher <b>Strategie</b> kannst du das überprüfen?<span class="hint">'+s.replace('_','<b>'+a+'</b>')+'</span>',opts:[st,...shuffle(STRAT_NAMES.filter(n=>n!==st)).slice(0,3)],ex:ex}]}))}),
+  wortart:()=>({title:'Bestimme die Wortart so genau wie möglich',need:8,items:WORTART.map(([s,a,o,ex])=>({steps:[{q:s,opts:[a,...o],ex}]}))}),
+  tempus:()=>({title:'Die Uhr will Zeitformen hören',need:8,items:[
+    ...TEMPUS_DET.map(([s,a,ex])=>({steps:[{q:'Bestimme die Zeitform:<span class="src">'+s+'</span>',opts:[a,...TEMPORA.filter(t=>t!==a)],ex}]})),
+    ...TEMPUS_FORM.map(([v,f,a,o])=>({steps:[{q:'Bilde die Verbform:<span class="src"><b>'+v+'</b> – '+f+'</span>',opts:[a,...o],ex:'Richtig ist: <b>'+a+'</b>.'}]}))]}),
+  passiv:()=>({title:'Forme richtig um – die Zeitform bleibt gleich!',need:5,items:[...PASSIV.map(([s,d,a,o,ex])=>({steps:[{q:'Forme ins <b>'+d+'</b> um:<span class="src">'+s+'</span>',opts:[a,...o],ex}]})),
+    {steps:[{q:'Wie wird das Vorgangspassiv gebildet?',opts:['Form von „werden“ + Partizip II','Form von „haben“ + Partizip II','Form von „sein“ + Infinitiv','Form von „werden“ + Infinitiv'],ex:'Achtung: „werden“ + Infinitiv ist Futur I!'}]}]}),
+  syn:()=>{const items=SYN_CTX.map(([s,a,o,ex])=>({steps:[{q:'„sah“ wäre langweilig. Welches Synonym passt am besten?<span class="src">'+s.replace('___','<span class="gap">?</span>')+'</span>',opts:[a,...o],ex}]}));
+    SYN_WORDS.forEach(([w,s,a],i)=>{const others=SYN_WORDS.filter((_,j)=>j!==i);
+      items.push({steps:[{q:'Welches Wort ist ein <b>Synonym</b> (ähnliche Bedeutung) zu <b>„'+w+'“</b>?',opts:[s,a,...shuffle(others).slice(0,2).map(x=>pick([x[1],x[2]]))],ex:w+' – Synonym: <b>'+s+'</b>, Antonym: <b>'+a+'</b>.'}]});
+      items.push({steps:[{q:'Welches Wort ist ein <b>Antonym</b> (Gegenwort) zu <b>„'+w+'“</b>?',opts:[a,s,...shuffle(others).slice(0,2).map(x=>pick([x[1],x[2]]))],ex:w+' – Antonym: <b>'+a+'</b>, Synonym: <b>'+s+'</b>.'}]});});
+    return {title:'Der Spiegel sagt alles anders',need:8,items};},
+  satz:()=>({title:'Ordne jedem Kabel das richtige Satzglied zu',need:8,items:SATZ.map(([s,a,ex])=>({steps:[{q:'Bestimme das unterstrichene Satzglied:<span class="src">'+s+'</span>',opts:[a,...shuffle(SG.filter(x=>x!==a)).slice(0,3)],ex}]}))})
+};
+
+/* ---------------- Modal & Rätsel-Engine ---------------- */
+const modal=$('#modal');
+function closeModal(){modal.classList.remove('on');modal.innerHTML='';}
+function shell(topic,title,onQuit,extra=''){
+  modal.innerHTML=`<div class="pz"><div class="pzhead"><div><div class="pztopic">${TOPICS[topic]}</div><div class="pztitle">${title}</div></div>
+    <div class="pzbtns"><button class="sbtn" data-a="rule">📖 Regel</button><button class="sbtn" data-a="quit">✕ Später</button></div></div>
+    <div class="pzprog"></div>${extra}<div class="pzbody"></div><div class="pzrule hidden">${RULES[topic]}<button class="next" data-a="rclose">Zurück zum Rätsel</button></div></div>`;
+  modal.classList.add('on');
+  const box=modal.querySelector('.pz'),rule=modal.querySelector('.pzrule');
+  modal.querySelector('[data-a=rule]').onclick=()=>{rule.classList.remove('hidden');rule.scrollTop=0;};
+  modal.querySelector('[data-a=rclose]').onclick=()=>rule.classList.add('hidden');
+  modal.querySelector('[data-a=quit]').onclick=()=>{closeModal();save();onQuit();};
+  return {box,body:modal.querySelector('.pzbody'),prog:modal.querySelector('.pzprog')};
+}
+function progress(el,done,need,label='richtig'){el.innerHTML=Array.from({length:need},(_,i)=>`<i class="${i<done?'on':''}"></i>`).join('')+`<span>${done} / ${need} ${label}</span>`;}
+function feedback(sh,ok,ex,cont){
+  const fb=sh.body.querySelector('.fb');
+  fb.innerHTML=`<div class="fbbox ${ok?'ok':'no'}"><span class="h">${ok?'✔ '+pick(PRAISE):'✘ '+pick(OOPS)}</span>${ex||''}</div><button class="next">Weiter ▶</button>`;
+  const n=fb.querySelector('.next');n.onclick=()=>{sfx.click();cont();};
+  if(TEST)window.G._next=n;
+  setTimeout(()=>fb.scrollIntoView({block:'nearest',behavior:'smooth'}),30);
+}
+function finishScreen(sh,topic,resolve,wrongs){
+  const st=S.stats[topic]||{r:0,w:0};
+  sh.body.innerHTML=`<div class="done"><h2>RÄTSEL GELÖST!</h2><div style="font-size:26px">${wrongs===0?'Fehlerfrei – hervorragend!':'Du hast '+wrongs+' Fehler gemacht – aber alles am Ende richtig gelöst.'}</div>
+    <div style="font-size:22px;color:#bfa8e6;margin-top:6px">Gesamt bei „${TOPICS[topic]}“: ${st.r} richtig, ${st.w} falsch</div><button class="big">Weiter ▶</button></div>`;
+  sh.prog.innerHTML='';sfx.win();
+  const b=sh.body.querySelector('.big');b.onclick=()=>{closeModal();save();resolve(true);};
+  if(TEST)window.G._next=b;
+}
+function runPuzzle(topic){
+  if(topic==='fehler')return runErrorText();
+  if(topic==='komma')return runKomma();
+  return runQuiz(topic);
+}
+function runQuiz(topic){
+  return new Promise(resolve=>{
+    const cfg=QUIZ[topic]();
+    const sh=shell(topic,cfg.title,()=>resolve(false));
+    let queue=shuffle(cfg.items);const need=Math.min(cfg.need,queue.length);let done=0,wrongs=0;
+    function next(){progress(sh.prog,done,need);if(done>=need)return finishScreen(sh,topic,resolve,wrongs);step(queue.shift(),0);}
+    function step(it,si){
+      const st=it.steps[si];const opts=shuffle(st.opts.map((t,i)=>({t,ok:i===0})));
+      const two=opts.length<=2||opts.some(o=>o.t.length>34);
+      sh.body.innerHTML=`<div class="q">${st.q}</div><div class="opts ${two&&opts.some(o=>o.t.length>34)?'one':''}">${opts.map((o,i)=>`<button class="opt" data-i="${i}">${o.t}</button>`).join('')}</div><div class="fb"></div>`;
+      sh.box.scrollTop=0;
+      const btns=[...sh.body.querySelectorAll('.opt')];const ri=opts.findIndex(o=>o.ok);
+      if(TEST){window.G._ans=btns[ri];window.G._wrong=btns.find((_,i)=>i!==ri);}
+      btns.forEach(b=>b.onclick=()=>{
+        const o=opts[+b.dataset.i];btns.forEach(x=>x.disabled=true);btns[ri].classList.add('right');
+        if(o.ok){stat(topic,1);sfx.ok();const last=si===it.steps.length-1;
+          feedback(sh,true,st.ex,()=>{if(!last)step(it,si+1);else{done++;next();}});}
+        else{b.classList.add('wrong');stat(topic,0);sfx.no();wrongs++;
+          queue.splice(Math.min(queue.length,2+Math.floor(Math.random()*3)),0,it);
+          feedback(sh,false,'Richtig wäre: <b>'+opts[ri].t+'</b>.<br>'+(st.ex||''),next);}
+      });
+    }
+    next();
+  });
+}
+function runErrorText(){
+  return new Promise(resolve=>{
+    const txt=pick(FEHLERTEXTE);
+    const toks=[];const re=/\{([^}]+)\}([.,!?;:]*)|(\S+)/g;let m;
+    while((m=re.exec(txt.t))){
+      if(m[1]){const p=m[1].split('|');toks.push({t:p[0],err:true,right:p[1],dist:p.slice(2)});if(m[2])toks.push({t:m[2],punct:true});}
+      else toks.push({t:m[3]});
+    }
+    const total=toks.filter(t=>t.err).length;let found=0,wrongs=0;
+    const sh=shell('fehler',txt.title,()=>resolve(false));
+    function draw(){
+      progress(sh.prog,found,total,'Fehler verbessert');
+      sh.body.innerHTML=`<div class="q" style="font-size:24px">Im Brief sind <b>${total} Wörter</b> falsch geschrieben (Groß-/Kleinschreibung, Getrennt-/Zusammenschreibung, andere Fehler). Tippe auf ein falsches Wort und verbessere es!</div>
+        <div class="ftext">${toks.map((t,i)=>t.punct?`<span>${t.t}</span>`:`${i?' ':''}<span class="w ${t.fixed?'fixed':''}" data-i="${i}">${t.fixed?t.right:t.t}</span>`).join('')}</div><div class="fb"></div>`;
+      sh.body.querySelectorAll('.w').forEach(el=>el.onclick=()=>tap(+el.dataset.i,el));
+      if(TEST)window.G._err=()=>{const i=toks.findIndex(t=>t.err&&!t.fixed);return sh.body.querySelector(`.w[data-i="${i}"]`);};
+    }
+    function tap(i,el){
+      const t=toks[i];if(t.fixed)return;
+      const fb=sh.body.querySelector('.fb');
+      sh.body.querySelectorAll('.w.act').forEach(x=>x.classList.remove('act'));
+      if(!t.err){el.classList.remove('miss');void el.offsetWidth;el.classList.add('miss');stat('fehler',0);wrongs++;sfx.no();
+        fb.innerHTML=`<div class="fbbox no"><span class="h">✘ Kein Fehler.</span>„${t.t}“ ist richtig geschrieben. Such weiter!</div>`;return;}
+      el.classList.add('act');
+      const opts=shuffle([t.right,...t.dist]);
+      fb.innerHTML=`<div class="q" style="font-size:26px">„<b>${t.t}</b>“ ist falsch. Wie schreibt man es richtig?</div><div class="opts">${opts.map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}</div><div class="fb2"></div>`;
+      const btns=[...fb.querySelectorAll('.opt')];
+      if(TEST)window.G._ans=btns[opts.indexOf(t.right)];
+      btns.forEach(b=>b.onclick=()=>{
+        if(opts[+b.dataset.k]===t.right){t.fixed=true;found++;stat('fehler',1);sfx.ok();
+          if(found>=total){draw();return finishScreen(sh,'fehler',resolve,wrongs);}draw();
+          sh.body.querySelector('.fb').innerHTML=`<div class="fbbox ok"><span class="h">✔ ${pick(PRAISE)}</span>„${t.t}“ → „${t.right}“. Noch ${total-found} Fehler!</div>`;}
+        else{b.classList.add('wrong');b.disabled=true;stat('fehler',0);wrongs++;sfx.no();
+          fb.querySelector('.fb2').innerHTML=`<div class="fbbox no" style="margin-top:10px"><span class="h">✘ ${pick(OOPS)}</span>Versuch es noch einmal. Tipp: Schau in die 📖 Regel.</div>`;}
+      });
+      setTimeout(()=>fb.scrollIntoView({block:'nearest',behavior:'smooth'}),30);
+    }
+    draw();
+  });
+}
+function runKomma(){
+  return new Promise(resolve=>{
+    const sh=shell('komma','Setze die fehlenden Kommas!',()=>resolve(false));
+    let queue=shuffle(KOMMA);
+    const noneItems=queue.filter(k=>k.c.length===0);
+    if(!queue.slice(0,6).some(k=>k.c.length===0)){const n=noneItems[0];queue=queue.filter(k=>k!==n);queue.splice(2+Math.floor(Math.random()*3),0,n);}
+    const need=6;let done=0,wrongs=0;
+    function next(){progress(sh.prog,done,need);if(done>=need)return finishScreen(sh,'komma',resolve,wrongs);step(queue.shift());}
+    function step(it){
+      const words=it.w.split(' ');const sel=new Set();
+      sh.body.innerHTML=`<div class="q" style="font-size:24px">Tippe auf die Lücken, wo ein Komma hingehört. Fehlt in diesem Satz <b>kein</b> Komma, tippe direkt auf „Prüfen“.</div>
+        <div class="ksent">${words.map((w,i)=>`<span>${w}</span>`+(i<words.length-1?`<button class="kgap" data-g="${i}"></button>`:'')).join('')}</div>
+        <button class="next" data-a="check">Prüfen ✔</button><div class="fb"></div>`;
+      sh.box.scrollTop=0;
+      const gaps=[...sh.body.querySelectorAll('.kgap')];
+      gaps.forEach(g=>g.onclick=()=>{sfx.click();const i=+g.dataset.g;sel.has(i)?sel.delete(i):sel.add(i);g.classList.toggle('on',sel.has(i));g.textContent=sel.has(i)?',':'';});
+      const chk=sh.body.querySelector('[data-a=check]');
+      if(TEST)window.G._komma=()=>{it.c.forEach(i=>gaps[i].click());chk.click();};
+      chk.onclick=()=>{
+        chk.remove();gaps.forEach(g=>g.disabled=true);
+        const ok=sel.size===it.c.length&&it.c.every(i=>sel.has(i));
+        gaps.forEach((g,i)=>{const should=it.c.includes(i);if(should){g.textContent=',';g.classList.add(sel.has(i)?'good':'bad');}else if(sel.has(i)){g.classList.add('bad');g.textContent='✗';}});
+        if(ok){stat('komma',1);sfx.ok();
+          const others=shuffle(Object.keys(KR).filter(k=>k!==it.r&&!(['UND','PRAEP'].includes(k)&&['UND','PRAEP'].includes(it.r)))).slice(0,3);
+          const opts=shuffle([it.r,...others]);
+          sh.body.querySelector('.fb').innerHTML=`<div class="fbbox ok"><span class="h">✔ ${it.c.length?'Die Kommas stimmen!':'Richtig – hier fehlt kein Komma!'}</span></div><div class="q" style="margin-top:12px">Und warum? Wähle die passende Begründung:</div><div class="opts one">${opts.map(k=>`<button class="opt" data-k="${k}">${KR[k]}</button>`).join('')}</div><div class="fb2"></div>`;
+          const btns=[...sh.body.querySelectorAll('.opt')];
+          if(TEST)window.G._ans=btns.find(b=>b.dataset.k===it.r);
+          btns.forEach(b=>b.onclick=()=>{btns.forEach(x=>x.disabled=true);const rb=btns.find(x=>x.dataset.k===it.r);rb.classList.add('right');
+            const f2=sh.body.querySelector('.fb2');
+            if(b.dataset.k===it.r){stat('komma',1);sfx.ok();done++;f2.innerHTML=`<div class="fb"></div>`;
+              const holder={body:f2};feedback(holder,true,'',next);}
+            else{b.classList.add('wrong');stat('komma',0);sfx.no();wrongs++;queue.splice(Math.min(queue.length,3),0,it);
+              f2.innerHTML=`<div class="fb"></div>`;feedback({body:f2},false,'Die richtige Begründung: <b>'+KR[it.r]+'</b>',next);}
+          });
+          setTimeout(()=>sh.body.querySelector('.fb').scrollIntoView({block:'nearest',behavior:'smooth'}),30);
+        }else{stat('komma',0);sfx.no();wrongs++;queue.splice(Math.min(queue.length,2+Math.floor(Math.random()*3)),0,it);
+          feedback(sh,false,'Grün markiert siehst du, wo die Kommas hingehören. <br><b>Regel:</b> '+KR[it.r],next);}
+      };
+    }
+    next();
+  });
+}
+
+/* ---------------- Szene zeichnen ---------------- */
+const svg=$('#scene');
+function curHS(){return ROOMS[S.room].hs();}
+function render(){
+  const room=ROOMS[S.room];
+  let s=room.art();
+  curHS().forEach(h=>s+=`<rect class="hs" data-id="${h.id}" x="${h.x}" y="${h.y}" width="${h.w}" height="${h.h}" fill="#fff" fill-opacity="0" pointer-events="all"/>`);
+  s+=`<g id="player" pointer-events="none"></g><g id="labels" pointer-events="none"></g>`;
+  svg.innerHTML=s;drawPlayer(0);
+  $('#roomname').textContent=room.name;
+  renderInv();updateSentence();
+}
+function drawPlayer(f){const g=svg.querySelector('#player');if(!g)return;g.setAttribute('transform',`translate(${S.px.toFixed(1)},${ROOMS[S.room].floorY}) scale(${S.dir},1)`);g.innerHTML=playerSVG(f);}
+let walkId=0;
+function walkTo(x){
+  return new Promise(res=>{
+    x=Math.max(12,Math.min(308,x));const id=++walkId;const start=S.px,dist=x-start;
+    if(Math.abs(dist)<1.5){res(true);return;}
+    S.dir=dist<0?-1:1;const dur=Math.abs(dist)/95*1000,t0=performance.now();
+    function stepF(t){if(id!==walkId){res(false);return;}const k=Math.min(1,(t-t0)/dur);S.px=start+dist*k;drawPlayer(k<1?(Math.floor((t-t0)/140)%2)+1:0);
+      if(k<1)requestAnimationFrame(stepF);else res(true);}
+    requestAnimationFrame(stepF);
+  });
+}
+async function goRoom(id,x){
+  sfx.door();$('#fade').classList.add('on');await new Promise(r=>setTimeout(r,260));
+  S.room=id;S.px=x;S.dir=x>160?-1:1;render();save();
+  $('#fade').classList.remove('on');
+  if(ROOMS[id].onEnter){busy=true;try{await ROOMS[id].onEnter();}finally{busy=false;}}
+}
+function svgPoint(ev){const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse());}
+
+/* ---------------- Bedienung ---------------- */
+const VERBS=[['gehe','Gehe zu'],['schau','Schau an'],['nimm','Nimm'],['oeffne','Öffne'],['benutze','Benutze'],['rede','Rede mit']];
+const VMAP={gehe:'go',schau:'look',nimm:'take',oeffne:'open',benutze:'use',rede:'talk'};
+const DEF={look:['Sieht nicht besonders spannend aus.','Nichts Besonderes.'],take:['Das kann ich nicht mitnehmen.','Das passt nicht in meinen Rucksack.','Wozu sollte ich das mitnehmen?'],
+  open:['Das kann man nicht öffnen.','Da lässt sich nichts öffnen.'],use:['Ich weiß nicht, wie ich das benutzen soll.','Das funktioniert so nicht.'],talk:['Keine Antwort. Wie erwartet.','Das redet nicht mit mir.']};
+function renderVerbs(){$('#verbs').innerHTML=VERBS.map(([k,l])=>`<button class="verb ${verb===k?'on':''}" data-v="${k}">${l}</button>`).join('');
+  $('#verbs').querySelectorAll('.verb').forEach(b=>b.onclick=()=>{sfx.click();verb=b.dataset.v;selItem=null;renderVerbs();renderInv();updateSentence();});}
+function renderInv(){
+  const slots=[];for(let i=0;i<8;i++){const id=S.inv[i];
+    slots.push(id?`<button class="slot ${selItem===id?'sel':''}" data-id="${id}">${ITEMS[id].icon}<span>${ITEMS[id].name}</span></button>`:`<div class="slot empty"></div>`);}
+  $('#inv').innerHTML=slots.join('');
+  $('#inv').querySelectorAll('button.slot').forEach(b=>b.onclick=()=>invTap(b.dataset.id));
+}
+function updateSentence(target){
+  const vl=VERBS.find(v=>v[0]===verb)[1];
+  let t=selItem?`Benutze ${ITEMS[selItem].name} mit`:vl;if(target)t+=' '+target;
+  $('#sTxt').textContent=t;
+}
+async function invTap(id){
+  if(busy){if(sayDone)sayDone();return;}
+  sfx.click();
+  if(verb==='schau'){verb='gehe';renderVerbs();updateSentence();return say(ITEMS[id].desc);}
+  if(selItem===id){selItem=null;verb='gehe';}else{selItem=id;verb='benutze';}
+  renderVerbs();renderInv();updateSentence();
+}
+async function act(h,v,item){
+  if(item){const f=h.useWith&&h.useWith[item];if(f)return f();return say(pick(['Das passt nicht zusammen.','Hmm, nein. Das bringt nichts.','Damit kann ich hier nichts anfangen.']));}
+  const k=VMAP[v];const f=h[k];
+  if(k==='go')return f?f():undefined;
+  if(f===undefined)return say(pick(DEF[k]));
+  if(typeof f==='string')return say(f);
+  return f();
+}
+svg.addEventListener('click',async ev=>{
+  if(busy){if(sayDone)sayDone();return;}
+  if(sayDone)sayDone();
+  const t=ev.target.closest('.hs');
+  if(t){
+    const h=curHS().find(x=>x.id===t.dataset.id);if(!h)return;
+    const v=verb,item=selItem;updateSentence(h.name);
+    const ok=await walkTo(h.wx!=null?h.wx:h.x+h.w/2);if(!ok)return;
+    const cx=h.x+h.w/2;if(Math.abs(cx-S.px)>3){S.dir=cx<S.px?-1:1;drawPlayer(0);}
+    busy=true;
+    try{await act(h,v,item);}catch(e){console.error(e);}
+    busy=false;verb='gehe';selItem=null;
+    if(svg.querySelector('#player'))renderVerbs();renderInv();updateSentence();save();
+  }else{
+    const p=svgPoint(ev);updateSentence();walkTo(p.x);
+  }
+});
+$('#stage').addEventListener('click',ev=>{if(ev.target.id==='say'&&sayDone)sayDone();});
+function flashLabels(){
+  const g=svg.querySelector('#labels');if(!g)return;
+  g.innerHTML=curHS().map(h=>{const cx=h.x+h.w/2,cy=Math.max(10,h.y+h.h/2);const w=h.name.length*4.2+6;
+    return R(h.x,h.y,h.w,h.h,'none','stroke="#ffe066" stroke-width=".8" stroke-dasharray="2 2"')+R(cx-w/2,cy-5,w,9,'#000','opacity=".75"')+`<text class="lbl" x="${cx}" y="${cy+2.5}" font-size="9" fill="#ffe066" text-anchor="middle">${h.name}</text>`;}).join('');
+  clearTimeout(flashLabels.t);flashLabels.t=setTimeout(()=>{g.innerHTML='';},3200);
+}
+$('#bShow').onclick=()=>{sfx.click();flashLabels();};
+$('#bHint').onclick=()=>{if(busy)return;sfx.click();say(hint(),'erz');};
+$('#bMenu').onclick=()=>{if(busy&&!modal.classList.contains('on'))return;sfx.click();showMenu();};
+
+function hint(){const f=S.flags;
+  if(!f.brief)return 'Im Briefkasten im Vorgarten steckt ein Brief. Wähle „Öffne“ und tippe auf den Briefkasten.';
+  if(!f.haustuer)return 'Tippe im Inventar auf den Haustürschlüssel und danach auf die Haustür.';
+  if(!f.butler)return 'Rede mit dem Butler-Gespenst in der Eingangshalle.';
+  if(!f.kuehl)return 'In der Küche steht ein Kühlschrank mit Schloss. Öffne ihn!';
+  if(!f.maus)return 'Mäuse mögen Käse … Benutze den Käse mit dem Mauseloch in der Halle.';
+  if(!f.bibOpen)return 'Benutze den kleinen Schlüssel mit der Bibliothekstür (rechts in der Halle).';
+  if(!f.regal)return 'Untersuche das Bücherregal in der Bibliothek („Benutze“).';
+  if(!f.uhr)return 'Benutze den Aufziehschlüssel mit der Standuhr.';
+  if(!f.gitter)return 'Benutze den eisernen Schlüssel mit dem Gitter vor der Treppe in der Halle.';
+  if(!f.maschine)return 'Oben im Labor steht der Umformer 3000. Benutze ihn!';
+  if(!f.spiegel)return 'Hinter der Tür „Privat“ im Labor hängt ein Zauberspiegel. Rede mit ihm!';
+  if(!f.kellerOpen)return 'Benutze den Kellerschlüssel mit der Kellertür in der Halle.';
+  if(!f.sicherungIn)return 'Benutze die Sicherung mit dem Sicherungskasten im Keller.';
+  if(!f.strom)return 'Benutze den Sicherungskasten und ordne die Kabel richtig zu.';
+  if(!f.turm)return 'Der Aufzug im Labor hat jetzt Strom. Ab in den Turm!';
+  if(!f.sieg)return 'Benutze den Sprachvernichter und schalte ihn ab!';
+  return 'Du hast die Sprache gerettet! 🎉';
+}
+
+/* ---------------- Menüs ---------------- */
+function statsTable(){
+  return `<table class="stats"><tr><th>Station</th><th>✔</th><th>✘</th><th>Quote</th><th></th></tr>`+Object.keys(TOPICS).map(t=>{
+    const s=S.stats[t]||{r:0,w:0},n=s.r+s.w,q=n?Math.round(s.r/n*100):0;
+    return `<tr><td>${S.flags[TOPIC_FLAG[t]]?'⭐':'·'} ${TOPICS[t]}</td><td>${s.r}</td><td>${s.w}</td><td>${n?q+' %':'–'}</td><td><div class="bar"><i style="width:${q}%"></i></div></td></tr>`;}).join('')+`</table>`;
+}
+function solvedCount(){return Object.values(TOPIC_FLAG).filter(f=>S.flags[f]).length;}
+function showMenu(){
+  modal.innerHTML=`<div class="pz"><div class="pzhead"><div><div class="pztopic">PAUSE</div><div class="pztitle">Villa Kauderwelsch</div></div><div class="pzbtns"><button class="sbtn" data-a="close">✕</button></div></div>
+    <div style="font-size:24px;margin-bottom:8px">Gelöste Stationen: <b>${solvedCount()} / 9</b></div>
+    <div class="list">
+      <button data-a="close">▶ Weiterspielen<small>Zurück ins Spiel</small></button>
+      <button data-a="stats">📊 Fortschritt<small>Richtig/falsch pro Thema</small></button>
+      <button data-a="train">🏋 Trainingsraum<small>Jedes Thema einzeln üben</small></button>
+      <button data-a="help">❓ Anleitung<small>So funktioniert die Steuerung</small></button>
+      <button data-a="sound">${S.sound?'🔊 Ton: an':'🔇 Ton: aus'}<small>Antippen zum Umschalten</small></button>
+      <button data-a="new">↺ Neues Spiel<small>Fortschritt wird gelöscht</small></button>
+    </div></div>`;
+  modal.classList.add('on');
+  modal.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{sfx.click();const a=b.dataset.a;
+    if(a==='close')closeModal();
+    else if(a==='stats')showStats();
+    else if(a==='train')showTraining(showMenu);
+    else if(a==='help')showHelp(showMenu);
+    else if(a==='sound'){S.sound=!S.sound;save();showMenu();}
+    else if(a==='new'){if(confirm('Wirklich ein neues Spiel starten? Der Spielstand wird gelöscht.')){closeModal();showTitle(true);}}
+  });
+}
+function showStats(){
+  modal.innerHTML=`<div class="pz"><div class="pzhead"><div><div class="pztopic">FORTSCHRITT</div><div class="pztitle">${S.name?S.name+' – ':''}${solvedCount()} von 9 Stationen gelöst</div></div><div class="pzbtns"><button class="sbtn" data-a="back">◀ Zurück</button></div></div>
+    ${statsTable()}<div style="font-size:20px;color:#bfa8e6;margin-top:8px">⭐ = Station im Spiel gelöst. Im Trainingsraum kannst du jedes Thema beliebig oft wiederholen.</div></div>`;
+  modal.querySelector('[data-a=back]').onclick=()=>{sfx.click();showMenu();};
+}
+function showHelp(back){
+  modal.innerHTML=`<div class="pz"><div class="pzhead"><div><div class="pztopic">ANLEITUNG</div><div class="pztitle">So spielst du</div></div><div class="pzbtns"><button class="sbtn" data-a="back">◀ Zurück</button></div></div>
+  <ul style="font-size:24px;line-height:1.25;padding-left:24px">
+   <li>Tippe unten auf ein <b style="color:var(--verb)">Verb</b> (z. B. „Schau an“, „Öffne“, „Rede mit“) und dann auf etwas im Bild.</li>
+   <li>Ohne Verb läufst du einfach dorthin – durch Türen kommst du in andere Räume.</li>
+   <li><b>Gegenstände benutzen:</b> Tippe im Inventar auf den Gegenstand und dann auf das Ziel im Bild.</li>
+   <li>„Schau an“ + Gegenstand im Inventar zeigt dir, was das ist.</li>
+   <li><b>🔍</b> zeigt alle Dinge, die du antippen kannst. <b>💡 Tipp</b> verrät, was als Nächstes zu tun ist.</li>
+   <li>In jedem Rätsel gibt es <b>📖 Regel</b> – dort stehen die wichtigsten Regeln zum Nachlesen.</li>
+   <li>Falsch beantwortete Aufgaben kommen später noch einmal – so übst du genau das, was noch nicht sitzt.</li>
+   <li>Dein Spielstand wird auf diesem Gerät automatisch gespeichert.</li></ul></div>`;
+  modal.classList.add('on');
+  modal.querySelector('[data-a=back]').onclick=()=>{sfx.click();back();};
+}
+function showTraining(back){
+  modal.innerHTML=`<div class="pz"><div class="pzhead"><div><div class="pztopic">TRAININGSRAUM</div><div class="pztitle">Welches Thema willst du üben?</div></div><div class="pzbtns"><button class="sbtn" data-a="back">◀ Zurück</button></div></div>
+    <div class="list">${Object.keys(TOPICS).map(t=>{const s=S.stats[t]||{r:0,w:0},n=s.r+s.w;return `<button data-t="${t}">${TOPICS[t]}<small>${n?Math.round(s.r/n*100)+' % richtig ('+n+' Antworten)':'noch nicht geübt'}</small></button>`;}).join('')}</div></div>`;
+  modal.classList.add('on');
+  modal.querySelector('[data-a=back]').onclick=()=>{sfx.click();back();};
+  modal.querySelectorAll('[data-t]').forEach(b=>b.onclick=async()=>{sfx.click();await runPuzzle(b.dataset.t);save();showTraining(back);});
+}
+function showEnd(){
+  const mins=Math.max(1,Math.round((S.played+(Date.now()-sessionStart))/60000));
+  let r=0,w=0;Object.values(S.stats).forEach(s=>{r+=s.r;w+=s.w;});
+  const d=new Date().toLocaleDateString('de-DE');
+  modal.innerHTML=`<div class="pz cert"><div class="pztopic">URKUNDE</div><h2>DIE DEUTSCHE SPRACHE<br>IST GERETTET!</h2>
+    <div class="nm">${S.name||'Unbekannte Heldin / unbekannter Held'}</div>
+    <div style="font-size:24px;margin:6px 0 10px">aus der Klasse 9a der Pater-Alois-Grimm-Schule Külsheim hat am ${d} Professor Kauderwelsch besiegt und alle 9 Stationen gelöst.<br>Spielzeit: ca. ${mins} Minuten · ${r} richtige und ${w} falsche Antworten</div>
+    ${statsTable()}
+    <div style="font-size:20px;color:#bfa8e6;margin-top:8px">Mach einen Screenshot und zeig ihn Herrn von Plotho-Kettner. Themen mit niedriger Quote kannst du im Trainingsraum wiederholen!</div>
+    <div class="list" style="margin-top:12px"><button data-a="train">🏋 Trainingsraum<small>Schwache Themen wiederholen</small></button><button data-a="close">▶ Weiter umsehen<small>Zurück in den Turm</small></button></div></div>`;
+  modal.classList.add('on');
+  modal.querySelector('[data-a=train]').onclick=()=>showTraining(showEnd);
+  modal.querySelector('[data-a=close]').onclick=()=>closeModal();
+  save();
+}
+
+/* ---------------- Titel ---------------- */
+let sessionStart=Date.now();
+function showTitle(forceNew){
+  const sv=load();const t=$('#title');t.classList.remove('off');
+  const prevS=S;S=S||freshState();const bg=ROOMS.garten.art();S=prevS;
+  t.innerHTML=`<svg viewBox="0 0 320 180">${(()=>{const keep=S;S=freshState();const a=ROOMS.garten.art();S=keep;return a;})()}</svg>
+    <div class="logo">VILLA<br>KAUDERWELSCH</div><div class="sub">Ein Grammatik-Abenteuer für die Klasse 9a<br><span style="color:#ffe066">Pater-Alois-Grimm-Schule Külsheim</span><br><span style="font-size:22px;color:#bfa8e6">Klassenlehrer: Thorsten von Plotho-Kettner</span></div>
+    <div class="tbtns">
+      ${sv&&!forceNew?`<button class="main" data-a="cont">▶ Weiterspielen${sv.name?' ('+sv.name+')':''}</button>`:''}
+      <input id="nameIn" placeholder="Vor- und Nachname" maxlength="30" autocomplete="off">
+      <button class="${sv&&!forceNew?'':'main'}" data-a="new">★ Neues Spiel</button>
+      <button data-a="train">🏋 Trainingsraum</button>
+      <button data-a="help">❓ Anleitung</button>
+    </div><div class="credit">Rechtschreibung · Wortarten · Tempora · Aktiv/Passiv · Synonyme · Satzglieder · Kommasetzung</div>`;
+  t.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{
+    const a=b.dataset.a;
+    if(a==='cont'){S=sv;startGame(false);}
+    else if(a==='new'){S=freshState($('#nameIn').value.trim());save();startGame(true);}
+    else if(a==='train'){if(!S)S=sv||freshState();showTraining(()=>closeModal());}
+    else if(a==='help'){if(!S)S=sv||freshState();showHelp(()=>closeModal());}
+  });
+}
+function startGame(isNew){
+  sessionStart=Date.now();
+  $('#title').classList.add('off');closeModal();verb='gehe';selItem=null;
+  renderVerbs();render();
+  if(isNew){
+    modal.innerHTML=`<div class="pz"><div class="pztopic">MITTERNACHT · VOLLMOND</div><div class="pztitle" style="margin:8px 0">Die Lage ist ernst!</div>
+     <p style="font-size:26px;line-height:1.2">Der verrückte <b style="color:var(--accent)">Professor Kauderwelsch</b> hat in seinem Turm eine Maschine gebaut: den <b>SPRACHVERNICHTER</b>. Um Punkt sechs Uhr morgens will er damit <b>alle Regeln der deutschen Sprache</b> löschen. Keine Kommas mehr, keine Großschreibung, kein Perfekt – nur noch Kauderwelsch!</p>
+     <p style="font-size:26px;line-height:1.2">Nur du kannst ihn aufhalten. Schleich dich in die Villa, löse die Rätsel mit deinem Deutschwissen und schalte die Maschine ab!</p>
+     <p style="font-size:22px;color:#bfa8e6">Tipp: Wähle unten ein Verb und tippe dann auf etwas im Bild. 🔍 zeigt alle Dinge, 💡 gibt einen Tipp.</p>
+     <button class="big">Los geht’s ▶</button></div>`;
+    modal.classList.add('on');
+    modal.querySelector('.big').onclick=async()=>{closeModal();sfx.door();busy=true;await say('Okay. Erst mal schauen, wie ich in diese Villa reinkomme …');busy=false;};
+  }
+}
+setInterval(()=>{if(S&&$('#title').classList.contains('off')){S.played=(S.played||0)+15000;save();}},15000);
+document.addEventListener('touchmove',e=>{if(!e.target.closest('.pz,#title'))e.preventDefault();},{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+
+if(TEST)window.G={get busy(){return busy;},skip(){if(sayDone)sayDone();},get S(){return S;},set S(v){S=v;},ROOMS,curHS,act,render,goRoom,runPuzzle,startGame,freshState,addItem};
+showTitle(false);
+</script>
+</body>
+</html>

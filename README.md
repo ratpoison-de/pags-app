@@ -57,6 +57,11 @@ Stand der Inhalte: Oktober 2026, übernommen von pags-kuelsheim.de.
 Link: `https://ratpoison-de.github.io/pags-app/deutsch/stilmittel.html` · QR-Code: `deutsch/stilmittel-qr.png`
 Definitionen nach der Übersicht „Rhetorische Mittel“ von lehrerfreund.de.
 
+## Deutsch: Villa Kauderwelsch
+
+`deutsch/villa-kauderwelsch.html` – Point-and-Click-Adventure im Stil von Maniac Mansion für Klasse 9a (M-Niveau), passend zur Klassenarbeit „Sprache untersuchen“: Professor Kauderwelsch will alle Sprachregeln löschen. Neun Stationen: Fehlertext, Getrennt-/Zusammenschreibung, Rechtschreibstrategien, Wortarten, Tempora, Aktiv/Passiv, Synonyme/Antonyme, Satzglieder, Kommasetzung. Touchsteuerung fürs iPad, Merkkästen, Wiederholung falscher Aufgaben, Trainingsraum, Urkunde. Spielstand bleibt im Browser des Geräts.
+Link: `https://ratpoison-de.github.io/pags-app/deutsch/villa-kauderwelsch.html` · QR-Code: `deutsch/villa-kauderwelsch-qr.png`
+
 ## Graduierung – Selbstbewertung (`graduierung/`)
 
 Selbstbewertungsbogen für die Stufen Walker, Hiker, Climber und Freeclimber. Direktlinks: `graduierung/?stufe=walker|hiker|climber|freeclimber`. QR-Codes: `graduierung/QR-Codes_Graduierung.pdf`.
