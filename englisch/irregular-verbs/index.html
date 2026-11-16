@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Irregular Verbs Trainer · PAGS</title>
+<meta name="description" content="Unregelmäßige englische Verben lernen, üben und wiederholen – mit eigenem Zugang und gespeichertem Fortschritt.">
+<meta name="theme-color" content="#A81010">
+<link rel="icon" href="../../icon.png">
+<link rel="apple-touch-icon" href="../../icon.png">
+<style>
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#2b2b2b;--muted:#6F6F6F;--bg:#F6F5F3;--card:#fff;
+  --ok:#1B7A3D;--ok-soft:#E5F4EA;--bad:#B3261E;--bad-soft:#FCE8E6;--warn:#B26A00;--warn-soft:#FFF4DC;
+  --b0:#D9D9D9;--b1:#E57373;--b2:#FFB74D;--b3:#FFD54F;--b4:#81C784;--b5:#2E7D32;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 Arial,"Liberation Sans",Helvetica,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;position:sticky;top:0;z-index:10}
+header .wrap{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:34px;width:auto;background:#fff;border-radius:6px;padding:2px 4px}
+header .t{flex:1;min-width:0}
+header .t b{display:block;font-size:17px;line-height:1.2}
+header .t small{opacity:.9;font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .hb{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:6px 10px;font-size:14px}
+#sync{font-size:12px;opacity:.9;white-space:nowrap}
+main{max-width:760px;margin:0 auto;padding:16px 14px 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 14px}
+.card h2{margin:0 0 8px;font-size:19px;color:#333}
+.card h3{margin:14px 0 6px;font-size:16px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;padding:11px 18px;font-weight:bold;background:var(--red);color:#fff;min-height:44px}
+.btn:hover{background:var(--red-dark)}
+.btn.ghost{background:var(--tint);color:var(--red-dark);border:1px solid #f0d2cd}
+.btn.light{background:#fff;color:#333;border:1px solid var(--line)}
+.btn.ok{background:var(--ok)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+label.f{display:block;margin:0 0 12px}
+label.f span{display:block;font-weight:bold;font-size:14px;margin-bottom:4px}
+input[type=text],input[type=password],input[type=search]{width:100%;font:inherit;font-size:17px;padding:11px 12px;border:1.5px solid #cfcfcf;border-radius:10px;background:#fff;color:var(--text)}
+input.ok{border-color:var(--ok);background:var(--ok-soft)}
+input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.msg{background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:15px}
+.msg.info{background:var(--warn-soft);color:#6b4500}
+.seg{display:flex;background:#eee;border-radius:10px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:9px;font-weight:bold;color:#555}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--red);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* Startseite */
+.hello{display:flex;gap:14px;align-items:center}
+.ring{--p:0;width:86px;height:86px;border-radius:50%;flex:0 0 auto;background:conic-gradient(var(--ok) calc(var(--p)*1%),#eee 0);display:grid;place-items:center}
+.ring span{width:68px;height:68px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:bold;font-size:18px;text-align:center;line-height:1.05}
+.ring small{display:block;font-size:10px;font-weight:normal;color:var(--muted)}
+.kpis{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.kpi{background:var(--bg);border-radius:8px;padding:4px 9px;font-size:13px}
+.cont{border:2px solid var(--red);background:var(--tint)}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.mode{display:flex;gap:12px;align-items:flex-start;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;color:var(--text)}
+.mode:hover{border-color:var(--red)}
+.mode .ic{font-size:26px;line-height:1}
+.mode b{display:block;font-size:16px}
+.mode small{color:var(--muted);font-size:13px;line-height:1.35;display:block}
+.boxbar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:#eee;margin:8px 0 4px}
+.boxbar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px;background:var(--c)}
+/* Auswahl */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:8px 13px;font-size:14px;color:#333}
+.chip[aria-pressed="true"]{border-color:var(--red);background:var(--tint);color:var(--red-dark);font-weight:bold}
+/* Übung */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.prog{flex:1;height:10px;background:#e6e6e6;border-radius:5px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--red);transition:width .3s}
+.cnt{font-size:14px;color:var(--muted);white-space:nowrap}
+.task{font-size:14px;color:var(--muted);font-weight:bold;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.big{font-size:30px;font-weight:bold;margin:2px 0;word-break:break-word}
+.de{font-size:18px;color:#555}
+.say{border:0;background:var(--tint);color:var(--red-dark);border-radius:50%;width:36px;height:36px;font-size:17px;vertical-align:middle;margin-left:6px}
+.flash{min-height:230px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;user-select:none}
+.forms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:12px}
+.forms div{background:var(--bg);border-radius:10px;padding:10px 6px}
+.forms small{display:block;color:var(--muted);font-size:12px}
+.forms b{font-size:19px;word-break:break-word}
+.sent{font-size:20px;line-height:1.5;margin:6px 0 12px}
+.sent .gap{display:inline-block;min-width:90px;border-bottom:2px solid var(--red);text-align:center;font-weight:bold}
+.fb{border-radius:10px;padding:10px 12px;margin-top:12px;font-size:16px}
+.fb.ok{background:var(--ok-soft);color:var(--ok)}
+.fb.bad{background:var(--bad-soft);color:var(--bad)}
+.opts{display:grid;gap:9px}
+.opt{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:13px;font-size:18px;text-align:left;color:var(--text)}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+.pattern{display:inline-block;font-size:12px;font-weight:bold;border-radius:6px;padding:1px 7px;background:#eee;color:#555;vertical-align:middle}
+.tip{background:var(--warn-soft);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px}
+/* Liste */
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);text-transform:uppercase}
+td.de2{color:#555;font-size:14px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:0}
+.vgrid{display:flex;flex-wrap:wrap;gap:5px}
+.vgrid span{font-size:12px;border-radius:6px;padding:3px 7px;background:var(--b0)}
+.res{text-align:center}
+.res .note{font-size:58px;font-weight:bold;color:var(--red);line-height:1}
+.mist li{margin:4px 0}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);z-index:9}
+nav.tabs button{flex:1;max-width:190px;border:0;background:transparent;padding:8px 4px 9px;font-size:12px;color:#666;display:flex;flex-direction:column;align-items:center;gap:1px}
+nav.tabs button span{font-size:20px;line-height:1.2}
+nav.tabs button[aria-current="page"]{color:var(--red);font-weight:bold}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:6px 14px 20px}
+@media (max-width:420px){.big{font-size:26px}.forms b{font-size:16px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <img src="../../img/logo.png" alt="PAGS" width="68" height="34">
+  <div class="t"><b>Irregular Verbs</b><small id="wer">Englisch · PAGS Külsheim</small></div>
+  <span id="sync" class="hidden"></span>
+  <button class="hb hidden" id="outBtn" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <!-- Anmeldung -->
+  <section id="login" class="hidden">
+    <div class="card">
+      <h2>Willkommen zum Verb-Training! 👋</h2>
+      <p class="muted small" style="margin-top:0">Lege dir einmal einen Zugang an. Dein Fortschritt wird automatisch gespeichert – du kannst jederzeit aufhören und später genau dort weitermachen, auch auf einem anderen Gerät.</p>
+      <div class="seg" role="group" aria-label="Neu oder Anmelden">
+        <button type="button" id="mNeu" aria-pressed="true">Zugang anlegen</button>
+        <button type="button" id="mAlt" aria-pressed="false">Anmelden</button>
+      </div>
+      <form id="loginForm" autocomplete="on">
+        <label class="f"><span>Benutzername</span><input type="text" id="lUser" autocomplete="username" autocapitalize="none" maxlength="30" required placeholder="z. B. leon.m"></label>
+        <label class="f"><span id="lPinL">Denk dir ein Kennwort aus</span><input type="password" id="lPin" autocomplete="current-password" maxlength="40" required></label>
+        <p class="muted small" id="lHint" style="margin-top:-6px">Mindestens 4 Zeichen. Schreib dir Benutzername und Kennwort auf – ohne sie kommst du nicht mehr an deinen Fortschritt.</p>
+        <div id="lMsg" class="msg hidden" role="alert"></div>
+        <button class="btn block" id="lBtn" type="submit">Zugang anlegen</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="view"></section>
+</main>
+
+<nav class="tabs hidden" id="tabs">
+  <button type="button" data-tab="home" aria-current="page"><span>🏠</span>Start</button>
+  <button type="button" data-tab="liste"><span>📋</span>Verbliste</button>
+  <button type="button" data-tab="fortschritt"><span>📈</span>Fortschritt</button>
+</nav>
+<footer id="foot">Englisch · Pater-Alois-Grimm-Schule Külsheim · App von Thorsten von Plotho-Kettner</footer>
+
+<script src="../../config.js"></script>
+<script src="verbs.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LS = 'pags-verben-v1';
+const MAXBOX = 5;
+const BOXNAME = ['neu', 'noch unsicher', 'geübt', 'gefestigt', 'sicher', 'Profi'];
+const BOXCOL = ['var(--b0)', 'var(--b1)', 'var(--b2)', 'var(--b3)', 'var(--b4)', 'var(--b5)'];
+
+/* ---------- Verben ---------- */
+const V = window.VERB_DATA.map((a, i) => ({ i, inf: a[0], past: a[1], pp: a[2], de: a[3], s: [null, a[4], a[5]] }));
+const base = s => s.replace(/\s*\(.*?\)\s*/g, ' ').trim();
+const first = s => s.split('/')[0].trim();
+V.forEach(v => {
+  const a = base(v.inf), b = first(v.past), c = first(v.pp);
+  v.pat = (a === b && b === c) ? 'AAA' : (b === c) ? 'ABB' : (a === c) ? 'ABA' : 'ABC';
+});
+const PATNAME = { AAA: 'alle drei Formen gleich (cut – cut – cut)', ABB: '2. und 3. Form gleich (buy – bought – bought)', ABA: '1. und 3. Form gleich (come – came – come)', ABC: 'alle Formen verschieden (go – went – gone)' };
+const PACK = 10;
+const PACKS = [];
+for (let i = 0; i < V.length; i += PACK) PACKS.push(V.slice(i, i + PACK).map(v => v.i));
+const packName = k => 'Paket ' + (k + 1) + ': ' + base(V[PACKS[k][0]].inf) + ' – ' + base(V[PACKS[k][PACKS[k].length - 1]].inf);
+const FORM = ['infinitive', 'simple past', 'past participle'];
+const formOf = (v, f) => f === 0 ? v.inf : f === 1 ? v.past : v.pp;
+
+/* ---------- Antworten prüfen ---------- */
+const norm = s => String(s || '').toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s*\(.*?\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
+function alts(v, f) {
+  const set = new Set(formOf(v, f).split('/').map(norm));
+  if (f > 0 && window.VERB_EXTRA[v.inf]) (window.VERB_EXTRA[v.inf][f - 1] || []).forEach(x => set.add(norm(x)));
+  if (f === 0) set.add(norm(v.inf));
+  return set;
+}
+/* Alle eingegebenen Teile (getrennt durch / , oder „or“) müssen richtig sein. */
+function pruefe(eingabe, set) {
+  const teile = norm(eingabe).split(/\s*(?:\/|,|\bor\b|\boder\b)\s*/).filter(Boolean);
+  return teile.length > 0 && teile.every(t => set.has(t));
+}
+function gapLoesung(v, f) {
+  const raw = v.s[f]; const p = raw.split('|');
+  return { satz: p[0], set: p[1] ? new Set([norm(p[1])]) : alts(v, f), zeige: p[1] || formOf(v, f) };
+}
+function regular(inf) {
+  const w = base(inf).split(' '); let x = w[0];
+  if (/e$/.test(x)) x += 'd'; else if (/[^aeiou]y$/.test(x)) x = x.slice(0, -1) + 'ied'; else x += 'ed';
+  w[0] = x; return w.join(' ');
+}
+
+/* ---------- Zustand ---------- */
+let S = null;   // Sitzung {id, pin, benutzer, updated_at, dirty, data}
+let D = null;   // Lernstand
+let TAB = 'home';
+const leer = () => ({ v: 1, box: {}, st: {}, run: null, tests: [], tage: [], richtig: 0, falsch: 0 });
+function normal(d) {
+  const x = Object.assign(leer(), d && typeof d === 'object' ? d : {});
+  ['box', 'st'].forEach(k => { if (!x[k] || typeof x[k] !== 'object') x[k] = {}; });
+  if (!Array.isArray(x.tests)) x.tests = []; if (!Array.isArray(x.tage)) x.tage = [];
+  return x;
+}
+const box = v => D.box[v.inf] || 0;
+function merke() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { } }
+
+/* ---------- Datenbank ---------- */
+async function rpc(fn, body, keepalive) {
+  const c = window.PAGS_CONFIG || {};
+  const r = await fetch(c.supabaseUrl + '/rest/v1/rpc/' + fn, {
+    method: 'POST', keepalive: !!keepalive,
+    headers: { 'Content-Type': 'application/json', apikey: c.supabaseAnonKey, Authorization: 'Bearer ' + c.supabaseAnonKey },
+    body: JSON.stringify(body || {})
+  });
+  if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (e) { } throw new Error(m || ('Fehler ' + r.status)); }
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+let timer = null, laeuft = false, stand = 0;
+function status(t, titel) { const e = $('sync'); e.textContent = t; e.title = titel || ''; }
+function geaendert(sofort) {
+  stand++; S.dirty = true; S.data = D; merke(); status('Speichert …');
+  clearTimeout(timer); timer = setTimeout(() => sync(), sofort ? 50 : 1200);
+}
+async function sync(keepalive) {
+  if (!S || S.gesperrt) return false;
+  if (laeuft) { for (let i = 0; i < 20 && laeuft; i++) await new Promise(r => setTimeout(r, 250)); if (laeuft) return false; }
+  if (!S.dirty) { status('Gespeichert ✓'); return true; }
+  laeuft = true; const gesendet = stand; clearTimeout(timer);
+  try {
+    const r = await rpc('verben_speichern', { p_id: S.id, p_pin: S.pin, p_data: D }, keepalive);
+    if (!r.ok) {
+      if (r.grund === 'pin' || r.grund === 'unbekannt' || r.grund === 'gesperrt') {
+        S.gesperrt = true; merke();
+        zeigeLogin(r.grund === 'unbekannt' ? 'Dein Zugang wurde nicht mehr gefunden. Frag bitte deinen Lehrer.' : 'Dein Kennwort stimmt nicht mehr. Melde dich bitte neu an – dein Stand auf diesem Gerät bleibt erhalten.');
+      } else status('Nicht gespeichert');
+      return false;
+    }
+    S.updated_at = r.updated_at;
+    if (gesendet === stand) { S.dirty = false; status('Gespeichert ✓'); } else timer = setTimeout(() => sync(), 600);
+    merke(); return true;
+  } catch (e) { status('Offline – wird nachgeholt', 'Dein Fortschritt ist auf diesem Gerät gesichert und wird gespeichert, sobald du wieder Internet hast.'); return false; }
+  finally { laeuft = false; }
+}
+addEventListener('online', () => sync());
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && S && S.dirty) sync(true); });
+
+/* ---------- Anmeldung ---------- */
+let NEU = true;
+const GRUND = {
+  eingabe: 'Bitte einen Benutzernamen mit 3 bis 30 Zeichen und ein Kennwort mit mindestens 4 Zeichen eingeben.',
+  vergeben: 'Diesen Benutzernamen gibt es schon. Hast du schon einen Zugang? Dann tippe oben auf „Anmelden“. Sonst wähle einen anderen Namen.',
+  unbekannt: 'Diesen Benutzernamen gibt es noch nicht. Prüfe die Schreibweise – oder lege oben einen neuen Zugang an.',
+  pin: 'Das Kennwort stimmt nicht.',
+  gesperrt: 'Zu viele falsche Versuche. Warte 10 Minuten oder frag deinen Lehrer.',
+  voll: 'Im Moment können keine neuen Zugänge angelegt werden. Sag bitte deinem Lehrer Bescheid.'
+};
+function modus(neu) {
+  NEU = neu; $('mNeu').setAttribute('aria-pressed', neu); $('mAlt').setAttribute('aria-pressed', !neu);
+  $('lPinL').textContent = neu ? 'Denk dir ein Kennwort aus' : 'Dein Kennwort';
+  $('lPin').autocomplete = neu ? 'new-password' : 'current-password';
+  $('lHint').classList.toggle('hidden', !neu); $('lBtn').textContent = neu ? 'Zugang anlegen' : 'Anmelden';
+  $('lMsg').classList.add('hidden');
+}
+$('mNeu').onclick = () => modus(true); $('mAlt').onclick = () => modus(false);
+function zeigeLogin(meldung) {
+  ['view', 'tabs', 'sync', 'outBtn'].forEach(i => $(i).classList.add('hidden'));
+  $('login').classList.remove('hidden'); $('wer').textContent = 'Englisch · PAGS Külsheim';
+  if (S && S.gesperrt) { modus(false); $('lUser').value = S.benutzer; }
+  if (meldung) { $('lMsg').textContent = meldung; $('lMsg').className = 'msg'; }
+}
+$('loginForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('lMsg'); m.classList.add('hidden'); $('lBtn').disabled = true;
+  try {
+    const pin = $('lPin').value;
+    const r = await rpc('verben_anmelden', { p_benutzer: $('lUser').value, p_pin: pin, p_neu: NEU });
+    if (!r.ok) { m.textContent = GRUND[r.grund] || 'Das hat nicht geklappt.'; m.className = 'msg'; return; }
+    const alt = S && S.gesperrt && S.id === r.id && S.dirty ? S.data : null;
+    S = { id: r.id, pin, benutzer: r.benutzer, updated_at: r.updated_at, data: normal(alt || r.data), dirty: !!alt };
+    merke(); $('lPin').value = ''; starte(); if (alt) sync();
+  } catch (err) { m.textContent = 'Keine Verbindung zur Datenbank. Prüfe dein Internet und versuche es noch einmal.'; m.className = 'msg'; }
+  finally { $('lBtn').disabled = false; }
+};
+$('outBtn').onclick = async () => {
+  const ok = await sync();
+  if (!ok && S.dirty && !confirm('Dein letzter Stand ist noch nicht in der Datenbank gespeichert (kein Internet?). Wenn du dich jetzt abmeldest, geht er verloren. Trotzdem abmelden?')) return;
+  if (ok && !confirm('Abmelden?\n\nDein Fortschritt ist gespeichert' + (D.run ? ' – auch die angefangene Übung' : '') + '. Mit Benutzername und Kennwort machst du später genau hier weiter.')) return;
+  try { localStorage.removeItem(LS); } catch (e) { }
+  S = null; D = null; modus(false); $('lUser').value = ''; zeigeLogin();
+};
+function starte() {
+  D = S.data; $('login').classList.add('hidden');
+  ['view', 'tabs', 'sync', 'outBtn'].forEach(i => $(i).classList.remove('hidden'));
+  $('wer').textContent = 'Angemeldet: ' + S.benutzer;
+  status(S.dirty ? 'Speichert …' : 'Gespeichert ✓');
+  zeige('home');
+}
+async function abgleich() {   // neueren Stand von einem anderen Gerät holen
+  if (!S || S.dirty || S.gesperrt) return;
+  try {
+    const r = await rpc('verben_anmelden', { p_benutzer: S.benutzer, p_pin: S.pin, p_neu: false });
+    if (!r.ok) { if (r.grund === 'pin' || r.grund === 'unbekannt') { S.gesperrt = true; merke(); zeigeLogin(r.grund === 'pin' ? 'Dein Kennwort wurde geändert. Melde dich bitte neu an.' : GRUND.unbekannt); } return; }
+    if (S.dirty || r.updated_at === S.updated_at) return;
+    S.data = normal(r.data); S.updated_at = r.updated_at; D = S.data; merke();
+    if (!RUNVIEW) zeige(TAB);
+  } catch (e) { }
+}
+
+/* ---------- Navigation ---------- */
+let RUNVIEW = false;
+document.querySelectorAll('nav.tabs button').forEach(b => b.onclick = () => zeige(b.dataset.tab));
+function zeige(tab) {
+  if (RUNVIEW && D.run) { RUNVIEW = false; }
+  TAB = tab; RUNVIEW = false; $('tabs').classList.remove('hidden');
+  document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === tab ? 'page' : 'false'));
+  ({ home: home, liste: liste, fortschritt: fortschritt, wahl: () => { } })[tab]();
+  scrollTo(0, 0);
+}
+
+/* ---------- Sprachausgabe ---------- */
+let STIMME = null;
+function stimme() {
+  if (!('speechSynthesis' in window)) return null;
+  const vs = speechSynthesis.getVoices();
+  return vs.find(v => /en[-_]GB/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
+}
+if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = () => { STIMME = stimme(); };
+function sprich(t) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t.replace(/\//g, ' or ').replace(/[()]/g, ''));
+  STIMME = STIMME || stimme(); if (STIMME) u.voice = STIMME; u.lang = 'en-GB'; u.rate = .9; speechSynthesis.speak(u);
+}
+const sayBtn = t => 'speechSynthesis' in window ? '<button class="say" type="button" data-say="' + esc(t) + '" aria-label="Vorlesen">🔊</button>' : '';
+document.addEventListener('click', e => { const b = e.target.closest('[data-say]'); if (b) { e.stopPropagation(); sprich(b.dataset.say); } });
+
+/* ---------- Hilfen ---------- */
+const heute = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+function serie() {
+  const set = new Set(D.tage); let n = 0; const d = new Date();
+  if (!set.has(heute())) d.setDate(d.getDate() - 1);
+  for (; ;) { const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); if (set.has(k)) { n++; d.setDate(d.getDate() - 1); } else break; }
+  return n;
+}
+function mischen(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const sicher = () => V.filter(v => box(v) >= 4).length;
+const schwach = () => V.filter(v => { const b = box(v); return b >= 1 && b <= 2; });
+const neue = () => V.filter(v => box(v) === 0);
+/* Klug auswählen: unsichere und lange nicht geübte Verben zuerst */
+function auswahl(pool, n) {
+  const jetzt = Date.now();
+  const w = pool.map(i => { const v = V[i]; const st = D.st[v.inf] || {}; const alt = st.t ? (jetzt - st.t) / 864e5 : 30;
+    return { i, k: box(v) * 2 - Math.min(alt, 10) * 0.3 + Math.random() * 1.5 }; });
+  return w.sort((a, b) => a.k - b.k).slice(0, n).map(x => x.i);
+}
+function boxBar() {
+  const c = [0, 0, 0, 0, 0, 0]; V.forEach(v => c[box(v)]++);
+  return '<div class="boxbar">' + c.map((n, b) => n ? '<i style="width:' + (n / V.length * 100) + '%;background:' + BOXCOL[b] + '" title="' + BOXNAME[b] + ': ' + n + '"></i>' : '').join('') + '</div>' +
+    '<div class="legend">' + c.map((n, b) => '<span style="--c:' + BOXCOL[b] + '">' + BOXNAME[b] + ' ' + n + '</span>').join('') + '</div>';
+}
+
+/* ---------- Startseite ---------- */
+const MODES = [
+  { k: 'karte', ic: '🃏', t: 'Lernen mit Karteikarten', d: 'Verb ansehen, Formen aufdecken, ehrlich einschätzen.' },
+  { k: 'formen', ic: '✍️', t: 'Formen eintippen', d: 'Simple past und past participle selbst schreiben.' },
+  { k: 'luecke', ic: '🧩', t: 'Lückensätze', d: 'Die richtige Form im Satz einsetzen – wie im Test.' },
+  { k: 'mc', ic: '⚡', t: 'Schnellquiz', d: 'Richtige Form antippen. Achtung, Fallen!' },
+  { k: 'mix', ic: '🔁', t: 'Wiederholen', d: 'Gemischtes Training mit deinen unsicheren Verben.' },
+  { k: 'test', ic: '📝', t: 'Probetest mit Note', d: '20 Aufgaben, ohne Hilfe – wie eine echte Klassenarbeit.' }
+];
+const MODENAME = Object.fromEntries(MODES.map(m => [m.k, m.t]));
+function home() {
+  const s = sicher(), p = Math.round(s / V.length * 100), n = serie(), sw = schwach().length;
+  let h = '';
+  if (D.run) {
+    const r = D.run;
+    h += '<div class="card cont"><h2>▶️ Hier hast du aufgehört</h2><p style="margin:0 0 10px"><b>' + esc(MODENAME[r.mode] || 'Übung') + '</b> · Aufgabe ' + (r.i + 1) + ' von ' + r.items.length +
+      (r.mode !== 'test' && r.mode !== 'karte' ? ' · ' + r.ok + ' richtig' : '') + '</p>' +
+      '<div class="row"><button class="btn" id="weiter">Weitermachen</button><button class="btn light" id="verwerfen">Übung beenden</button></div></div>';
+  }
+  h += '<div class="card"><div class="hello"><div class="ring" style="--p:' + p + '"><span>' + s + '<small>von ' + V.length + '<br>sicher</small></span></div><div>' +
+    '<h2 style="margin:0">Hallo ' + esc(S.benutzer) + '!</h2><div class="muted small">' + (s === 0 ? 'Leg los – jedes Verb zählt.' : s === V.length ? 'Alle Verben sicher – stark! Bleib mit „Wiederholen“ dran.' : 'Noch ' + (V.length - s) + ' Verben bis zum Ziel.') + '</div>' +
+    '<div class="kpis"><span class="kpi">🔥 ' + n + ' Tag' + (n === 1 ? '' : 'e') + ' in Folge</span>' + (sw ? '<span class="kpi">⚠️ ' + sw + ' unsicher</span>' : '') +
+    (D.tests.length ? '<span class="kpi">📝 letzte Note ' + D.tests[D.tests.length - 1].note + '</span>' : '') + '</div></div></div>' + boxBar() + '</div>';
+  h += '<div class="card"><h2>Was möchtest du tun?</h2><div class="modes">' + MODES.map(m =>
+    '<button class="mode" data-mode="' + m.k + '"><span class="ic">' + m.ic + '</span><span><b>' + m.t + '</b><small>' + m.d + '</small></span></button>').join('') + '</div></div>';
+  h += '<div class="card"><h2>So lernst du am besten</h2><ol class="small" style="margin:0;padding-left:20px">' +
+    '<li>Jeden Tag 10 Minuten – lieber oft und kurz als selten und lang.</li>' +
+    '<li>Neue Verben paketweise: erst <b>Karteikarten</b>, dann <b>Formen eintippen</b>.</li>' +
+    '<li>Laut mitsprechen (🔊): <i>go – went – gone</i>. Der Rhythmus hilft beim Merken.</li>' +
+    '<li><b>Wiederholen</b> holt dir automatisch die Verben, die noch wackeln.</li>' +
+    '<li>Vor dem Test: <b>Probetest</b> schreiben und Fehler nachüben.</li></ol></div>';
+  $('view').innerHTML = h;
+  if (D.run) {
+    $('weiter').onclick = () => { RUNVIEW = true; zeigeAufgabe(); };
+    $('verwerfen').onclick = () => { if (confirm('Die angefangene Übung beenden? Was du schon gelernt hast, bleibt gespeichert.')) { D.run = null; geaendert(true); home(); } };
+  }
+  document.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => wahl(b.dataset.mode));
+}
+
+/* ---------- Auswahl der Verben ---------- */
+function wahl(mode) {
+  if (D.run && !confirm('Du hast noch eine angefangene Übung (' + (MODENAME[D.run.mode] || '') + '). Neue Übung starten? Die alte wird dann beendet.')) return;
+  const m = MODES.find(x => x.k === mode);
+  const opts = [];
+  if (mode === 'mix') opts.push({ k: 'smart', t: 'Automatisch (empfohlen)', pool: V.map(v => v.i) });
+  const sw = schwach().map(v => v.i), nu = neue().map(v => v.i);
+  if (mode !== 'mix') opts.push({ k: 'alle', t: 'Alle Verben (' + V.length + ')', pool: V.map(v => v.i) });
+  if (sw.length) opts.push({ k: 'schwach', t: 'Unsichere Verben (' + sw.length + ')', pool: sw });
+  if (nu.length && mode !== 'mix') opts.push({ k: 'neu', t: 'Noch nicht geübt (' + nu.length + ')', pool: nu });
+  PACKS.forEach((p, k) => opts.push({ k: 'p' + k, t: packName(k), pool: p, pack: k }));
+  ['AAA', 'ABB', 'ABA', 'ABC'].forEach(pt => { const pool = V.filter(v => v.pat === pt).map(v => v.i); opts.push({ k: pt, t: 'Muster ' + pt + ' (' + pool.length + ')', pool, pat: pt }); });
+  let gew = opts[0].k, anz = mode === 'test' ? 20 : 10;
+  const anzahlen = mode === 'test' ? [] : [5, 10, 20, 0];
+  function packInfo(o) {
+    return o.pool.map(i => { const v = V[i]; return '<span style="background:' + BOXCOL[box(v)] + '">' + esc(base(v.inf)) + '</span>'; }).join('');
+  }
+  function render() {
+    const o = opts.find(x => x.k === gew);
+    $('view').innerHTML = '<div class="card"><button class="btn light" id="zur" type="button">← Zurück</button></div>' +
+      '<div class="card"><h2>' + m.ic + ' ' + m.t + '</h2><p class="muted small" style="margin-top:0">' + m.d +
+      (mode === 'test' ? ' Am Ende bekommst du Punkte und eine Note. Während des Tests gibt es keine Rückmeldung.' : '') + '</p>' +
+      '<h3>Welche Verben?</h3><div class="chips">' + opts.filter(x => !x.pack && x.pack !== 0 && !x.pat).map(x => chip(x)).join('') + '</div>' +
+      '<h3>Nach Paketen (Reihenfolge wie im Buch)</h3><div class="chips">' + opts.filter(x => x.pack != null).map(x => chip(x)).join('') + '</div>' +
+      '<h3>Nach Muster</h3><div class="chips">' + opts.filter(x => x.pat).map(x => chip(x)).join('') + '</div>' +
+      (o.pat ? '<p class="tip">' + o.pat + ': ' + PATNAME[o.pat] + '</p>' : '') +
+      (o.k !== 'smart' ? '<div class="vgrid" style="margin-top:12px">' + packInfo(o) + '</div>' : '<p class="tip">Die App mischt unsichere, neue und lange nicht geübte Verben und wechselt die Aufgabenarten.</p>') +
+      (anzahlen.length ? '<h3>Wie viele Aufgaben?</h3><div class="chips">' + anzahlen.map(n => '<button type="button" class="chip" data-anz="' + n + '" aria-pressed="' + (anz === n) + '">' + (n || 'alle ausgewählten') + '</button>').join('') + '</div>' : '') +
+      '<div style="margin-top:16px"><button class="btn block" id="los">Los geht’s</button></div></div>';
+    $('zur').onclick = () => zeige('home');
+    document.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { gew = b.dataset.k; render(); });
+    document.querySelectorAll('[data-anz]').forEach(b => b.onclick = () => { anz = +b.dataset.anz; render(); });
+    $('los').onclick = () => starteRun(mode, o.pool, anz, o.k);
+  }
+  const chip = x => '<button type="button" class="chip" data-k="' + x.k + '" aria-pressed="' + (x.k === gew) + '">' + esc(x.t) + '</button>';
+  TAB = 'wahl'; document.querySelectorAll('nav.tabs button').forEach(b => b.setAttribute('aria-current', 'false'));
+  render(); scrollTo(0, 0);
+}
+
+/* ---------- Aufgaben erzeugen ---------- */
+function mcItem(vi) {
+  const v = V[vi]; const q = ['past', 'pp', 'de'][Math.floor(Math.random() * 3)];
+  if (q === 'de') {
+    const andere = mischen(V.filter(x => x.i !== vi && x.de !== v.de)).slice(0, 3).map(x => x.inf);
+    return { t: 'mc', v: vi, q, opts: mischen([v.inf].concat(andere)), a: v.inf };
+  }
+  const f = q === 'past' ? 1 : 2, richtig = formOf(v, f), set = alts(v, f), cand = [];
+  cand.push(regular(v.inf));
+  cand.push(formOf(v, f === 1 ? 2 : 1));
+  if (f === 2) cand.push(first(v.past) + 'en', base(v.inf) + 'en'); else cand.push(base(v.inf) + 't', first(v.pp));
+  const aehnlich = V.filter(x => x.i !== vi && x.pat === v.pat).map(x => formOf(x, f));
+  mischen(aehnlich).forEach(x => cand.push(x));
+  const falsch = [];
+  cand.forEach(c => { const n = norm(c); if (!c || pruefe(c, set) || falsch.some(x => norm(x) === n) || n === norm(richtig)) return; if (falsch.length < 3) falsch.push(c); });
+  return { t: 'mc', v: vi, q, opts: mischen([richtig].concat(falsch)), a: richtig };
+}
+function baue(mode, ids) {
+  if (mode === 'karte') return ids.map(v => ({ t: 'karte', v }));
+  if (mode === 'formen') return ids.map(v => ({ t: 'formen', v }));
+  if (mode === 'luecke') return ids.map(v => ({ t: 'luecke', v, f: Math.random() < .5 ? 1 : 2 }));
+  if (mode === 'mc') return ids.map(mcItem);
+  if (mode === 'mix') return ids.map((v, k) => { const r = k % 4; return r === 0 ? { t: 'formen', v } : r === 1 ? { t: 'luecke', v, f: Math.random() < .5 ? 1 : 2 } : r === 2 ? mcItem(v) : { t: 'formen3', v }; });
+  if (mode === 'test') { const it = ids.map((v, k) => k < 14 ? { t: 'formen3', v } : { t: 'luecke', v, f: k % 2 ? 1 : 2 }); return it; }
+  return [];
+}
+function starteRun(mode, pool, anz, wahlKey) {
+  let ids;
+  if (mode === 'test') ids = mischen(auswahl(pool, Math.min(20, pool.length)));
+  else if (wahlKey === 'smart') ids = mischen(auswahl(pool, anz || 12));
+  else ids = mischen(anz ? auswahl(pool, Math.min(anz, pool.length)) : pool.slice());
+  if (!ids.length) { alert('Keine Verben ausgewählt.'); return; }
+  D.run = { mode, items: baue(mode, ids), i: 0, ok: 0, err: 0, fehler: [], ans: [], pkt: 0, max: 0, start: Date.now() };
+  geaendert(true); RUNVIEW = true; zeigeAufgabe();
+}
+
+/* ---------- Lernstand aktualisieren ---------- */
+function lerne(vi, richtig) {
+  const v = V[vi]; const b = box(v);
+  D.box[v.inf] = richtig ? Math.min(MAXBOX, b + 1) : 1;
+  const st = D.st[v.inf] || (D.st[v.inf] = { r: 0, f: 0 });
+  richtig ? st.r++ : st.f++; st.t = Date.now();
+  richtig ? D.richtig++ : D.falsch++;
+  const h = heute(); if (D.tage[D.tage.length - 1] !== h) { D.tage.push(h); if (D.tage.length > 120) D.tage.shift(); }
+}
+
+/* ---------- Aufgabe anzeigen ---------- */
+function kopf(r) {
+  return '<div class="top"><button class="btn light" id="pause" type="button" title="Speichern und Pause">⏸ Pause</button>' +
+    '<div class="prog"><i style="width:' + (r.i / r.items.length * 100) + '%"></i></div><span class="cnt">' + (r.i + 1) + ' / ' + r.items.length + '</span></div>';
+}
+function zeigeAufgabe() {
+  const r = D.run; if (!r) { zeige('home'); return; }
+  if (r.i >= r.items.length) { ergebnis(); return; }
+  $('tabs').classList.add('hidden');
+  const it = r.items[r.i], v = V[it.v], test = r.mode === 'test';
+  let h = kopf(r) + '<div class="card">';
+  if (it.t === 'karte') {
+    h += '<div class="flash" id="flash"><div class="task">Kennst du die Formen?</div><div class="big">' + esc(v.inf) + sayBtn(v.inf) + '</div><div class="de">' + esc(v.de) + '</div>' +
+      '<div id="aufd" class="hidden" style="width:100%"><div class="forms"><div><small>infinitive</small><b>' + esc(v.inf) + '</b></div><div><small>simple past</small><b>' + esc(v.past) + '</b></div><div><small>past participle</small><b>' + esc(v.pp) + '</b></div></div>' +
+      '<p style="margin:10px 0 0"><span class="pattern">' + v.pat + '</span> ' + sayBtn(v.inf + ', ' + v.past + ', ' + v.pp) + '</p></div>' +
+      '<p class="muted small" id="tapHint" style="margin:14px 0 0">Sag die Formen erst laut – dann antippen zum Aufdecken.</p></div>' +
+      '<div class="row hidden" id="kBtns" style="margin-top:10px"><button class="btn ghost" style="flex:1" id="kNein">😕 Noch nicht</button><button class="btn ok" style="flex:1" id="kJa">😀 Wusste ich</button></div>';
+  } else if (it.t === 'formen' || it.t === 'formen3') {
+    const drei = it.t === 'formen3';
+    h += '<div class="task">' + (drei ? 'Schreib alle drei Formen' : 'Schreib simple past und past participle') + '</div>' +
+      (drei ? '<div class="big">„' + esc(v.de) + '“</div>' : '<div class="big">' + esc(v.inf) + sayBtn(v.inf) + '</div><div class="de">' + esc(v.de) + '</div>') +
+      '<form id="fForm" autocomplete="off" style="margin-top:12px">' +
+      (drei ? '<label class="f"><span>infinitive</span><input type="text" id="a0" autocapitalize="none" spellcheck="false"></label>' : '') +
+      '<label class="f"><span>simple past</span><input type="text" id="a1" autocapitalize="none" spellcheck="false"></label>' +
+      '<label class="f"><span>past participle</span><input type="text" id="a2" autocapitalize="none" spellcheck="false"></label>' +
+      '<div id="fb"></div><button class="btn block" id="fBtn" type="submit">' + (test ? 'Weiter' : 'Prüfen') + '</button></form>';
+  } else if (it.t === 'luecke') {
+    const g = gapLoesung(v, it.f);
+    h += '<div class="task">Setze die richtige Form ein</div>' +
+      '<p class="muted small" style="margin:0">' + esc(FORM[it.f]) + ' von <b>' + esc(v.inf) + '</b></p>' +
+      '<div class="sent">' + esc(g.satz).replace('___', '<span class="gap" id="gap">…</span>') + '</div>' +
+      '<form id="fForm" autocomplete="off"><label class="f"><span>Deine Lösung</span><input type="text" id="a1" autocapitalize="none" spellcheck="false"></label>' +
+      '<div id="fb"></div><button class="btn block" id="fBtn" type="submit">' + (test ? 'Weiter' : 'Prüfen') + '</button></form>';
+  } else if (it.t === 'mc') {
+    const frage = it.q === 'de' ? 'Welches Verb bedeutet <b>„' + esc(v.de) + '“</b>?' : 'Was ist das <b>' + (it.q === 'past' ? 'simple past' : 'past participle') + '</b> von <b>' + esc(v.inf) + '</b>?';
+    h += '<div class="task">Tippe die richtige Antwort an</div><p class="sent" style="margin-top:0">' + frage + '</p><div class="opts">' +
+      it.opts.map((o, k) => '<button type="button" class="opt" data-o="' + k + '">' + esc(o) + '</button>').join('') + '</div><div id="fb"></div>';
+  }
+  h += '</div>';
+  $('view').innerHTML = h; scrollTo(0, 0);
+  $('pause').onclick = pause;
+  if (it.t === 'karte') {
+    const auf = () => { $('aufd').classList.remove('hidden'); $('tapHint').classList.add('hidden'); $('kBtns').classList.remove('hidden'); };
+    $('flash').onclick = auf;
+    $('kJa').onclick = () => { lerne(it.v, true); r.ok++; weiter(); };
+    $('kNein').onclick = () => { lerne(it.v, false); r.err++; r.fehler.push(it.v); nochmal(it); weiter(); };
+  } else if (it.t === 'mc') {
+    document.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
+      const wahlO = it.opts[+b.dataset.o]; const ok = norm(wahlO) === norm(it.a);
+      document.querySelectorAll('[data-o]').forEach(x => { x.disabled = true; if (norm(it.opts[+x.dataset.o]) === norm(it.a)) x.classList.add('ok'); });
+      if (!ok) b.classList.add('bad');
+      bewerte(it, ok, [wahlO]);
+    });
+  } else {
+    const f = $('fForm'); const first = f.querySelector('input'); setTimeout(() => first.focus(), 50);
+    f.onsubmit = e => { e.preventDefault(); if ($('fBtn').dataset.next) { weiter(); return; } pruefeFormular(it); };
+  }
+}
+function pruefeFormular(it) {
+  const v = V[it.v], r = D.run, test = r.mode === 'test';
+  const felder = it.t === 'formen3' ? [0, 1, 2] : it.t === 'formen' ? [1, 2] : [1];
+  let alle = true; const eing = []; let pkt = 0;
+  felder.forEach(f => {
+    const inp = $('a' + f); const w = inp.value; eing.push(w);
+    const set = it.t === 'luecke' ? gapLoesung(v, it.f).set : alts(v, f);
+    const ok = pruefe(w, set); if (ok) pkt++; else alle = false;
+    if (!test) { inp.classList.add(ok ? 'ok' : 'bad'); inp.readOnly = true; }
+  });
+  if (test) { r.pkt += pkt; r.max += felder.length; }
+  bewerte(it, alle, eing);
+}
+function bewerte(it, ok, eing) {
+  const r = D.run, v = V[it.v], test = r.mode === 'test';
+  lerne(it.v, ok);
+  if (ok) r.ok++; else { r.err++; if (!r.fehler.includes(it.v)) r.fehler.push(it.v); }
+  if (test) { r.ans.push({ v: it.v, t: it.t, f: it.f, e: eing, ok }); weiter(); return; }
+  if (!ok) nochmal(it);
+  const loes = it.t === 'luecke' ? gapLoesung(v, it.f).zeige : v.inf + ' – ' + v.past + ' – ' + v.pp;
+  const lob = ['Super!', 'Richtig!', 'Klasse!', 'Genau!', 'Perfekt!', 'Stark!'];
+  $('fb').innerHTML = '<div class="fb ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✅ ' + lob[Math.floor(Math.random() * lob.length)] + ' ' : '❌ Richtig ist: ') +
+    '<b>' + esc(ok && it.t === 'luecke' ? loes : (ok ? '' : loes)) + '</b>' + (ok && it.t !== 'luecke' ? esc(v.inf + ' – ' + v.past + ' – ' + v.pp) : '') +
+    sayBtn(v.inf + ', ' + v.past + ', ' + v.pp) + (!ok ? '<div class="small" style="margin-top:4px">Kommt gleich noch einmal dran.</div>' : '') + '</div>';
+  r.wartet = true; geaendert();
+  if (it.t === 'mc') {
+    const b = document.createElement('button'); b.className = 'btn block'; b.style.marginTop = '12px'; b.textContent = 'Weiter'; b.onclick = weiter;
+    $('fb').appendChild(b); b.focus();
+  } else { const b = $('fBtn'); b.textContent = 'Weiter'; b.dataset.next = '1'; b.focus(); }
+}
+/* falsch beantwortete Aufgabe einmal später wiederholen */
+function nochmal(it) {
+  const r = D.run; if (it.rep || r.mode === 'test') return;
+  const kopie = Object.assign({}, it, { rep: 1 }); if (kopie.t === 'mc') { const n = mcItem(it.v); n.rep = 1; r.items.splice(Math.min(r.items.length, r.i + 4), 0, n); return; }
+  r.items.splice(Math.min(r.items.length, r.i + 4), 0, kopie);
+}
+function weiter() { const r = D.run; r.i++; r.wartet = false; geaendert(); zeigeAufgabe(); }
+async function pause() {
+  const r = D.run;
+  if (r && r.wartet) { r.i++; r.wartet = false; }   // beantwortete Aufgabe zählt schon
+  geaendert(true); await sync();
+  zeige('home');
+}
+
+/* ---------- Ergebnis ---------- */
+function note(p) { return p >= .92 ? 1 : p >= .81 ? 2 : p >= .67 ? 3 : p >= .50 ? 4 : p >= .30 ? 5 : 6; }
+function ergebnis() {
+  const r = D.run; $('tabs').classList.remove('hidden');
+  const fehler = r.fehler.slice();
+  let h = '<div class="card res">';
+  if (r.mode === 'test') {
+    const p = r.max ? r.pkt / r.max : 0, n = note(p);
+    D.tests.push({ d: heute(), p: r.pkt, m: r.max, note: n }); if (D.tests.length > 50) D.tests.shift();
+    h += '<h2>Dein Probetest</h2><div class="note">' + n + '</div><p style="font-size:18px;margin:6px 0">' + r.pkt + ' von ' + r.max + ' Punkten (' + Math.round(p * 100) + ' %)</p>' +
+      '<p class="muted small">' + (n <= 2 ? 'Sehr gut vorbereitet – weiter so!' : n <= 3 ? 'Gute Basis. Übe die Fehler unten noch einmal.' : 'Da geht noch was. Übe die Fehler mit „Fehler üben“ und schreib den Test morgen noch einmal.') + '</p>' +
+      '<p class="muted small" style="font-size:12px">Note nur zur Orientierung (≥ 92 % = 1, ≥ 81 % = 2, ≥ 67 % = 3, ≥ 50 % = 4, ≥ 30 % = 5).</p></div>';
+    const falsch = r.ans.filter(a => !a.ok);
+    if (falsch.length) {
+      h += '<div class="card"><h2>Deine Fehler</h2><ul class="mist" style="padding-left:18px">' + falsch.map(a => {
+        const v = V[a.v]; const soll = a.t === 'luecke' ? gapLoesung(v, a.f).zeige : v.inf + ' – ' + v.past + ' – ' + v.pp;
+        return '<li><b>' + esc(soll) + '</b> <span class="muted small">(du: ' + esc(a.e.map(x => x || '–').join(' – ')) + ')</span></li>';
+      }).join('') + '</ul></div>';
+    }
+  } else {
+    const n = r.ok + r.err, p = n ? Math.round(r.ok / n * 100) : 0;
+    h += '<h2>' + (p >= 90 ? '🏆 Hervorragend!' : p >= 70 ? '👍 Gut gemacht!' : '💪 Dranbleiben!') + '</h2><p style="font-size:18px;margin:6px 0">' + r.ok + ' richtig · ' + r.err + ' falsch</p>' +
+      '<p class="muted small">Sicher kannst du jetzt ' + sicher() + ' von ' + V.length + ' Verben.</p></div>';
+    if (fehler.length) h += '<div class="card"><h2>Diese Verben solltest du noch üben</h2><table><tbody>' + fehler.map(i => { const v = V[i];
+      return '<tr><td><b>' + esc(v.inf) + '</b></td><td>' + esc(v.past) + '</td><td>' + esc(v.pp) + '</td><td>' + sayBtn(v.inf + ', ' + v.past + ', ' + v.pp) + '</td></tr>'; }).join('') + '</tbody></table></div>';
+  }
+  h += '<div class="card"><div class="row">' + (fehler.length ? '<button class="btn" id="fUeben">Fehler üben</button>' : '') +
+    '<button class="btn light" id="nochm">Noch eine Runde</button><button class="btn light" id="zStart">Zur Startseite</button></div></div>';
+  const modus = r.mode; D.run = null; geaendert(true);
+  $('view').innerHTML = h; scrollTo(0, 0);
+  if (fehler.length) $('fUeben').onclick = () => starteRun(modus === 'test' || modus === 'karte' ? 'formen' : modus, fehler, 0, 'fehler');
+  $('nochm').onclick = () => wahl(modus);
+  $('zStart').onclick = () => zeige('home');
+}
+
+/* ---------- Verbliste ---------- */
+function liste() {
+  let q = '', pat = '', nurSchwach = false;
+  $('view').innerHTML = '<div class="card"><h2>📋 Alle ' + V.length + ' unregelmäßigen Verben</h2><p class="muted small" style="margin-top:0">Der farbige Punkt zeigt, wie sicher du das Verb kannst. 🔊 liest alle drei Formen vor.</p>' +
+    '<input type="search" id="such" placeholder="Suchen (englisch oder deutsch) …" autocapitalize="none">' +
+    '<div class="chips" style="margin-top:10px"><button class="chip" data-p="" aria-pressed="true">alle</button>' + ['AAA', 'ABB', 'ABA', 'ABC'].map(p => '<button class="chip" data-p="' + p + '" aria-pressed="false">' + p + '</button>').join('') +
+    '<button class="chip" id="nurS" aria-pressed="false">nur unsichere</button></div><p class="tip hidden" id="patTip"></p></div>' +
+    '<div class="card" style="padding:8px"><div style="overflow-x:auto"><table><thead><tr><th>infinitive</th><th>simple past</th><th>past participle</th><th>Deutsch</th><th></th></tr></thead><tbody id="tb"></tbody></table></div></div>';
+  function fill() {
+    const n = norm(q);
+    const rows = V.filter(v => (!pat || v.pat === pat) && (!nurSchwach || box(v) <= 2) && (!n || norm(v.inf + ' ' + v.past + ' ' + v.pp + ' ' + v.de).includes(n)));
+    $('tb').innerHTML = rows.map(v => '<tr><td><span class="dot" style="background:' + BOXCOL[box(v)] + '" title="' + BOXNAME[box(v)] + '"></span><b>' + esc(v.inf) + '</b></td><td>' + esc(v.past) + '</td><td>' + esc(v.pp) + '</td><td class="de2">' + esc(v.de) + '</td><td>' + sayBtn(v.inf + ', ' + v.past + ', ' + v.pp) + '</td></tr>').join('') ||
+      '<tr><td colspan="5" class="muted">Nichts gefunden.</td></tr>';
+    $('patTip').classList.toggle('hidden', !pat); if (pat) $('patTip').textContent = pat + ': ' + PATNAME[pat];
+  }
+  $('such').oninput = e => { q = e.target.value; fill(); };
+  document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { pat = b.dataset.p; document.querySelectorAll('[data-p]').forEach(x => x.setAttribute('aria-pressed', x === b)); fill(); });
+  $('nurS').onclick = e => { nurSchwach = !nurSchwach; e.target.setAttribute('aria-pressed', nurSchwach); fill(); };
+  fill();
+}
+
+/* ---------- Fortschritt ---------- */
+function fortschritt() {
+  const ges = D.richtig + D.falsch, quote = ges ? Math.round(D.richtig / ges * 100) : 0;
+  let h = '<div class="card"><h2>📈 Dein Fortschritt</h2>' + boxBar() +
+    '<div class="grid2" style="margin-top:12px"><div class="kpi">✅ sicher: <b>' + sicher() + ' / ' + V.length + '</b></div><div class="kpi">🎯 Trefferquote: <b>' + quote + ' %</b></div>' +
+    '<div class="kpi">📚 Antworten: <b>' + ges + '</b></div><div class="kpi">🔥 Tage in Folge: <b>' + serie() + '</b></div></div>' +
+    '<p class="muted small">Jede richtige Antwort bringt ein Verb eine Stufe höher (bis „Profi“). Eine falsche Antwort setzt es auf „noch unsicher“ zurück. Ab „sicher“ zählt ein Verb als gelernt.</p></div>';
+  h += '<div class="card"><h2>Pakete</h2>' + PACKS.map((p, k) => {
+    const s = p.filter(i => box(V[i]) >= 4).length;
+    return '<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><b class="small">' + esc(packName(k)) + '</b><span class="small muted">' + s + ' / ' + p.length + '</span></div>' +
+      '<div class="vgrid" style="margin-top:4px">' + p.map(i => '<span style="background:' + BOXCOL[box(V[i])] + '" title="' + BOXNAME[box(V[i])] + '">' + esc(base(V[i].inf)) + '</span>').join('') + '</div></div>';
+  }).join('') + '</div>';
+  h += '<div class="card"><h2>📝 Probetests</h2>' + (D.tests.length ? '<table><thead><tr><th>Datum</th><th>Punkte</th><th>Note</th></tr></thead><tbody>' +
+    D.tests.slice().reverse().map(t => '<tr><td>' + t.d.split('-').reverse().join('.') + '</td><td>' + t.p + ' / ' + t.m + '</td><td><b>' + t.note + '</b></td></tr>').join('') + '</tbody></table>'
+    : '<p class="muted">Noch kein Probetest geschrieben.</p>') + '</div>';
+  h += '<div class="card"><h2>Mein Zugang</h2><p class="small" style="margin-top:0">Benutzername: <b>' + esc(S.benutzer) + '</b><br>Dein Stand wird nach jeder Antwort automatisch gespeichert.</p>' +
+    '<button class="btn light" id="reset">Lernstand zurücksetzen</button></div>';
+  $('view').innerHTML = h;
+  $('reset').onclick = () => { if (confirm('Wirklich den gesamten Lernstand löschen? Das kann nicht rückgängig gemacht werden.')) { D = normal({}); S.data = D; geaendert(true); fortschritt(); } };
+}
+
+/* ---------- Start ---------- */
+modus(true);
+try { S = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) { S = null; }
+if (S && S.id && !S.gesperrt) { S.data = normal(S.data); starte(); abgleich(); }
+else zeigeLogin();
+</script>
+</body>
+</html>

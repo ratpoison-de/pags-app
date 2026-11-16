@@ -116,3 +116,14 @@ Terminbuchung für die Standortgespräche (zuerst Klasse 9a). Link für Eltern: 
   - *Übersicht:* Tabelle nach Tagen; als PDF herunterladen (ohne Zusatzbibliothek erzeugt), drucken, als Text für Claude kopieren, CSV.
   - *Einstellungen:* Titel, Ort, Hinweis für die Eltern, Elternlink.
 - Technik: Tabellen `public.gespraech_*` und Funktionen `gespraech_*` in `supabase/standortgespraech.sql` (Projekt pags-lernplaner, eingerichtet am 15.11.2026). Doppelbuchungen verhindert die Datenbank (eindeutiger Schlüssel auf dem Termin). Meldungen schreibt ein Trigger. E-Mail-Benachrichtigung: stündliche geplante Aufgabe ruft `gespraech_neue_meldungen_melden()` auf (`supabase/standortgespraech_meldung.sql`) und mailt Art und Termin, ohne Namen. Gemeinsame Hilfen: `standortgespraech/gespraech.js`.
+
+## Englisch: Irregular Verbs Trainer (`englisch/irregular-verbs/`)
+
+Trainer für die 98 unregelmäßigen Verben aus der „List of irregular verbs“ des Englischbuchs (S. 199–201), für Klasse 10 (M-Niveau). Link: `https://ratpoison-de.github.io/pags-app/englisch/irregular-verbs/` · QR-Code: `englisch/irregular-verbs/qr-irregular-verbs.png`
+
+- **Zugang:** Benutzername und Kennwort selbst anlegen (keine E-Mail). Der Lernstand wird nach jeder Antwort in Supabase gespeichert (Tabelle `public.verben`). „⏸ Pause“ oder „Abmelden“ sichert die angefangene Übung; nach dem nächsten Anmelden – auch auf einem anderen Gerät – geht es an derselben Aufgabe weiter. Ohne Netz bleibt der Stand im Gerät und wird nachgeholt.
+- **Übungsarten:** Karteikarten, Formen eintippen, Lückensätze, Schnellquiz (mit typischen Fallen wie *buyed*), Wiederholen (gemischt, unsichere Verben zuerst), Probetest mit Punkten und Note.
+- **Auswahl:** alle Verben, unsichere, noch nicht geübte, Pakete à 10 in Buchreihenfolge, Muster AAA/ABB/ABA/ABC.
+- **Lernstufen** (Leitner): neu → noch unsicher → geübt → gefestigt → sicher → Profi. Falsche Antworten kommen in derselben Runde noch einmal dran.
+- Verbliste mit Suche, Musterfilter und Sprachausgabe (britisches Englisch); Fortschritt je Paket, Tage in Folge, Verlauf der Probetests.
+- Verbdaten und Beispielsätze: `englisch/irregular-verbs/verbs.js`. Datenbank: `supabase/irregular-verbs.sql`.
