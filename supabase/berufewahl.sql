@@ -1,0 +1,6 @@
+-- Stimmabgabe Ausbildungsberufe 2026/27. Eingerichtet am 16.11.2026 (Migration berufewahl_2026).
+-- Tabelle public.berufewahl_stimmen (name, klasse, wahl text[2]); RLS an, keine Policies.
+-- public.berufewahl_liste()                      – die 35 Berufe der Liste
+-- public.berufewahl_abstimmen(name, klasse, wahl) – für anon freigegeben; prüft Name, Klasse, genau 2 verschiedene Berufe der Liste, keine Doppelabgabe
+-- public.berufewahl_ergebnis()                   – nur Service-Zugang: Teilnehmer, Teilnahme je Klasse, Stimmen je Beruf in Listenreihenfolge
+-- Vollständiger Code: siehe Supabase → Database → Migrations → berufewahl_2026.

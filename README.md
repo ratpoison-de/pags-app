@@ -133,3 +133,11 @@ Trainer für die 98 unregelmäßigen Verben aus der „List of irregular verbs�
 `https://ratpoison-de.github.io/pags-app/apps/` · QR-Code: `apps/qr/landing.png`
 
 Alle Web-Apps für die PAGS auf einer Seite, getrennt nach **Schülern**, **Lehrkräften** und **Eltern** (auch die Apps aus `pags-lernplaner`, `lerntagebuch`, `unterrichtsplaner` und `tag-der-berufe`). Jede Karte hat „Öffnen“, wo vorhanden „Anleitung“ und einen QR-Code zum Zeigen über das Apple TV (`apps/qr/*.png`). Mit Suchfeld.
+
+## Stimmabgabe Ausbildungsberufe 2026/27
+
+`berufewahl/index.html` – Schülerinnen und Schüler wählen aus der Liste der Ausbildungsberufe genau **2 Berufe** und geben ihre Stimmen ab (Name + Klasse, jede Person nur einmal).
+Link: `https://ratpoison-de.github.io/pags-app/berufewahl/` · QR-Code: `berufewahl/qr-berufewahl.png`
+
+- Datenbank: Supabase-Projekt pags-lernplaner, Tabelle `public.berufewahl_stimmen` (per RLS gesperrt), Abgabe nur über `berufewahl_abstimmen()`. SQL: `supabase/berufewahl.sql`
+- Auswertung: `select public.berufewahl_ergebnis();` (nur mit Service-Zugang) → JSON in `berufewahl/auswertung.py` geben → PDF mit Stimmen je Beruf (Reihenfolge der Liste) und Rangliste.

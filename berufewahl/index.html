@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Ausbildungsberufe wählen – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<script src="../config.js?v=20261108"></script>
+<style>
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2{margin:0;line-height:1.25}
+p{margin:0 0 10px}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;position:sticky;top:0;z-index:10}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:36px;width:auto;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.02rem}
+header p{margin:0;font-size:.78rem;opacity:.92}
+main{max-width:760px;margin:0 auto;padding:14px 14px 120px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{font-size:1.08rem;margin-bottom:8px}
+.muted{color:var(--muted);font-size:.86rem}
+label.f{display:block;margin:0 0 12px}
+label.f>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px}
+input[type=text]{width:100%;font:inherit;padding:10px 12px;border:1px solid #C9C9C9;border-radius:10px;background:#fff;color:var(--text)}
+input:focus{border-color:var(--red);outline:2px solid rgba(168,16,16,.18)}
+.zeile{display:grid;grid-template-columns:1fr 110px;gap:10px}
+.liste{display:grid;gap:8px}
+.beruf{font:inherit;text-align:left;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:12px}
+.beruf:hover{border-color:#C9C9C9}
+.beruf .box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid #BDBDBD;display:grid;place-items:center;font-weight:700;font-size:.85rem;color:#fff}
+.beruf[aria-pressed=true]{border-color:var(--red);background:var(--tint);font-weight:600}
+.beruf[aria-pressed=true] .box{background:var(--red);border-color:var(--red)}
+.beruf[disabled]{opacity:.45;cursor:default}
+.beruf small{color:var(--muted);font-weight:400}
+.leiste{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));z-index:10}
+.leiste .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.leiste .zahl{flex:1;font-size:.92rem}
+.leiste .zahl b{color:var(--red)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:10px 18px;font:inherit;font-weight:600;border-radius:10px;border:0;cursor:pointer;background:var(--red);color:#fff}
+.btn:hover{background:var(--red-dark)}
+.btn[disabled]{opacity:.5;cursor:default}
+.msg{padding:10px 12px;border-radius:10px;background:#FDECEA;color:#8A1C1C;margin:0 0 12px;font-size:.9rem}
+.hero{background:linear-gradient(135deg,var(--red),#C62A1E);color:#fff;border:0;text-align:center;padding:28px 18px}
+.hero .gross{font-size:3rem;line-height:1}
+.hero h2{font-size:1.3rem;margin:10px 0 8px}
+.hero ul{list-style:none;padding:0;margin:12px 0 0;font-weight:600}
+.hero li{background:rgba(255,255,255,.15);border-radius:10px;padding:8px;margin-top:6px}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div><h1>Ausbildungsberufe 2026/2027</h1><p>Stimmabgabe · PAGS Külsheim</p></div>
+</div></header>
+
+<main>
+  <div id="fehler" class="msg hidden" role="alert"></div>
+
+  <section id="form">
+    <div class="card">
+      <h2>Welche Berufe interessieren dich?</h2>
+      <p>Du hast <b>2 Stimmen</b>. Tippe zwei Ausbildungsberufe an und gib deine Stimmen unten ab. Du kannst nur einmal abstimmen.</p>
+      <div class="zeile">
+        <label class="f"><span>Vor- und Nachname</span><input id="name" type="text" autocomplete="name" maxlength="80" placeholder="z. B. Max Muster"></label>
+        <label class="f"><span>Klasse</span><input id="klasse" type="text" maxlength="10" placeholder="z. B. 9a" autocapitalize="off"></label>
+      </div>
+      <p class="muted" style="margin:0">Deinen Namen sieht nur die Lehrkraft. Er verhindert, dass jemand doppelt abstimmt. Ausgewertet wird nur, wie viele Stimmen jeder Beruf bekommt.</p>
+    </div>
+    <div class="card">
+      <div id="liste" class="liste"></div>
+    </div>
+  </section>
+
+  <section id="fertig" class="hidden">
+    <div class="card hero">
+      <div class="gross">✓</div>
+      <h2>Danke! Deine Stimmen sind abgegeben.</h2>
+      <p>Du hast gewählt:</p>
+      <ul id="gewaehlt"></ul>
+    </div>
+    <p class="muted" style="text-align:center"><a href="#" id="neu" style="color:var(--red)">Gerät wird geteilt? Nächste Person abstimmen lassen</a></p>
+  </section>
+</main>
+
+<div class="leiste" id="leiste"><div class="in">
+  <div class="zahl" id="zahl">Noch <b>2</b> Stimmen frei</div>
+  <button class="btn" id="abgeben" type="button" disabled>Stimmen abgeben</button>
+</div></div>
+
+<script>
+const BERUFE = [
+  'Bankkaufmann/-frau','Baugeräteführer/-in','Bauzeichner/-in','Duale/-r Student/-in – Wirtschaftsingenieurwesen',
+  'Elektroniker/-in','Elektroniker/-in für Betriebstechnik','Elektroniker/-in für Geräte und Systeme',
+  'Fachinformatiker/-in für Anwendungsentwicklung','Fachinformatiker/-in für Systemintegration',
+  'Fachkraft für Abwassertechnik','Fachkraft für Lagerlogistik','Fachkraft für Metalltechnik',
+  'Fertigungsmechaniker/-in','Holzmechaniker/-in','Industriekaufmann/-frau mit Zusatzqualifikation',
+  'Industriekaufmann/-frau','Industriemechaniker/-in','Kaufmann/-frau für Bürokommunikation',
+  'Kaufmann/-frau für Büromanagement','KFZ-Mechaniker/-in','Konstruktionsmechaniker/-in',
+  'Maschinen- und Anlagenführer/-in','Mechatroniker/-in','Mechatroniker/-in für Kältetechnik',
+  'Medizinische/-r Fachangestellte/-r','Pflegefachkraft','Polizeiobermeisteranwärter/-in',
+  'Technische/-r Produktdesigner/-in','Verfahrensmechaniker/-in für Kunststoff- und Kautschuktechnik',
+  'Verwaltungsfachangestellte/-r','Zerspanungsmechaniker/-in',
+  'Friseur/-in','Industrieelektroniker/-in','Notfallsanitäter/-in','Straßenbauer/-in'];
+const ANGEFRAGT = new Set(['Friseur/-in','Industrieelektroniker/-in','Notfallsanitäter/-in','Straßenbauer/-in']);
+const SCHLUESSEL = 'pags-berufewahl-2026';
+const $ = id => document.getElementById(id);
+let wahl = [];
+
+function zeigen() {
+  $('liste').innerHTML = '';
+  BERUFE.forEach(b => {
+    const an = wahl.includes(b);
+    const el = document.createElement('button');
+    el.type = 'button'; el.className = 'beruf';
+    el.setAttribute('aria-pressed', an);
+    el.disabled = !an && wahl.length >= 2;
+    el.innerHTML = '<span class="box">' + (an ? (wahl.indexOf(b) + 1) : '') + '</span><span></span>';
+    el.lastChild.textContent = b;
+    if (ANGEFRAGT.has(b)) el.lastChild.insertAdjacentHTML('beforeend', ' <small>(wird angefragt)</small>');
+    el.onclick = () => { wahl = an ? wahl.filter(x => x !== b) : wahl.concat(b); zeigen(); };
+    $('liste').appendChild(el);
+  });
+  const frei = 2 - wahl.length;
+  $('zahl').innerHTML = frei ? 'Noch <b>' + frei + '</b> ' + (frei === 1 ? 'Stimme' : 'Stimmen') + ' frei' : '<b>2 Berufe</b> gewählt';
+  $('abgeben').disabled = wahl.length !== 2;
+}
+
+function fehler(t) { const e = $('fehler'); e.textContent = t; e.classList.toggle('hidden', !t); if (t) window.scrollTo({top: 0, behavior: 'smooth'}); }
+
+function fertig(liste) {
+  $('form').classList.add('hidden'); $('leiste').classList.add('hidden');
+  $('gewaehlt').innerHTML = '';
+  liste.forEach(b => { const li = document.createElement('li'); li.textContent = b; $('gewaehlt').appendChild(li); });
+  $('fertig').classList.remove('hidden');
+}
+
+$('abgeben').onclick = async () => {
+  fehler('');
+  const name = $('name').value.trim(), klasse = $('klasse').value.trim();
+  if (name.split(/\s+/).length < 2) return fehler('Bitte gib deinen Vor- und Nachnamen ein.');
+  if (!klasse) return fehler('Bitte gib deine Klasse ein.');
+  const btn = $('abgeben'); btn.disabled = true; btn.textContent = 'Wird gesendet …';
+  try {
+    const c = window.PAGS_CONFIG;
+    const r = await fetch(c.supabaseUrl + '/rest/v1/rpc/berufewahl_abstimmen', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', apikey: c.supabaseAnonKey, Authorization: 'Bearer ' + c.supabaseAnonKey},
+      body: JSON.stringify({p_name: name, p_klasse: klasse, p_wahl: wahl})
+    });
+    const d = await r.json();
+    if (d && d.ok) {
+      try { localStorage.setItem(SCHLUESSEL, JSON.stringify(wahl)); } catch (e) {}
+      return fertig(wahl);
+    }
+    const g = d && d.grund;
+    fehler(g === 'doppelt' ? 'Mit diesem Namen wurde in dieser Klasse schon abgestimmt. Jede Person kann nur einmal abstimmen.'
+         : g === 'name' ? 'Bitte gib deinen Vor- und Nachnamen ein.'
+         : g === 'klasse' ? 'Bitte gib deine Klasse ein.'
+         : g === 'wahl' ? 'Bitte wähle genau zwei verschiedene Berufe.'
+         : 'Das hat nicht geklappt. Bitte versuche es gleich noch einmal.');
+  } catch (e) {
+    fehler('Keine Verbindung. Prüfe dein Internet und versuche es noch einmal.');
+  }
+  btn.textContent = 'Stimmen abgeben'; btn.disabled = wahl.length !== 2;
+};
+
+$('neu').onclick = e => {
+  e.preventDefault();
+  try { localStorage.removeItem(SCHLUESSEL); } catch (x) {}
+  wahl = []; $('name').value = ''; $('klasse').value = '';
+  $('fertig').classList.add('hidden'); $('form').classList.remove('hidden'); $('leiste').classList.remove('hidden');
+  zeigen(); window.scrollTo(0, 0);
+};
+
+try { const alt =JSON.parse(localStorage.getItem(SCHLUESSEL) || 'null'); if (Array.isArray(alt) && alt.length === 2) fertig(alt); } catch (e) {}
+zeigen();
+</script>
+</body>
+</html>
