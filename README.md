@@ -147,3 +147,10 @@ Link: `https://ratpoison-de.github.io/pags-app/berufewahl/` · QR-Code: `berufew
 `it-start/index.html` – Checkliste für neue Kolleginnen und Kollegen auf Grundlage des Medienkonzepts: 24 Punkte in fünf Bereichen (Zugänge, Unterricht, Datenschutz, Kommunikation, Medienkonzept). Abhaken mit automatischem Datum, Notizen je Punkt, Fortschrittsanzeige, Filter, Drucken/PDF, „Stand kopieren“ als Text sowie Sicherung als Datei speichern und laden (Gerätewechsel). Der Fortschritt bleibt im Browser des Geräts, es gibt keinen Server.
 Link: `https://ratpoison-de.github.io/pags-app/it-start/` · QR-Code: `apps/qr/it-start.png`
 Die Punkte stehen im Skript im Array `ITEMS`, die Bereiche in `CATS`.
+
+## Schülerseite: Apps und Material (`schueler/`)
+
+`https://ratpoison-de.github.io/pags-app/schueler/` · QR-Code: `schueler/qr-schueler.png` · Plakat (A4): `schueler/Plakat-Schueler-QR.pdf`
+
+Alle Angebote für Schülerinnen und Schüler, getrennt in **Apps** (Planen, Organisieren, Schulalltag, Berufsorientierung) und **Material** (Lernspiele, Trainer, Übungen), jeweils gruppiert nach **Klassenstufe → Fach → Thema**. Filter nach Klasse und Fach, Suche, QR-Code je Karte. Direktlinks: `schueler/?klasse=9`, `schueler/?fach=deutsch`.
+Neue Einträge im Skript im Array `ITEMS` ergänzen (`typ: 'app'|'mat'`, `k: [Klassen]`, `fach`, `thema`).

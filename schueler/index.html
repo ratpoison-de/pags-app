@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PAGS für Schüler – Apps und Lernmaterial</title>
+<meta name="description" content="Alle Apps und Lernmaterialien für Schülerinnen und Schüler der Pater-Alois-Grimm-Schule Külsheim, sortiert nach Klassenstufe, Fach und Thema. Entwickelt von Thorsten von Plotho-Kettner.">
+<meta name="author" content="Thorsten von Plotho-Kettner">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="../apps/img/pags-logo.png">
+<link rel="apple-touch-icon" href="../apps/img/pags-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#F7F7F6; --card:#FFFFFF; --ink:#2A2A2B; --mute:#6C6C70; --line:#E2E2DF; --chip:#F0F0EE;
+  --red:#AD120D; --red-soft:#FBEDEC; --navy:#1B2A6B; --navy-soft:#ECEEF6; --green:#2F6B3A; --dark:#383838; --gold:#9A6A00;
+  --f-display:"Archivo","Arial Black",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px;border-radius:6px}
+
+header.top{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.topbar img{height:48px;width:auto}
+.topnav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.topnav a{text-decoration:none;font-weight:700;font-size:15px;color:var(--mute);padding:8px 12px;border-radius:8px}
+.topnav a:hover{background:var(--chip);color:var(--ink)}
+
+.hero{padding-block:44px 30px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.kicker{font-family:var(--f-display);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(34px,6vw,60px);line-height:1;letter-spacing:-.01em;text-transform:uppercase;margin:10px 0 16px;text-wrap:balance}
+.lead{font-size:clamp(18px,2.2vw,21px);color:var(--mute);max-width:60ch;margin:0}
+.dots{height:6px;margin-top:26px;background:radial-gradient(circle,var(--ink) 2px,transparent 2.5px) 0 50%/11px 6px repeat-x;opacity:.75;max-width:420px}
+.heroqr{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 16px 12px;text-align:center;width:200px}
+.heroqr img{width:168px;height:168px;margin:0 auto}
+.heroqr b{display:block;font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;margin-top:8px}
+.heroqr span{font-size:13px;color:var(--mute)}
+
+/* Einstieg Apps / Material */
+.aud{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px}
+.aud a{--c:var(--red);display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:14px;padding:16px 18px}
+.aud a:hover{border-color:var(--c)}
+.aud svg{width:30px;height:30px;flex:none;stroke:var(--c);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.aud b{display:block;font-family:var(--f-display);font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.01em}
+.aud small{color:var(--mute);font-size:14px}
+
+/* Filter */
+.filters{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:grid;gap:12px}
+.frow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flabel{font-family:var(--f-display);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);min-width:96px}
+.chip{font:inherit;font-size:15px;font-weight:700;padding:6px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.search{flex:1;max-width:420px;position:relative}
+.search input{width:100%;font:inherit;font-size:16px;padding:10px 14px 10px 40px;border:1.5px solid var(--line);border-radius:12px;background:var(--card)}
+.search input:focus{outline:none;border-color:var(--ink)}
+.search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--mute);fill:none;stroke-width:2}
+.hint{font-size:14px;color:var(--mute)}
+.reset{font:inherit;font-size:14px;font-weight:700;color:var(--red);background:none;border:none;cursor:pointer;padding:4px 6px;display:none}
+
+/* Bereiche */
+section.part{padding-block:44px 6px;scroll-margin-top:80px}
+.phead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;border-bottom:3px solid var(--ink);padding-bottom:10px}
+.pbar{width:12px;height:30px;background:var(--c);border-radius:3px}
+.phead h2{font-family:var(--f-display);font-weight:900;font-size:30px;text-transform:uppercase;margin:0;letter-spacing:.01em}
+.phead p{margin:0;color:var(--mute);font-size:16px}
+.cnt{margin-left:auto;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+
+/* Klassenstufe */
+.level{margin-top:26px}
+.lhead{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.lhead h3{font-family:var(--f-display);font-weight:800;font-size:23px;text-transform:uppercase;margin:0}
+.lnum{display:inline-grid;place-items:center;min-width:44px;height:44px;padding:0 8px;border-radius:12px;background:var(--c);color:#fff;font-family:var(--f-display);font-weight:900;font-size:20px;align-self:center}
+.lhead small{color:var(--mute);font-size:15px}
+
+/* Fach */
+.subject{margin:14px 0 4px}
+.shead{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--sc)}
+.shead::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--sc)}
+.shead::after{content:"";flex:1;height:1px;background:var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;display:grid;grid-template-columns:62px 1fr;min-width:0;overflow:hidden}
+.ico{background:var(--sc);display:flex;justify-content:center;padding-top:20px}
+.ico svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.body{padding:16px 18px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.thema{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sc)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--chip);color:var(--mute)}
+.tag.login{background:var(--red-soft);color:var(--red)}
+.card h4{font-family:var(--f-display);font-weight:800;font-size:20px;line-height:1.15;margin:0}
+.card p{margin:0;color:var(--mute);font-size:15.5px}
+.more{display:flex;flex-wrap:wrap;gap:6px}
+.mini{font-size:13.5px;font-weight:700;text-decoration:none;color:var(--sc);border:1.5px solid var(--line);border-radius:999px;padding:3px 10px}
+.mini:hover{border-color:var(--sc)}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:8px}
+.btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font:inherit;font-weight:700;font-size:15px;padding:9px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);white-space:nowrap;cursor:pointer}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--sc);border-color:var(--sc);color:#fff}
+.btn.primary:hover{filter:brightness(.88)}
+.btn svg{width:17px;height:17px;flex:none}
+.btn.qrb{padding:9px 11px;margin-left:auto}
+.empty{padding:22px 0;color:var(--mute);display:none}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding-block:50px 6px}
+.note{border-left:4px solid var(--red);padding:2px 0 2px 16px}
+.note h3{font-family:var(--f-display);font-size:17px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px}
+.note p{margin:0;color:var(--mute);font-size:15.5px}
+
+footer{margin-top:56px;background:var(--card);border-top:1px solid var(--line)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding-block:28px 36px;align-items:center}
+.dev{display:flex;flex-direction:column;gap:2px}
+.dev .k{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.dev b{font-family:var(--f-display);font-size:22px;font-weight:800}
+.dev span{color:var(--mute);font-size:15px}
+.foot img{height:44px;width:auto}
+
+dialog{border:none;border-radius:20px;padding:26px;max-width:min(440px,92vw);text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(30,30,32,.55)}
+dialog img{width:min(320px,70vw);height:auto;margin:0 auto}
+dialog h3{font-family:var(--f-display);font-weight:800;font-size:22px;margin:0 0 4px}
+dialog .u{font-size:13px;color:var(--mute);overflow-wrap:anywhere;margin:10px 0 16px}
+dialog .actions{justify-content:center;--sc:var(--red)}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .heroqr{display:none}
+}
+@media (max-width:560px){
+  .aud{grid-template-columns:1fr}
+  .body{padding:14px}
+  .topbar img{height:40px}
+  .hero{padding-block:28px 18px}
+  .cnt,.pbar{display:none}
+  .phead h2{font-size:24px}
+  .flabel{min-width:100%}
+  .card{grid-template-columns:52px 1fr}
+  .ico svg{width:26px;height:26px}
+  .grid{grid-template-columns:1fr}
+}
+@media print{
+  header.top{position:static}
+  .filters,.actions,.aud,dialog{display:none!important}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap topbar">
+    <a href="https://pags-kuelsheim.de" target="_blank" rel="noopener"><img src="../apps/img/pags-logo.png" alt="PAGS Gemeinschaftsschule Külsheim" width="101" height="48"></a>
+    <nav class="topnav" aria-label="Bereiche"><a href="#apps">Apps</a><a href="#material">Material</a></nav>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="kicker">Pater-Alois-Grimm-Schule Külsheim</div>
+      <h1>Für Schülerinnen und Schüler</h1>
+      <p class="lead">Alle Apps und Lernmaterialien an einem Ort, sortiert nach Klassenstufe, Fach und Thema. Antippen und loslegen, auf dem iPad oder dem Handy.</p>
+      <div class="dots" aria-hidden="true"></div>
+    </div>
+    <div class="heroqr">
+      <img src="qr-schueler.png" alt="QR-Code zu dieser Seite" width="168" height="168">
+      <b>Diese Seite</b><span>scannen und merken</span>
+    </div>
+  </div>
+
+  <nav class="aud" aria-label="Einstieg">
+    <a href="#apps" style="--c:var(--red)"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M10 18h4"/></svg><span><b>Apps</b><small id="cntApps">Planen, organisieren, Schulalltag</small></span></a>
+    <a href="#material" style="--c:var(--navy)"><svg viewBox="0 0 24 24"><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/><path d="M9 7h7M9 11h5"/></svg><span><b>Material</b><small id="cntMat">Lernen und üben im Fach</small></span></a>
+  </nav>
+
+  <div class="filters" role="search">
+    <div class="frow"><span class="flabel">Klasse</span><span id="fKlasse" class="frow"></span></div>
+    <div class="frow"><span class="flabel">Fach</span><span id="fFach" class="frow"></span></div>
+    <div class="frow"><span class="flabel">Suchen</span>
+      <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="q" type="search" placeholder="z. B. Komma, Vokabeln, Praktikum …" aria-label="Apps und Material durchsuchen"></label>
+      <span class="hint" id="hint" aria-live="polite"></span><button class="reset" id="reset" type="button">Filter zurücksetzen</button>
+    </div>
+  </div>
+
+  <section class="part" id="apps" style="--c:var(--red)">
+    <div class="phead"><span class="pbar"></span><h2>Apps</h2><p>Werkzeuge zum Planen, Organisieren und für den Schulalltag</p><span class="cnt" id="nApps"></span></div>
+    <div id="listApps"></div>
+    <p class="empty" id="emptyApps">Keine App passt zu dieser Auswahl.</p>
+  </section>
+
+  <section class="part" id="material" style="--c:var(--navy)">
+    <div class="phead"><span class="pbar"></span><h2>Material</h2><p>Lernspiele, Trainer und Übungen für den Unterricht</p><span class="cnt" id="nMat"></span></div>
+    <div id="listMat"></div>
+    <p class="empty" id="emptyMat">Kein Material passt zu dieser Auswahl.</p>
+  </section>
+
+  <div class="notes">
+    <div class="note"><h3>Mit Anmeldung</h3><p>Apps mit rotem Hinweis speichern deinen Stand in deinem Konto. Merke dir Benutzername und Kennwort gut.</p></div>
+    <div class="note"><h3>Ohne Anmeldung</h3><p>Lernspiele und Übungen merken sich deinen Stand im Browser deines Geräts. Nutze deshalb immer dasselbe iPad.</p></div>
+    <div class="note"><h3>Im Unterricht zeigen</h3><p>Das QR-Symbol auf jeder Karte öffnet einen großen Code, den die Lehrkraft über das Apple TV zeigen kann.</p></div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="dev"><span class="k">Entwickelt von</span><b>Thorsten von Plotho-Kettner</b><span>Pater-Alois-Grimm-Schule Külsheim · <a href="../apps/">alle Schul-Apps</a></span></div>
+    <img src="../apps/img/pags-logo.png" alt="PAGS Külsheim" width="92" height="44">
+  </div>
+</footer>
+
+<dialog id="dlg" aria-labelledby="dt">
+  <h3 id="dt"></h3>
+  <img id="di" alt="">
+  <div class="u" id="du"></div>
+  <div class="actions"><a class="btn" id="dd" href="#" download>QR-Code speichern</a><button class="btn primary" id="dc" type="button">Schließen</button></div>
+</dialog>
+
+<script>
+(function(){
+var B='https://ratpoison-de.github.io/', P=B+'pags-app/', L=B+'pags-lernplaner/', DL=L+'apps/downloads/';
+
+/* Fächer: Farbe und Reihenfolge */
+var FACH={
+  'Fächerübergreifend':{c:'var(--dark)',o:1},
+  'Fremdsprachen':{c:'var(--gold)',o:2},
+  'Berufsorientierung':{c:'var(--green)',o:3},
+  'Deutsch':{c:'var(--red)',o:4},
+  'Englisch':{c:'var(--navy)',o:5}
+};
+var ICON={
+  plan:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h4M7 17h7"/>',
+  stack:'<path d="M12 3 2 8l10 5 10-5z"/><path d="m2 13 10 5 10-5"/><path d="m2 17.5 10 5 10-5"/>',
+  book:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v17H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 21.5A2.5 2.5 0 0 1 6.5 19H20v3H6.5"/><path d="M9 7h7M9 11h5"/>',
+  mount:'<path d="m3 20 6.5-11 4 6.5L16 12l5 8z"/><path d="m8 11.5 1.5 1.5 1.5-1.5"/><circle cx="17.5" cy="5.5" r="1.8"/>',
+  cards:'<rect x="2" y="6" width="14" height="15" rx="2"/><path d="M6 2h14a2 2 0 0 1 2 2v13"/><path d="M6 12h6M6 16h4"/>',
+  school:'<path d="M3 21V9l9-6 9 6v12z"/><path d="M9 21v-6h6v6M8 11h8"/>',
+  case:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 13h20M11 13v2h2v-2"/>',
+  route:'<circle cx="6" cy="19" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M8.5 19H16a3.5 3.5 0 0 0 0-7H8a3.5 3.5 0 0 1 0-7h7.5"/>',
+  vote:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  scan:'<path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M7 12h10M7 9h5M7 15h7"/>',
+  house:'<path d="M3 21V9l9-6 9 6v12z"/><path d="M9 21v-6h6v6M11 9h2"/>',
+  verb:'<path d="M4 6h10M9 6v12M17 10l-3 8M17 10l3 8M15 15h4"/>',
+  board:'<path d="M2 4h20v12H2z"/><path d="M8 20h8M12 16v4M6 8h6M6 12h9"/>'
+};
+var ALL=[5,6,7,8,9,10];
+
+/* Inhalte: typ app|mat, klassen, fach, thema */
+var ITEMS=[
+ {typ:'app',k:ALL,fach:'Fächerübergreifend',thema:'Planen & Organisieren',ic:'plan',t:'PAGS Lernplaner',
+  d:'Aufgaben, IL-Stunden und Klassenarbeiten im Blick: Tag planen, Woche verteilen, Lernplan für Arbeiten.',
+  u:L,a:DL+'Anleitung-PAGS-Lernplaner.pdf',qr:'../apps/qr/lernplaner.png',tags:['login','Handy']},
+ {typ:'app',k:ALL,fach:'Fächerübergreifend',thema:'Planen & Organisieren',ic:'stack',t:'Wochenstapel',
+  d:'Die nächsten sieben Tage untereinander: Aufgaben abhaken, verschieben, wiederholen. Gleiches Konto wie der Lernplaner.',
+  u:L+'wochenstapel/',a:DL+'Anleitung-Wochenstapel-Online.pdf',qr:'../apps/qr/wochenstapel.png',tags:['login'],
+  more:[['Für Android',DL+'Wochenstapel.apk']]},
+ {typ:'app',k:ALL,fach:'Fächerübergreifend',thema:'Planen & Reflektieren',ic:'book',t:'Lerntagebuch',
+  d:'Das Lerntagebuch der PAGS digital: Wochenplanung, Ziele und Rückblick wie im gedruckten Planer.',
+  u:B+'lerntagebuch/',qr:'../apps/qr/lerntagebuch.png',tags:['Handy','Tablet']},
+ {typ:'app',k:ALL,fach:'Fächerübergreifend',thema:'Selbsteinschätzung',ic:'mount',t:'Graduierung – Selbstbewertung',
+  d:'Wöchentliche Selbsteinschätzung für Walker, Hiker, Climber und Freeclimber. Punkte wählen und abgeben.',
+  u:P+'graduierung/',qr:'../apps/qr/graduierung.png',tags:['Wöchentlich'],
+  more:[['Walker',P+'graduierung/?stufe=walker'],['Hiker',P+'graduierung/?stufe=hiker'],['Climber',P+'graduierung/?stufe=climber'],['Freeclimber',P+'graduierung/?stufe=freeclimber']]},
+ {typ:'app',k:ALL,fach:'Fächerübergreifend',thema:'Schulalltag',ic:'school',t:'PAGS Alltag',
+  d:'Mensa, Ferien, Krankmeldung, Kontakte und Schulordnung – dazu eigene Termine, Notizen und Links.',
+  u:P+'alltag.html',a:P+'PAGS-App_Leitfaden.pdf',qr:'../apps/qr/alltag.png',tags:['Handy']},
+ {typ:'app',k:ALL,fach:'Fremdsprachen',thema:'Vokabeln lernen',ic:'cards',t:'Vokabeltrainer',
+  d:'Buchseite fotografieren, Vokabeln erkennen lassen und mit dem 5-Fächer-System lernen. Mit Sprachausgabe.',
+  u:L+'vokabeln/',qr:'../apps/qr/vokabeln.png',tags:['Daten nur im Gerät'],
+  more:[['Installieren',L+'vokabeln/installieren.html']],s:'englisch französisch'},
+ {typ:'app',k:[9],fach:'Berufsorientierung',thema:'Betriebspraktikum',ic:'case',t:'Mein Praktikum',
+  d:'Vorbereiten, Tagesberichte schreiben, Betrieb erkunden – und daraus den Praktikumsbericht erstellen.',
+  u:P+'praktikum/',qr:'../apps/qr/praktikum.png',tags:['login'],more:[['Klasse 9b',P+'praktikum/9b/']],s:'wbs'},
+ {typ:'app',k:[9],fach:'Berufsorientierung',thema:'Tag der Berufe',ic:'route',t:'Tag der Berufe',
+  d:'Digitaler Laufzettel für den Tag der Berufe in Hardheim: Lageplan, Betriebe, Fragen.',
+  u:B+'tag-der-berufe/',a:DL+'Anleitung-Tag-der-Berufe.pdf',qr:'../apps/qr/tdb.png',tags:[],s:'wbs'},
+ {typ:'app',k:[9],fach:'Berufsorientierung',thema:'Ausbildungsberufe',ic:'vote',t:'Ausbildungsberufe wählen',
+  d:'Aus der Liste der Ausbildungsberufe 2026/27 zwei Berufe auswählen und die Stimmen abgeben.',
+  u:P+'berufewahl/',qr:'../berufewahl/qr-berufewahl.png',tags:['Einmalig'],s:'wbs abstimmung'},
+
+ {typ:'mat',k:[9],fach:'Deutsch',thema:'Stilmittel · Rhetorik',ic:'scan',t:'DECODE – Operation Rhetorik',
+  d:'Agenten-Adventure: In fünf Zonen 30 Stilmittel in echten Texten aufspüren und die KI VOXA besiegen.',
+  u:P+'deutsch/stilmittel.html',qr:'../apps/qr/decode.png',tags:['Spiel'],s:'rhetorische mittel metapher'},
+ {typ:'mat',k:[9],fach:'Deutsch',thema:'Sprache untersuchen',ic:'house',t:'Villa Kauderwelsch',
+  d:'Point-and-Click-Abenteuer zu Rechtschreibung, Wortarten, Tempora, Aktiv/Passiv, Satzgliedern und Kommas.',
+  u:P+'deutsch/villa-kauderwelsch.html',qr:'../apps/qr/villa.png',tags:['Spiel'],s:'grammatik komma rechtschreibung satzglieder wortarten'},
+ {typ:'mat',k:[9],fach:'Englisch',thema:'Unit 1 · Grammar & Writing',ic:'board',t:'English 9 · Unit 1',
+  d:'Modal verbs, comparison und letter of application – Erklärungen und Übungen in kleinen Schritten.',
+  u:P+'englisch/unit1.html',qr:'../apps/qr/unit1.png',tags:['Übungen'],s:'bewerbung'},
+ {typ:'mat',k:[10],fach:'Englisch',thema:'Irregular verbs',ic:'verb',t:'Irregular Verbs Trainer',
+  d:'Alle unregelmäßigen Verben aus dem Englischbuch: Karteikarten, Lückensätze, Schnellquiz und Probetest mit Note.',
+  u:P+'englisch/irregular-verbs/',qr:'../apps/qr/verbs.png',tags:['login','Trainer'],s:'unregelmäßige verben'}
+];
+
+var SV={doc:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/>',
+        qr:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/>'};
+function sv(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>'}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;')}
+function isAll(k){return k.length===ALL.length}
+function lvlKey(it){return isAll(it.k)?'alle':String(it.k[0])}
+
+function card(it){
+  var tags=it.tags.map(function(t){return t==='login'?'<span class="tag login">Mit Anmeldung</span>':'<span class="tag">'+esc(t)+'</span>'}).join('');
+  var more=it.more?'<div class="more">'+it.more.map(function(m){return '<a class="mini" href="'+m[1]+'" target="_blank" rel="noopener">'+esc(m[0])+'</a>'}).join('')+'</div>':'';
+  return '<article class="card" style="--sc:'+FACH[it.fach].c+'">'+
+   '<div class="ico"><svg viewBox="0 0 24 24">'+ICON[it.ic]+'</svg></div><div class="body">'+
+   '<div class="thema">'+esc(it.thema)+'</div><h4>'+esc(it.t)+'</h4>'+
+   (tags?'<div class="tags">'+tags+'</div>':'')+'<p>'+esc(it.d)+'</p>'+more+
+   '<div class="actions"><a class="btn primary" href="'+it.u+'" target="_blank" rel="noopener">Öffnen</a>'+
+   (it.a?'<a class="btn" href="'+it.a+'" target="_blank" rel="noopener">'+sv(SV.doc)+'Anleitung</a>':'')+
+   '<button class="btn qrb" type="button" data-qr="'+it.qr+'" data-t="'+esc(it.t)+'" data-u="'+it.u+'" aria-label="QR-Code für '+esc(it.t)+' zeigen">'+sv(SV.qr)+'</button>'+
+   '</div></div></article>';
+}
+
+function render(list,typ){
+  var lv={};
+  list.forEach(function(it){var k=lvlKey(it);(lv[k]=lv[k]||[]).push(it)});
+  var keys=Object.keys(lv).sort(function(a,b){return (a==='alle'?0:+a)-(b==='alle'?0:+b)});
+  return keys.map(function(k){
+    var items=lv[k], fa={};
+    items.forEach(function(it){(fa[it.fach]=fa[it.fach]||[]).push(it)});
+    var head=k==='alle'
+      ?'<span class="lnum">5–10</span><h3>Für alle Klassen</h3><small>'+items.length+(typ==='app'?' Apps':' Angebote')+'</small>'
+      :'<span class="lnum">'+k+'</span><h3>Klasse '+k+'</h3><small>'+items.length+(typ==='app'?(items.length===1?' App':' Apps'):(items.length===1?' Angebot':' Angebote'))+'</small>';
+    return '<div class="level"><div class="lhead">'+head+'</div>'+
+      Object.keys(fa).sort(function(a,b){return FACH[a].o-FACH[b].o}).map(function(f){
+        return '<div class="subject" style="--sc:'+FACH[f].c+'"><h5 class="shead">'+esc(f)+'</h5><div class="grid">'+
+          fa[f].sort(function(a,b){return a.thema.localeCompare(b.thema,'de')}).map(card).join('')+'</div></div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+
+/* Filter */
+var st={k:0,f:'',q:''};
+var fK=document.getElementById('fKlasse'),fF=document.getElementById('fFach');
+function chips(el,vals,key,label){
+  el.innerHTML=vals.map(function(v){return '<button class="chip" type="button" data-v="'+v+'" aria-pressed="'+(st[key]==v)+'">'+label(v)+'</button>'}).join('');
+  el.querySelectorAll('.chip').forEach(function(b){b.onclick=function(){var v=b.dataset.v;st[key]=key==='k'?+v:v;update()}});
+}
+var fachList=Object.keys(FACH).filter(function(f){return ITEMS.some(function(i){return i.fach===f})}).sort(function(a,b){return FACH[a].o-FACH[b].o});
+
+function match(it){
+  if(st.k&&it.k.indexOf(st.k)<0)return false;
+  if(st.f&&it.fach!==st.f)return false;
+  if(st.q){var h=(it.t+' '+it.d+' '+it.thema+' '+it.fach+' '+(it.s||'')+' '+(it.tags||[]).join(' ')+' klasse '+it.k.join(' ')).toLowerCase();if(h.indexOf(st.q)<0)return false}
+  return true;
+}
+function update(){
+  chips(fK,[0].concat(ALL),'k',function(v){return v?v:'Alle'});
+  chips(fF,[''].concat(fachList),'f',function(v){return v||'Alle'});
+  var apps=ITEMS.filter(function(i){return i.typ==='app'&&match(i)}), mats=ITEMS.filter(function(i){return i.typ==='mat'&&match(i)});
+  document.getElementById('listApps').innerHTML=render(apps,'app');
+  document.getElementById('listMat').innerHTML=render(mats,'mat');
+  document.getElementById('emptyApps').style.display=apps.length?'none':'block';
+  document.getElementById('emptyMat').style.display=mats.length?'none':'block';
+  document.getElementById('nApps').textContent=apps.length+(apps.length===1?' App':' Apps');
+  document.getElementById('nMat').textContent=mats.length+(mats.length===1?' Angebot':' Angebote');
+  var on=st.k||st.f||st.q;
+  document.getElementById('hint').textContent=on?(apps.length+mats.length)+' gefunden':'';
+  document.getElementById('reset').style.display=on?'inline':'none';
+  bindQR();
+}
+var tA=ITEMS.filter(function(i){return i.typ==='app'}).length,tM=ITEMS.length-tA;
+document.getElementById('cntApps').textContent=tA+' Apps zum Planen, Organisieren und für den Alltag';
+document.getElementById('cntMat').textContent=tM+' Lernspiele und Übungen im Fach';
+var q=document.getElementById('q');
+q.addEventListener('input',function(){st.q=q.value.trim().toLowerCase();update()});
+document.getElementById('reset').onclick=function(){st={k:0,f:'',q:''};q.value='';update()};
+
+/* QR-Fenster */
+var dlg=document.getElementById('dlg');
+function bindQR(){
+  document.querySelectorAll('.qrb').forEach(function(b){
+    b.onclick=function(){
+      document.getElementById('dt').textContent=b.dataset.t;
+      var i=document.getElementById('di');i.src=b.dataset.qr;i.alt='QR-Code für '+b.dataset.t;
+      document.getElementById('du').textContent=b.dataset.u;
+      var d=document.getElementById('dd');d.href=b.dataset.qr;d.setAttribute('download','QR '+b.dataset.t+'.png');
+      if(dlg.showModal)dlg.showModal();else window.open(b.dataset.qr);
+    };
+  });
+}
+document.getElementById('dc').onclick=function(){dlg.close()};
+dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
+
+/* Direktlink: ?klasse=9&fach=Deutsch */
+var sp=new URLSearchParams(location.search);
+if(sp.get('klasse'))st.k=+sp.get('klasse')||0;
+if(sp.get('fach')){var fx=fachList.filter(function(f){return f.toLowerCase()===sp.get('fach').toLowerCase()})[0];if(fx)st.f=fx}
+update();
+})();
+</script>
+</body>
+</html>
