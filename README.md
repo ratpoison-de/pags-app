@@ -10,6 +10,7 @@ Entwickelt von **Thorsten von Plotho-Kettner** (t.von.plotho-kettner@pagskuelshe
 | `kennenlernen.html` | Erstinformation für neue Familien: Konzept, Grundschule, Sekundarstufe, Abschlüsse, Fächer, Ganztag, Anmeldung, Ansprechpartner |
 | `PAGS-App_Leitfaden.pdf` | Kurzleitfaden für Eltern, Schüler und Kollegium (5 Seiten) |
 | `alltag.html` | Tagesbegleiter: Sekretariat offen/geschlossen, Krankmeldung, Mensa, Ferien 2026/27, Kontakte, Schulordnung, Links – plus **eigene Termine, Notizen und Links** |
+| `bildungswege/` | Klasse 9a: interaktive Übersicht „Wie geht’s weiter nach dem Realschulabschluss?“ – Schaubild, Wegfinder, Abschlüsse, Fahrplan (lokal gespeichert), Quiz, PDF zum Download |
 
 Veröffentlicht über GitHub Pages: `https://ratpoison-de.github.io/pags-app/`
 
