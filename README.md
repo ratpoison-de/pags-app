@@ -141,6 +141,7 @@ Alle Web-Apps für die PAGS auf einer Seite, getrennt nach **Schülern**, **Lehr
 Link: `https://ratpoison-de.github.io/pags-app/berufewahl/` · QR-Code: `berufewahl/qr-berufewahl.png`
 
 - Datenbank: Supabase-Projekt pags-lernplaner, Tabelle `public.berufewahl_stimmen` (per RLS gesperrt), Abgabe nur über `berufewahl_abstimmen()`. SQL: `supabase/berufewahl.sql`
+- Lehrerbereich: `berufewahl/lehrer.html` (gleicher Zugangsschlüssel wie Elternumfrage) – Stimmen je Beruf live, Rangliste, Abgaben mit Löschen, PDF über Drucken. Funktionen `berufewahl_lehrer()`, `berufewahl_loeschen()`.
 - Auswertung: `select public.berufewahl_ergebnis();` (nur mit Service-Zugang) → JSON in `berufewahl/auswertung.py` geben → PDF mit Stimmen je Beruf (Reihenfolge der Liste) und Rangliste.
 
 ## Lehrkräfte: IT-Start für neue Lehrkräfte
