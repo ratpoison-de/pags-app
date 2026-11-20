@@ -47,7 +47,7 @@ footer a{color:#fff}
 .socket a{color:#fff}
 </style>
 </head>
-<body>
+<body data-buddy="start">
 <header><div class="wrap">
   <a href="./" aria-label="PAGS-App Startseite"><img src="img/logo.png" alt="PAGS Gemeinschaftsschule Külsheim" width="120" height="60"></a>
   <a class="ext" href="https://pags-kuelsheim.de/" target="_blank" rel="noopener">pags-kuelsheim.de</a>
@@ -84,7 +84,9 @@ footer a{color:#fff}
 </div></footer>
 <div class="socket"><div class="wrap">
   <span>Inhalte aus pags-kuelsheim.de · Stand Oktober 2026 · App entwickelt von Thorsten von Plotho-Kettner</span>
+  <label style="display:flex;gap:6px;align-items:center">Assistent-Figur: <select id="budSel" aria-label="Assistent-Figur" style="font:inherit;font-size:12px;padding:2px 6px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#333"><option value="0">Klementine</option><option value="1">Bit</option><option value="2">Olli</option><option value="-1">Aus</option></select></label>
   <span><a href="https://pags-kuelsheim.de/impressum/" target="_blank" rel="noopener">Impressum der Schule</a> · <a href="https://pags-kuelsheim.de/datenschutz/" target="_blank" rel="noopener">Datenschutz der Schule</a></span>
 </div></div>
+<script src="buddy.js?v=1"></script>
 </body>
 </html>

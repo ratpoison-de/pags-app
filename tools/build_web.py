@@ -250,9 +250,24 @@ for bad in ['buildDoc', 'saveLocal', 'claude.use', 'LS_KEY', 'restore', 'dirty()
 s = s.replace('<script type="application/json" id="pags-data">',
               '<script src="config.js?v=2"></script>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>\n<script type="application/json" id="pags-data">')
 
+# ---------- Assistent-Figur (Klementine, Bit, Olli) ----------
+BUD_SEL = ('<select id="budSel" aria-label="Assistent-Figur" style="font:inherit;font-size:13px;padding:2px 6px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#333">'
+           '<option value="0">Klementine</option><option value="1">Bit</option><option value="2">Olli</option><option value="-1">Aus</option></select>')
+rep('<body>', '<body data-buddy="alltag">')
+rep("""        '<span>App entwickelt von Thorsten von Plotho-Kettner.</span>' +""",
+    """        '<span>App entwickelt von Thorsten von Plotho-Kettner.</span>' +
+        '<label class="small" style="display:flex;gap:8px;align-items:center">Assistent-Figur: """ + BUD_SEL.replace("'", "\\'") + """</label>' +""")
+rep('</body>', '<script src="buddy.js?v=1"></script>\n</body>')
+
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, 'alltag.html'), 'w').write(s)
 k = open(os.path.join(ROOT, 'lokal', 'pags-kennenlernen.html')).read()
+k = k.replace('<body>', '<body data-buddy="kennen">', 1)
+k = k.replace('<span>Inhalte aus pags-kuelsheim.de · Stand Oktober 2026 · App entwickelt von Thorsten von Plotho-Kettner</span>',
+              '<span>Inhalte aus pags-kuelsheim.de · Stand Oktober 2026 · App entwickelt von Thorsten von Plotho-Kettner</span>\n  <label style="display:flex;gap:6px;align-items:center">Assistent-Figur: ' + BUD_SEL + '</label>', 1)
+assert 'budSel' in k
+k = k.replace('</body>', '<script src="buddy.js?v=1"></script>\n</body>', 1)
+shutil.copy(os.path.join(SRC, 'buddy-pags.js'), os.path.join(OUT, 'buddy.js'))
 k = k.replace('<title>PAGS kennenlernen</title>', '<title>PAGS kennenlernen</title>\n<meta name="theme-color" content="#A81010">\n<link rel="icon" href="icon.png">\n<link rel="apple-touch-icon" href="icon.png">')
 open(os.path.join(OUT, 'kennenlernen.html'), 'w').write(k)
 print('pags-app/alltag.html', round(len(s) / 1024), 'KB; kennenlernen.html', round(len(k) / 1024), 'KB')

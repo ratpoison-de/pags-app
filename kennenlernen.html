@@ -153,7 +153,7 @@ footer.site a{color:#fff}
 @media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
 </style>
 </head>
-<body>
+<body data-buddy="kennen">
 
 <div class="topbar"><div class="wrap"><a href="https://pags-kuelsheim.de/barrierefreiheit/leichte-sprache/" target="_blank" rel="noopener">Leichte Sprache</a><a href="https://pags-kuelsheim.de/barrierefreiheit/gebaerdensprache/" target="_blank" rel="noopener">Gebärdensprache</a></div></div>
 
@@ -562,6 +562,7 @@ footer.site a{color:#fff}
 </footer>
 <div class="socket"><div class="wrap">
   <span>Inhalte aus pags-kuelsheim.de · Stand Oktober 2026 · App entwickelt von Thorsten von Plotho-Kettner</span>
+  <label style="display:flex;gap:6px;align-items:center">Assistent-Figur: <select id="budSel" aria-label="Assistent-Figur" style="font:inherit;font-size:13px;padding:2px 6px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#333"><option value="0">Klementine</option><option value="1">Bit</option><option value="2">Olli</option><option value="-1">Aus</option></select></label>
   <nav aria-label="Rechtliches"><a href="https://pags-kuelsheim.de/barrierefreiheit/" target="_blank" rel="noopener">Barrierefreiheit</a><a href="https://pags-kuelsheim.de/datenschutz/" target="_blank" rel="noopener">Datenschutz</a><a href="https://pags-kuelsheim.de/impressum/" target="_blank" rel="noopener">Impressum</a></nav>
 </div></div>
 
@@ -597,5 +598,6 @@ footer.site a{color:#fff}
 })();
 </script>
 
+<script src="buddy.js?v=1"></script>
 </body>
 </html>

@@ -126,7 +126,7 @@ footer.meta{font-size:13px;color:var(--muted);display:grid;gap:8px;padding-top:6
 .sitefoot a{color:#fff}
 </style>
 </head>
-<body>
+<body data-buddy="alltag">
 
 <div id="app"></div>
 
@@ -410,6 +410,7 @@ footer.meta{font-size:13px;color:var(--muted);display:grid;gap:8px;padding-top:6
         vKonto() +
         '<span>Schuldaten aus <a href="' + esc(S.quelle) + '" target="_blank" rel="noopener">pags-kuelsheim.de</a>, Stand ' + fmtShort(S.stand) + S.stand.slice(0, 4) + '.</span>' +
         '<span>App entwickelt von Thorsten von Plotho-Kettner.</span>' +
+        '<label class="small" style="display:flex;gap:8px;align-items:center">Assistent-Figur: <select id="budSel" aria-label="Assistent-Figur" style="font:inherit;font-size:13px;padding:2px 6px;border:1px solid #ccc;border-radius:3px;background:#fff;color:#333"><option value="0">Klementine</option><option value="1">Bit</option><option value="2">Olli</option><option value="-1">Aus</option></select></label>' +
         '<div class="sitefoot"><div><b>KONTAKT</b><br>Pater-Alois-Grimm-Schule<br>Kirchbergweg 11, 97900 Külsheim</div><div><b>Telefon / Fax</b><br>Tel. 09345 / 333<br>Fax 09345 / 8303</div><div><b>PAGS Mensa</b><br><a href="https://login.mampf1a.de/kuelsheim/" target="_blank" rel="noopener">Login Mensaprogramm Mampf</a></div></div>' +
         '</footer>' +
       '</div></main>' +
@@ -599,5 +600,6 @@ footer.meta{font-size:13px;color:var(--muted);display:grid;gap:8px;padding-top:6
 })();
 </script>
 
+<script src="buddy.js?v=1"></script>
 </body>
 </html>
