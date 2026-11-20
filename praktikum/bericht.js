@@ -219,6 +219,7 @@
 
   /* ---------- PDF ---------- */
   let LOGO = null;
+  PB.logo = () => LOGO;
   PB.ladeLogo = function (url) {
     return new Promise(res => {
       const im = new Image();

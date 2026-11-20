@@ -156,3 +156,15 @@ Die Punkte stehen im Skript im Array `ITEMS`, die Bereiche in `CATS`.
 
 Alle Angebote für Schülerinnen und Schüler, getrennt in **Apps** (Planen, Organisieren, Schulalltag, Berufsorientierung) und **Material** (Lernspiele, Trainer, Übungen), jeweils gruppiert nach **Klassenstufe → Fach → Thema**. Filter nach Klasse und Fach, Suche, QR-Code je Karte. Direktlinks: `schueler/?klasse=9`, `schueler/?fach=deutsch`.
 Neue Einträge im Skript im Array `ITEMS` ergänzen (`typ: 'app'|'mat'`, `k: [Klassen]`, `fach`, `thema`).
+
+## Azubi-App (`azubi/`)
+
+Begleit-App für Auszubildende – aufgebaut wie die Praktikums-App, mit Ausbildungsnachweis (Berichtsheft) statt Praktikumswoche. Link: `https://ratpoison-de.github.io/pags-app/azubi/` · QR-Code: `azubi/qr-azubi.png` · Fester Gruppenlink: `azubi/?gruppe=Kfz%202026`
+
+- **Auszubildende** (`azubi/index.html`): Anmeldung mit Name, Gruppe und selbst gewähltem Kennwort. Alles wird automatisch gespeichert (auch offline).
+  - *Start-Info:* Steckbrief mit Betrieb, Ausbilder und Berufsschule, Beginn und Dauer, Checkliste zum Ausbildungsstart, Ziele, Rechte und Pflichten (BBiG/JArbSchG, Kurzüberblick), Tipps.
+  - *Nachweis:* ein Wochennachweis je Ausbildungswoche ab Ausbildungsbeginn (Abteilung, Stunden Betrieb/Schule, Tätigkeiten, Unterweisungen, Berufsschulthemen, Gelerntes, Fragen), Urlaub/Krank/Frei, „Woche fertig“, Hinweis auf offene Wochen.
+  - *Ausbildung:* Ausbildungsplan (Abteilungsdurchlauf), Berufsschule, Prüfungen, Kompetenz-Selbsteinschätzung.
+  - *Bericht:* Rückblick mit Berichtszeitraum, Ausbildungsbericht (aus Einträgen und Wochennachweisen erzeugt, überarbeitbar, abgebbar, PDF) und Berichtsheft als PDF mit Unterschriftsfeldern für Azubi und Ausbilder.
+- **Betreuer** (`azubi/lehrer.html`): Zugang mit dem Hauptschlüssel der Graduierung (nur `klasse is null`). Übersicht (Betrieb, Stand, Wochen offen, Bericht), Lesen in der Seitenleiste (Berichtsheft, abgegebener Bericht, Bericht aus Einträgen), PDF und Drucken (einzeln, alle Berichte, alle Berichtshefte), CSV-Übersicht, Kennwort zurücksetzen, Löschen.
+- Technik: Tabelle `public.azubi` und Funktionen `azubi_*` in `supabase/azubi.sql`; Logik und PDF-Layout in `azubi/azubi.js` (nutzt `praktikum/bericht.js` und die lokale jsPDF-Kopie des Praktikums).

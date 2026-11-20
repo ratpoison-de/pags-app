@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Meine Ausbildung – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<script src="../praktikum/jspdf.umd.min.js" defer></script>
+<script src="../config.js?v=20261108"></script>
+<script src="../praktikum/bericht.js?v=20261120"></script>
+<script src="azubi.js?v=20261120"></script>
+<style>
+/* Azubi-App: Aufbau wie die Praktikums-App */
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;--warn:#B26A00;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg);padding-bottom:calc(74px + env(safe-area-inset-bottom,0px))}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
+p{margin:0 0 10px}
+a{color:var(--red)}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;position:sticky;top:0;z-index:10}
+header .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:36px;width:auto;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.02rem;white-space:nowrap}
+header p{margin:0;font-size:.78rem;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1;min-width:0;overflow:hidden}
+#sync{font-size:.74rem;border:1px solid rgba(255,255,255,.55);border-radius:20px;padding:3px 9px;white-space:nowrap}
+#menuBtn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:5px 9px;font:inherit;font-size:.8rem;cursor:pointer}
+main{max-width:760px;margin:0 auto;padding:14px 14px 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{font-size:1.08rem;margin-bottom:8px}
+.card h3{font-size:.95rem;margin:14px 0 6px}
+.muted{color:var(--muted);font-size:.86rem}
+.lead{font-size:.95rem}
+/* Formular */
+label.f{display:block;margin:0 0 12px}
+label.f>span{display:block;font-weight:600;font-size:.9rem;margin-bottom:4px}
+label.f small{display:block;color:var(--muted);font-size:.8rem;font-weight:400;margin-top:1px}
+input[type=text],input[type=tel],input[type=password],input[type=time],input[type=date],select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #C9C9C9;border-radius:10px;background:#fff;color:var(--text)}
+textarea{min-height:76px;resize:vertical;line-height:1.45;overflow:hidden}
+input:focus,textarea:focus,select:focus{border-color:var(--red);outline:2px solid rgba(168,16,16,.18)}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0 12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;font:inherit;font-weight:600;border-radius:10px;border:0;cursor:pointer;background:var(--red);color:#fff;text-decoration:none}
+.btn:hover{background:var(--red-dark)}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.sec:hover{background:var(--tint)}
+.btn.klein{min-height:36px;padding:6px 11px;font-size:.84rem}
+.btn[disabled]{opacity:.55;cursor:default}
+.knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.msg{padding:10px 12px;border-radius:10px;background:#FDECEA;color:#8A1C1C;margin:10px 0 0;font-size:.9rem}
+.msg.gut{background:#E9F6EC;color:#14562B}
+/* Aufklapp-Bereiche */
+details.acc{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+details.acc>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:10px;font-weight:700}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary::after{content:"";margin-left:auto;width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s;flex:none}
+details.acc[open]>summary::after{transform:rotate(-135deg)}
+details.acc>summary small{font-weight:400;color:var(--muted);font-size:.8rem}
+details.acc .body{padding:2px 16px 16px;border-top:1px solid var(--line);padding-top:14px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid #BDBDBD;flex:none;background:#fff}
+.dot.s1{border-color:var(--warn);background:linear-gradient(90deg,var(--warn) 50%,#fff 50%)}
+.dot.s2{border-color:var(--ok);background:var(--ok)}
+/* Start */
+.hero{background:linear-gradient(135deg,var(--red),#C62A1E);color:#fff;border:0}
+.hero h2{font-size:1.3rem}
+.hero .gross{font-size:2.4rem;font-weight:700;line-height:1.1;margin:6px 0 2px}
+.hero .btn{background:#fff;color:var(--red);margin-top:10px}
+.hero .btn:hover{background:var(--tint)}
+.fort{list-style:none;margin:0;padding:0}
+.fort li{border-top:1px solid var(--line)}
+.fort li:first-child{border-top:0}
+.fort button{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;width:100%;padding:11px 2px;cursor:pointer}
+.fort button:focus-visible{outline:2px solid var(--red)}
+.fort .info{margin-left:auto;color:var(--muted);font-size:.82rem}
+.balken{height:8px;background:#EEE;border-radius:8px;overflow:hidden;margin:8px 0 2px}
+.balken i{display:block;height:100%;background:var(--ok);border-radius:8px}
+.notfall{border-left:5px solid var(--red)}
+.notfall ol{margin:6px 0 0;padding-left:20px}
+/* Checkliste */
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.check:first-of-type{border-top:0}
+.check input{width:22px;height:22px;accent-color:var(--red);flex:none;margin-top:1px}
+.check input:checked+span{color:var(--muted);text-decoration:line-through}
+ul.tipps{margin:0;padding-left:20px}
+ul.tipps li{margin-bottom:6px}
+dl.wenn{margin:0}
+dl.wenn dt{font-weight:700;margin-top:10px}
+dl.wenn dd{margin:2px 0 0}
+/* Woche */
+.tage{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.tage button{font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:8px 2px;cursor:pointer;display:grid;justify-items:center;gap:2px;color:var(--text)}
+.tage button b{font-size:.95rem}
+.tage button span{font-size:.72rem;color:var(--muted)}
+.tage button[aria-pressed=true]{border-color:var(--red);background:var(--tint)}
+.tage button.heute b::after{content:" •";color:var(--red)}
+.auftrag{background:var(--tint);border:1px solid #F3D3CD;border-radius:12px;padding:12px;margin:0 0 14px}
+.auftrag b{display:block;color:var(--red);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.wahl{display:flex;flex-wrap:wrap;gap:6px}
+.wahl button{font:inherit;min-height:42px;padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--text)}
+.wahl button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff;font-weight:600}
+.wahl.smile button{font-size:1.5rem;padding:4px 10px;flex:1}
+.wahl.smile button[aria-pressed=true]{background:var(--tint)}
+.frage{font-weight:600;font-size:.9rem;margin:0 0 6px}
+.gruppe{margin:0 0 14px}
+.hilfe{background:#F7F7F7;border-radius:10px;padding:8px 12px;margin:-4px 0 12px;font-size:.84rem;color:#555}
+.hilfe summary{cursor:pointer;font-weight:600}
+/* Listen (Schritte, Interview) */
+.item{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;background:#FCFCFC}
+.item .kopf{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-weight:700;font-size:.86rem;color:var(--muted)}
+.item .kopf button{margin-left:auto;border:0;background:none;color:var(--red);font:inherit;font-size:.82rem;cursor:pointer;padding:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.chips button{font:inherit;font-size:.82rem;border:1px dashed #B9B9B9;background:#fff;border-radius:18px;padding:5px 10px;cursor:pointer;text-align:left;color:var(--text)}
+.skala{display:grid;grid-template-columns:1fr;gap:4px;padding:10px 0;border-top:1px solid var(--line)}
+.skala:first-of-type{border-top:0}
+.skala .wahl button{flex:1;font-size:.78rem;padding:4px 6px;min-height:40px}
+/* Bericht */
+.teil{margin-bottom:14px}
+.teil .tk{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.teil .tk b{flex:1;font-size:.92rem}
+.teil .tk button{border:0;background:none;color:var(--red);font:inherit;font-size:.8rem;cursor:pointer;padding:4px}
+.teil textarea{min-height:90px}
+.status{display:inline-block;border-radius:20px;padding:2px 10px;font-size:.8rem;font-weight:700;background:#EEE;color:#555}
+.status.gut{background:#E9F6EC;color:#14562B}
+/* Leiste unten */
+nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:10;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav button{font:inherit;border:0;background:none;padding:8px 2px 9px;cursor:pointer;display:grid;justify-items:center;gap:1px;color:var(--muted);font-size:.7rem;font-weight:600}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current=page]{color:var(--red)}
+footer{max-width:760px;margin:0 auto;padding:6px 16px 18px;color:var(--muted);font-size:.76rem;text-align:center}
+@media (min-width:560px){.skala{grid-template-columns:1fr 1.2fr;align-items:center}}
+@media (max-width:480px){header{padding-left:12px;padding-right:12px}header .in{gap:7px}header img{height:28px}header h1{font-size:.95rem}#sync{font-size:.66rem;padding:2px 6px}#menuBtn{font-size:.7rem;padding:4px 6px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.wochen{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;margin:0 0 6px}
+.wochen button{font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px 2px 5px;cursor:pointer;display:grid;justify-items:center;gap:2px;color:var(--text);font-size:.78rem}
+.wochen button b{font-size:.86rem}
+.wochen button[aria-pressed=true]{border-color:var(--red);background:var(--tint)}
+.wochen button.jetzt b::after{content:" •";color:var(--red)}
+.wnav{display:flex;align-items:center;gap:8px;margin:0 0 12px}
+.wnav .mitte{flex:1;text-align:center;line-height:1.25}
+.wnav .mitte b{display:block;font-size:1.02rem}
+.wnav .btn{min-width:44px;padding:8px 12px}
+.summe{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.86rem;color:var(--muted);margin:0 0 10px}
+.summe b{color:var(--text)}
+details.acc.klein2>summary{padding:11px 14px;font-size:.92rem}
+.abt{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;background:#FCFCFC}
+.abt .kopf{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-weight:700;font-size:.86rem;color:var(--muted)}
+.abt .kopf button{margin-left:auto;border:0;background:none;color:var(--red);font:inherit;font-size:.82rem;cursor:pointer;padding:4px}
+.recht dt{font-weight:700;margin-top:10px}
+.recht dd{margin:2px 0 0}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Meine Ausbildung</h1><p id="wer">Berichtsheft und Ausbildungsbegleiter</p></div>
+  <span id="sync" class="hidden" role="status"></span>
+  <button id="menuBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="login" class="hidden">
+    <div class="card">
+      <h2>Willkommen!</h2>
+      <p class="lead">Diese App begleitet dich durch deine Ausbildung: Ausbildungsstart vorbereiten, jede Woche deinen Ausbildungsnachweis (Berichtsheft) schreiben, Ausbildungsplan, Berufsschule und Prüfungen im Blick behalten und einen Ausbildungsbericht erstellen.</p>
+      <div class="wahl" style="margin:12px 0 14px" role="group" aria-label="Anmeldeart">
+        <button type="button" id="modusNeu" aria-pressed="true">Neu anfangen</button>
+        <button type="button" id="modusAlt" aria-pressed="false">Weitermachen</button>
+      </div>
+      <form id="loginForm" autocomplete="off">
+        <label class="f"><span>Vorname und Nachname</span><input type="text" id="lName" maxlength="80" required autocomplete="name"></label>
+        <label class="f"><span>Gruppe<small>Berufsschulklasse, Ausbildungsjahrgang oder Beruf – so, wie dein Ausbilder oder deine Lehrkraft es vorgibt, z. B. „Kfz 2026“.</small></span><input type="text" id="lGruppe" maxlength="30" required></label>
+        <label class="f"><span id="lPinLabel">Denk dir ein Kennwort aus</span><input type="password" id="lPin" minlength="4" maxlength="40" required autocomplete="off">
+          <small id="lPinHinweis">Mindestens 4 Zeichen. Merk es dir gut – damit kommst du auf jedem Gerät wieder an deine Einträge.</small></label>
+        <button class="btn" type="submit" id="lBtn">Los geht’s</button>
+        <div id="lMsg" class="msg hidden" role="alert"></div>
+      </form>
+    </div>
+    <p class="muted" style="text-align:center">Kennwort vergessen? Deine Betreuung kann es zurücksetzen.</p>
+  </section>
+
+  <div id="app" class="hidden"></div>
+</main>
+
+<nav id="nav" class="hidden" aria-label="Bereiche"><div class="in">
+  <button type="button" data-tab="start"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Start</button>
+  <button type="button" data-tab="vor"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h10"/></svg>Start-Info</button>
+  <button type="button" data-tab="woche"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Nachweis</button>
+  <button type="button" data-tab="ausb"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5-9 5z"/><path d="M7 11.5V16c0 1.4 2.2 3 5 3s5-1.6 5-3v-4.5"/></svg>Ausbildung</button>
+  <button type="button" data-tab="bericht"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>Bericht</button>
+</div></nav>
+
+<footer>Azubi-App der PAGS Külsheim · entwickelt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = PB.esc;
+const LS = 'pags-azubi-v1';
+let S = null;            // Sitzung: {id, pin, name, gruppe, data, dirty, abgegeben_am, updated_at}
+let D = null;            // S.data
+let TAB = 'start', WOCHE = '', OFFEN = new Set(), NEU = true, ALLE = false;
+
+/* ---------- Speicher im Gerät ---------- */
+function lade() { try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s && s.id && s.pin) { s.data = AZ.normal(s.data); return s; } } catch (e) { } return null; }
+function merke() { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) { } }
+
+/* ---------- Pfade in den Daten ---------- */
+function hole(p) { return p.split('.').reduce((o, k) => (o == null ? undefined : o[k]), D); }
+function setze(p, v) {
+  const k = p.split('.'); let o = D;
+  for (let i = 0; i < k.length - 1; i++) { if (o[k[i]] == null || typeof o[k[i]] !== 'object') o[k[i]] = /^\d+$/.test(k[i + 1]) ? [] : {}; o = o[k[i]]; }
+  o[k[k.length - 1]] = v;
+}
+
+/* ---------- Speichern in der Datenbank ---------- */
+let timer = null, laeuft = false, stand = 0, gesendet = 0;
+function status(txt, titel) { const e = $('sync'); e.textContent = txt; e.title = titel || ''; }
+function geaendert() {
+  stand++; S.dirty = true; merke(); status('Speichert …');
+  clearTimeout(timer); timer = setTimeout(() => sync(false), 1500);
+}
+async function sync(abgeben, keepalive) {
+  if (!S || S.gesperrt) return false;
+  if (laeuft) { if (!abgeben) return false; for (let i = 0; i < 20 && laeuft; i++) await new Promise(r => setTimeout(r, 300)); if (laeuft) return false; }
+  if (!S.dirty && !abgeben) { status('Gespeichert ✓'); return true; }
+  laeuft = true; gesendet = stand; clearTimeout(timer);
+  try {
+    const r = await AZ.rpc('azubi_speichern', { p_id: S.id, p_pin: S.pin, p_data: D, p_abgeben: !!abgeben }, keepalive);
+    if (!r.ok) {
+      if (r.grund === 'pin' || r.grund === 'unbekannt' || r.grund === 'gesperrt') { S.gesperrt = true; merke(); zeigeLogin(r.grund === 'unbekannt' ? 'Dein Eintrag wurde nicht mehr gefunden. Melde dich bitte bei deiner Betreuung.' : 'Dein Kennwort stimmt nicht mehr. Melde dich bitte neu an – deine Einträge auf diesem Gerät bleiben erhalten.'); }
+      else status('Nicht gespeichert', 'Die Datenmenge ist zu groß.');
+      return false;
+    }
+    S.updated_at = r.updated_at; S.abgegeben_am = r.abgegeben_am;
+    if (gesendet === stand) { S.dirty = false; status('Gespeichert ✓'); } else { timer = setTimeout(() => sync(false), 800); }
+    merke(); return true;
+  } catch (e) { status('Offline – wird nachgeholt', 'Deine Einträge sind auf diesem Gerät gesichert und werden gespeichert, sobald du wieder online bist.'); return false; }
+  finally { laeuft = false; }
+}
+addEventListener('online', () => sync(false));
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && S && S.dirty) sync(false, true); });
+
+/* ---------- Anmeldung ---------- */
+const GRUND = {
+  eingabe: 'Bitte Vor- und Nachname, Gruppe (2 bis 30 Zeichen) und ein Kennwort mit mindestens 4 Zeichen eingeben.',
+  vergeben: 'Diesen Namen gibt es in deiner Gruppe schon. Hast du schon angefangen? Dann tippe oben auf „Weitermachen“.',
+  unbekannt: 'Mit diesem Namen und dieser Gruppe gibt es noch keinen Eintrag. Prüfe die Schreibweise – oder tippe oben auf „Neu anfangen“.',
+  pin: 'Das Kennwort stimmt nicht.',
+  gesperrt: 'Zu viele falsche Versuche. Warte 10 Minuten oder frag deine Betreuung.',
+  voll: 'Im Moment können keine neuen Einträge angelegt werden. Sag bitte deiner Betreuung Bescheid.'
+};
+function modus(neu) {
+  NEU = neu; $('modusNeu').setAttribute('aria-pressed', neu); $('modusAlt').setAttribute('aria-pressed', !neu);
+  $('lPinLabel').textContent = neu ? 'Denk dir ein Kennwort aus' : 'Dein Kennwort';
+  $('lPinHinweis').classList.toggle('hidden', !neu); $('lBtn').textContent = neu ? 'Los geht’s' : 'Anmelden';
+  $('lMsg').classList.add('hidden');
+}
+function zeigeLogin(meldung) {
+  $('app').classList.add('hidden'); $('nav').classList.add('hidden'); $('sync').classList.add('hidden'); $('menuBtn').classList.add('hidden');
+  $('login').classList.remove('hidden'); $('wer').textContent = 'Berichtsheft und Ausbildungsbegleiter';
+  if (S && S.gesperrt) { modus(false); $('lName').value = S.name; $('lGruppe').value = S.gruppe; }
+  if (meldung) { $('lMsg').textContent = meldung; $('lMsg').className = 'msg'; }
+}
+$('modusNeu').onclick = () => modus(true); $('modusAlt').onclick = () => modus(false);
+$('loginForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('lMsg'); m.classList.add('hidden'); $('lBtn').disabled = true;
+  try {
+    const pin = $('lPin').value;
+    const r = await AZ.rpc('azubi_anmelden', { p_name: $('lName').value, p_gruppe: $('lGruppe').value.trim(), p_pin: pin, p_neu: NEU });
+    if (!r.ok) { m.textContent = GRUND[r.grund] || 'Das hat nicht geklappt.'; m.className = 'msg'; return; }
+    const alt = S && S.gesperrt && S.id === r.id && S.dirty ? S.data : null;   // ungesicherte Einträge dieses Geräts behalten
+    S = { id: r.id, pin: pin, name: r.name, gruppe: r.gruppe, data: alt || AZ.normal(r.data), dirty: !!alt, abgegeben_am: r.abgegeben_am, updated_at: r.updated_at };
+    merke(); $('lPin').value = ''; starte(); if (alt) sync(false);
+  } catch (err) { m.textContent = 'Keine Verbindung zur Datenbank. Prüfe dein Internet und versuche es noch einmal.'; m.className = 'msg'; }
+  finally { $('lBtn').disabled = false; }
+};
+$('menuBtn').onclick = async () => {
+  if (S.dirty && !(await sync(false)) && !confirm('Deine letzten Änderungen sind noch nicht in der Datenbank gespeichert. Wenn du dich jetzt abmeldest, gehen sie verloren. Trotzdem abmelden?')) return;
+  if (!S.dirty && !confirm('Abmelden? Mit deinem Namen und Kennwort kommst du jederzeit wieder an deine Einträge.')) return;
+  try { localStorage.removeItem(LS); } catch (e) { }
+  S = null; D = null; modus(false); zeigeLogin();
+};
+
+function aktuelleWoche() { const l = AZ.wochenListe(D); return l.length ? l[l.length - 1] : AZ.montag(D.beginn); }
+function starte() {
+  D = S.data; $('login').classList.add('hidden');
+  ['app', 'nav', 'sync', 'menuBtn'].forEach(i => $(i).classList.remove('hidden'));
+  $('wer').textContent = S.name + ' · ' + S.gruppe;
+  status(S.dirty ? 'Speichert …' : 'Gespeichert ✓');
+  WOCHE = aktuelleWoche();
+  zeige('start');
+  if (S.dirty) sync(false);
+}
+/* Beim Öffnen: neueren Stand von einem anderen Gerät holen */
+async function abgleich() {
+  if (!S || S.dirty || S.gesperrt) return;
+  try {
+    const r = await AZ.rpc('azubi_anmelden', { p_name: S.name, p_gruppe: S.gruppe, p_pin: S.pin, p_neu: false });
+    if (!r.ok) { if (r.grund === 'pin' || r.grund === 'unbekannt') { S.gesperrt = true; merke(); zeigeLogin(r.grund === 'pin' ? 'Dein Kennwort wurde geändert. Melde dich bitte neu an.' : GRUND.unbekannt); } return; }
+    if (S.dirty || r.updated_at === S.updated_at) return;
+    S.data = AZ.normal(r.data); S.updated_at = r.updated_at; S.abgegeben_am = r.abgegeben_am; D = S.data; merke(); zeige(TAB);
+  } catch (e) { }
+}
+
+/* ---------- Bausteine ---------- */
+function F(p, label, o) {
+  o = o || {}; const v = hole(p); const wert = esc(v == null ? '' : v);
+  const hint = o.hint ? '<small>' + esc(o.hint) + '</small>' : '';
+  const ph = o.ph ? ' placeholder="' + esc(o.ph) + '"' : '';
+  const extra = (o.mode ? ' inputmode="' + o.mode + '"' : '') + (o.list ? ' list="' + o.list + '"' : '');
+  const feld = o.area ? '<textarea data-p="' + p + '" maxlength="' + (o.max || 2500) + '"' + ph + '>' + wert + '</textarea>'
+    : '<input type="' + (o.type || 'text') + '" data-p="' + p + '" maxlength="' + (o.max || 200) + '" value="' + wert + '"' + ph + extra + '>';
+  return '<label class="f"><span>' + esc(label) + hint + '</span>' + feld + '</label>';
+}
+function wahl(p, werte, klasse, vorgabe) {
+  let v = hole(p); if (v == null) v = vorgabe;
+  return '<div class="wahl ' + (klasse || '') + '">' + werte.map(w => '<button type="button" data-set="' + p + '" data-val="' + esc(w[0]) + '" aria-pressed="' + (String(v) === String(w[0])) + '"' + (w[2] ? ' aria-label="' + esc(w[2]) + '" title="' + esc(w[2]) + '"' : '') + '>' + w[1] + '</button>').join('') + '</div>';
+}
+function acc(id, titel, stand, inhalt, info) {
+  return '<details class="acc" data-acc="' + id + '" id="acc-' + id + '"' + (OFFEN.has(id) ? ' open' : '') + '><summary>' +
+    (stand == null ? '' : '<span class="dot s' + stand + '"></span>') + '<span>' + esc(titel) + (info ? ' <small>· ' + esc(info) + '</small>' : '') + '</span></summary><div class="body">' + inhalt + '</div></details>';
+}
+const hilfe = (titel, text) => '<details class="hilfe"><summary>' + esc(titel) + '</summary>' + text + '</details>';
+const zf = n => String(n).replace('.', ',');
+
+const CHECK = [
+  'Ich habe meinen Ausbildungsvertrag unterschrieben zurück und eine Kopie behalten.',
+  'Ich weiß, wann und wo ich am ersten Tag sein muss und wer mich empfängt.',
+  'Ich habe meine Krankenkasse mitgeteilt und meine Sozialversicherungsnummer bzw. Steuer-ID parat.',
+  'Ich habe dem Betrieb meine Kontodaten für die Ausbildungsvergütung gegeben.',
+  'Ich habe mich bei der Berufsschule angemeldet und kenne meine Schultage bzw. Blockwochen.',
+  'Unter 18? Die ärztliche Erstuntersuchung nach dem Jugendarbeitsschutzgesetz ist erledigt (Bescheinigung beim Betrieb abgeben).',
+  'Ich habe den Ausbildungsplan bekommen und weiß, in welchen Abteilungen ich wann eingesetzt bin.',
+  'Ich weiß, wie der Betrieb den Ausbildungsnachweis (Berichtsheft) haben will: täglich oder wöchentlich, digital oder auf Papier.',
+  'Ich kenne meine Arbeitszeiten, Pausen und meinen Urlaubsanspruch.',
+  'Ich weiß, was ich tun muss, wenn ich krank bin, und wen ich anrufe.',
+  'Ich habe passende Arbeitskleidung und Schutzausrüstung (oder weiß, wer sie stellt).',
+  'Die Nummern von Betrieb, Ausbilder/in und Berufsschule sind in meinem Handy gespeichert.'
+];
+const SMILE = [[1, '😫', 'sehr schlecht'], [2, '😕', 'eher schlecht'], [3, '😐', 'mittel'], [4, '🙂', 'gut'], [5, '🤩', 'super']];
+
+/* ---------- Ansichten ---------- */
+function offeneWochen() { return AZ.wochenListe(D).filter(m => AZ.wocheStand(D.wochen[m]) < 2); }
+function vStart() {
+  const ph = AZ.phase(D), st = AZ.stand(D), vor = st.filter(x => x.tab === 'vor');
+  const fertig = st.filter(x => x.stand === 2).length, pro = Math.round(st.reduce((a, x) => a + x.stand, 0) / (st.length * 2) * 100);
+  const vn = esc(S.name.split(' ')[0]), b = AZ.parse(D.beginn);
+  let hero;
+  if (ph.phase === 'vor') {
+    const offen = vor.filter(x => x.stand < 2).length;
+    hero = '<h2>Hallo ' + vn + '!</h2><div class="gross">Noch ' + ph.bis + (ph.bis === 1 ? ' Tag' : ' Tage') + '</div><p>bis zum Beginn deiner Ausbildung (' + PB.wtag(b) + ', ' + PB.lang(b) + ').</p>' +
+      (offen ? '<p>Für den Start fehlt noch etwas.</p><button class="btn" data-go="vor">Jetzt vorbereiten</button>' : '<p>Du bist gut vorbereitet. Viel Erfolg!</p>');
+  } else {
+    const jetzt = aktuelleWoche(), w = D.wochen[jetzt], s = AZ.wocheStand(w), alt = offeneWochen().filter(m => m !== jetzt);
+    hero = '<h2>Hallo ' + vn + '!</h2><div class="gross">Woche ' + AZ.wocheNr(D, jetzt) + '</div><p>' + AZ.jahr(D, jetzt) + '. Ausbildungsjahr · KW ' + AZ.kw(jetzt) + ' (' + AZ.zeitraumWoche(jetzt) + ')</p>' +
+      '<button class="btn" data-go="woche" data-woche="' + jetzt + '">' + (s === 2 ? 'Nachweis dieser Woche ansehen ✓' : s === 1 ? 'Nachweis weiterschreiben' : 'Nachweis dieser Woche schreiben') + '</button>' +
+      (alt.length ? '<p style="margin-top:12px;font-size:.9rem">⚠ ' + alt.length + (alt.length === 1 ? ' frühere Woche ist' : ' frühere Wochen sind') + ' noch nicht abgeschlossen.</p><button class="btn" style="margin-top:0" data-go="woche" data-woche="' + alt[0] + '">Älteste offene Woche öffnen</button>' : '');
+  }
+  const tel = String(D.betrieb.tel || '').replace(/[^\d+]/g, '');
+  const wz = AZ.wochenZahlen(D);
+  return '<div class="card hero">' + hero + '</div>' +
+    '<div class="card"><h2>Mein Fortschritt</h2><div class="balken" role="img" aria-label="' + pro + ' Prozent"><i style="width:' + pro + '%"></i></div><p class="muted">' + fertig + ' von ' + st.length + ' Bereichen fertig' + (wz.hb ? ' · ' + zf(wz.hb) + ' Stunden im Betrieb erfasst' : '') + '</p><ul class="fort">' +
+    st.map(x => '<li><button type="button" data-go="' + x.tab + '" data-acc="' + x.id + '"><span class="dot s' + x.stand + '"></span>' + esc(x.titel) + '<span class="info">' + esc(x.info || (x.stand === 2 ? 'fertig' : x.stand === 1 ? 'angefangen' : 'offen')) + '</span></button></li>').join('') + '</ul></div>' +
+    '<div class="card notfall"><h2>Krank oder verspätet?</h2><ol><li><b>Sofort im Betrieb anrufen</b> – noch vor Arbeitsbeginn' +
+    (tel ? ': <a href="tel:' + esc(tel) + '">' + esc(D.betrieb.tel) + '</a>' : ' (trag die Nummer im Steckbrief ein)') + '.</li>' +
+    '<li><b>Berufsschule informieren</b>, wenn ein Schultag betroffen ist' + (D.betrieb.schule ? ' (' + esc(D.betrieb.schule) + ')' : '') + '.</li>' +
+    '<li><b>Ärztliche Bescheinigung:</b> spätestens ab dem 4. Krankheitstag – manche Betriebe verlangen sie früher. Frag nach der Regel in deinem Betrieb.</li></ol></div>';
+}
+
+function vVor() {
+  const st = AZ.stand(D), s = id => st.find(x => x.id === id);
+  const b = AZ.parse(D.beginn);
+  return '<div class="card"><h2>Ausbildungsstart</h2><p class="lead">Hier trägst du die wichtigsten Daten zu deiner Ausbildung ein und findest eine Checkliste, deine Rechte und Pflichten und Tipps für die ersten Wochen.</p></div>' +
+    acc('steckbrief', 'Mein Betrieb (Steckbrief)', s('steckbrief').stand,
+      F('betrieb.name', 'Name des Ausbildungsbetriebs') + F('betrieb.branche', 'Branche', { ph: 'z. B. Handwerk, Handel, Pflege, Verwaltung' }) +
+      F('betrieb.ort', 'Adresse', { ph: 'Straße, Ort' }) + F('betrieb.beruf', 'Mein Ausbildungsberuf', { ph: 'z. B. Kfz-Mechatroniker/in' }) +
+      F('betrieb.ausbilder', 'Ausbilder/in', { ph: 'Frau/Herr …' }) + F('betrieb.tel', 'Telefonnummer vom Betrieb', { type: 'tel' }) +
+      F('betrieb.mail', 'E-Mail des Ausbilders / der Ausbilderin') +
+      F('betrieb.zeiten', 'Meine Arbeitszeiten', { ph: 'z. B. 7:30 bis 16:00 Uhr, 45 Minuten Pause' }) +
+      F('betrieb.taetig', 'Was macht der Betrieb?', { area: 1, hint: 'freiwillig' }) + F('betrieb.team', 'Wie viele Mitarbeiter und Auszubildende gibt es?', { hint: 'freiwillig' }) +
+      '<h3>Berufsschule</h3>' +
+      F('betrieb.schule', 'Name der Berufsschule', { ph: 'z. B. Gewerbliche Schule Tauberbischofsheim' }) + F('betrieb.bsklasse', 'Meine Klasse') +
+      F('betrieb.schultage', 'Schultage oder Blockunterricht', { ph: 'z. B. Dienstag und Donnerstag' }) +
+      '<h3>Dauer</h3>' +
+      '<label class="f"><span>Beginn der Ausbildung</span><input type="date" data-p="beginn" value="' + esc(D.beginn) + '"></label>' +
+      '<div class="gruppe"><p class="frage">Dauer der Ausbildung (laut Vertrag)</p>' + wahl('dauer', [[2, '2 Jahre'], [2.5, '2,5'], [3, '3 Jahre'], [3.5, '3,5 Jahre'], [4, '4']], '', D.dauer) + '</div>' +
+      '<p class="muted">Voraussichtliches Ende: ' + AZ.ende(D) + '. Die App rechnet damit die Wochen deines Berichtshefts aus (ab ' + PB.wtag(b) + ', ' + PB.lang(b) + ').</p>') +
+    acc('check', 'Checkliste Ausbildungsstart', s('check').stand,
+      CHECK.map((c, i) => '<label class="check"><input type="checkbox" data-p="check.c' + (i + 1) + '"' + (D.check['c' + (i + 1)] ? ' checked' : '') + '><span>' + esc(c) + '</span></label>').join(''), s('check').info) +
+    acc('ziele', 'Meine Ziele', s('ziele').stand,
+      '<p class="muted">Schreib in ganzen Sätzen. Diese Texte kommen später in deinen Ausbildungsbericht.</p>' +
+      F('ziele.warum', 'Warum habe ich mich für diesen Beruf und diesen Betrieb entschieden?', { area: 1 }) +
+      F('ziele.erwartung', 'Was erwarte ich von der Ausbildung?', { area: 1, ph: 'Ich stelle mir vor, dass …' }) +
+      F('ziele.ziele', 'Das sind meine Ziele', { area: 1, ph: 'Ich möchte … lernen, die Prüfung mit … bestehen, nach der Ausbildung …' }) +
+      F('ziele.respekt', 'Davor habe ich etwas Respekt', { area: 1, hint: 'freiwillig' }) +
+      F('ziele.staerken', 'Diese Stärken bringe ich mit', { area: 1, ph: 'Ich kann gut …' })) +
+    acc('recht', 'Meine Rechte und Pflichten', null,
+      '<p class="muted">Kurzüberblick nach Berufsbildungsgesetz (BBiG) und Jugendarbeitsschutzgesetz (JArbSchG). Das ist keine Rechtsberatung – bei Fragen hilft dir dein Ausbilder, die zuständige Kammer (IHK oder Handwerkskammer) oder der Ausbildungsberater.</p>' +
+      '<dl class="recht"><dt>Probezeit</dt><dd>Sie dauert mindestens einen und höchstens vier Monate. In dieser Zeit kann der Vertrag von beiden Seiten ohne Frist gekündigt werden.</dd>' +
+      '<dt>Ausbildungsnachweis (Berichtsheft)</dt><dd>Du musst ihn führen, und der Betrieb muss dir dafür Zeit während der Ausbildungszeit geben. Ohne Nachweis kann die Zulassung zur Abschlussprüfung verweigert werden. Der Ausbilder prüft und unterschreibt ihn regelmäßig.</dd>' +
+      '<dt>Ausbildungsvergütung</dt><dd>Sie muss angemessen sein und steigt mit jedem Ausbildungsjahr.</dd>' +
+      '<dt>Arbeitszeit</dt><dd>Unter 18: höchstens 8 Stunden am Tag und 40 Stunden pro Woche, in der Regel 5-Tage-Woche. Ab 18 gilt das Arbeitszeitgesetz. Die Berufsschulzeit zählt als Arbeitszeit.</dd>' +
+      '<dt>Pausen</dt><dd>Unter 18: 30 Minuten bei mehr als 4,5 Stunden und 60 Minuten bei mehr als 6 Stunden Arbeit. Ab 18: 30 Minuten bei mehr als 6 Stunden.</dd>' +
+      '<dt>Urlaub</dt><dd>Er steht im Ausbildungsvertrag. Gesetzlich sind es mindestens 24 Werktage, bei Jugendlichen je nach Alter bis zu 30 Werktage. Urlaub nimmst du in der Regel in den Schulferien der Berufsschule.</dd>' +
+      '<dt>Ausbildungsmittel</dt><dd>Werkzeug, Material und Prüfungsgebühren für die Ausbildung muss der Betrieb stellen.</dd>' +
+      '<dt>Aufgaben</dt><dd>Du darfst nur Aufgaben bekommen, die zur Ausbildung gehören und deinen Fähigkeiten entsprechen. Dauerhafte Hilfsarbeiten ohne Lerninhalt gehören nicht dazu.</dd>' +
+      '<dt>Deine Pflichten</dt><dd>Lernen, Aufgaben sorgfältig erledigen, Berufsschule besuchen, Berichtsheft führen, Betriebsregeln einhalten, bei Krankheit sofort Bescheid geben und über Betriebsgeheimnisse schweigen.</dd></dl>') +
+    acc('tipps', 'Tipps für die ersten Wochen', null,
+      '<ul class="tipps"><li><b>Nachfragen:</b> Niemand erwartet, dass du schon alles kannst. Wer fragt, lernt schneller – und zeigt Interesse.</li><li><b>Notizen machen:</b> Schreib dir tagsüber Stichworte auf. Freitags schreibst du damit deinen Wochennachweis in zehn Minuten.</li>' +
+      '<li><b>Pünktlich sein:</b> Plane Puffer ein. Wenn du dich verspätest, ruf vorher an.</li><li><b>Fehler offen ansprechen:</b> Fehler passieren. Verschweigen macht sie schlimmer.</li>' +
+      '<li><b>Sicherheit:</b> Halte dich an alle Vorschriften und fass keine Maschinen an, die man dir nicht erklärt hat.</li><li><b>Lernen für die Prüfung:</b> Fang früh an. Berufsschulstoff und Praxis aus dem Betrieb gehören zusammen.</li>' +
+      '<li><b>Probleme früh klären:</b> Sprich zuerst mit deinem Ausbilder. Hilft das nicht, wende dich an die Berufsschule, die Jugend- und Auszubildendenvertretung (JAV), den Betriebsrat oder die Ausbildungsberatung der Kammer.</li></ul>');
+}
+
+function wochenKopf() {
+  const liste = AZ.wochenListe(D), jetzt = aktuelleWoche();
+  const buttons = (ALLE ? liste : liste.slice(-12)).map(m => '<button type="button" data-woche="' + m + '" aria-pressed="' + (m === WOCHE) + '" class="' + (m === jetzt ? 'jetzt' : '') + '" title="Woche ' + AZ.wocheNr(D, m) + ': ' + AZ.zeitraumWoche(m) + '"><b>KW ' + AZ.kw(m) + '</b><span class="dot s' + AZ.wocheStand(D.wochen[m]) + '"></span></button>').join('');
+  return '<div class="wochen" role="group" aria-label="Woche wählen">' + buttons + '</div>' +
+    (liste.length > 12 ? '<p style="margin:0 0 12px"><button type="button" class="btn sec klein" data-act="alle">' + (ALLE ? 'Nur die letzten 12 Wochen zeigen' : 'Alle ' + liste.length + ' Wochen zeigen') + '</button></p>' : '');
+}
+function vWoche() {
+  const ph = AZ.phase(D);
+  if (ph.phase === 'vor') return '<div class="card"><h2>Wochennachweise</h2><p class="lead">Deine Ausbildung beginnt am ' + PB.lang(AZ.parse(D.beginn)) + '. Ab dann findest du hier für jede Woche einen Ausbildungsnachweis.</p><p class="muted">Stimmt das Datum nicht? Ändere es bei „Start-Info“ im Steckbrief.</p></div>';
+  const liste = AZ.wochenListe(D); if (!liste.includes(WOCHE)) WOCHE = aktuelleWoche();
+  const m = WOCHE, i = liste.indexOf(m), p = 'wochen.' + m + '.', w = D.wochen[m] || {}, stw = AZ.wocheStand(w);
+  const abts = [...new Set(D.plan.map(x => String(x.abt || '').trim()).filter(Boolean))];
+  const vor = i > 0 ? liste[i - 1] : '', nach = i < liste.length - 1 ? liste[i + 1] : '';
+  const nav = '<div class="wnav"><button class="btn sec" type="button" data-woche="' + vor + '" aria-label="Vorherige Woche"' + (vor ? '' : ' disabled') + '>‹</button><div class="mitte"><b>Woche ' + AZ.wocheNr(D, m) + ' · KW ' + AZ.kw(m) + '</b><span class="muted">' + AZ.zeitraumWoche(m) + ' · ' + AZ.jahr(D, m) + '. Ausbildungsjahr</span></div><button class="btn sec" type="button" data-woche="' + nach + '" aria-label="Nächste Woche"' + (nach ? '' : ' disabled') + '>›</button></div>';
+  const art = w.art || '';
+  let body = '<div class="gruppe">' + wahl(p + 'art', AZ.ART, '', '') + '</div>';
+  if (art) body += F(p + 'taet', 'Bemerkung', { ph: art === 'krank' ? 'z. B. Krankmeldung am Montag, Attest ab Mittwoch' : 'optional', max: 200 });
+  else {
+    body += F(p + 'abt', 'Abteilung / Einsatzort', { ph: 'z. B. Werkstatt, Lager, Verwaltung', list: abts.length ? 'abtliste' : '' }) +
+      (abts.length ? '<datalist id="abtliste">' + abts.map(a => '<option value="' + esc(a) + '">').join('') + '</datalist>' : '') +
+      '<div class="row">' + F(p + 'hb', 'Stunden im Betrieb', { mode: 'decimal', max: 6, ph: 'z. B. 38,5' }) + F(p + 'hs', 'Stunden Berufsschule / Unterweisung', { mode: 'decimal', max: 6, ph: 'z. B. 8' }) + '</div>' +
+      F(p + 'taet', 'Betriebliche Tätigkeiten', { area: 1, hint: 'Eine Tätigkeit pro Zeile, mit einem Fachwort statt „geholfen“.', ph: 'Bremsbeläge an der Vorderachse gewechselt\nKundenauftrag im System angelegt' }) +
+      hilfe('Formulierungshilfen', '<p style="margin:6px 0 0">Ich habe … durchgeführt · Ich habe … nach Anweisung … · Zusammen mit … habe ich … · Ich habe … beobachtet und danach selbst … · Ich habe … kontrolliert und dokumentiert</p>') +
+      F(p + 'unterw', 'Unterweisungen, Lehrgespräche, Betriebsunterricht', { area: 1, hint: 'Eine Zeile pro Thema – auch Sicherheitsunterweisungen. Freiwillig.', ph: 'Unterweisung Arbeitssicherheit\nErklärung Diagnosegerät' }) +
+      F(p + 'bsthemen', 'Berufsschule: Themen und Lernfelder', { area: 1, hint: 'Nur ausfüllen, wenn du in dieser Woche Berufsschule hattest.' }) +
+      F(p + 'gelernt', 'Das habe ich diese Woche gelernt', { area: 1, hint: 'freiwillig – kommt in den Ausbildungsbericht' }) +
+      F(p + 'offen', 'Fragen oder Probleme für mein nächstes Gespräch', { area: 1, hint: 'freiwillig – deine Betreuung kann das lesen, im PDF steht es nicht' }) +
+      '<div class="gruppe"><p class="frage">Wie war die Woche?</p>' + wahl(p + 'stimmung', SMILE, 'smile') + '</div>' +
+      (i > 0 ? '<p><button class="btn sec klein" type="button" data-act="vorwoche">Abteilung und Stunden aus der Vorwoche übernehmen</button></p>' : '');
+  }
+  body += '<label class="check" style="border-top:1px solid var(--line);margin-top:6px;padding-top:12px"><input type="checkbox" data-p="' + p + 'fertig"' + (w.fertig ? ' checked' : '') + '><span><b>Diese Woche ist fertig</b> und kann von meinem Ausbilder abgezeichnet werden.</span></label>' +
+    (art ? '' : '<label class="check"><input type="checkbox" data-p="' + p + 'unterschr"' + (w.unterschr ? ' checked' : '') + '><span>Mein Ausbilder hat diese Woche unterschrieben (auf dem ausgedruckten Nachweis).</span></label>') +
+    '<p class="muted" style="margin-top:8px">' + (stw === 2 ? '✓ Diese Woche ist abgeschlossen.' : 'Alles wird automatisch gespeichert.') + '</p>';
+  const wz = AZ.wochenZahlen(D);
+  return '<div class="card"><h2>Ausbildungsnachweis</h2><p class="summe"><span><b>' + wz.fertig + '</b> von ' + wz.erwartet + ' Wochen abgeschlossen</span>' + (wz.hb ? '<span><b>' + zf(wz.hb) + '</b> Std. im Betrieb</span>' : '') + (wz.hs ? '<span><b>' + zf(wz.hs) + '</b> Std. Schule</span>' : '') + '</p>' + wochenKopf() + '</div>' +
+    '<div class="card">' + nav + body + '</div>';
+}
+
+function planEintraege() {
+  return D.plan.map((x, k) => '<div class="abt"><div class="kopf">Abteilung ' + (k + 1) + '<button type="button" data-del="plan" data-i="' + k + '">Entfernen</button></div>' +
+    '<input type="text" data-p="plan.' + k + '.abt" maxlength="120" value="' + esc(x.abt) + '" placeholder="Abteilung / Einsatzbereich" style="margin-bottom:6px">' +
+    '<div class="row"><label class="f"><span>von</span><input type="date" data-p="plan.' + k + '.von" value="' + esc(x.von) + '"></label><label class="f"><span>bis</span><input type="date" data-p="plan.' + k + '.bis" value="' + esc(x.bis) + '"></label></div>' +
+    '<input type="text" data-p="plan.' + k + '.ansprech" maxlength="120" value="' + esc(x.ansprech) + '" placeholder="Ansprechperson" style="margin-bottom:6px">' +
+    '<textarea data-p="plan.' + k + '.ziel" maxlength="600" placeholder="Lernziele in dieser Abteilung" style="min-height:52px">' + esc(x.ziel) + '</textarea></div>').join('');
+}
+function vAusb() {
+  const st = AZ.stand(D), s = id => st.find(x => x.id === id);
+  const skala = AZ.KOMP.map(x => '<div class="skala"><span>' + esc(x[1]) + '</span>' + wahl('komp.' + x[0], [1, 2, 3, 4].map(n => [n, esc(AZ.SKALA[n])])) + '</div>').join('');
+  return '<div class="card"><h2>Meine Ausbildung</h2><p class="lead">Behalte Ausbildungsplan, Berufsschule und Prüfungen im Blick und schätze regelmäßig ein, wo du stehst.</p></div>' +
+    acc('plan', 'Ausbildungsplan', s('plan').stand,
+      '<p class="muted">Trag ein, wann du in welcher Abteilung bist. Du findest den Plan in deinen Ausbildungsunterlagen – oder frag deinen Ausbilder. Die Abteilungen erscheinen im Wochennachweis als Auswahl.</p>' + planEintraege() +
+      '<button class="btn sec klein" type="button" data-add="plan">+ Abteilung hinzufügen</button>', s('plan').info) +
+    acc('bs', 'Berufsschule', s('bs').stand,
+      F('bs.faecher', 'Fächer und Lernfelder in diesem Schuljahr', { area: 1 }) + F('bs.noten', 'Meine Noten', { area: 1, hint: 'freiwillig – zum Beispiel aus dem letzten Zeugnis' }) +
+      F('bs.staerken', 'Das fällt mir leicht', { area: 1 }) + F('bs.schwaechen', 'Das fällt mir schwer', { area: 1 }) +
+      F('bs.lernen', 'So lerne ich und so hole ich mir Unterstützung', { area: 1, ph: 'Lerngruppe, Nachhilfe, Übungsaufgaben, Fragen an Lehrkräfte …' })) +
+    acc('pruef', 'Prüfungen', s('pruef').stand,
+      '<div class="row"><label class="f"><span>Zwischenprüfung / Teil 1 der Abschlussprüfung</span><input type="date" data-p="pruef.zwischen" value="' + esc(D.pruef.zwischen || '') + '"></label>' +
+      '<label class="f"><span>Abschlussprüfung</span><input type="date" data-p="pruef.abschluss" value="' + esc(D.pruef.abschluss || '') + '"></label></div>' +
+      F('pruef.themen', 'Prüfungsthemen und Prüfungsteile', { area: 1, hint: 'Frag bei deiner Kammer oder im Betrieb nach dem Prüfungskatalog.' }) +
+      F('pruef.lernplan', 'So bereite ich mich vor', { area: 1, ph: 'Lernplan, alte Prüfungen üben, Lerngruppe, Betriebsaufgaben …' }) +
+      F('pruef.ergebnis', 'Ergebnisse', { area: 1, hint: 'freiwillig – nach der Prüfung' }) +
+      (D.pruef.abschluss ? '<p class="muted">' + (() => { const t = Math.round((AZ.parse(D.pruef.abschluss) - new Date(new Date().toDateString())) / 86400000); return t > 0 ? 'Noch ' + t + ' Tage bis zur Abschlussprüfung.' : t === 0 ? 'Heute ist die Abschlussprüfung. Viel Erfolg!' : ''; })() + '</p>' : '')) +
+    acc('komp', 'Meine Kompetenzen', s('komp').stand,
+      '<p class="muted">Schätze dich ehrlich ein – am besten am Ende jedes Ausbildungsjahres. Das hilft für das Gespräch mit deinem Ausbilder.</p>' + skala, s('komp').info);
+}
+
+function vBericht() {
+  const st = AZ.stand(D), rb = st.find(x => x.id === 'rb'), fehlt = st.filter(x => x.stand < 2 && x.id !== 'check');
+  const offen = offeneWochen();
+  let h = acc('rb', 'Mein Rückblick', rb.stand,
+    '<p class="muted">Schreib den Rückblick am Ende eines Ausbildungsabschnitts, zum Beispiel nach jedem Ausbildungsjahr.</p>' +
+    '<div class="row"><label class="f"><span>Berichtszeitraum von<small>leer = ab Ausbildungsbeginn</small></span><input type="date" data-p="rb.von" value="' + esc(D.rb.von || '') + '"></label>' +
+    '<label class="f"><span>bis<small>leer = bis heute</small></span><input type="date" data-p="rb.bis" value="' + esc(D.rb.bis || '') + '"></label></div>' +
+    F('rb.erfuellt', 'Haben sich meine Erwartungen an die Ausbildung erfüllt?', { area: 1, ph: 'Meine Erwartungen haben sich … erfüllt, weil …' }) +
+    F('rb.gefallen', 'Das gefällt mir gut', { area: 1 }) + F('rb.schwierig', 'Das ist schwierig oder gefällt mir nicht', { area: 1 }) +
+    F('rb.erfolg', 'Mein größter Lernerfolg', { area: 1 }) +
+    F('rb.gelernt', 'Das habe ich über mich und die Arbeitswelt gelernt', { area: 1 }) +
+    '<div class="gruppe"><p class="frage">Wie zufrieden bist du insgesamt mit deiner Ausbildung?</p>' + wahl('rb.zufrieden', [1, 2, 3, 4, 5].map(n => [n, esc(AZ.ZUFRIEDEN[n])])) + '</div>' +
+    F('rb.ausblick', 'Das will ich im nächsten Abschnitt erreichen', { area: 1 }) +
+    F('rb.wunsch', 'Das wünsche ich mir von Betrieb oder Berufsschule', { area: 1, hint: 'freiwillig' }));
+
+  h += '<div class="card"><h2>Mein Berichtsheft</h2><p class="lead">Deine Wochennachweise als PDF mit Feldern für deine Unterschrift und die deines Ausbilders – zum Ausdrucken.</p>' +
+    (offen.length ? '<p class="msg" style="background:#FFF3DC;color:#7A4A00">' + offen.length + (offen.length === 1 ? ' Woche ist' : ' Wochen sind') + ' noch nicht abgeschlossen. Älteste: KW ' + AZ.kw(offen[0]) + ' (' + AZ.zeitraumWoche(offen[0]) + ').</p>' : '') +
+    '<div class="knoepfe"><button class="btn" type="button" data-act="heftpdf">Berichtsheft als PDF</button>' + (offen.length ? '<button class="btn sec" type="button" data-go="woche" data-woche="' + offen[0] + '">Offene Woche öffnen</button>' : '') + '</div>' +
+    '<p class="muted" style="margin-top:8px">Der Zeitraum richtet sich nach „Berichtszeitraum“ im Rückblick. Dein Betreuer kann die Nachweise ebenfalls einsehen.</p></div>';
+
+  h += '<div class="card"><h2>Mein Ausbildungsbericht</h2>';
+  if (!D.bericht) {
+    h += '<p class="lead">Aus allem, was du eingetragen hast, baut die App deinen Ausbildungsbericht zusammen – inklusive deiner Tätigkeiten aus den Wochennachweisen. Danach kannst du jeden Abschnitt überarbeiten.</p>' +
+      (fehlt.length ? '<p class="frage">Das fehlt noch oder ist noch nicht vollständig:</p><ul class="fort">' + fehlt.map(x => '<li><button type="button" data-go="' + x.tab + '" data-acc="' + x.id + '"><span class="dot s' + x.stand + '"></span>' + esc(x.titel) + '<span class="info">ergänzen ›</span></button></li>').join('') + '</ul>' : '<p class="msg gut">Alle Bereiche sind ausgefüllt. Sehr gut!</p>') +
+      '<div class="knoepfe"><button class="btn" type="button" data-act="erstellen">Bericht erstellen</button></div>' +
+      (fehlt.length ? '<p class="muted" style="margin-top:8px">Du kannst den Bericht auch jetzt schon erstellen und fehlende Teile später nachtragen.</p>' : '');
+  } else {
+    h += '<p><span class="status ' + (S.abgegeben_am ? 'gut' : '') + '" id="abgStatus">' + (S.abgegeben_am ? 'Abgegeben am ' + PB.zeitpunkt(S.abgegeben_am) : 'Noch nicht abgegeben') + '</span></p>' +
+      '<p class="muted">Lies jeden Abschnitt durch und verbessere ihn: ganze Sätze, Rechtschreibung, nichts doppelt. Mit ↻ holst du einen Abschnitt neu aus deinen Einträgen – deine Änderungen an diesem Abschnitt gehen dabei verloren.</p>' +
+      D.bericht.teile.map((x, k) => '<div class="teil"><div class="tk"><b>' + (k + 1) + ' · ' + esc(x.titel) + '</b><button type="button" data-act="teilneu" data-i="' + k + '" title="Diesen Abschnitt neu aus den Einträgen holen">↻ neu holen</button></div><textarea data-p="bericht.teile.' + k + '.text" maxlength="6000" placeholder="Hier steht noch nichts. Fülle den passenden Bereich aus und tippe auf „neu holen“ – oder schreib den Text direkt hier.">' + esc(x.text) + '</textarea></div>').join('') +
+      '<div class="knoepfe"><button class="btn" type="button" data-act="abgeben">' + (S.abgegeben_am ? 'Erneut speichern und abgeben' : 'Speichern und abgeben') + '</button><button class="btn sec" type="button" data-act="pdf">Als PDF herunterladen</button></div>' +
+      '<div id="bMsg" class="msg hidden" role="status"></div>' +
+      '<p class="muted" style="margin-top:10px">Nach dem Abgeben kann deine Betreuung den Bericht lesen. Du kannst ihn danach weiter verbessern und erneut abgeben.</p>';
+  }
+  return h + '</div>';
+}
+
+/* ---------- Anzeigen ---------- */
+const ANSICHT = { start: vStart, vor: vVor, woche: vWoche, ausb: vAusb, bericht: vBericht };
+function wachse(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; }
+function zeige(tab, behalte) {
+  const y = scrollY; TAB = tab; $('app').innerHTML = ANSICHT[tab]();
+  document.querySelectorAll('nav button').forEach(b => b.toggleAttribute('aria-current', false));
+  document.querySelector('nav button[data-tab="' + tab + '"]').setAttribute('aria-current', 'page');
+  $('app').querySelectorAll('textarea').forEach(wachse);
+  scrollTo(0, behalte ? y : 0);
+}
+function gehe(tab, accId, woche) {
+  if (woche) WOCHE = woche;
+  if (accId && accId !== 'woche') OFFEN.add(accId);
+  zeige(tab);
+  const el = accId && $('acc-' + accId); if (el) el.scrollIntoView({ block: 'start' }), scrollBy(0, -70);
+}
+function meldung(txt, gut) { const m = $('bMsg'); if (!m) return; m.textContent = txt; m.className = 'msg' + (gut ? ' gut' : ''); }
+
+$('nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) zeige(b.dataset.tab); });
+$('app').addEventListener('toggle', e => {
+  const d = e.target; if (!d.dataset || !d.dataset.acc) { if (d.open) d.querySelectorAll('textarea').forEach(wachse); return; }
+  if (d.open) { OFFEN.add(d.dataset.acc); d.querySelectorAll('textarea').forEach(wachse); } else OFFEN.delete(d.dataset.acc);
+}, true);
+$('app').addEventListener('input', e => {
+  const el = e.target, p = el.dataset.p; if (!p) return;
+  if (el.type === 'checkbox') setze(p, el.checked);
+  else if (el.type === 'date' && !/^\d{4}-\d\d-\d\d$/.test(el.value) && (p === 'beginn')) return;
+  else setze(p, el.value);
+  if (el.tagName === 'TEXTAREA') wachse(el);
+  geaendert();
+});
+$('app').addEventListener('change', e => {
+  const p = e.target.dataset.p;
+  if (p === 'beginn' || (p && (p.startsWith('check.') || p.endsWith('.fertig') || p.endsWith('.unterschr')))) { if (p === 'beginn') WOCHE = aktuelleWoche(); zeige(TAB, true); }
+});
+const KEIN_UMSCHALTEN = /(status|dauer|\.art)$/;
+$('app').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return; const d = b.dataset;
+  if (d.go) return gehe(d.go, d.acc, d.woche);
+  if (d.woche != null && !d.go) { if (!d.woche) return; WOCHE = d.woche; return zeige('woche'); }
+  if (d.set) { const alt = hole(d.set), neu = /^\d+$/.test(d.val) ? +d.val : d.val; setze(d.set, String(alt) === String(neu) && !KEIN_UMSCHALTEN.test(d.set) ? null : neu); geaendert(); return zeige(TAB, true); }
+  if (d.add) { hole(d.add).push(d.add === 'plan' ? { abt: '', von: '', bis: '', ansprech: '', ziel: '' } : ''); geaendert(); zeige(TAB, true); const f = $('app').querySelectorAll('[data-p^="' + d.add + '."]'); if (f.length) f[Math.max(0, f.length - 5)].focus(); return; }
+  if (d.del) { const arr = hole(d.del), x = arr[+d.i]; const voll = typeof x === 'string' ? x.trim() : Object.values(x).join('').trim(); if (voll && !confirm('Diesen Eintrag wirklich entfernen?')) return; arr.splice(+d.i, 1); geaendert(); return zeige(TAB, true); }
+  if (d.act === 'alle') { ALLE = !ALLE; return zeige('woche', true); }
+  if (d.act === 'vorwoche') {
+    const liste = AZ.wochenListe(D), i = liste.indexOf(WOCHE); if (i < 1) return; const v = D.wochen[liste[i - 1]] || {};
+    if (!v.abt && !v.hb && !v.hs) return alert('In der Vorwoche stehen keine Angaben zu Abteilung oder Stunden.');
+    const w = D.wochen[WOCHE] = D.wochen[WOCHE] || {}; if (v.abt) w.abt = v.abt; if (v.hb) w.hb = v.hb; if (v.hs) w.hs = v.hs;
+    geaendert(); return zeige('woche', true);
+  }
+  if (d.act === 'erstellen') { D.bericht = { erstellt: new Date().toISOString(), teile: AZ.teile(D) }; geaendert(); return zeige('bericht', true); }
+  if (d.act === 'teilneu') {
+    const i = +d.i, neu = AZ.teile(D)[i]; if (!neu) return;
+    if (D.bericht.teile[i].text.trim() && D.bericht.teile[i].text !== neu.text && !confirm('Diesen Abschnitt neu aus deinen Einträgen holen? Deine Änderungen an diesem Abschnitt gehen verloren.')) return;
+    D.bericht.teile[i] = neu; geaendert(); return zeige('bericht', true);
+  }
+  if (d.act === 'abgeben') {
+    b.disabled = true; meldung('Wird gespeichert …', true);
+    const ok = await sync(true); b.disabled = false;
+    if (ok) { zeige('bericht', true); meldung('Dein Bericht ist gespeichert und abgegeben. Deine Betreuung kann ihn jetzt lesen.', true); }
+    else meldung('Das Abgeben hat nicht geklappt. Prüfe deine Internetverbindung und versuche es noch einmal. Deine Texte sind auf diesem Gerät gesichert.');
+    return;
+  }
+  if (d.act === 'pdf' || d.act === 'heftpdf') {
+    if (!window.jspdf) return alert('Das PDF-Werkzeug konnte nicht geladen werden. Prüfe deine Internetverbindung und lade die Seite neu.');
+    const rec = { name: S.name, gruppe: S.gruppe, data: D, abgegeben_am: S.dirty ? null : S.abgegeben_am, updated_at: new Date().toISOString() };
+    if (d.act === 'pdf') AZ.pdf([rec]).save(AZ.dateiname(S));
+    else AZ.pdfHeft([rec], { von: D.rb.von, bis: D.rb.bis }).save(AZ.dateiname(S, 'Berichtsheft'));
+  }
+});
+
+/* ---------- Start ---------- */
+PB.ladeLogo('../img/logo.png');
+S = lade();
+if (S && !S.gesperrt) { starte(); abgleich(); } else zeigeLogin();
+/* Gruppen-Link (…/azubi/?gruppe=Kfz2026): Gruppe ist fest vorgegeben */
+const GP = (new URLSearchParams(location.search).get('gruppe') || '').trim();
+if (/^[A-Za-z0-9ÄÖÜäöüß][A-Za-z0-9ÄÖÜäöüß .,\/_-]{1,29}$/.test(GP)) {
+  $('lGruppe').value = GP; $('lGruppe').readOnly = true;
+  if (!$('login').classList.contains('hidden')) $('wer').textContent = GP + ' · PAGS Külsheim';
+}
+</script>
+</body>
+</html>
