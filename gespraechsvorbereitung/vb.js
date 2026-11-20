@@ -47,126 +47,111 @@
   /* ---------- Fragenkatalog ---------- */
   // Arbeits- und Sozialverhalten: dieselben Punkte aus drei Blickwinkeln (Schüler, Eltern, Lehrer) – so lassen sie sich vergleichen.
   VB.KRITERIEN = [
-    { k: 'konz', s: 'Ich arbeite im Unterricht konzentriert mit.', e: 'Mein Kind arbeitet konzentriert (z. B. bei Hausaufgaben).', l: 'arbeitet im Unterricht konzentriert mit', kurz: 'Konzentration' },
-    { k: 'sorg', s: 'Ich arbeite sorgfältig (Hefte, Mappen, Ordner).', e: 'Mein Kind arbeitet sorgfältig und ordentlich.', l: 'arbeitet sorgfältig, Hefte und Mappen sind ordentlich', kurz: 'Sorgfalt' },
-    { k: 'haus', s: 'Ich erledige meine Hausaufgaben vollständig und pünktlich.', e: 'Mein Kind erledigt seine Hausaufgaben zuverlässig.', l: 'erledigt Hausaufgaben vollständig und pünktlich', kurz: 'Hausaufgaben' },
-    { k: 'mat', s: 'Ich habe mein Material dabei und bin pünktlich.', e: 'Mein Kind denkt an sein Material und ist pünktlich.', l: 'hat das Material dabei und ist pünktlich', kurz: 'Material, Pünktlichkeit' },
-    { k: 'selbst', s: 'Ich plane meine Aufgaben in der IL selbstständig.', e: 'Mein Kind plant und arbeitet selbstständig.', l: 'plant und arbeitet in der IL selbstständig', kurz: 'Selbstständigkeit (IL)' },
-    { k: 'mit', s: 'Ich beteilige mich am Unterricht und melde mich.', e: 'Mein Kind zeigt Interesse am Unterricht.', l: 'beteiligt sich aktiv am Unterricht', kurz: 'Mitarbeit' },
-    { k: 'frag', s: 'Ich frage nach, wenn ich etwas nicht verstehe.', e: 'Mein Kind holt sich Hilfe, wenn es etwas nicht versteht.', l: 'fragt nach und holt sich Hilfe', kurz: 'Hilfe holen' },
-    { k: 'regel', s: 'Ich halte mich an Regeln und Absprachen.', e: 'Mein Kind hält sich an Regeln und Absprachen.', l: 'hält Regeln und Absprachen ein', kurz: 'Regeln' },
-    { k: 'team', s: 'Ich arbeite gut mit anderen zusammen.', e: 'Mein Kind arbeitet gern und gut mit anderen zusammen.', l: 'arbeitet gut im Team', kurz: 'Teamarbeit' },
-    { k: 'umg', s: 'Ich gehe respektvoll und fair mit anderen um.', e: 'Mein Kind geht respektvoll mit anderen um.', l: 'geht respektvoll und fair mit anderen um', kurz: 'Umgang' },
-    { k: 'konf', s: 'Ich löse Streit ruhig und fair.', e: 'Mein Kind löst Konflikte angemessen.', l: 'löst Konflikte angemessen', kurz: 'Konflikte' },
-    { k: 'dig', s: 'Ich nutze iPad und Handy verantwortungsvoll.', e: 'Mein Kind geht verantwortungsvoll mit Handy und Medien um.', l: 'nutzt iPad und Handy verantwortungsvoll', kurz: 'Medien' }
+    { k: 'konz', s: 'Ich arbeite konzentriert mit.', e: 'Mein Kind arbeitet konzentriert.', l: 'arbeitet konzentriert mit', kurz: 'Konzentration' },
+    { k: 'haus', s: 'Ich mache meine Hausaufgaben zuverlässig.', e: 'Mein Kind erledigt Hausaufgaben zuverlässig.', l: 'erledigt Hausaufgaben zuverlässig', kurz: 'Hausaufgaben' },
+    { k: 'mat', s: 'Ich habe mein Material dabei und bin pünktlich.', e: 'Mein Kind ist organisiert und pünktlich.', l: 'hat Material dabei, ist pünktlich', kurz: 'Material, Pünktlichkeit' },
+    { k: 'selbst', s: 'Ich arbeite in der IL selbstständig.', e: 'Mein Kind arbeitet selbstständig.', l: 'arbeitet in der IL selbstständig', kurz: 'Selbstständigkeit (IL)' },
+    { k: 'mit', s: 'Ich beteilige mich am Unterricht.', e: 'Mein Kind interessiert sich für die Schule.', l: 'beteiligt sich am Unterricht', kurz: 'Mitarbeit' },
+    { k: 'frag', s: 'Ich frage nach, wenn ich etwas nicht verstehe.', e: 'Mein Kind holt sich Hilfe, wenn nötig.', l: 'fragt nach, holt sich Hilfe', kurz: 'Hilfe holen' },
+    { k: 'team', s: 'Ich arbeite gut mit anderen zusammen.', e: 'Mein Kind kommt gut mit anderen aus.', l: 'arbeitet gut mit anderen zusammen', kurz: 'Teamarbeit' },
+    { k: 'regel', s: 'Ich halte mich an Regeln und gehe fair mit anderen um.', e: 'Mein Kind hält sich an Regeln und ist fair.', l: 'hält Regeln ein, geht fair mit anderen um', kurz: 'Regeln, Umgang' }
   ];
   VB.STUFEN = [{ v: 4, t: '++', l: 'trifft voll zu' }, { v: 3, t: '+', l: 'trifft eher zu' }, { v: 2, t: '–', l: 'trifft eher nicht zu' }, { v: 1, t: '– –', l: 'trifft nicht zu' }];
-  VB.FAECHER = ['Deutsch', 'Mathematik', 'Englisch', 'WBS', 'Geographie', 'Gemeinschaftskunde', 'Geschichte', 'Biologie', 'Physik', 'Chemie', 'Wahlpflichtfach', 'Sport', 'BK / Musik', 'Religion / Ethik'];
+  VB.FAECHER = ['Deutsch', 'Mathematik', 'Englisch', 'WBS', 'Geographie', 'Gemeinschaftskunde', 'Geschichte', 'Naturwissenschaften', 'Wahlpflichtfach', 'Sport', 'BK / Musik', 'Religion / Ethik'];
   VB.AMPEL = [{ v: 'g', t: 'läuft gut', c: '#1B7A3D' }, { v: 'm', t: 'geht so', c: '#D99A00' }, { v: 's', t: 'schwierig', c: '#C0261A' }];
   VB.SMILEY = [{ v: 1, t: '😟', l: 'gar nicht gut' }, { v: 2, t: '🙁', l: 'eher schlecht' }, { v: 3, t: '😐', l: 'mittel' }, { v: 4, t: '🙂', l: 'gut' }, { v: 5, t: '😄', l: 'sehr gut' }];
 
-  const NACH10 = ['Ausbildung', 'Berufliches Gymnasium', 'Berufskolleg', 'Berufsfachschule', 'Weiß ich noch nicht'];
+  // Gemeinsame Auswahllisten – dieselben Begriffe bei Schüler, Eltern und Lehrer, damit sie vergleichbar sind
+  const NACH10 = ['Ausbildung', 'Berufliches Gymnasium', 'Berufskolleg', 'Berufsfachschule', 'Noch offen'];
+  const STAERKEN = ['hilfsbereit', 'zuverlässig', 'kreativ', 'sportlich', 'handwerklich geschickt', 'technisch / digital fit', 'sprachlich stark', 'gut in Mathe / Logik', 'organisiert', 'teamfähig', 'humorvoll', 'ausdauernd'];
+  const BERUFE = ['Handwerk / Technik', 'Büro / Verwaltung', 'Handel / Verkauf', 'Gesundheit / Pflege', 'Soziales / Erziehung', 'IT / Medien', 'Gastronomie / Hotel', 'Natur / Landwirtschaft', 'Gestaltung / Kreatives', 'Noch keine Idee'];
+  const ZIELE = ['Hausaufgaben vollständig machen', 'Pünktlich sein, Material dabeihaben', 'Früher für Arbeiten lernen', 'Mehr im Unterricht mitarbeiten', 'In der IL selbstständiger arbeiten', 'Konzentrierter arbeiten', 'Eine Note verbessern', 'Praktikum / Bewerbung angehen', 'Konflikte fair lösen'];
+  const HILFE = ['Deutsch', 'Mathematik', 'Englisch', 'Lernen planen', 'Für Arbeiten lernen', 'Konzentration', 'Hausaufgaben', 'Brauche gerade keine'];
+  const THEMEN = ['Noten', 'Abschluss', 'Beruf / Praktikum', 'Klasse / Mitschüler', 'Lernen / Hausaufgaben', 'Stress', 'Nichts Bestimmtes'];
+  const ABSCHLUSS = ['Realschulabschluss (Kl. 10)', 'Hauptschulabschluss', 'Noch unsicher'];
+  VB.LISTEN = { STAERKEN, ZIELE };
 
   // Teil für die Schülerin / den Schüler (du)
   VB.SCHUELER = [
-    { id: 'wohl', titel: 'So geht es mir', intro: 'Hier geht es um dich – ehrlich ist am besten. Es gibt kein Richtig oder Falsch.', felder: [
-      { id: 's_schule', typ: 'skala5', frage: 'Wie fühlst du dich zurzeit an der Schule?' },
-      { id: 's_klasse', typ: 'skala5', frage: 'Wie fühlst du dich in deiner Klasse?' },
-      { id: 's_gut', typ: 'text', frage: 'Was gefällt dir an der Schule gerade besonders?' },
-      { id: 's_stoert', typ: 'text', frage: 'Was stört oder belastet dich gerade?', hilfe: 'Zum Beispiel Stress, Streit, Lärm, zu viele Arbeiten …' }
+    { id: 'wohl', titel: 'So geht es mir', intro: 'Tippe an, was passt. Ehrlich ist am besten.', felder: [
+      { id: 's_schule', typ: 'skala5', frage: 'An der Schule fühle ich mich …' },
+      { id: 's_klasse', typ: 'skala5', frage: 'In meiner Klasse fühle ich mich …' },
+      { id: 's_belast', typ: 'mehr', frage: 'Was belastet dich gerade?', optionen: ['Nichts – alles okay', 'Zu viele Arbeiten / Stress', 'Streit mit Mitschülern', 'Unruhe in der Klasse', 'Ein bestimmtes Fach', 'Zu wenig Schlaf / Freizeit', 'Handy / Social Media', 'Etwas Privates'] }
     ] },
-    { id: 'verhalten', titel: 'Wie ich arbeite', intro: 'Schätze dich selbst ein: ++ trifft voll zu · + eher · – eher nicht · – – trifft nicht zu.', felder: [
+    { id: 'arbeit', titel: 'Wie ich arbeite', intro: '++ trifft voll zu · + eher · – eher nicht · – – trifft nicht zu', felder: [
       { id: 's_krit', typ: 'kriterien', sicht: 's' }
     ] },
-    { id: 'faecher', titel: 'Meine Fächer', intro: 'Wie läuft es in den einzelnen Fächern? Tippe auf eine Farbe.', felder: [
-      { id: 's_faecher', typ: 'faecher' },
-      { id: 's_stolz', typ: 'text', frage: 'Worauf bist du in diesem Schuljahr stolz?' },
-      { id: 's_hilfe', typ: 'text', frage: 'Wo brauchst du Unterstützung – und welche?' }
+    { id: 'faecher', titel: 'Meine Fächer', felder: [
+      { id: 's_faecher', typ: 'faecher', frage: 'Wie läuft es?' },
+      { id: 's_hilfe', typ: 'mehr', frage: 'Wobei brauchst du Unterstützung?', optionen: HILFE }
     ] },
-    { id: 'staerken', titel: 'Meine Stärken', felder: [
-      { id: 's_kann', typ: 'text', frage: 'Was kannst du gut – in der Schule und außerhalb?' },
-      { id: 's_hobby', typ: 'text', frage: 'Was machst du in deiner Freizeit gern (Hobbys, Verein, Nebenjob)?' },
-      { id: 's_besser', typ: 'text', frage: 'Was möchtest du an dir oder deiner Arbeitsweise verbessern?' }
+    { id: 'zukunft', titel: 'Stärken und Zukunft', felder: [
+      { id: 's_staerken', typ: 'mehr', frage: 'Ich bin …', optionen: STAERKEN },
+      { id: 's_abschluss', typ: 'wahl', frage: 'Mein Ziel-Abschluss', optionen: ABSCHLUSS },
+      { id: 's_nach10', typ: 'mehr', frage: 'Nach der Schule möchte ich …', optionen: NACH10 },
+      { id: 's_beruf', typ: 'mehr', frage: 'Diese Berufsfelder interessieren mich', optionen: BERUFE }
     ] },
-    { id: 'zukunft', titel: 'Meine Zukunft', felder: [
-      { id: 's_abschluss', typ: 'wahl', frage: 'Welchen Abschluss strebst du an?', optionen: ['Realschulabschluss nach Klasse 10', 'Hauptschulabschluss nach Klasse 9', 'Hauptschulabschluss nach Klasse 10', 'Bin mir noch unsicher'] },
-      { id: 's_nach10', typ: 'mehr', frage: 'Wie könnte es nach der Schule weitergehen?', optionen: NACH10 },
-      { id: 's_beruf', typ: 'text', frage: 'Welche Berufe interessieren dich? Was hast du im Praktikum erlebt?' }
-    ] },
-    { id: 'ziele', titel: 'Meine Ziele', intro: 'Überlege dir bis zu drei Ziele bis zum nächsten Gespräch. Gute Ziele sind konkret: Was genau? Wie? Bis wann?', felder: [
-      { id: 's_ziele', typ: 'ziele' },
-      { id: 's_brauche', typ: 'text', frage: 'Was brauchst du dafür von deinen Lehrkräften oder deinen Eltern?' }
-    ] },
-    { id: 'gespraech', titel: 'Fürs Gespräch', felder: [
-      { id: 's_themen', typ: 'text', frage: 'Das möchte ich im Gespräch unbedingt ansprechen:' },
-      { id: 's_fragen', typ: 'text', frage: 'Meine Fragen an Herrn von Plotho-Kettner:' }
+    { id: 'gespraech', titel: 'Ziele und Gespräch', felder: [
+      { id: 's_ziele', typ: 'mehr', frage: 'Daran will ich bis zum nächsten Gespräch arbeiten (1–3)', optionen: ZIELE },
+      { id: 's_themen', typ: 'mehr', frage: 'Das möchte ich im Gespräch ansprechen', optionen: THEMEN },
+      { id: 's_sonst', typ: 'kurz', frage: 'Sonst noch etwas?', hilfe: '(freiwillig, ein Satz)', frei: true }
     ] }
   ];
 
   // Teil für die Eltern (Sie)
   VB.ELTERN = [
-    { id: 'erleben', titel: 'Wie erleben Sie Ihr Kind?', intro: 'Ihre Sicht von zu Hause ergänzt das, was wir in der Schule sehen.', felder: [
-      { id: 'e_stimmung', typ: 'skala5', frage: 'Wie geht es Ihrem Kind zurzeit mit der Schule?' },
-      { id: 'e_erzaehlt', typ: 'text', frage: 'Was erzählt Ihr Kind zu Hause über die Schule und die Klasse?' },
-      { id: 'e_veraendert', typ: 'text', frage: 'Was hat sich seit Beginn des Schuljahres verändert?' }
+    { id: 'kind', titel: 'Ihr Kind und die Schule', felder: [
+      { id: 'e_stimmung', typ: 'skala5', frage: 'Mit der Schule geht es meinem Kind …' },
+      { id: 'e_veraendert', typ: 'wahl', frage: 'Seit Schuljahresbeginn ist es …', optionen: ['eher besser geworden', 'gleich geblieben', 'eher schwieriger geworden'] },
+      { id: 'e_ha', typ: 'wahl', frage: 'Hausaufgaben macht mein Kind …', optionen: ['selbstständig', 'mit Erinnerung', 'mit viel Hilfe', 'selten'] },
+      { id: 'e_lernen', typ: 'wahl', frage: 'Für Arbeiten lernt mein Kind …', optionen: ['rechtzeitig', 'kurz vorher', 'kaum'] },
+      { id: 'e_medien', typ: 'wahl', frage: 'Die Zeit mit Handy und Medien ist …', optionen: ['angemessen', 'eher viel', 'zu viel'] }
     ] },
-    { id: 'zuhause', titel: 'Lernen zu Hause', felder: [
-      { id: 'e_ha', typ: 'wahl', frage: 'Hausaufgaben erledigt mein Kind …', optionen: ['selbstständig', 'mit Erinnerung', 'mit viel Unterstützung', 'selten'] },
-      { id: 'e_lernen', typ: 'wahl', frage: 'Für Klassenarbeiten lernt mein Kind …', optionen: ['rechtzeitig und geplant', 'meist kurz vorher', 'kaum'] },
-      { id: 'e_medien', typ: 'wahl', frage: 'Die Zeit mit Handy, Spielen und Medien ist …', optionen: ['angemessen', 'eher viel', 'zu viel'] },
-      { id: 'e_zuhause', typ: 'text', frage: 'Was klappt beim Lernen zu Hause gut, was ist schwierig?' }
-    ] },
-    { id: 'verhalten', titel: 'Ihre Einschätzung', intro: '++ trifft voll zu · + eher · – eher nicht · – – trifft nicht zu · ? kann ich nicht einschätzen.', felder: [
+    { id: 'einsch', titel: 'Ihre Einschätzung', intro: '++ trifft voll zu · + eher · – eher nicht · – – trifft nicht zu · ? weiß ich nicht', felder: [
       { id: 'e_krit', typ: 'kriterien', sicht: 'e', unklar: true }
     ] },
-    { id: 'staerken', titel: 'Stärken und Interessen', felder: [
-      { id: 'e_staerken', typ: 'text', frage: 'Wo liegen die Stärken Ihres Kindes?' },
-      { id: 'e_interessen', typ: 'text', frage: 'Wofür interessiert und engagiert sich Ihr Kind außerhalb der Schule (Verein, Ehrenamt, Nebenjob, Familie)?' }
-    ] },
-    { id: 'zukunft', titel: 'Zukunft', felder: [
-      { id: 'e_abschluss', typ: 'wahl', frage: 'Welchen Abschluss wünschen Sie sich für Ihr Kind?', optionen: ['Realschulabschluss nach Klasse 10', 'Hauptschulabschluss', 'Das möchten wir im Gespräch klären'] },
-      { id: 'e_nach10', typ: 'mehr', frage: 'Welche Wege nach der Schule kommen für Sie in Frage?', optionen: NACH10 },
-      { id: 'e_bo', typ: 'text', frage: 'Welche beruflichen Interessen sehen Sie bei Ihrem Kind? Wünschen Sie Unterstützung bei der Berufsorientierung?' }
-    ] },
-    { id: 'wichtig', titel: 'Wichtiges und Sorgen', intro: 'Alles hier ist freiwillig. Teilen Sie nur, was Sie teilen möchten.', felder: [
-      { id: 'e_sorgen', typ: 'text', frage: 'Gibt es etwas, das Ihnen Sorgen macht?' },
-      { id: 'e_wissen', typ: 'text', frage: 'Gibt es etwas, das der Klassenlehrer wissen sollte (z. B. Gesundheit, besondere Belastungen, Veränderungen in der Familie)?' }
+    { id: 'zukunft', titel: 'Stärken und Zukunft', felder: [
+      { id: 'e_staerken', typ: 'mehr', frage: 'Mein Kind ist …', optionen: STAERKEN },
+      { id: 'e_abschluss', typ: 'wahl', frage: 'Abschluss, den wir uns wünschen', optionen: ABSCHLUSS },
+      { id: 'e_nach10', typ: 'mehr', frage: 'Nach der Schule kommt in Frage …', optionen: NACH10 },
+      { id: 'e_bo', typ: 'wahl', frage: 'Unterstützung bei der Berufsorientierung?', optionen: ['Ja, gern', 'Vielleicht', 'Nein, danke'] }
     ] },
     { id: 'gespraech', titel: 'Fürs Gespräch', felder: [
-      { id: 'e_schule', typ: 'text', frage: 'Was wünschen Sie sich von der Schule und vom Klassenlehrer?' },
-      { id: 'e_unterst', typ: 'text', frage: 'Wie können Sie Ihr Kind zu Hause unterstützen?' },
-      { id: 'e_themen', typ: 'text', frage: 'Diese Themen und Fragen möchte ich im Gespräch ansprechen:' }
+      { id: 'e_themen', typ: 'mehr', frage: 'Das beschäftigt mich / möchte ich ansprechen', optionen: ['Noten', 'Abschluss', 'Motivation', 'Lernen zu Hause', 'Freundschaften / Klasse', 'Wohlbefinden', 'Handy / Medien', 'Berufswahl', 'Nichts Besonderes'] },
+      { id: 'e_wunsch', typ: 'mehr', frage: 'Von der Schule wünsche ich mir …', optionen: ['regelmäßige Rückmeldung', 'mehr Infos zu Noten', 'Unterstützung beim Lernen', 'Hilfe bei der Berufsorientierung', 'Kontakt zur Schulsozialarbeit', 'Es passt so'] },
+      { id: 'e_vertr', typ: 'wahl', frage: 'Gibt es etwas Vertrauliches, das Sie lieber persönlich besprechen?', optionen: ['Ja', 'Nein'] },
+      { id: 'e_sonst', typ: 'kurz', frage: 'Sonst noch etwas?', hilfe: '(freiwillig, ein Satz)', frei: true }
     ] }
   ];
 
   // Gesprächsvorlage für den Klassenlehrer (je Schüler)
   VB.LEHRER_VORLAGE = [
-    { id: 'rahmen', titel: 'Gesprächsrahmen', felder: [
+    { id: 'rahmen', titel: 'Rahmen', felder: [
       { id: 'l_status', typ: 'wahl', frage: 'Stand', optionen: ['offen', 'vorbereitet', 'geführt'] },
       { id: 'l_datum', typ: 'datum', frage: 'Datum' },
       { id: 'l_zeit', typ: 'kurz', frage: 'Uhrzeit', hilfe: 'z. B. 15:15 Uhr' },
-      { id: 'l_teiln', typ: 'mehr', frage: 'Teilnehmende', optionen: ['Schüler/in', 'Mutter', 'Vater', 'andere Erziehungsberechtigte', 'weitere Lehrkraft', 'Schulsozialarbeit', 'Dolmetscher/in'] },
-      { id: 'l_anlass', typ: 'wahl', frage: 'Anlass', optionen: ['Regelgespräch (Halbjahr)', 'Auf Wunsch der Eltern', 'Besonderer Anlass'] }
+      { id: 'l_teiln', typ: 'mehr', frage: 'Teilnehmende', optionen: ['Schüler/in', 'Mutter', 'Vater', 'andere Erziehungsberechtigte', 'Schulsozialarbeit', 'Dolmetscher/in'] },
+      { id: 'l_anlass', typ: 'wahl', frage: 'Anlass', optionen: ['Regelgespräch', 'Wunsch der Eltern', 'Besonderer Anlass'] }
     ] },
-    { id: 'ziel', titel: 'Ziel des Gesprächs', felder: [
-      { id: 'l_ziel', typ: 'text', frage: 'Was soll am Ende des Gesprächs stehen?' },
-      { id: 'l_kern', typ: 'kurz', frage: 'Meine Kernbotschaft in einem Satz' }
-    ] },
-    { id: 'beob', titel: 'Meine Beobachtungen', felder: [
-      { id: 'l_staerken', typ: 'text', frage: 'Stärken (damit beginnen)' },
-      { id: 'l_entw', typ: 'text', frage: 'Entwicklungsfelder (höchstens 2–3, konkret und beobachtbar)' },
-      { id: 'l_faecher', typ: 'faecher', notiz: true, frage: 'Leistungsstand nach Fächern (Rückmeldungen der Fachlehrkräfte)' },
+    { id: 'einsch', titel: 'Meine Einschätzung', felder: [
+      { id: 'l_gesamt', typ: 'wahl', frage: 'Gesamteindruck', optionen: ['sehr positiv', 'positiv', 'gemischt', 'besorgniserregend'] },
+      { id: 'l_faecher', typ: 'faecher', frage: 'Leistungsstand' },
       { id: 'l_krit', typ: 'kriterien', sicht: 'l', unklar: true, frage: 'Arbeits- und Sozialverhalten' },
-      { id: 'l_fehl', typ: 'kurz', frage: 'Fehlzeiten / Verspätungen' },
-      { id: 'l_grad', typ: 'kurz', frage: 'Graduierung / Lernen in der IL' },
-      { id: 'l_prog', typ: 'wahl', frage: 'Realschulabschluss (M-Niveau)', optionen: ['sicher erreichbar', 'erreichbar mit Einsatz', 'gefährdet'] },
-      { id: 'l_prog_t', typ: 'kurz', frage: 'Begründung / Empfehlung' },
-      { id: 'l_bo', typ: 'text', frage: 'Berufsorientierung: Praktikum, Interessen, nächste Schritte' }
+      { id: 'l_fehl', typ: 'wahl', frage: 'Fehlzeiten / Verspätungen', optionen: ['unauffällig', 'gelegentlich', 'häufig'] },
+      { id: 'l_grad', typ: 'wahl', frage: 'Graduierung', optionen: ['Walker', 'Hiker', 'Climber', 'Freeclimber'] },
+      { id: 'l_prog', typ: 'wahl', frage: 'Realschulabschluss', optionen: ['sicher erreichbar', 'erreichbar mit Einsatz', 'gefährdet'] }
     ] },
-    { id: 'nach', titel: 'Im und nach dem Gespräch', felder: [
-      { id: 'l_notiz', typ: 'text', frage: 'Gesprächsnotizen', gross: true },
-      { id: 'l_verein', typ: 'vereinbarungen', frage: 'Vereinbarungen' },
-      { id: 'l_naechst', typ: 'kurz', frage: 'Überprüfung / nächstes Gespräch', hilfe: 'z. B. vor den Osterferien' }
+    { id: 'schwer', titel: 'Schwerpunkte', felder: [
+      { id: 'l_staerken', typ: 'mehr', frage: 'Stärken (zum Einstieg)', optionen: STAERKEN },
+      { id: 'l_entw', typ: 'mehr', frage: 'Entwicklungsfelder (höchstens 2–3)', optionen: ZIELE },
+      { id: 'l_themen', typ: 'mehr', frage: 'Ansprechen', optionen: ['Lob / Bestärkung', 'Leistungsstand', 'Abschlussprognose', 'Arbeitsverhalten', 'Sozialverhalten', 'Fehlzeiten', 'Berufsorientierung', 'Wohlbefinden'] }
+    ] },
+    { id: 'ergebnis', titel: 'Vereinbarungen', felder: [
+      { id: 'l_v_s', typ: 'mehr', frage: 'Schüler/in', optionen: ZIELE },
+      { id: 'l_v_e', typ: 'mehr', frage: 'Eltern', optionen: ['Hausaufgaben regelmäßig ansehen', 'Lernzeit zu Hause einplanen', 'Medienzeit absprechen', 'Lernplaner wöchentlich abzeichnen', 'Bei Praktikum / Bewerbung unterstützen', 'Kontakt zur Fachlehrkraft'] },
+      { id: 'l_v_l', typ: 'mehr', frage: 'Schule', optionen: ['Regelmäßige Rückmeldung', 'Absprache mit Fachlehrkräften', 'Förderangebot vermitteln', 'Lernbegleitung in der IL', 'Schulsozialarbeit einbeziehen', 'Infos zur Berufsorientierung'] },
+      { id: 'l_naechst', typ: 'wahl', frage: 'Überprüfung', optionen: ['in 4 Wochen', 'in 6–8 Wochen', 'vor den Osterferien', 'zum Halbjahr', 'zum Schuljahresende'] },
+      { id: 'l_notiz', typ: 'kurz', frage: 'Notiz', hilfe: '(freiwillig)', frei: true }
     ] }
   ];
 
@@ -202,7 +187,7 @@
     return String(v).trim() !== '';
   };
   VB.fortschritt = function (abschnitte, d) {
-    let n = 0, a = 0; abschnitte.forEach(s => s.felder.forEach(f => { n++; if (VB.beantwortet(f, d[f.id])) a++; }));
+    let n = 0, a = 0; abschnitte.forEach(s => s.felder.forEach(f => { if (f.frei) return; n++; if (VB.beantwortet(f, d[f.id])) a++; }));
     return n ? Math.round(a / n * 100) : 0;
   };
 
@@ -344,6 +329,24 @@
       if (antwort) P.text(antwort, 10.5, 'normal', [20, 20, 20], 2, 3);
       else P.linien(leer == null ? 2 : leer, 2);
     };
+    // Auswahl als Ankreuzkästchen (gewählte rot angekreuzt, übrige leer zum Ankreuzen von Hand)
+    P.optionen = function (frage, optionen, gewaehlt) {
+      const g = Array.isArray(gewaehlt) ? gewaehlt : gewaehlt == null || gewaehlt === '' ? [] : [gewaehlt];
+      P.platz(12); P.text(frage, 9.5, 'bold', [60, 60, 60], 0, 0.6);
+      let x = P.x + 2; const lh = 5.4;
+      optionen.forEach(o => {
+        const an = g.includes(o); P.font(9, an ? 'bold' : 'normal', an ? [20, 20, 20] : [110, 110, 110]);
+        const w = doc.getTextWidth(o) + 5.2;
+        if (x + w > P.x + P.w) { x = P.x + 2; P.y += lh; }
+        P.platz(lh);
+        doc.setLineWidth(0.25); doc.setDrawColor.apply(doc, an ? ROT : [150, 150, 150]);
+        if (an) { doc.setFillColor.apply(doc, ROT); doc.rect(x, P.y + 1, 3.2, 3.2, 'FD'); doc.setDrawColor(255, 255, 255); doc.setLineWidth(0.5); doc.line(x + 0.7, P.y + 2.7, x + 1.4, P.y + 3.5); doc.line(x + 1.4, P.y + 3.5, x + 2.6, P.y + 1.6); }
+        else doc.rect(x, P.y + 1, 3.2, 3.2);
+        P.font(9, an ? 'bold' : 'normal', an ? [20, 20, 20] : [110, 110, 110]); doc.text(o, x + 4.6, P.y + 3.8);
+        x += w + 3.5;
+      });
+      P.y += lh + 2.4;
+    };
     P.punkt = function (x, y, farbe, r) { doc.setFillColor.apply(doc, farbe); doc.circle(x, y, r || 1.6, 'F'); };
     P.fuss = function (text) {
       const n = doc.getNumberOfPages();
@@ -432,7 +435,8 @@
             else P.linien(3, 2);
             return;
           }
-          P.frage(f.frage, VB.klartext(f, v), f.typ === 'wahl' || f.typ === 'mehr' ? 1 : 2);
+          if (f.typ === 'wahl' || f.typ === 'mehr') return P.optionen(f.frage + (f.typ === 'mehr' ? '  (mehrere möglich)' : ''), f.optionen, v);
+          P.frage(f.frage + (f.hilfe ? ' ' + f.hilfe : ''), VB.klartext(f, v), f.typ === 'kurz' ? 1 : 2);
         });
       });
     });
@@ -451,85 +455,62 @@
 
   // Gesprächsvorlage des Lehrers für eine Schülerin / einen Schüler
   VB.pdfLehrer = function (doc0, sch, termin) {
-    let P = VB.pdfNeu(); if (doc0) { doc0.addPage(); P.doc = doc0; P.y = 18; }
+    const P = VB.pdfNeu(); if (doc0) { doc0.addPage(); P.doc = doc0; }
     const doc = P.doc, L = sch.lehrer || {}, kind = VB.name(sch);
     const konten = (sch.konten || []).filter(k => k.freigabe && k.daten);
     const S = konten.filter(k => k.rolle !== 'eltern').map(k => k.daten)[0] || {};
     const E = konten.filter(k => k.rolle !== 'schueler').map(k => k.daten).filter(d => Object.keys(d).some(x => x.startsWith('e_')))[0] || {};
     const hatS = konten.some(k => k.rolle !== 'eltern'), hatE = Object.keys(E).length > 0;
     const datum = L.l_datum ? VB.isoDatum(L.l_datum) : (termin ? termin.datum : ''), zeit = L.l_zeit || (termin ? termin.zeit : '');
+    const feld = id => VB.LEHRER_VORLAGE.flatMap(a => a.felder).find(f => f.id === id);
+    const opt = id => { const f = feld(id); P.optionen(f.frage, f.optionen, L[id]); };
+    const kt = (abschn, id, d) => VB.klartext(abschn.flatMap(a => a.felder).find(f => f.id === id) || {}, d[id]);
     P.kopf('Standortgespräch – Gesprächsvorlage', kind + (datum ? ' · ' + datum : '') + (zeit ? ' · ' + zeit : ''),
       'Klassenlehrer: ' + VB.LEHRER + (L.l_teiln && L.l_teiln.length ? ' · Teilnehmende: ' + L.l_teiln.join(', ') : ''));
     const status = (sch.konten || []).length ? (sch.konten || []).map(k => VB.ROLLE[k.rolle] + (k.freigabe ? ' (freigegeben)' : ' (nicht freigegeben)')).join(', ') : 'noch kein Konto angelegt';
     P.text('Vorbereitungsbögen: ' + status + (L.l_anlass ? ' · Anlass: ' + L.l_anlass : ''), 8.5, 'normal', GRAU, 0, 2);
 
-    P.h2('Ziel und Kernbotschaft');
-    P.frage('Was soll am Ende stehen?', L.l_ziel, 2);
-    P.frage('Kernbotschaft', L.l_kern, 1);
-
-    P.h2('Stärken und Entwicklungsfelder');
-    P.frage('Stärken (Einstieg)', L.l_staerken, 2);
-    P.frage('Entwicklungsfelder (2–3)', L.l_entw, 2);
-    if (hatS && (S.s_kann || S.s_besser)) P.frage('So sieht sich ' + sch.vorname + ' selbst', [S.s_kann && 'Kann gut: ' + S.s_kann, S.s_besser && 'Will verbessern: ' + S.s_besser].filter(Boolean).join('\n'));
-    if (hatE && E.e_staerken) P.frage('Stärken aus Sicht der Eltern', E.e_staerken);
-
+    P.h2('Meine Einschätzung');
+    ['l_gesamt', 'l_prog', 'l_fehl', 'l_grad'].forEach(opt);
     P.h2('Leistungsstand nach Fächern');
-    VB.pdfFaecher(P, [{ titel: 'Lehrer', werte: L.l_faecher, notiz: true }].concat(hatS ? [{ titel: 'Schüler/in', werte: S.s_faecher }] : []));
-
+    VB.pdfFaecher(P, [{ titel: 'Lehrer', werte: L.l_faecher }].concat(hatS ? [{ titel: 'Schüler/in', werte: S.s_faecher }] : []));
     P.h2('Arbeits- und Sozialverhalten im Vergleich');
     VB.pdfKriterien(P, [{ titel: 'Schüler/in', werte: S.s_krit, leer: !hatS }, { titel: 'Eltern', werte: E.e_krit, leer: !hatE }, { titel: 'Lehrer', werte: L.l_krit }], null);
 
-    P.h2('Weitere Punkte');
-    P.frage('Fehlzeiten / Verspätungen', L.l_fehl, 1);
-    P.frage('Graduierung / IL', L.l_grad, 1);
-    P.frage('Realschulabschluss', [L.l_prog, L.l_prog_t].filter(Boolean).join(' – '), 1);
-    P.frage('Berufsorientierung', L.l_bo, 2);
+    P.h2('Schwerpunkte');
+    opt('l_staerken');
+    const st = [hatS && (S.s_staerken || []).length && sch.vorname + ': ' + S.s_staerken.join(', '), hatE && (E.e_staerken || []).length && 'Eltern: ' + E.e_staerken.join(', ')].filter(Boolean);
+    if (st.length) P.text('Stärken laut Bögen – ' + st.join(' · '), 8.8, 'normal', [70, 70, 70], 2, 2.4);
+    opt('l_entw'); opt('l_themen');
 
     if (hatS || hatE) {
       P.h2('Aus den Vorbereitungsbögen');
-      const wohl = [hatS && S.s_schule && 'Schüler/in: ' + VB.klartext({ typ: 'skala5' }, S.s_schule), hatE && E.e_stimmung && 'Eltern: ' + VB.klartext({ typ: 'skala5' }, E.e_stimmung)].filter(Boolean).join(' · ');
-      if (wohl) P.frage('Wohlbefinden an der Schule', wohl);
+      const zeile = (t, w) => { if (w) { P.platz(6); P.text(t.replace(/[\s?…:]+$/, '') + ': ' + w, 9.2, 'normal', [30, 30, 30], 0, 1.2); } };
       if (hatS) {
-        if (S.s_stoert) P.frage('Was ' + sch.vorname + ' belastet', S.s_stoert);
-        if (S.s_abschluss || (S.s_nach10 || []).length || S.s_beruf) P.frage('Zukunft (Schüler/in)', [S.s_abschluss, (S.s_nach10 || []).join(', '), S.s_beruf].filter(Boolean).join('\n'));
-        if (VB.beantwortet({ typ: 'ziele' }, S.s_ziele)) P.frage('Ziele von ' + sch.vorname, VB.klartext({ typ: 'ziele' }, S.s_ziele));
-        if (S.s_brauche) P.frage('Braucht dafür', S.s_brauche);
-        if (S.s_themen || S.s_fragen) P.frage('Themen und Fragen von ' + sch.vorname, [S.s_themen, S.s_fragen].filter(Boolean).join('\n'));
+        P.text(sch.vorname, 9.5, 'bold', ROT, 0, 0.8);
+        zeile('Wohlbefinden Schule / Klasse', [kt(VB.SCHUELER, 's_schule', S), kt(VB.SCHUELER, 's_klasse', S)].filter(Boolean).join(' / '));
+        ['s_belast', 's_hilfe', 's_abschluss', 's_nach10', 's_beruf', 's_ziele', 's_themen', 's_sonst'].forEach(id => zeile(VB.SCHUELER.flatMap(a => a.felder).find(f => f.id === id).frage.replace(/ \(1–3\)$/, ''), kt(VB.SCHUELER, id, S)));
+        P.y += 1.5;
       }
       if (hatE) {
-        const zh = [E.e_ha && 'Hausaufgaben: ' + E.e_ha, E.e_lernen && 'Lernen: ' + E.e_lernen, E.e_medien && 'Medien: ' + E.e_medien].filter(Boolean).join(' · ');
-        if (zh || E.e_zuhause) P.frage('Lernen zu Hause (Eltern)', [zh, E.e_zuhause].filter(Boolean).join('\n'));
-        if (E.e_abschluss || (E.e_nach10 || []).length || E.e_bo) P.frage('Zukunft (Eltern)', [E.e_abschluss, (E.e_nach10 || []).join(', '), E.e_bo].filter(Boolean).join('\n'));
-        if (E.e_sorgen || E.e_wissen) P.frage('Sorgen / Wichtiges (vertraulich)', [E.e_sorgen, E.e_wissen].filter(Boolean).join('\n'));
-        if (E.e_schule || E.e_unterst || E.e_themen) P.frage('Wünsche und Themen der Eltern', [E.e_schule && 'Von der Schule: ' + E.e_schule, E.e_unterst && 'Unterstützung zu Hause: ' + E.e_unterst, E.e_themen].filter(Boolean).join('\n'));
+        P.text('Eltern', 9.5, 'bold', ROT, 0, 0.8);
+        ['e_stimmung', 'e_veraendert', 'e_ha', 'e_lernen', 'e_medien', 'e_abschluss', 'e_nach10', 'e_bo', 'e_themen', 'e_wunsch', 'e_vertr', 'e_sonst'].forEach(id => zeile(VB.ELTERN.flatMap(a => a.felder).find(f => f.id === id).frage.replace(/ …$/, ''), kt(VB.ELTERN, id, E)));
       }
     }
 
-    // Ablauf mit Platz für Notizen
+    // Ablauf und Vereinbarungen
     doc.addPage(); P.y = 18;
     P.text('Gesprächsablauf – ' + kind, 14, 'bold', [40, 40, 40], 0, 2);
     VB.PHASEN.forEach((ph, i) => {
-      P.platz(26);
-      P.font(10.5, 'bold', ROT); P.doc.text((i + 1) + '. ' + ph.t, P.x, P.y + 4); P.font(8.5, 'normal', GRAU); P.doc.text('ca. ' + ph.min + ' Min.', 192, P.y + 4, { align: 'right' }); P.y += 6;
-      ph.fragen.forEach(q => P.text('•  ' + q, 8.8, 'normal', [70, 70, 70], 2, 0.4));
-      P.linien(1, 2);
+      P.platz(14);
+      P.font(10, 'bold', ROT); doc.text((i + 1) + '. ' + ph.t, P.x, P.y + 4); P.font(8.5, 'normal', GRAU); doc.text('ca. ' + ph.min + ' Min.', 192, P.y + 4, { align: 'right' }); P.y += 5.6;
+      P.text(ph.fragen.join('  ·  '), 8.4, 'normal', [80, 80, 80], 2, 1.5);
     });
-    if (L.l_notiz) { P.h2('Gesprächsnotizen'); P.text(L.l_notiz, 10, 'normal', [20, 20, 20], 0, 3); }
-
     P.h2('Vereinbarungen');
-    const ver = (Array.isArray(L.l_verein) ? L.l_verein : []).filter(z => z && (z.was || '').trim());
-    const zeilen = ver.concat(Array(Math.max(2, 5 - ver.length)).fill({}));
-    P.platz(10); P.font(8, 'bold', GRAU); doc.text('Wer', P.x + 1, P.y + 3); doc.text('Was', P.x + 30, P.y + 3); doc.text('Bis wann', P.x + 142, P.y + 3); P.y += 4.5;
-    doc.setDrawColor.apply(doc, LINIE);
-    zeilen.forEach(z => {
-      P.font(9.5, 'normal', [20, 20, 20]); const t = doc.splitTextToSize(z.was || '', 108); const h = Math.max(8, t.length * 4.2 + 3.5);
-      P.platz(h); doc.rect(P.x, P.y, P.w, h);
-      doc.line(P.x + 28, P.y, P.x + 28, P.y + h); doc.line(P.x + 140, P.y, P.x + 140, P.y + h);
-      if (z.wer) doc.text(z.wer, P.x + 1.5, P.y + 5); if (t.length) doc.text(t, P.x + 30, P.y + 5); if (z.bis) doc.text(doc.splitTextToSize(z.bis, 30), P.x + 142, P.y + 5);
-      P.y += h;
-    });
-    P.y += 4; P.text('Überprüfung / nächstes Gespräch: ' + (L.l_naechst || '______________________'), 10, 'normal', [40, 40, 40], 0, 5);
-    P.platz(11); P.font(8.5, 'normal', GRAU); const y = P.y + 7; doc.setDrawColor(120, 120, 120);
+    ['l_v_s', 'l_v_e', 'l_v_l'].forEach(id => { opt(id); P.font(8.5, 'normal', GRAU); doc.text('Weiteres:', P.x + 2, P.y + 1); doc.setDrawColor.apply(doc, LINIE); doc.line(P.x + 17, P.y + 1.4, P.x + P.w, P.y + 1.4); P.y += 5.5; });
+    opt('l_naechst');
+    if (L.l_notiz) P.text('Notiz: ' + L.l_notiz, 9.5, 'normal', [30, 30, 30], 0, 2);
+    P.platz(14); P.font(8.5, 'normal', GRAU); const y = P.y + 9; doc.setDrawColor(120, 120, 120);
     [['Schüler/in', 18], ['Erziehungsberechtigte', 78], ['Klassenlehrer', 138]].forEach(([t, x]) => { doc.line(x, y, x + 52, y); doc.text(t, x, y + 4); });
     P.y = y + 8;
     return P;

@@ -8,9 +8,9 @@
 <title>Standortgespräch vorbereiten – PAGS Külsheim</title>
 <link rel="icon" href="../icon.png">
 <link rel="apple-touch-icon" href="../icon.png">
-<link rel="stylesheet" href="vb.css?v=20261120">
+<link rel="stylesheet" href="vb.css?v=20261120b">
 <script src="../config.js?v=20261108"></script>
-<script src="vb.js?v=20261120"></script>
+<script src="vb.js?v=20261120b"></script>
 <script src="../praktikum/jspdf.umd.min.js" defer></script>
 </head>
 <body>
@@ -151,7 +151,7 @@ function zeichne() {
       : 'Hier bereiten Sie sich auf das Standortgespräch für ' + esc(s.vorname) + ' vor. Alles wird automatisch gespeichert – Sie können jederzeit unterbrechen.') + '</p>' +
     '<div class="balken" aria-hidden="true"><i style="width:' + proz + '%"></i></div><p style="margin:0;font-size:.82rem;opacity:.95">' + proz + ' % ausgefüllt' + (FREI ? ' · für den Klassenlehrer freigegeben' : '') + '</p></div>';
   h += '<nav class="schritte" aria-label="Abschnitte">' + L.map((x, i) => {
-    const fertig = !x.ende && x.a.felder.every(f => VB.beantwortet(f, D[f.id]));
+    const fertig = !x.ende && x.a.felder.every(f => f.frei || VB.beantwortet(f, D[f.id]));
     return '<button type="button" data-s="' + i + '"' + (i === SCHRITT ? ' aria-current="true"' : '') + (fertig ? ' class="fertig"' : '') + '>' +
       (x.ende ? '✓ Fertig & PDF' : (gemeinsam ? (x.teil === 's' ? s.vorname + ': ' : 'Eltern: ') : '') + esc(x.a.titel)) + '</button>';
   }).join('') + '</nav>';
@@ -204,7 +204,7 @@ function endeHTML() {
   return '<div class="card"><h2>' + T('Fast geschafft!', 'Geschafft!') + '</h2>' +
     '<p>' + T('Laden Sie Ihren Bogen als PDF herunter, drucken Sie ihn aus und bringen Sie ihn zum Gespräch mit. Auf der letzten Seite ist Platz für Notizen und Vereinbarungen.',
               'Lade deinen Bogen als PDF herunter, druck ihn aus und bring ihn zum Gespräch mit. Auf der letzten Seite ist Platz für Notizen und eure Vereinbarungen.') + '</p>' +
-    '<p class="muted">' + T('Leere Fragen erscheinen im PDF mit Linien – so können Sie sie auch noch von Hand ergänzen.', 'Leere Fragen erscheinen im PDF mit Linien – die kannst du auch noch von Hand ausfüllen.') + '</p>' +
+    '<p class="muted">' + T('Im PDF stehen alle Antwortmöglichkeiten als Kästchen – was noch offen ist, können Sie von Hand ankreuzen.', 'Im PDF stehen alle Antwortmöglichkeiten als Kästchen – was noch offen ist, kannst du von Hand ankreuzen.') + '</p>' +
     '<div class="knoepfe"><button class="btn" type="button" id="pdfBtn">⬇ PDF herunterladen</button><button class="btn sec" type="button" id="pdfAnsehen">PDF ansehen / drucken</button></div></div>' +
     '<div class="card"><h2>Für den Klassenlehrer freigeben?</h2>' +
     '<label class="schalter"><input type="checkbox" id="frei"' + (FREI ? ' checked' : '') + '><span>' +
