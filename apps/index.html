@@ -129,7 +129,7 @@ dialog .actions{justify-content:center;--c:var(--red)}
 }
 @media print{
   header.top{position:static}
-  .tools,.actions,.aud,dialog{display:none!important}
+  .tools,.actions,.aud,dialog,.bud,.bub,.budctl{display:none!important}
   .card{break-inside:avoid}
 }
 </style>
@@ -506,7 +506,7 @@ dialog .actions{justify-content:center;--c:var(--red)}
 
 <footer>
   <div class="wrap foot">
-    <div class="dev"><span class="k">Entwickelt von</span><b>Thorsten von Plotho-Kettner</b><span>Pater-Alois-Grimm-Schule Külsheim · <a href="mailto:t.von.plotho-kettner@pagskuelsheim.de">t.von.plotho-kettner@pagskuelsheim.de</a></span></div>
+    <div class="dev"><span class="k">Entwickelt von</span><b>Thorsten von Plotho-Kettner</b><span>Pater-Alois-Grimm-Schule Külsheim · <a href="mailto:t.von.plotho-kettner@pagskuelsheim.de">t.von.plotho-kettner@pagskuelsheim.de</a></span><label class="budctl" style="font-size:15px;color:var(--mute);margin-top:8px">Assistent-Figur: <select id="budSel" style="font:inherit;padding:3px 6px;border-radius:8px;border:1.5px solid var(--line);background:#fff;color:var(--ink)"><option value="0">Klementine</option><option value="1">Bit</option><option value="2">Olli</option><option value="-1">Aus</option></select></label></div>
     <a href="https://pags-kuelsheim.de" target="_blank" rel="noopener"><img src="img/pags-logo.png" alt="PAGS Külsheim" width="92" height="44"></a>
   </div>
 </footer>
@@ -543,8 +543,10 @@ dialog .actions{justify-content:center;--c:var(--red)}
     groups.forEach(function(g){g.style.display=g.querySelector('.card:not(.hide)')?'':'none';});
     document.getElementById('empty').style.display=n?'none':'block';
     document.getElementById('hint').textContent=t?n+' gefunden':'';
+    if(window.buddySearch)buddySearch(n,q.value.trim());
   });
 })();
 </script>
+<script src="buddy.js"></script>
 </body>
 </html>

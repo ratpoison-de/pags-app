@@ -135,6 +135,8 @@ Trainer für die 98 unregelmäßigen Verben aus der „List of irregular verbs�
 
 Alle Web-Apps für die PAGS auf einer Seite, getrennt nach **Schülern**, **Lehrkräften** und **Eltern** (auch die Apps aus `pags-lernplaner`, `lerntagebuch`, `unterrichtsplaner` und `tag-der-berufe`). Jede Karte hat „Öffnen“, wo vorhanden „Anleitung“ und einen QR-Code zum Zeigen über das Apple TV (`apps/qr/*.png`). Mit Suchfeld.
 
+**Assistent-Figur** (`apps/buddy.js`, aus der Assistent-App wie bei den Bildungswegen): Klementine, Bit oder Olli begleiten durch die Seite. App-Finder (erst Schüler/Lehrkraft/Eltern, dann wofür → die passende Karte leuchtet auf, mit Öffnen und QR-Code), Fragen zu Anmeldung, QR-Codes im Unterricht, Home-Bildschirm und Datenschutz, Tipps, Hinweise je Bereich (einmal pro Gerät), Hilfe bei erfolgloser Suche. Frei verschiebbar; Auswahl oder „Aus“ im Seitenfuß.
+
 ## Stimmabgabe Ausbildungsberufe 2026/27
 
 `berufewahl/index.html` – Schülerinnen und Schüler wählen aus der Liste der Ausbildungsberufe genau **2 Berufe** und geben ihre Stimmen ab (Name + Klasse, jede Person nur einmal).
