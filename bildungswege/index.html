@@ -206,7 +206,7 @@ footer b{color:var(--ink)}
   .step-body{padding-left:16px}
 }
 @media print{
-  header.top,.sheet,.sheet-bg,.hero-actions,#wegfinder,#quiz{display:none!important}
+  header.top,.sheet,.sheet-bg,.hero-actions,#wegfinder,#quiz,.bud,.bub,.budctl{display:none!important}
   body{background:#fff}
 }
 </style>
@@ -389,6 +389,7 @@ footer b{color:var(--ink)}
 <footer>
   <div class="wrap">
     <p style="margin:0 0 6px"><b>Thorsten von Plotho-Kettner</b> · Klassenlehrer 9a · Pater-Alois-Grimm-Schule Külsheim (PAGS) · Schuljahr 2026/2027</p>
+    <p class="budctl" style="margin:0 0 8px"><label>Assistent-Figur: <select id="budSel" style="font:inherit;padding:3px 6px;border-radius:8px;border:1.5px solid var(--line);background:#fff"><option value="0">Klementine</option><option value="1">Bit</option><option value="2">Olli</option><option value="-1">Aus</option></select></label></p>
     <p style="margin:0">Quelle: Ministerium für Kultus, Jugend und Sport Baden-Württemberg, „Bildungswege in Baden-Württemberg – Abschlüsse und Anschlüsse 2027/2028“ · weitere Infos: <a href="https://km.baden-wuerttemberg.de" target="_blank" rel="noopener">km-bw.de</a> · Online-Bewerbung berufliche Schulen: <a href="https://bewo.kultus-bw.de/bewo" target="_blank" rel="noopener">BewO</a>. Fristen bitte immer bei der Wunschschule bestätigen.</p>
   </div>
 </footer>
@@ -540,7 +541,7 @@ function renderResult(){
   var arr=Object.keys(W).map(function(k){return [k,fState.score[k]||0];}).sort(function(a,b){return b[1]-a[1];});
   var max=arr[0][1]||1,top=arr.slice(0,3).filter(function(x){return x[1]>0;});
   finder.innerHTML='<div class="progress"><i style="width:100%"></i></div><p class="q">Diese Wege passen gut zu deinen Antworten:</p><div class="res-list">'+top.map(function(x,i){var o=W[x[0]];return '<div class="res-item"><div class="rank">'+(i+1)+'</div><div style="flex:1"><b>'+o.t+'</b> <span class="small mute">– '+o.sub+' → '+RES[o.res][1]+'</span><div class="meter"><i style="width:'+Math.round(x[1]/max*100)+'%"></i></div><p style="margin:8px 0 0"><button class="resetbtn" data-open="'+x[0]+'">Mehr erfahren →</button></p></div></div>';}).join('')+'</div><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="fShow">Im Schaubild zeigen</button><button class="btn ghost" id="fAgain">Nochmal</button></div><div class="note">Das ist nur eine erste Orientierung, keine Entscheidung. Sprich mit der <b>Berufsberatung der Agentur für Arbeit</b>, deinem Coach und deinen Eltern. Und denk dran: Mit Ausbildung ist nicht Schluss – Fachhochschulreife und Abitur gehen auch später noch.</div>';
-  STORE.finder=top.map(function(x){return x[0];});save(STORE);
+  STORE.finder=top.map(function(x){return x[0];});save(STORE);if(window.buddyFinder)buddyFinder(STORE.finder);
   document.getElementById('fShow').onclick=function(){highlight(top.map(function(x){return x[0];}),[],'Hervorgehoben: deine Wegfinder-Ergebnisse.');document.getElementById('wege').scrollIntoView({behavior:'smooth'});};
   document.getElementById('fAgain').onclick=function(){fState={i:0,score:{}};renderFinder();};
 }
@@ -570,7 +571,7 @@ function renderChk(id,list,pre,p,m){
   var ul=document.getElementById(id);
   ul.innerHTML=list.map(function(t,i){var k=pre+i;return '<li><label><input type="checkbox" data-k="'+k+'"'+(STORE.chk[k]?' checked':'')+'><span>'+t+'</span></label></li>';}).join('');
   function upd(){var n=list.filter(function(_,i){return STORE.chk[pre+i];}).length;document.getElementById(p).textContent=n+'/'+list.length+' erledigt';document.getElementById(m).style.width=(n/list.length*100)+'%';}
-  ul.querySelectorAll('input').forEach(function(c){c.onchange=function(){STORE.chk[c.dataset.k]=c.checked;save(STORE);upd();};});
+  ul.querySelectorAll('input').forEach(function(c){c.onchange=function(){STORE.chk[c.dataset.k]=c.checked;save(STORE);upd();if(window.buddyDone)buddyDone(c.checked);};});
   upd();
 }
 renderChk('chk9',C9,'a','p9','m9');renderChk('chk10',C10,'b','p10','m10');
@@ -594,14 +595,14 @@ var qs={i:0,ok:0};
 var qzEl=document.getElementById('qz');
 function renderQz(){
   if(qs.i>=QZ.length){
-    var best=Math.max(qs.ok,STORE.quizBest||0);STORE.quizBest=best;save(STORE);
+    var best=Math.max(qs.ok,STORE.quizBest||0);STORE.quizBest=best;save(STORE);if(window.buddyQuiz)buddyQuiz(true,true,qs.ok,QZ.length);
     qzEl.innerHTML='<div class="progress"><i style="width:100%"></i></div><p class="q">'+(qs.ok===QZ.length?'Perfekt! 🎉':qs.ok>=5?'Stark! 💪':'Gut gemacht – schau dir das Schaubild nochmal an.')+'</p><p style="font-size:20px;margin:0 0 6px"><b>'+qs.ok+' von '+QZ.length+'</b> richtig</p><p class="small mute">Deine Bestleistung auf diesem Gerät: '+best+' von '+QZ.length+'</p><button class="btn" id="qzAgain">Nochmal spielen</button>';
     document.getElementById('qzAgain').onclick=function(){qs={i:0,ok:0};renderQz();};return;
   }
   var q=QZ[qs.i];
   qzEl.innerHTML='<div class="progress"><i style="width:'+(qs.i/QZ.length*100)+'%"></i></div><div class="small mute">Frage '+(qs.i+1)+' von '+QZ.length+' · '+qs.ok+' richtig</div><p class="q" style="margin-top:6px">'+q[0]+'</p><div class="qz-opts">'+q[1].map(function(o,j){return '<button data-j="'+j+'">'+o+'</button>';}).join('')+'</div><div class="qz-fb" id="qzFb" aria-live="polite"></div><div class="qz-foot"><span></span><button class="btn" id="qzNext" hidden>Weiter →</button></div>';
   qzEl.querySelectorAll('.qz-opts button').forEach(function(b){b.onclick=function(){
-    var j=+b.dataset.j,right=j===q[2];if(right)qs.ok++;
+    var j=+b.dataset.j,right=j===q[2];if(right)qs.ok++;if(window.buddyQuiz)buddyQuiz(right,false);
     qzEl.querySelectorAll('.qz-opts button').forEach(function(x,k){x.disabled=true;if(k===q[2])x.classList.add('ok');});
     if(!right)b.classList.add('no');
     document.getElementById('qzFb').innerHTML=(right?'<b style="color:var(--green)">Richtig!</b> ':'<b style="color:var(--red)">Nicht ganz.</b> ')+q[3];
@@ -617,5 +618,6 @@ if('IntersectionObserver' in window){
   document.querySelectorAll('main section').forEach(function(s){io.observe(s);});
 }
 </script>
+<script src="buddy.js"></script>
 </body>
 </html>
