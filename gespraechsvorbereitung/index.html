@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Standortgespräch vorbereiten – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="apple-touch-icon" href="../icon.png">
+<link rel="stylesheet" href="vb.css?v=20261120">
+<script src="../config.js?v=20261108"></script>
+<script src="vb.js?v=20261120"></script>
+<script src="../praktikum/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Standortgespräch vorbereiten</h1><p id="wer">Klasse 9a · PAGS Külsheim</p></div>
+  <button id="kontoBtn" class="hidden" type="button">Konto</button>
+  <button id="abmeldenBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="login" class="hidden">
+    <div class="card">
+      <h2>Willkommen!</h2>
+      <p class="lead">Hier bereiten sich <b>Eltern</b> und <b>Schülerinnen und Schüler</b> der Klasse 9a auf das Standortgespräch mit dem Klassenlehrer vor. Am Ende gibt es ein PDF zum Ausdrucken, das Sie mit ins Gespräch bringen.</p>
+      <div class="wahl" style="margin:12px 0 14px" role="group" aria-label="Anmeldeart">
+        <button type="button" id="modusNeu" aria-pressed="true">Neues Konto anlegen</button>
+        <button type="button" id="modusAlt" aria-pressed="false">Anmelden</button>
+      </div>
+      <form id="loginForm" autocomplete="on">
+        <div id="neuFelder">
+          <label class="f"><span>Zugangscode <small>(steht auf dem Zettel vom Klassenlehrer)</small></span>
+            <input type="text" id="lCode" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="z. B. K7QM-3XPA" style="text-transform:uppercase;letter-spacing:.08em;font-weight:600"></label>
+          <div class="f"><span class="fr">Wer legt das Konto an?</span>
+            <div class="wahl" role="group" id="rollen">
+              <button type="button" data-rolle="eltern" aria-pressed="false">Elternteil</button>
+              <button type="button" data-rolle="schueler" aria-pressed="false">Schülerin / Schüler</button>
+              <button type="button" data-rolle="gemeinsam" aria-pressed="false">Eltern und Kind gemeinsam</button>
+            </div>
+            <small class="muted" style="display:block;margin-top:5px">Jede und jeder bekommt ein eigenes Konto mit eigenem Bogen. Wer möchte, füllt beide Teile gemeinsam in einem Konto aus.</small></div>
+          <label class="f"><span>Ihr / dein Name <small>(freiwillig, z. B. „Frau Müller“ oder „Leon“)</small></span><input type="text" id="lName" maxlength="80" autocomplete="name"></label>
+        </div>
+        <label class="f"><span>Benutzername</span><input type="text" id="lBenutzer" maxlength="60" required autocapitalize="none" autocomplete="username">
+          <small id="lBenHinweis">Frei wählbar, z. B. E-Mail-Adresse oder Spitzname.</small></label>
+        <label class="f"><span id="lPwLabel">Kennwort ausdenken</span><input type="password" id="lPw" minlength="6" maxlength="72" required autocomplete="new-password">
+          <small id="lPwHinweis">Mindestens 6 Zeichen. Damit kommt man auf jedem Gerät wieder an den eigenen Bogen.</small></label>
+        <label class="f" id="lPw2Feld"><span>Kennwort wiederholen</span><input type="password" id="lPw2" minlength="6" maxlength="72" autocomplete="new-password"></label>
+        <button class="btn" type="submit" id="lBtn">Konto anlegen</button>
+        <div id="lMsg" class="msg hidden" role="alert"></div>
+      </form>
+      <details class="info">
+        <summary>Was wird gespeichert – und wer sieht es?</summary>
+        <p style="margin:8px 0 0">Benutzername, Kennwort (verschlüsselt) und die Antworten im Bogen. Die Antworten sieht nur das eigene Konto. Der Klassenlehrer sieht sie erst, wenn Sie bzw. du am Ende „Vorab für den Klassenlehrer freigeben“ ankreuzen – das ist freiwillig. Eltern sehen den Bogen des Kindes nicht und umgekehrt (außer bei einem gemeinsamen Konto). Die Daten liegen in einer passwortgeschützten Datenbank mit Serverstandort Frankfurt. Das Konto lässt sich jederzeit selbst löschen.</p>
+      </details>
+    </div>
+    <p class="muted" style="text-align:center">Kennwort vergessen oder Zettel verloren? Der Klassenlehrer hilft weiter.</p>
+  </section>
+
+  <div id="hinweis" class="msg gut hidden" role="status"></div>
+  <div id="app" class="hidden"></div>
+</main>
+<footer>Standortgespräche der PAGS Külsheim · Klasse 9a · entwickelt von Thorsten von Plotho-Kettner</footer>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = VB.esc;
+const LS = 'pags-vb-sitzung';
+let S = null, STAND = null, D = {}, FREI = false, SCHRITT = 0, ANSICHT = 'bogen', NEU = true, ROLLE = '';
+let timer = null, offen = false, laeuft = false;
+
+/* ---------- Sitzung ---------- */
+function ladeSitzung() { try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); return s && s.id && s.pw ? s : null; } catch (e) { return null; } }
+function merke() { try { if (S) localStorage.setItem(LS, JSON.stringify(S)); else localStorage.removeItem(LS); } catch (e) { } }
+const du = () => STAND && STAND.konto.rolle === 'schueler';
+const T = (sie, d) => du() ? d : sie;   // Anrede: Sie (Eltern, gemeinsam) oder du (Schüler)
+
+/* ---------- Anmeldung ---------- */
+function modus(neu) {
+  NEU = neu; $('modusNeu').setAttribute('aria-pressed', neu); $('modusAlt').setAttribute('aria-pressed', !neu);
+  $('neuFelder').classList.toggle('hidden', !neu); $('lPw2Feld').classList.toggle('hidden', !neu); $('lPw2').required = neu;
+  $('lPwLabel').textContent = neu ? 'Kennwort ausdenken' : 'Kennwort';
+  $('lPwHinweis').classList.toggle('hidden', !neu); $('lBenHinweis').classList.toggle('hidden', !neu);
+  $('lPw').autocomplete = neu ? 'new-password' : 'current-password';
+  $('lBtn').textContent = neu ? 'Konto anlegen' : 'Anmelden'; $('lMsg').classList.add('hidden');
+}
+$('modusNeu').onclick = () => modus(true);
+$('modusAlt').onclick = () => modus(false);
+$('rollen').onclick = e => { const b = e.target.closest('button'); if (!b) return; ROLLE = b.dataset.rolle; $('rollen').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
+function zeigeLogin(text) {
+  $('login').classList.remove('hidden'); $('app').classList.add('hidden'); $('hinweis').classList.add('hidden');
+  $('kontoBtn').classList.add('hidden'); $('abmeldenBtn').classList.add('hidden');
+  if (text) { $('lMsg').textContent = text; $('lMsg').classList.remove('hidden'); }
+}
+$('loginForm').onsubmit = async e => {
+  e.preventDefault(); const m = $('lMsg'); m.classList.add('hidden');
+  const fehler = t => { m.textContent = t; m.classList.remove('hidden'); };
+  const b = $('lBenutzer').value.trim(), pw = $('lPw').value;
+  if (NEU) {
+    if ($('lCode').value.replace(/[^A-Za-z0-9]/g, '').length !== 8) return fehler('Bitte den Zugangscode vom Zettel eingeben (8 Zeichen, z. B. K7QM-3XPA).');
+    if (!ROLLE) return fehler('Bitte auswählen, wer das Konto anlegt.');
+    if (pw !== $('lPw2').value) return fehler('Die beiden Kennwörter stimmen nicht überein.');
+  }
+  $('lBtn').disabled = true;
+  try {
+    const r = VB.ok(await VB.rpc('vb_anmelden', NEU ? { p_benutzer: b, p_pw: pw, p_neu: true, p_code: $('lCode').value, p_rolle: ROLLE, p_name: $('lName').value.trim() }
+                                                   : { p_benutzer: b, p_pw: pw, p_neu: false }));
+    S = { id: r.konto.id, pw, benutzer: r.konto.benutzer }; merke();
+    $('lPw').value = $('lPw2').value = '';
+    angemeldet(r, NEU ? (r.konto.rolle === 'schueler' ? 'Dein Konto ist angelegt. Merk dir Benutzername und Kennwort gut!' : 'Ihr Konto ist angelegt. Bitte merken Sie sich Benutzername und Kennwort.') : '');
+    if (NEU) history.replaceState(null, '', location.pathname);
+  } catch (err) { fehler(err.grund ? err.message : 'Keine Verbindung zur Datenbank. Bitte später noch einmal versuchen.'); }
+  finally { $('lBtn').disabled = false; }
+};
+function angemeldet(r, text) {
+  STAND = r; D = JSON.parse(JSON.stringify(r.konto.daten || {})); FREI = !!r.konto.freigabe;
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  $('kontoBtn').classList.remove('hidden'); $('abmeldenBtn').classList.remove('hidden');
+  $('wer').textContent = VB.name(r.schueler) + ' · Klasse ' + r.schueler.klasse;
+  try { SCHRITT = +(localStorage.getItem(LS + '-schritt-' + r.konto.id) || 0); } catch (e) { SCHRITT = 0; }
+  if (SCHRITT >= schritte().length) SCHRITT = 0;
+  ANSICHT = 'bogen'; zeichne(); hinweis(text);
+}
+$('abmeldenBtn').onclick = async () => {
+  if (offen) await speichern();
+  if (!confirm(T('Abmelden? Ihre Antworten bleiben gespeichert.', 'Abmelden? Deine Antworten bleiben gespeichert.'))) return;
+  S = null; STAND = null; merke(); modus(false); zeigeLogin();
+};
+$('kontoBtn').onclick = () => { ANSICHT = ANSICHT === 'konto' ? 'bogen' : 'konto'; zeichne(); scrollTo(0, 0); };
+
+/* ---------- Schritte ---------- */
+function schritte() {
+  const l = [];
+  VB.teile(STAND.konto.rolle).forEach(([teil, abschnitte]) => abschnitte.forEach(a => l.push({ teil, a })));
+  l.push({ ende: true });
+  return l;
+}
+function hinweis(text, fehler) { const h = $('hinweis'); h.textContent = text || ''; h.classList.toggle('hidden', !text); h.classList.toggle('gut', !fehler); }
+
+function zeichne() {
+  $('kontoBtn').textContent = ANSICHT === 'konto' ? '‹ Bogen' : 'Konto';
+  if (ANSICHT === 'konto') { $('app').innerHTML = kontoHTML(); kontoBinden(); return; }
+  const L = schritte(), k = STAND.konto, s = STAND.schueler, akt = L[SCHRITT];
+  const alle = VB.teile(k.rolle).flatMap(([, a]) => a), proz = VB.fortschritt(alle, D);
+  const gemeinsam = k.rolle === 'gemeinsam';
+  let h = '<div class="card hero"><h2>' + (du() ? 'Hallo' + (k.name ? ' ' + esc(k.name) : '') + '!' : 'Guten Tag' + (k.name ? ', ' + esc(k.name) : '') + '!') + '</h2>' +
+    '<p style="margin:4px 0 0">' + (du() ? 'Bereite dich hier in Ruhe auf dein Standortgespräch vor. Alles wird automatisch gespeichert – du kannst jederzeit unterbrechen.'
+      : gemeinsam ? 'Hier bereiten Sie sich gemeinsam mit ' + esc(s.vorname) + ' auf das Standortgespräch vor: zuerst der Teil für ' + esc(s.vorname) + ', dann der Teil für die Eltern. Alles wird automatisch gespeichert.'
+      : 'Hier bereiten Sie sich auf das Standortgespräch für ' + esc(s.vorname) + ' vor. Alles wird automatisch gespeichert – Sie können jederzeit unterbrechen.') + '</p>' +
+    '<div class="balken" aria-hidden="true"><i style="width:' + proz + '%"></i></div><p style="margin:0;font-size:.82rem;opacity:.95">' + proz + ' % ausgefüllt' + (FREI ? ' · für den Klassenlehrer freigegeben' : '') + '</p></div>';
+  h += '<nav class="schritte" aria-label="Abschnitte">' + L.map((x, i) => {
+    const fertig = !x.ende && x.a.felder.every(f => VB.beantwortet(f, D[f.id]));
+    return '<button type="button" data-s="' + i + '"' + (i === SCHRITT ? ' aria-current="true"' : '') + (fertig ? ' class="fertig"' : '') + '>' +
+      (x.ende ? '✓ Fertig & PDF' : (gemeinsam ? (x.teil === 's' ? s.vorname + ': ' : 'Eltern: ') : '') + esc(x.a.titel)) + '</button>';
+  }).join('') + '</nav>';
+  h += '<div class="speicher" id="speicher" aria-live="polite"></div>';
+  if (akt.ende) h += endeHTML();
+  else h += '<div class="card" id="abschnitt">' + (gemeinsam ? '<span class="teil">' + (akt.teil === 's' ? 'Teil für ' + esc(s.vorname) : 'Teil für die Eltern') + '</span>' : '') +
+    '<h2>' + esc(akt.a.titel) + '</h2>' + (akt.a.intro ? '<p class="muted">' + esc(akt.a.intro) + '</p>' : '') + VB.abschnittHTML(akt.a, D) + '</div>';
+  h += '<div class="knoepfe zwei">' + (SCHRITT > 0 ? '<button class="btn sec" type="button" id="zurueck">‹ Zurück</button>' : '<span></span>') +
+    (akt.ende ? '' : '<button class="btn" type="button" id="weiter">' + (SCHRITT === L.length - 2 ? 'Fertig ›' : 'Weiter ›') + '</button>') + '</div>';
+  $('app').innerHTML = h;
+  $('app').querySelectorAll('[data-s]').forEach(b => b.onclick = () => gehe(+b.dataset.s));
+  if ($('zurueck')) $('zurueck').onclick = () => gehe(SCHRITT - 1);
+  if ($('weiter')) $('weiter').onclick = () => gehe(SCHRITT + 1);
+  if ($('abschnitt')) VB.binden($('abschnitt'), D, neu => { geaendert(); if (neu) { const y = scrollY; zeichne(); scrollTo(0, y); } });
+  if (akt.ende) endeBinden();
+  const cur = $('app').querySelector('.schritte [aria-current]'); if (cur) cur.scrollIntoView({ block: 'nearest', inline: 'center' });
+  speicherAnzeige();
+}
+function gehe(i) {
+  SCHRITT = Math.max(0, Math.min(schritte().length - 1, i));
+  try { localStorage.setItem(LS + '-schritt-' + STAND.konto.id, SCHRITT); } catch (e) { }
+  hinweis(''); zeichne(); scrollTo(0, 0);
+  if (offen) speichern();
+}
+
+/* ---------- Speichern ---------- */
+function speicherAnzeige(t) {
+  const el = $('speicher'); if (!el) return;
+  el.textContent = t || (offen ? 'Wird gespeichert …' : STAND.konto.gespeichert_am ? 'Gespeichert ✓ ' + VB.zeitpunkt(STAND.konto.gespeichert_am) : '');
+}
+function geaendert() { offen = true; speicherAnzeige(); clearTimeout(timer); timer = setTimeout(speichern, 1200); }
+async function speichern() {
+  clearTimeout(timer); if (!S || laeuft) { if (laeuft) timer = setTimeout(speichern, 800); return; }
+  laeuft = true; offen = false;
+  try {
+    const r = await VB.rpc('vb_speichern', { p_id: S.id, p_pw: S.pw, p_daten: D, p_freigabe: FREI, p_name: null });
+    if (!r.ok && ['pw', 'unbekannt'].includes(r.grund)) { S = null; merke(); zeigeLogin(r.grund === 'pw' ? 'Das Kennwort wurde geändert. Bitte neu anmelden.' : 'Das Konto wurde nicht mehr gefunden.'); return; }
+    VB.ok(r); STAND.konto.gespeichert_am = r.gespeichert_am; STAND.konto.daten = JSON.parse(JSON.stringify(D)); STAND.konto.freigabe = FREI;
+    if (!offen) speicherAnzeige();
+  } catch (e) {
+    offen = true; speicherAnzeige('⚠ Nicht gespeichert – keine Verbindung. Neuer Versuch in 15 Sekunden …'); timer = setTimeout(speichern, 15000);
+  } finally { laeuft = false; }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && offen) speichern(); });
+addEventListener('beforeunload', e => { if (offen) { speichern(); e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- Fertig & PDF ---------- */
+function endeHTML() {
+  const s = STAND.schueler;
+  return '<div class="card"><h2>' + T('Fast geschafft!', 'Geschafft!') + '</h2>' +
+    '<p>' + T('Laden Sie Ihren Bogen als PDF herunter, drucken Sie ihn aus und bringen Sie ihn zum Gespräch mit. Auf der letzten Seite ist Platz für Notizen und Vereinbarungen.',
+              'Lade deinen Bogen als PDF herunter, druck ihn aus und bring ihn zum Gespräch mit. Auf der letzten Seite ist Platz für Notizen und eure Vereinbarungen.') + '</p>' +
+    '<p class="muted">' + T('Leere Fragen erscheinen im PDF mit Linien – so können Sie sie auch noch von Hand ergänzen.', 'Leere Fragen erscheinen im PDF mit Linien – die kannst du auch noch von Hand ausfüllen.') + '</p>' +
+    '<div class="knoepfe"><button class="btn" type="button" id="pdfBtn">⬇ PDF herunterladen</button><button class="btn sec" type="button" id="pdfAnsehen">PDF ansehen / drucken</button></div></div>' +
+    '<div class="card"><h2>Für den Klassenlehrer freigeben?</h2>' +
+    '<label class="schalter"><input type="checkbox" id="frei"' + (FREI ? ' checked' : '') + '><span>' +
+    T('Herr von Plotho-Kettner darf meine Antworten schon vor dem Gespräch lesen, um sich gut vorzubereiten.', 'Herr von Plotho-Kettner darf meine Antworten schon vor dem Gespräch lesen, um sich gut vorzubereiten.') +
+    '<br><small class="muted">Freiwillig. Ohne Freigabe ' + T('sehen nur Sie', 'siehst nur du') + ' die Antworten. Die Freigabe lässt sich jederzeit zurücknehmen.</small></span></label></div>' +
+    '<div class="card"><h2>Zum Gespräch mitbringen</h2><ul style="margin:0;padding-left:20px">' +
+    '<li>' + T('den ausgedruckten Bogen (oder das PDF auf dem Handy)', 'deinen ausgedruckten Bogen (oder das PDF auf dem iPad)') + '</li>' +
+    '<li>' + T('das letzte Zeugnis und – wenn vorhanden – Ihr Notizheft', 'dein letztes Zeugnis und deinen Lernplaner') + '</li>' +
+    '<li>' + T('Ihre Fragen – es gibt keine falschen Fragen', 'deine Fragen – du darfst im Gespräch zuerst erzählen') + '</li></ul>' +
+    '<p class="muted" style="margin:10px 0 0">Das Gespräch dauert etwa eine Viertelstunde. ' + esc(s.vorname) + ' ist dabei und beginnt mit der eigenen Einschätzung. Den Termin buchen Eltern unter <a href="../standortgespraech/">Standortgespräche – Terminbuchung</a>.</p></div>';
+}
+function endeBinden() {
+  $('frei').onchange = e => { FREI = e.target.checked; geaendert(); hinweis(FREI ? 'Freigegeben – der Klassenlehrer kann die Antworten jetzt lesen.' : 'Freigabe zurückgenommen.'); };
+  const pdf = async ansehen => {
+    if (offen) await speichern();
+    try {
+      const doc = VB.pdfBogen({ konto: Object.assign({}, STAND.konto, { daten: D }), schueler: STAND.schueler });
+      const datei = 'Standortgespraech_Vorbereitung_' + STAND.schueler.vorname.replace(/[^\wÄÖÜäöüß-]+/g, '_') + '_' + (STAND.konto.rolle === 'schueler' ? 'Schueler' : STAND.konto.rolle === 'eltern' ? 'Eltern' : 'gemeinsam') + '.pdf';
+      if (ansehen) { const url = doc.output('bloburl'); const w = window.open(url, '_blank'); if (!w) doc.save(datei); }
+      else doc.save(datei);
+    } catch (e) { hinweis(e.message, true); scrollTo(0, 0); }
+  };
+  $('pdfBtn').onclick = () => pdf(false);
+  $('pdfAnsehen').onclick = () => pdf(true);
+}
+
+/* ---------- Konto ---------- */
+function kontoHTML() {
+  const k = STAND.konto, s = STAND.schueler;
+  return '<div class="card"><h2>' + T('Ihr Konto', 'Dein Konto') + '</h2><p>Benutzername: <b>' + esc(k.benutzer) + '</b><br>Für: <b>' + esc(VB.name(s)) + '</b>, Klasse ' + esc(s.klasse) + '</p>' +
+    '<label class="f"><span>Name <small>(wird im PDF genannt)</small></span><input type="text" id="kName" maxlength="80" value="' + esc(k.name) + '"></label>' +
+    '<div class="f"><span class="fr">Wer nutzt dieses Konto?</span><div class="wahl" id="kRolle">' + ['eltern', 'schueler', 'gemeinsam'].map(r =>
+      '<button type="button" data-r="' + r + '" aria-pressed="' + (k.rolle === r) + '">' + VB.ROLLE[r] + '</button>').join('') + '</div>' +
+    '<small class="muted" style="display:block;margin-top:5px">Beim Wechsel bleiben alle Antworten erhalten.</small></div>' +
+    '<button class="btn" type="button" id="kSpeichern">Speichern</button><div id="kMsg" class="msg hidden" role="alert"></div></div>' +
+    '<div class="card"><h2>Kennwort ändern</h2><form id="pwForm"><label class="f"><span>Neues Kennwort</span><input type="password" id="pNeu" minlength="6" maxlength="72" required autocomplete="new-password"></label>' +
+    '<label class="f"><span>Neues Kennwort wiederholen</span><input type="password" id="pNeu2" minlength="6" maxlength="72" required autocomplete="new-password"></label>' +
+    '<button class="btn" type="submit">Kennwort ändern</button><div id="pMsg" class="msg hidden" role="alert"></div></form></div>' +
+    '<div class="card"><h2>Konto löschen</h2><p class="muted">Löscht das Konto und alle Antworten endgültig.</p><button class="btn sec" type="button" id="kLoeschen">Konto endgültig löschen</button><div id="lzMsg" class="msg hidden" role="alert"></div></div>' +
+    '<div class="knoepfe"><button class="btn sec" type="button" id="kZurueck">‹ Zurück zum Bogen</button></div>';
+}
+function kontoBinden() {
+  let rolle = STAND.konto.rolle;
+  const msg = (id, t, gut) => { const m = $(id); m.textContent = t; m.classList.remove('hidden'); m.classList.toggle('gut', !!gut); };
+  $('kRolle').onclick = e => { const b = e.target.closest('button'); if (!b) return; rolle = b.dataset.r; $('kRolle').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
+  $('kSpeichern').onclick = async () => {
+    try {
+      if (rolle !== STAND.konto.rolle) { const r = VB.ok(await VB.rpc('vb_rolle', { p_id: S.id, p_pw: S.pw, p_rolle: rolle })); STAND.konto.rolle = r.konto.rolle; SCHRITT = 0; }
+      const n = $('kName').value.trim();
+      VB.ok(await VB.rpc('vb_speichern', { p_id: S.id, p_pw: S.pw, p_daten: D, p_freigabe: FREI, p_name: n }));
+      STAND.konto.name = n; msg('kMsg', 'Gespeichert.', true);
+    } catch (e) { msg('kMsg', e.grund ? e.message : 'Keine Verbindung.'); }
+  };
+  $('pwForm').onsubmit = async e => {
+    e.preventDefault(); const n = $('pNeu').value;
+    if (n !== $('pNeu2').value) return msg('pMsg', 'Die beiden Kennwörter stimmen nicht überein.');
+    try { VB.ok(await VB.rpc('vb_pw_aendern', { p_id: S.id, p_pw: S.pw, p_neu: n })); S.pw = n; merke(); $('pNeu').value = $('pNeu2').value = ''; msg('pMsg', 'Kennwort geändert.', true); }
+    catch (x) { msg('pMsg', x.grund ? x.message : 'Keine Verbindung.'); }
+  };
+  $('kLoeschen').onclick = async () => {
+    if (!confirm('Konto und alle Antworten wirklich endgültig löschen?')) return;
+    try { VB.ok(await VB.rpc('vb_konto_loeschen', { p_id: S.id, p_pw: S.pw })); S = null; STAND = null; merke(); modus(true); zeigeLogin(); hinweis('Das Konto wurde gelöscht.'); $('hinweis').classList.remove('hidden'); }
+    catch (x) { msg('lzMsg', x.grund === 'fehltfn' ? 'Löschen ist gerade noch nicht möglich. Bitte beim Klassenlehrer melden.' : x.grund ? x.message : 'Keine Verbindung.'); }
+  };
+  $('kZurueck').onclick = () => { ANSICHT = 'bogen'; zeichne(); scrollTo(0, 0); };
+}
+
+/* ---------- Start ---------- */
+(async function () {
+  const code = new URLSearchParams(location.search).get('code');
+  if (code) $('lCode').value = code.toUpperCase();
+  S = ladeSitzung();
+  if (!S) { modus(true); zeigeLogin(); return; }
+  try {
+    const r = await VB.rpc('vb_laden', { p_id: S.id, p_pw: S.pw });
+    if (!r.ok) { S = null; merke(); modus(false); zeigeLogin(r.grund === 'pw' ? 'Das Kennwort wurde geändert. Bitte neu anmelden.' : r.grund === 'gesperrt' ? VB.GRUND.gesperrt : ''); return; }
+    angemeldet(r, '');
+  } catch (e) { modus(false); zeigeLogin('Keine Verbindung zur Datenbank. Bitte später noch einmal versuchen.'); }
+})();
+</script>
+</body>
+</html>

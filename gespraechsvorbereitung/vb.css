@@ -1,0 +1,90 @@
+/* Gesprächsvorbereitung – Aufbau wie Standortgespräche und Elternumfrage: roter Kopf mit Logo, Inhalt als Karten */
+:root{--red:#A81010;--red-dark:#860000;--tint:#FFF4F2;--line:#E1E1E1;--text:#333;--muted:#6F6F6F;--bg:#F6F5F3;--ok:#1B7A3D;color-scheme:light}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 "Open Sans",Arial,sans-serif;color:var(--text);background:var(--bg)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+h1,h2,h3{margin:0;line-height:1.25;text-wrap:balance}
+p{margin:0 0 10px}
+a{color:var(--red)}
+.hidden{display:none!important}
+header{background:var(--red);color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;position:sticky;top:0;z-index:10}
+header .in{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:10px}
+header img{height:36px;width:auto;background:#fff;border-radius:6px;padding:3px}
+header h1{font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header p{margin:0;font-size:.78rem;opacity:.92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .sp{flex:1;min-width:0;overflow:hidden}
+header button{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:5px 9px;font:inherit;font-size:.8rem;cursor:pointer;white-space:nowrap}
+main{max-width:860px;margin:0 auto;padding:14px 14px 8px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.card h2{font-size:1.08rem;margin-bottom:8px}
+.card h3{font-size:1rem;margin:0 0 4px}
+.muted{color:var(--muted);font-size:.86rem}
+.lead{font-size:.95rem}
+label.f,div.f{display:block;margin:0 0 16px}
+label.f>span,.fr{display:block;font-weight:600;font-size:.93rem;margin-bottom:5px}
+.fr small,label.f small{color:var(--muted);font-size:.8rem;font-weight:400}
+label.f>small{display:block;margin-top:2px}
+input[type=text],input[type=password],input[type=date],input[type=tel],select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #C9C9C9;border-radius:10px;background:#fff;color:var(--text)}
+textarea{min-height:84px;resize:vertical;line-height:1.45}
+input:focus,textarea:focus,select:focus{border-color:var(--red);outline:2px solid rgba(168,16,16,.18)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:10px 16px;font:inherit;font-weight:600;border-radius:10px;border:0;cursor:pointer;background:var(--red);color:#fff;text-decoration:none}
+.btn:hover{background:var(--red-dark)}
+.btn.sec{background:#fff;color:var(--red);border:1.5px solid var(--red)}
+.btn.sec:hover{background:var(--tint)}
+.btn.klein{min-height:36px;padding:6px 12px;font-size:.86rem}
+.btn[disabled]{opacity:.55;cursor:default}
+.knoepfe{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.knoepfe.zwei{justify-content:space-between}
+.msg{padding:10px 12px;border-radius:10px;background:#FDECEA;color:#8A1C1C;margin:10px 0 0;font-size:.9rem}
+.msg.gut{background:#E9F6EC;color:#14562B}
+main>.msg{margin:0 0 12px}
+.wahl{display:flex;flex-wrap:wrap;gap:6px}
+.wahl button{font:inherit;font-size:.92rem;min-height:42px;padding:6px 12px;border:1.5px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--text);text-align:left}
+.wahl button[aria-pressed=true]{border-color:var(--red);background:var(--red);color:#fff;font-weight:600}
+.hero{background:linear-gradient(135deg,var(--red),#C62A1E);color:#fff;border:0}
+.hero h2{font-size:1.25rem}
+.hero .btn{background:#fff;color:var(--red)}
+.hero .btn:hover{background:var(--tint)}
+.hero .btn.sec{background:transparent;color:#fff;border-color:rgba(255,255,255,.75)}
+details.info{background:#F7F7F7;border-radius:10px;padding:8px 12px;font-size:.85rem;color:#555;margin-top:12px}
+details.info summary{cursor:pointer;font-weight:600}
+footer{max-width:860px;margin:0 auto;padding:6px 16px 22px;color:var(--muted);font-size:.76rem;text-align:center}
+/* Formular-Bausteine */
+.smileys .wahl button{font-size:1.6rem;min-width:52px;justify-content:center;text-align:center;padding:4px 8px}
+.smileys .wahl button[aria-pressed=true]{background:var(--tint);color:inherit;border-width:2.5px}
+.krit{display:grid;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.kz{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;flex-wrap:wrap}
+.kz:nth-child(odd){background:#FAF9F7}
+.kz>span{flex:1 1 240px;font-size:.92rem}
+.stufen{flex-wrap:nowrap;gap:4px}
+.stufen button{min-width:42px;min-height:40px;justify-content:center;text-align:center;padding:4px 6px;font-weight:700}
+.faecher{display:grid;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.fz{display:flex;align-items:center;gap:8px 10px;padding:7px 10px;flex-wrap:wrap}
+.fz:nth-child(odd){background:#FAF9F7}
+.fz>b{flex:1 1 140px;font-size:.92rem;font-weight:600}
+.ampel{display:flex;gap:4px}
+.ampel button{font:inherit;font-size:.8rem;min-height:36px;padding:4px 9px;border:1.5px solid var(--line);background:#fff;border-radius:999px;cursor:pointer;color:var(--text);display:inline-flex;align-items:center;gap:5px}
+.ampel button i{width:11px;height:11px;border-radius:50%;background:var(--c);opacity:.35}
+.ampel button[aria-pressed=true]{border-color:var(--c);background:var(--c);color:#fff;font-weight:600}
+.ampel button[aria-pressed=true] i{background:#fff;opacity:1}
+.fz .fn{flex:1 1 100%;padding:6px 10px;font-size:.88rem}
+fieldset.ziel{border:1px solid var(--line);border-radius:12px;padding:10px 12px 0;margin:0 0 10px}
+fieldset.ziel legend{font-weight:700;color:var(--red);padding:0 4px}
+fieldset.ziel label.f{margin-bottom:10px}
+.verein{display:grid;gap:6px;margin-bottom:8px}
+.vz{display:grid;grid-template-columns:120px 1fr 120px;gap:6px}
+/* Schritte */
+.schritte{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;margin:0 0 4px;scrollbar-width:thin}
+.schritte button{flex:0 0 auto;font:inherit;font-size:.8rem;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;cursor:pointer;color:var(--text);white-space:nowrap}
+.schritte button.fertig{border-color:#9CC9A9;background:#EEF7F0}
+.schritte button[aria-current=true]{border-color:var(--red);background:var(--red);color:#fff;font-weight:600}
+.balken{height:8px;background:rgba(255,255,255,.35);border-radius:99px;overflow:hidden;margin:10px 0 4px}
+.balken i{display:block;height:100%;background:#fff;border-radius:99px}
+.speicher{font-size:.8rem;color:var(--muted);text-align:right;min-height:1.2em;margin:-4px 0 8px}
+.teil{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--red);background:var(--tint);border-radius:6px;padding:2px 7px;margin-bottom:6px}
+.schalter{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
+.schalter input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--red);flex:0 0 auto}
+@media (max-width:520px){header{padding-left:12px;padding-right:12px}header .in{gap:7px}header img{height:28px}header h1{font-size:.95rem}header button{font-size:.72rem;padding:4px 7px}
+  .vz{grid-template-columns:1fr 1fr}.vz input[data-k=was]{grid-column:1/-1;order:3}.kz{padding:8px}.stufen button{min-width:38px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Standortgespräche – Lehrerbereich – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="stylesheet" href="vb.css?v=20261120">
+<script src="../config.js?v=20261108"></script>
+<script src="vb.js?v=20261120"></script>
+<script src="qrcode.js"></script>
+<script src="../praktikum/jspdf.umd.min.js"></script>
+<style>
+.tabs{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+.tabs button{font:inherit;font-weight:600;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;cursor:pointer;color:var(--text)}
+.tabs button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.zahlen{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px}
+.zahl{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.zahl b{display:block;font-size:1.5rem;color:var(--red);line-height:1.2}
+.zahl span{font-size:.82rem;color:var(--muted)}
+.liste{display:grid;gap:8px}
+.zeile{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.zeile:hover{border-color:var(--red)}
+.zeile .nr{width:26px;height:26px;border-radius:50%;background:var(--tint);color:var(--red);font-weight:700;font-size:.8rem;display:grid;place-items:center;flex:0 0 auto}
+.zeile .nm{flex:1;min-width:0}
+.zeile .nm b{display:block}
+.zeile .nm small{color:var(--muted);font-size:.8rem}
+.chip{display:inline-block;font-size:.72rem;font-weight:600;border-radius:999px;padding:2px 8px;margin:2px 3px 0 0;background:#EFEFEF;color:#555;white-space:nowrap}
+.chip.frei{background:#E9F6EC;color:#14562B}
+.chip.st-vorbereitet{background:#FFF3D6;color:#7A5300}
+.chip.st-geführt{background:#E9F6EC;color:#14562B}
+.chip.st-offen{background:#F1F1F1;color:#777}
+table.vgl{width:100%;border-collapse:collapse;font-size:.88rem}
+table.vgl th,table.vgl td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.vgl th.c,table.vgl td.c{text-align:center;width:64px;font-weight:700}
+table.vgl tr.abw td{background:#FFF4F2}
+table.vgl tr.abw td.c{color:var(--red)}
+.punkt{display:inline-block;width:13px;height:13px;border-radius:50%;vertical-align:-2px}
+.antw{margin:0 0 10px}
+.antw b{display:block;font-size:.86rem;color:#555}
+.antw p{margin:2px 0 0;white-space:pre-wrap}
+.phase{border-left:4px solid var(--red);padding:4px 0 4px 12px;margin:0 0 14px}
+.phase h3{color:var(--red)}
+.phase ul,.tipps ul{margin:4px 0 0;padding-left:20px}
+dialog{border:0;border-radius:16px;padding:0;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{padding:18px}
+.konto{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Standortgespräche · Lehrerbereich</h1><p>Vorbereitung und Gesprächsvorlagen · Klasse 9a</p></div>
+  <button id="abmeldenBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="tor" class="card">
+    <h2>Zugang für den Klassenlehrer</h2>
+    <p class="muted">Derselbe Hauptschlüssel wie bei Graduierung, Elternumfrage und Terminbuchung.</p>
+    <form id="torForm" style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" required style="flex:1 1 220px">
+      <button class="btn" type="submit">Öffnen</button>
+    </form>
+    <div id="torMsg" class="msg hidden" role="alert"></div>
+  </section>
+
+  <section id="innen" class="hidden">
+    <div class="tabs" role="group">
+      <button type="button" data-tab="uebersicht" aria-pressed="true">Übersicht</button>
+      <button type="button" data-tab="leitfaden" aria-pressed="false">Leitfaden Gesprächsführung</button>
+    </div>
+    <div id="hinweis" class="msg gut hidden" role="status"></div>
+    <div id="inhalt"></div>
+  </section>
+</main>
+<footer>Standortgespräche der PAGS Külsheim · Lehrerbereich · Thorsten von Plotho-Kettner</footer>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = VB.esc, SK = 'pags-vb-lehrer';
+let KEY = '', DATEN = null, TERMINE = [], TAB = 'uebersicht', AKT = null, UNTER = 'vorlage', L = {}, LID = null, timer = null, offen = false;
+
+function merk(v) { try { if (v === null) sessionStorage.removeItem(SK); else if (v === undefined) return sessionStorage.getItem(SK); else sessionStorage.setItem(SK, v); } catch (e) { return null; } }
+function hinweis(t, fehler) { const h = $('hinweis'); h.textContent = t || ''; h.classList.toggle('hidden', !t); h.classList.toggle('gut', !fehler); if (t) scrollTo(0, 0); }
+
+/* ---------- Zugang ---------- */
+async function laden() {
+  DATEN = VB.ok(await VB.rpc('vb_lehrer_daten', { schluessel: KEY, p_klasse: VB.KLASSE }));
+  // Termine aus der Terminbuchung (Standortgespräche) – wenn vorhanden
+  try {
+    const g = await VB.rpc('gespraech_lehrer_daten', { schluessel: KEY, p_klasse: VB.KLASSE });
+    TERMINE = g && g.ok ? g.termine.filter(t => t.buchung) : [];
+  } catch (e) { TERMINE = []; }
+}
+async function oeffnen(s) {
+  KEY = s; const m = $('torMsg'); m.classList.add('hidden');
+  try {
+    await laden(); merk(KEY);
+    $('tor').classList.add('hidden'); $('innen').classList.remove('hidden'); $('abmeldenBtn').classList.remove('hidden');
+    zeichne();
+  } catch (e) { KEY = ''; merk(null); $('tor').classList.remove('hidden'); $('innen').classList.add('hidden'); if (s) { m.textContent = e.grund ? e.message : 'Keine Verbindung zur Datenbank.'; m.classList.remove('hidden'); } }
+}
+$('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
+$('abmeldenBtn').onclick = async () => { if (offen) await speichern(); merk(null); location.reload(); };
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = async () => { if (offen) await speichern(); TAB = b.dataset.tab; AKT = null; zeichne(); scrollTo(0, 0); });
+
+/* Termin aus der Buchung zu einem Schüler suchen (Name des Kindes enthält Vor- und ggf. Nachnamen) */
+function termin(s) {
+  const n = x => (x || '').toLowerCase().normalize('NFC');
+  const t = TERMINE.find(t => { const k = n(t.buchung.name_kind); return k.includes(n(s.vorname)) && (!s.nachname || k.includes(n(s.nachname))); });
+  if (!t) return null;
+  const d = new Date(t.beginn);
+  return { datum: d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Europe/Berlin' }),
+           zeit: d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }) + ' Uhr', beginn: t.beginn };
+}
+
+/* ---------- Ansichten ---------- */
+function zeichne() {
+  document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', b.dataset.tab === TAB));
+  if (TAB === 'leitfaden') { $('inhalt').innerHTML = leitfadenHTML(); return; }
+  if (AKT) return detail();
+  uebersicht();
+}
+
+function uebersicht() {
+  const S = DATEN.schueler, konten = S.flatMap(s => s.konten);
+  const st = s => (s.lehrer || {}).l_status || 'offen';
+  let h = '<div class="zahlen">' +
+    '<div class="zahl"><b>' + S.length + '</b><span>Schüler angelegt</span></div>' +
+    '<div class="zahl"><b>' + konten.length + '</b><span>Konten (Eltern/Schüler)</span></div>' +
+    '<div class="zahl"><b>' + konten.filter(k => k.freigabe).length + '</b><span>Bögen freigegeben</span></div>' +
+    '<div class="zahl"><b>' + S.filter(s => st(s) !== 'offen').length + ' / ' + S.length + '</b><span>Vorlagen vorbereitet</span></div>' +
+    '<div class="zahl"><b>' + S.filter(s => st(s) === 'geführt').length + '</b><span>Gespräche geführt</span></div></div>';
+  h += '<div class="card"><h2>Schülerliste und Vorlagen</h2>' +
+    (S.length ? '<p class="muted">Tippen Sie auf einen Namen, um die Gesprächsvorlage auszufüllen und die freigegebenen Bögen zu sehen.</p>'
+      : '<p>Legen Sie zuerst Ihre Schülerliste an. Jede Schülerin und jeder Schüler bekommt dann eine eigene Gesprächsvorlage und einen Zugangscode für die Familie.</p>') +
+    '<div class="knoepfe"><button class="btn" type="button" id="anlegen">+ Schüler anlegen</button>' +
+    (S.length ? '<button class="btn sec" type="button" id="codes">Zugangscodes als PDF</button><button class="btn sec" type="button" id="alle">Alle Vorlagen als PDF</button>' : '') +
+    '<button class="btn sec" type="button" id="neu">↻ Aktualisieren</button></div></div>';
+  h += '<div class="liste">' + S.map((s, i) => {
+    const t = termin(s), L = s.lehrer || {};
+    const dat = L.l_datum ? VB.isoDatum(L.l_datum) + (L.l_zeit ? ', ' + L.l_zeit : '') : t ? t.datum + ', ' + t.zeit : '';
+    return '<button type="button" class="zeile" data-id="' + s.id + '"><span class="nr">' + (i + 1) + '</span><span class="nm"><b>' + esc(VB.name(s)) + '</b>' +
+      '<small>' + (dat ? 'Termin: ' + esc(dat) + ' · ' : '') + 'Code ' + esc(s.code) + '</small><br>' +
+      '<span class="chip st-' + esc(st(s)) + '">Vorlage: ' + esc(st(s)) + '</span>' +
+      (s.konten.length ? s.konten.map(k => '<span class="chip' + (k.freigabe ? ' frei' : '') + '">' + esc(VB.ROLLE[k.rolle]) + (k.freigabe ? ' ✓ freigegeben' : '') + '</span>').join('') : '<span class="chip">noch kein Konto</span>') +
+      '</span><span aria-hidden="true">›</span></button>';
+  }).join('') + '</div>';
+  $('inhalt').innerHTML = h;
+  $('anlegen').onclick = anlegenDialog;
+  $('neu').onclick = async () => { try { await laden(); zeichne(); hinweis('Aktualisiert.'); } catch (e) { hinweis(e.message, true); } };
+  if ($('codes')) $('codes').onclick = () => codesPDF(DATEN.schueler);
+  if ($('alle')) $('alle').onclick = () => allePDF();
+  $('inhalt').querySelectorAll('.zeile').forEach(b => b.onclick = () => { AKT = b.dataset.id; UNTER = 'vorlage'; hinweis(''); zeichne(); scrollTo(0, 0); });
+}
+
+function anlegenDialog() {
+  const frei = 40 - DATEN.schueler.length;
+  $('dlgForm').innerHTML = '<h2>Schüler anlegen</h2>' +
+    '<p class="muted">Eine Person pro Zeile, als „Vorname Nachname“ oder „Nachname, Vorname“. Sie können die Liste z. B. aus Excel oder ASV kopieren. Noch ' + frei + ' Plätze frei.</p>' +
+    '<label class="f"><span>Namen</span><textarea id="namen" style="min-height:220px" placeholder="Leon Muster&#10;Müller, Anna&#10;…"></textarea></label>' +
+    '<p class="muted">Oder zunächst Platzhalter anlegen („Schüler 1“ bis „Schüler 20“) und die Namen später ändern.</p>' +
+    '<div id="aMsg" class="msg hidden" role="alert"></div>' +
+    '<div class="knoepfe zwei"><button class="btn sec" type="button" id="aAbbr">Abbrechen</button><span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sec" type="button" id="aPlatz">20 Platzhalter</button><button class="btn" type="submit">Anlegen</button></span></div>';
+  $('aAbbr').onclick = () => $('dlg').close();
+  const senden = async namen => {
+    try {
+      const r = VB.ok(await VB.rpc('vb_schueler_anlegen', { schluessel: KEY, p_klasse: VB.KLASSE, p_namen: namen }));
+      $('dlg').close(); await laden(); zeichne(); hinweis(r.angelegt + ' Schüler angelegt. Jetzt können Sie die Zugangscodes als PDF ausdrucken.');
+    } catch (e) { $('aMsg').textContent = e.grund === 'voll' ? 'Höchstens 40 Schüler je Klasse.' : e.message; $('aMsg').classList.remove('hidden'); }
+  };
+  $('aPlatz').onclick = () => { const start = DATEN.schueler.length; senden(Array.from({ length: Math.min(20, frei) }, (_, i) => ({ vorname: 'Schüler ' + (start + i + 1), nachname: '' }))); };
+  $('dlgForm').onsubmit = e => {
+    e.preventDefault();
+    const namen = $('namen').value.split(/\r?\n/).map(z => z.replace(/\t/g, ' ').trim()).filter(Boolean).map(z => {
+      if (z.includes(',')) { const [n, v] = z.split(',').map(x => x.trim()); return { vorname: v || n, nachname: v ? n : '' }; }
+      const w = z.split(/\s+/); return w.length > 1 ? { vorname: w.slice(0, -1).join(' '), nachname: w[w.length - 1] } : { vorname: z, nachname: '' };
+    });
+    if (!namen.length) { $('aMsg').textContent = 'Bitte mindestens einen Namen eintragen.'; $('aMsg').classList.remove('hidden'); return; }
+    senden(namen);
+  };
+  $('dlg').showModal();
+}
+
+/* ---------- Detail eines Schülers ---------- */
+function schueler() { return DATEN.schueler.find(s => s.id === AKT); }
+function detail() {
+  const s = schueler(); if (!s) { AKT = null; return uebersicht(); }
+  const i = DATEN.schueler.indexOf(s), t = termin(s);
+  if (LID !== s.id) { L = JSON.parse(JSON.stringify(s.lehrer || {})); LID = s.id; }
+  const frei = s.konten.filter(k => k.freigabe);
+  let h = '<div class="knoepfe" style="margin:0 0 10px"><button class="btn sec klein" type="button" id="zurueck">‹ Übersicht</button>' +
+    (i > 0 ? '<button class="btn sec klein" type="button" data-geh="' + (i - 1) + '">‹ ' + esc(DATEN.schueler[i - 1].vorname) + '</button>' : '') +
+    (i < DATEN.schueler.length - 1 ? '<button class="btn sec klein" type="button" data-geh="' + (i + 1) + '">' + esc(DATEN.schueler[i + 1].vorname) + ' ›</button>' : '') + '</div>';
+  h += '<div class="card hero"><h2>' + esc(VB.name(s)) + '</h2><p style="margin:4px 0 0">Zugangscode für die Familie: <b style="letter-spacing:.06em">' + esc(s.code) + '</b>' +
+    (t ? ' · Gebuchter Termin: <b>' + esc(t.datum + ', ' + t.zeit) + '</b>' : '') + '<br>' +
+    (s.konten.length ? s.konten.length + ' Konto/Konten · ' + frei.length + ' freigegeben' : 'Noch kein Konto angelegt') + '</p>' +
+    '<div class="knoepfe"><button class="btn" type="button" id="pdfVorlage">⬇ Gesprächsvorlage (PDF)</button>' +
+    (frei.length ? '<button class="btn sec" type="button" id="pdfBoegen">Freigegebene Bögen (PDF)</button>' : '') +
+    '<button class="btn sec" type="button" id="pdfCode">Code-Zettel</button></div></div>';
+  h += '<div class="tabs" role="group">' + [['vorlage', 'Meine Vorlage'], ['vergleich', 'Bögen & Vergleich (' + frei.length + ')'], ['konten', 'Konten & Name']].map(([k, t]) =>
+    '<button type="button" data-u="' + k + '" aria-pressed="' + (UNTER === k) + '">' + t + '</button>').join('') + '</div>';
+  h += '<div class="speicher" id="speicher" aria-live="polite">' + (s.lehrer_am ? 'Gespeichert ✓ ' + VB.zeitpunkt(s.lehrer_am) : '') + '</div>';
+  if (UNTER === 'vorlage') h += VB.LEHRER_VORLAGE.map(a => '<div class="card vorl"><h2>' + esc(a.titel) + '</h2>' + VB.abschnittHTML(a, L) + '</div>').join('');
+  else if (UNTER === 'vergleich') h += vergleichHTML(s);
+  else h += kontenHTML(s);
+  $('inhalt').innerHTML = h;
+  $('zurueck').onclick = async () => { if (offen) await speichern(); AKT = null; zeichne(); scrollTo(0, 0); };
+  $('inhalt').querySelectorAll('[data-geh]').forEach(b => b.onclick = async () => { if (offen) await speichern(); AKT = DATEN.schueler[+b.dataset.geh].id; zeichne(); scrollTo(0, 0); });
+  $('inhalt').querySelectorAll('[data-u]').forEach(b => b.onclick = async () => { if (offen) await speichern(); UNTER = b.dataset.u; zeichne(); });
+  $('pdfVorlage').onclick = async () => { if (offen) await speichern(); vorlagePDF(schueler()); };
+  if ($('pdfBoegen')) $('pdfBoegen').onclick = () => boegenPDF(s);
+  $('pdfCode').onclick = () => codesPDF([s]);
+  if (UNTER === 'vorlage') {
+    // Termin aus der Buchung vorschlagen
+    if (t && !L.l_datum) { const dIn = $('inhalt').querySelector('[data-f=l_datum]'); if (dIn) dIn.placeholder = t.datum; }
+    $('inhalt').querySelectorAll('.vorl').forEach(c => VB.binden(c, L, neu => { geaendert(); if (neu) { const y = scrollY; detailNeu(); scrollTo(0, y); } }));
+    if (t && !L.l_datum) { const z = new Date(t.beginn); const iso = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin' }).format(z);
+      const box = $('inhalt').querySelector('[data-f=l_datum]').closest('label'); box.insertAdjacentHTML('beforeend', '<small><a href="#" id="terminUebernehmen">Gebuchten Termin übernehmen (' + esc(t.datum + ', ' + t.zeit) + ')</a></small>');
+      $('terminUebernehmen').onclick = ev => { ev.preventDefault(); L.l_datum = iso; L.l_zeit = t.zeit; geaendert(); detailNeu(); }; }
+  }
+  if (UNTER === 'konten') kontenBinden(s);
+}
+function detailNeu() { detail(); }
+
+/* Speichern der Lehrervorlage */
+function geaendert() { offen = true; const el = $('speicher'); if (el) el.textContent = 'Wird gespeichert …'; clearTimeout(timer); timer = setTimeout(speichern, 1200); }
+async function speichern() {
+  clearTimeout(timer); if (!offen || !AKT) { offen = false; return; }
+  offen = false; const id = AKT, daten = JSON.parse(JSON.stringify(L));
+  try {
+    const r = VB.ok(await VB.rpc('vb_lehrer_speichern', { schluessel: KEY, p_id: id, p_lehrer: daten }));
+    const s = DATEN.schueler.find(x => x.id === id); if (s) { s.lehrer = daten; s.lehrer_am = r.gespeichert_am; }
+    const el = $('speicher'); if (el && AKT === id && !offen) el.textContent = 'Gespeichert ✓ ' + VB.zeitpunkt(r.gespeichert_am);
+  } catch (e) { offen = true; const el = $('speicher'); if (el) el.textContent = '⚠ Nicht gespeichert: ' + (e.grund ? e.message : 'keine Verbindung') + ' – neuer Versuch …'; timer = setTimeout(speichern, 10000); }
+}
+addEventListener('beforeunload', e => { if (offen) { speichern(); e.preventDefault(); e.returnValue = ''; } });
+
+function vergleichHTML(s) {
+  const frei = s.konten.filter(k => k.freigabe && k.daten);
+  const nicht = s.konten.filter(k => !k.freigabe);
+  if (!frei.length) return '<div class="card"><h2>Noch keine freigegebenen Bögen</h2><p class="muted">' +
+    (s.konten.length ? nicht.length + ' Konto/Konten angelegt, aber (noch) nicht freigegeben. Die Familie bringt den Bogen dann ausgedruckt mit.' : 'Die Familie hat mit dem Code ' + esc(s.code) + ' noch kein Konto angelegt.') + '</p></div>';
+  const Sd = frei.filter(k => k.rolle !== 'eltern').map(k => k.daten)[0], Ed = frei.filter(k => k.rolle !== 'schueler').map(k => k.daten).filter(d => Object.keys(d).some(x => x.startsWith('e_')))[0];
+  const L0 = s.lehrer || {};
+  let h = '<div class="card"><h2>Arbeits- und Sozialverhalten im Vergleich</h2><p class="muted">Rot markiert: Die Sichtweisen liegen zwei Stufen oder mehr auseinander – ein guter Gesprächsanlass.</p>' +
+    '<div style="overflow-x:auto"><table class="vgl"><thead><tr><th>Bereich</th><th class="c">Schüler</th><th class="c">Eltern</th><th class="c">Lehrer</th></tr></thead><tbody>' +
+    VB.KRITERIEN.map(k => {
+      const w = [Sd && (Sd.s_krit || {})[k.k], Ed && (Ed.e_krit || {})[k.k], (L0.l_krit || {})[k.k]];
+      const z = w.filter(v => v > 0), abw = z.length > 1 && Math.max(...z) - Math.min(...z) >= 2;
+      const sym = v => v === 0 ? '?' : (VB.STUFEN.find(x => x.v === v) || {}).t || '·';
+      return '<tr' + (abw ? ' class="abw"' : '') + '><td>' + esc(k.kurz) + '</td>' + w.map(v => '<td class="c">' + esc(sym(v)) + '</td>').join('') + '</tr>';
+    }).join('') + '</tbody></table></div></div>';
+  if (Sd && Sd.s_faecher) h += '<div class="card"><h2>Fächer: Einschätzung von ' + esc(s.vorname) + ' und Lehrer</h2><div style="overflow-x:auto"><table class="vgl"><thead><tr><th>Fach</th><th class="c">Schüler</th><th class="c">Lehrer</th></tr></thead><tbody>' +
+    VB.FAECHER.map(f => { const p = v => { const a = VB.AMPEL.find(x => x.v === ((v || {})[f] || {}).a); return a ? '<span class="punkt" style="background:' + a.c + '" title="' + a.t + '"></span>' : '·'; };
+      return '<tr><td>' + esc(f) + '</td><td class="c">' + p(Sd.s_faecher) + '</td><td class="c">' + p(L0.l_faecher) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  frei.forEach(k => {
+    h += '<div class="card"><h2>Bogen: ' + esc(VB.ROLLE[k.rolle]) + (k.name ? ' – ' + esc(k.name) : '') + '</h2><p class="muted">Zuletzt gespeichert: ' + esc(VB.zeitpunkt(k.gespeichert_am) || '–') + '</p>';
+    VB.teile(k.rolle).forEach(([teil, abs]) => abs.forEach(a => {
+      const zeilen = a.felder.map(f => { const t = VB.klartext(f, k.daten[f.id]); return t ? '<div class="antw"><b>' + esc(f.frage || '') + '</b><p>' + esc(t) + '</p></div>' : ''; }).join('');
+      if (zeilen) h += '<h3 style="margin-top:10px">' + (k.rolle === 'gemeinsam' ? (teil === 's' ? s.vorname + ': ' : 'Eltern: ') : '') + esc(a.titel) + '</h3>' + zeilen;
+    }));
+    h += '</div>';
+  });
+  if (nicht.length) h += '<p class="muted">Nicht freigegeben: ' + nicht.map(k => esc(VB.ROLLE[k.rolle])).join(', ') + '</p>';
+  return h;
+}
+
+function kontenHTML(s) {
+  return '<div class="card"><h2>Name ändern</h2><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+    '<label class="f"><span>Vorname</span><input type="text" id="nVor" maxlength="60" value="' + esc(s.vorname) + '"></label>' +
+    '<label class="f"><span>Nachname</span><input type="text" id="nNach" maxlength="60" value="' + esc(s.nachname) + '"></label></div>' +
+    '<button class="btn" type="button" id="nSpeichern">Speichern</button></div>' +
+    '<div class="card"><h2>Konten der Familie</h2>' + (s.konten.length ? s.konten.map(k =>
+      '<div class="konto"><b>' + esc(k.benutzer) + '</b> · ' + esc(VB.ROLLE[k.rolle]) + (k.name ? ' · ' + esc(k.name) : '') +
+      '<br><small class="muted">angelegt ' + esc(VB.datum(k.created_at)) + ' · ' + (k.gespeichert_am ? 'zuletzt gespeichert ' + esc(VB.zeitpunkt(k.gespeichert_am)) : 'noch nichts gespeichert') + ' · ' + (k.freigabe ? 'freigegeben' : 'nicht freigegeben') + '</small>' +
+      '<div class="knoepfe"><button class="btn sec klein" type="button" data-pw="' + k.id + '">Neues Kennwort setzen</button><button class="btn sec klein" type="button" data-weg="' + k.id + '">Konto entfernen</button></div></div>').join('')
+      : '<p class="muted">Noch keine Konten. Höchstens 4 Konten je Code (z. B. Mutter, Vater, Kind).</p>') + '</div>' +
+    '<div class="card"><h2>Zugangscode</h2><p>Aktueller Code: <b style="letter-spacing:.06em">' + esc(s.code) + '</b></p><p class="muted">Ein neuer Code macht den alten ungültig. Bestehende Konten bleiben erhalten.</p>' +
+    '<div class="knoepfe"><button class="btn sec" type="button" id="neuCode">Neuen Code erzeugen</button><button class="btn sec" type="button" id="loeschen">Schüler mit allen Konten löschen</button></div></div>';
+}
+function kontenBinden(s) {
+  const fehl = e => hinweis(e.grund === 'fehltfn' ? 'Löschen ist in der Datenbank noch nicht eingerichtet (siehe supabase/gespraechsvorbereitung_loeschen.sql).' : e.grund ? e.message : 'Keine Verbindung.', true);
+  $('nSpeichern').onclick = async () => { try { VB.ok(await VB.rpc('vb_schueler_aendern', { schluessel: KEY, p_id: s.id, p_vorname: $('nVor').value, p_nachname: $('nNach').value })); await laden(); zeichne(); hinweis('Name gespeichert.'); } catch (e) { fehl(e); } };
+  $('neuCode').onclick = async () => { if (!confirm('Neuen Code erzeugen? Der alte Code ' + s.code + ' gilt dann nicht mehr.')) return; try { const r = VB.ok(await VB.rpc('vb_code_neu', { schluessel: KEY, p_id: s.id })); await laden(); zeichne(); hinweis('Neuer Code: ' + r.code); } catch (e) { fehl(e); } };
+  $('loeschen').onclick = async () => { if (!confirm(VB.name(s) + ' mit Vorlage und allen Konten endgültig löschen?')) return; try { VB.ok(await VB.rpc('vb_schueler_loeschen', { schluessel: KEY, p_id: s.id })); AKT = null; await laden(); zeichne(); hinweis('Gelöscht.'); } catch (e) { fehl(e); } };
+  $('inhalt').querySelectorAll('[data-pw]').forEach(b => b.onclick = async () => {
+    const n = prompt('Neues Kennwort für dieses Konto (mindestens 6 Zeichen):'); if (!n) return;
+    try { VB.ok(await VB.rpc('vb_pw_neu', { schluessel: KEY, p_konto: b.dataset.pw, p_neu: n })); hinweis('Neues Kennwort gesetzt. Bitte der Familie mitteilen.'); } catch (e) { fehl(e); }
+  });
+  $('inhalt').querySelectorAll('[data-weg]').forEach(b => b.onclick = async () => {
+    if (!confirm('Dieses Konto mit allen Antworten endgültig entfernen?')) return;
+    try { VB.ok(await VB.rpc('vb_konto_entfernen', { schluessel: KEY, p_konto: b.dataset.weg })); await laden(); zeichne(); hinweis('Konto entfernt.'); } catch (e) { fehl(e); }
+  });
+}
+
+/* ---------- Leitfaden ---------- */
+function leitfadenHTML() {
+  return '<div class="card"><h2>Ablauf eines Standortgesprächs</h2><p class="muted">Etwa 15–20 Minuten. Die Schülerin / der Schüler spricht zuerst – das Gespräch wird <i>mit</i> dem Kind geführt, nicht über das Kind.</p>' +
+    VB.PHASEN.map((p, i) => '<div class="phase"><h3>' + (i + 1) + '. ' + esc(p.t) + ' <small class="muted">· ca. ' + p.min + ' Min.</small></h3><ul>' + p.fragen.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul></div>').join('') + '</div>' +
+    '<div class="card tipps"><h2>Formulierungshilfen</h2>' + VB.TIPPS.map(t => '<h3 style="margin-top:10px">' + esc(t.t) + '</h3><ul>' + t.x.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>').join('') + '</div>' +
+    '<div class="card"><h2>Checkliste</h2><ul style="margin:0;padding-left:20px">' + VB.CHECKLISTE.map(c => '<li>' + esc(c) + '</li>').join('') + '</ul></div>' +
+    '<div class="card"><h2>So läuft es mit der App</h2><ol style="margin:0;padding-left:20px">' +
+    '<li>Schülerliste anlegen (Übersicht → „Schüler anlegen“).</li><li>Zugangscodes als PDF drucken, ausschneiden, mitgeben (Kind und Eltern nutzen denselben Code, jeder legt ein eigenes Konto an – oder ein gemeinsames).</li>' +
+    '<li>Familien füllen ihre Bögen aus, laden das PDF herunter und geben auf Wunsch frei.</li><li>Sie füllen je Schüler „Meine Vorlage“ aus – freigegebene Antworten erscheinen im Vergleich und im PDF.</li>' +
+    '<li>Gesprächsvorlage drucken (einzeln oder alle) und im Gespräch Notizen und Vereinbarungen eintragen. Stand auf „geführt“ setzen.</li></ol>' +
+    '<p class="muted" style="margin:10px 0 0">Link für die Familien: <a href="' + VB.URL + '" target="_blank" rel="noopener">' + VB.URL + '</a></p></div>';
+}
+
+/* ---------- PDFs ---------- */
+function speichernPDF(doc, name) { doc.save(name.replace(/[^\wÄÖÜäöüß.-]+/g, '_')); }
+function vorlagePDF(s) {
+  try { const P = VB.pdfLehrer(null, s, termin(s)); P.fuss('Gesprächsvorlage · ' + VB.name(s) + ' · Klasse ' + VB.KLASSE + ' · vertraulich'); speichernPDF(P.doc, 'Gespraechsvorlage_' + VB.name(s) + '.pdf'); }
+  catch (e) { hinweis(e.message, true); }
+}
+async function allePDF() {
+  try {
+    await laden(); let P = null;
+    DATEN.schueler.forEach((s, i) => { P = VB.pdfLehrer(i ? P.doc : null, s, termin(s)); });
+    P.fuss('Gesprächsvorlagen Klasse ' + VB.KLASSE + ' · PAGS Külsheim · vertraulich');
+    speichernPDF(P.doc, 'Gespraechsvorlagen_Klasse_' + VB.KLASSE + '.pdf');
+  } catch (e) { hinweis(e.message, true); }
+}
+function boegenPDF(s) {
+  try {
+    s.konten.filter(k => k.freigabe && k.daten).forEach(k => {
+      const doc = VB.pdfBogen({ konto: k, schueler: s });
+      speichernPDF(doc, 'Vorbereitung_' + VB.name(s) + '_' + k.rolle + '.pdf');
+    });
+  } catch (e) { hinweis(e.message, true); }
+}
+// Code-Zettel: 4 pro A4-Seite, mit persönlichem QR-Code (Link enthält den Code)
+function codesPDF(liste) {
+  try {
+    const P = VB.pdfNeu(), doc = P.doc;
+    liste.forEach((s, i) => {
+      if (i && i % 4 === 0) doc.addPage();
+      const x = (i % 2) * 105, y = (Math.floor(i / 2) % 2) * 148.5, m = 9;
+      doc.setDrawColor(190, 190, 190); doc.setLineDashPattern([1.5, 1.5], 0); doc.line(105, 0, 105, 297); doc.line(0, 148.5, 210, 148.5); doc.setLineDashPattern([], 0);
+      doc.setFillColor(168, 16, 16); doc.rect(x + m, y + m, 105 - 2 * m, 13, 'F');
+      P.font(11, 'bold', [255, 255, 255]); doc.text('Standortgespräch vorbereiten', x + m + 4, y + m + 6);
+      P.font(8, 'normal', [255, 255, 255]); doc.text('Klasse ' + VB.KLASSE + ' · PAGS Külsheim · Klassenlehrer', x + m + 4, y + m + 10.5);
+      P.font(9, 'normal', [90, 90, 90]); doc.text('für', x + m, y + m + 21);
+      P.font(14, 'bold', [30, 30, 30]); doc.text(doc.splitTextToSize(VB.name(s), 105 - 2 * m)[0], x + m, y + m + 27.5);
+      P.font(8.6, 'normal', [50, 50, 50]);
+      const txt = 'Liebe Eltern, liebe Schülerin, lieber Schüler, mit diesem Code legt jede und jeder ein eigenes Konto an – oder Sie nutzen gemeinsam eines. Dort bereiten Sie sich in Ruhe auf das Standortgespräch vor und laden am Ende ein PDF zum Mitbringen herunter.';
+      doc.text(doc.splitTextToSize(txt, 105 - 2 * m), x + m, y + m + 34);
+      // QR-Code als Vektorgrafik
+      const url = VB.URL + '?code=' + encodeURIComponent(s.code);
+      const qr = qrcode(0, 'M'); qr.addData(url); qr.make();
+      const n = qr.getModuleCount(), size = 38, cell = size / n, qx = x + m, qy = y + m + 58;
+      doc.setFillColor(0, 0, 0);
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) doc.rect(qx + c * cell, qy + r * cell, cell + 0.02, cell + 0.02, 'F');
+      const tx = qx + size + 5;
+      P.font(8, 'normal', [90, 90, 90]); doc.text('Zugangscode', tx, qy + 6);
+      P.font(17, 'bold', [168, 16, 16]); doc.text(s.code, tx, qy + 14);
+      P.font(8, 'normal', [50, 50, 50]);
+      doc.text(doc.splitTextToSize('QR-Code scannen – der Code ist dann schon eingetragen. Oder im Browser öffnen:', 105 - 2 * m - size - 5), tx, qy + 21);
+      P.font(7.2, 'bold', [30, 30, 30]); doc.text(doc.splitTextToSize('ratpoison-de.github.io/pags-app/gespraechsvorbereitung', 105 - 2 * m - size - 5), tx, qy + 33);
+      P.font(7.5, 'normal', [110, 110, 110]);
+      doc.text(doc.splitTextToSize('Höchstens 4 Konten je Code. Die Antworten sieht der Klassenlehrer nur, wenn Sie sie freigeben. Fragen: ' + 't.von.plotho-kettner@pagskuelsheim.de', 105 - 2 * m), x + m, y + m + 104);
+    });
+    speichernPDF(doc, liste.length === 1 ? 'Zugangscode_' + VB.name(liste[0]) + '.pdf' : 'Zugangscodes_Klasse_' + VB.KLASSE + '.pdf');
+  } catch (e) { hinweis(e.message, true); }
+}
+
+/* ---------- Start ---------- */
+(function () { const k = merk(); if (k) oeffnen(k); else $('schluessel').focus(); })();
+</script>
+</body>
+</html>

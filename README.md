@@ -118,6 +118,15 @@ Terminbuchung für die Standortgespräche (zuerst Klasse 9a). Link für Eltern: 
   - *Einstellungen:* Titel, Ort, Hinweis für die Eltern, Elternlink.
 - Technik: Tabellen `public.gespraech_*` und Funktionen `gespraech_*` in `supabase/standortgespraech.sql` (Projekt pags-lernplaner, eingerichtet am 15.11.2026). Doppelbuchungen verhindert die Datenbank (eindeutiger Schlüssel auf dem Termin). Meldungen schreibt ein Trigger. E-Mail-Benachrichtigung: stündliche geplante Aufgabe ruft `gespraech_neue_meldungen_melden()` auf (`supabase/standortgespraech_meldung.sql`) und mailt Art und Termin, ohne Namen. Gemeinsame Hilfen: `standortgespraech/gespraech.js`.
 
+## Standortgespräch vorbereiten (`gespraechsvorbereitung/`)
+
+Vorbereitung auf das Standortgespräch der Klasse 9a für Eltern, Schüler und Klassenlehrer.
+Link für Familien: `https://ratpoison-de.github.io/pags-app/gespraechsvorbereitung/` · QR-Code: `gespraechsvorbereitung/qr-gespraechsvorbereitung.png`
+
+- **Familien** (`index.html`): Mit dem Zugangscode vom Zettel legt jede Person ein eigenes Konto an (Elternteil oder Schüler/in) – oder Eltern und Kind nutzen ein gemeinsames Konto. Höchstens 4 Konten je Code. Der Bogen hat einen Schülerteil (du: Wohlbefinden, Arbeits- und Sozialverhalten, Fächer-Ampel, Stärken, Zukunft, Ziele, Themen) und einen Elternteil (Sie: Erleben, Lernen zu Hause, Einschätzung, Stärken, Zukunft, Sorgen, Wünsche). Speichert automatisch. Am Ende **PDF zum Ausdrucken** mit Notizseite und Vereinbarungen; freiwillige **Freigabe** für den Klassenlehrer. Der persönliche QR-Code auf dem Zettel trägt den Code schon ein (`?code=…`).
+- **Lehrer** (`lehrer.html`, Hauptschlüssel der Graduierung): Schülerliste anlegen (Namen einfügen oder 20 Platzhalter), Zugangscodes als PDF (4 Zettel je A4-Seite mit QR-Code), je Schüler eine **Gesprächsvorlage** (Rahmen, Ziel, Stärken, Entwicklungsfelder, Fächer mit Noten, Arbeits-/Sozialverhalten, Fehlzeiten, Graduierung, Abschlussprognose, Berufsorientierung, Notizen, Vereinbarungen), **Vergleich** Schüler – Eltern – Lehrer (Abweichungen rot), gebuchter Termin aus der Terminbuchung, PDF je Schüler oder alle zusammen, Leitfaden zur Gesprächsführung, Kennwort zurücksetzen.
+- Datenbank: Projekt pags-lernplaner, Tabellen `public.vb_schueler` und `public.vb_konten`, nur über Funktionen erreichbar (`supabase/gespraechsvorbereitung.sql`). Die Löschfunktionen stehen in `supabase/gespraechsvorbereitung_loeschen.sql`.
+
 ## Englisch: Irregular Verbs Trainer (`englisch/irregular-verbs/`)
 
 Trainer für die 98 unregelmäßigen Verben aus der „List of irregular verbs“ des Englischbuchs (S. 199–201), für Klasse 10 (M-Niveau). Link: `https://ratpoison-de.github.io/pags-app/englisch/irregular-verbs/` · QR-Code: `englisch/irregular-verbs/qr-irregular-verbs.png`
