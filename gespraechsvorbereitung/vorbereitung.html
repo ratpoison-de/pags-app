@@ -9,7 +9,7 @@
 <link rel="icon" href="../icon.png">
 <link rel="stylesheet" href="vb.css?v=20261123">
 <script src="../config.js?v=20261108"></script>
-<script src="vb.js?v=20261123"></script>
+<script src="vb.js?v=20261123b"></script>
 <script src="../praktikum/jspdf.umd.min.js"></script>
 <style>
 .zahlen{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
@@ -83,6 +83,9 @@ function hinweis(t, fehler) { const h = $('hinweis'); h.textContent = t || ''; h
 async function laden() {
   DATEN = VB.ok(await VB.rpc('vb_lehrer_daten', { schluessel: KEY, p_klasse: VB.KLASSE }));
   try { const g = await VB.rpc('gespraech_lehrer_daten', { schluessel: KEY, p_klasse: VB.KLASSE }); TERMINE = g && g.ok ? g.termine.filter(t => t.buchung) : []; } catch (e) { TERMINE = []; }
+  // nach Gesprächstermin sortieren (ohne Termin ans Ende)
+  const schl = s => { const L0 = s.lehrer || {}, t = termin(s); return L0.l_datum ? L0.l_datum + ' ' + (L0.l_zeit || '').padStart(9, '0') : t ? t.iso + ' ' + t.zeit.padStart(9, '0') : '9999'; };
+  DATEN.schueler.sort((a, b) => schl(a).localeCompare(schl(b)) || (a.nachname + a.vorname).localeCompare(b.nachname + b.vorname, 'de'));
 }
 async function oeffnen(s) {
   KEY = s; $('torMsg').classList.add('hidden');
@@ -94,14 +97,7 @@ async function oeffnen(s) {
 $('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
 $('abmeldenBtn').onclick = async () => { if (offen) await speichern(); merk(null); location.reload(); };
 
-function termin(s) {
-  const n = x => (x || '').toLowerCase().normalize('NFC');
-  const t = TERMINE.find(t => { const k = n(t.buchung.name_kind); return k.includes(n(s.vorname)) && (!s.nachname || k.includes(n(s.nachname))); });
-  if (!t) return null; const d = new Date(t.beginn);
-  return { datum: d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Europe/Berlin' }),
-           zeit: d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }) + ' Uhr',
-           iso: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin' }).format(d) };
-}
+function termin(s) { return VB.terminFinden(s, TERMINE, DATEN ? DATEN.schueler : []); }
 const status = s => (s.lehrer || {}).l_status || 'offen';
 const schueler = () => DATEN.schueler.find(s => s.id === AKT);
 function zeichne() { if (AKT && schueler()) detail(); else { AKT = null; uebersicht(); } }

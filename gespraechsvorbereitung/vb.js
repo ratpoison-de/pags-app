@@ -175,6 +175,25 @@
     const E = konten.filter(k => k.rolle !== 'schueler').map(k => k.daten).filter(d => Object.keys(d).some(x => x.startsWith('e_')))[0] || {};
     return { S, E, hatS: konten.some(k => k.rolle !== 'eltern'), hatE: Object.keys(E).length > 0 };
   };
+  // Buchung aus der Terminbuchung einem Schüler zuordnen. Eltern schreiben oft nur den Vornamen ("Alex"),
+  // Nachname vorn ("Söser Tim") oder den Nachnamen nur beim Elternnamen – daher werden Kind- und Elternname geprüft.
+  VB.terminFinden = function (s, termine, alle) {
+    const norm = x => (x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').replace(/\s*-\s*/g, '-');
+    const woerter = x => norm(x).split(/[^a-z-]+/).filter(Boolean);
+    const vorPasst = (sch, w) => { const v = norm(sch.vorname); return w.some(x => x === v || (x.length >= 3 && v.startsWith(x)) || v.split('-')[0] === x); };
+    const nachPasst = (sch, w) => !!sch.nachname && w.some(x => x === norm(sch.nachname) || norm(sch.nachname).split('-').includes(x));
+    const treffer = termine.filter(t => {
+      const wk = woerter(t.buchung.name_kind), we = woerter(t.buchung.name_eltern);
+      if (!vorPasst(s, wk)) return false;
+      if (nachPasst(s, wk.concat(we))) return true;
+      // nur Vorname angegeben: zuordnen, wenn kein anderer Schüler mit passendem Vornamen besser passt
+      return (alle || []).filter(o => vorPasst(o, wk)).length === 1;
+    });
+    const t = treffer[0]; if (!t) return null; const d = new Date(t.beginn);
+    return { datum: d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Europe/Berlin' }),
+             zeit: d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }) + ' Uhr',
+             iso: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin' }).format(d), beginn: t.beginn };
+  };
   // Familienfeld (s_… / e_…) per Id finden
   VB.familienFeld = id => VB.SCHUELER.concat(VB.ELTERN).flatMap(a => a.felder).find(f => f.id === id);
 
