@@ -7,9 +7,9 @@
 <meta name="theme-color" content="#A81010">
 <title>Standortgespräche – Lehrerbereich – PAGS Külsheim</title>
 <link rel="icon" href="../icon.png">
-<link rel="stylesheet" href="vb.css?v=20261120b">
+<link rel="stylesheet" href="vb.css?v=20261123">
 <script src="../config.js?v=20261108"></script>
-<script src="vb.js?v=20261120b"></script>
+<script src="vb.js?v=20261123"></script>
 <script src="qrcode.js"></script>
 <script src="../praktikum/jspdf.umd.min.js"></script>
 <style>
@@ -142,7 +142,7 @@ function uebersicht() {
       : '<p>Legen Sie zuerst Ihre Schülerliste an. Jede Schülerin und jeder Schüler bekommt dann eine eigene Gesprächsvorlage und einen Zugangscode für die Familie.</p>') +
     '<div class="knoepfe"><button class="btn" type="button" id="anlegen">+ Schüler anlegen</button>' +
     (S.length ? '<button class="btn sec" type="button" id="codes">Zugangscodes als PDF</button><button class="btn sec" type="button" id="alle">Alle Vorlagen als PDF</button>' : '') +
-    '<button class="btn sec" type="button" id="neu">↻ Aktualisieren</button></div></div>';
+    '<button class="btn sec" type="button" id="neu">↻ Aktualisieren</button><a class="btn sec" href="vorbereitung.html">Meine Gesprächsvorbereitung ›</a></div></div>';
   h += '<div class="liste">' + S.map((s, i) => {
     const t = termin(s), L = s.lehrer || {};
     const dat = L.l_datum ? VB.isoDatum(L.l_datum) + (L.l_zeit ? ', ' + L.l_zeit : '') : t ? t.datum + ', ' + t.zeit : '';

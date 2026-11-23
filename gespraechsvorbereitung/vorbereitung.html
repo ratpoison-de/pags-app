@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#A81010">
+<title>Meine Gesprächsvorbereitung – Standortgespräche – PAGS Külsheim</title>
+<link rel="icon" href="../icon.png">
+<link rel="stylesheet" href="vb.css?v=20261123">
+<script src="../config.js?v=20261108"></script>
+<script src="vb.js?v=20261123"></script>
+<script src="../praktikum/jspdf.umd.min.js"></script>
+<style>
+.zahlen{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px}
+.zahl{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.zahl b{display:block;font-size:1.45rem;color:var(--red);line-height:1.2}
+.zahl span{font-size:.8rem;color:var(--muted)}
+.liste{display:grid;gap:8px}
+.zeile{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.zeile:hover{border-color:var(--red)}
+.zeile .nm{flex:1;min-width:0}
+.zeile .nm b{display:block}
+.zeile .nm small{color:var(--muted);font-size:.8rem}
+.ring{--p:0;width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--red);
+  background:radial-gradient(closest-side,#fff 76%,transparent 78% 100%),conic-gradient(var(--red) calc(var(--p)*1%),#EEE 0)}
+.chip{display:inline-block;font-size:.72rem;font-weight:600;border-radius:999px;padding:2px 8px;margin:3px 3px 0 0;background:#EFEFEF;color:#555;white-space:nowrap}
+.chip.frei{background:#E9F6EC;color:#14562B}
+.chip.st-vorbereitet{background:#FFF3D6;color:#7A5300}
+.chip.st-geführt{background:#E9F6EC;color:#14562B}
+.familie{background:#F7F6F4;border:1px dashed #CFCFCF;border-radius:12px;padding:10px 12px;margin-top:4px}
+.familie h3{font-size:.86rem;color:var(--red);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+.familie p{margin:0 0 5px;font-size:.88rem}
+.familie p b{color:#444}
+table.vgl{width:100%;border-collapse:collapse;font-size:.86rem;margin:4px 0 6px}
+table.vgl th,table.vgl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left}
+table.vgl th.c,table.vgl td.c{text-align:center;width:56px;font-weight:700}
+table.vgl tr.abw td{background:#FFF4F2}
+table.vgl tr.abw td.c{color:var(--red)}
+.punkt{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px}
+dialog{border:0;border-radius:16px;padding:0;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{padding:18px}
+.phase{border-left:4px solid var(--red);padding:2px 0 2px 10px;margin:0 0 10px}
+.phase b{color:var(--red)}
+.phase p{margin:2px 0 0;font-size:.88rem;color:#555}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <img src="../img/logo.png" alt="PAGS Külsheim" width="72" height="36">
+  <div class="sp"><h1>Meine Gesprächsvorbereitung</h1><p id="unter">Standortgespräche · Klasse 9a</p></div>
+  <button id="abmeldenBtn" class="hidden" type="button">Abmelden</button>
+</div></header>
+
+<main>
+  <section id="tor" class="card">
+    <h2>Nur für den Klassenlehrer</h2>
+    <p class="muted">Bitte mit Ihrem Zugangsschlüssel anmelden (Hauptschlüssel wie bei Graduierung, Elternumfrage und Terminbuchung).</p>
+    <form id="torForm" style="display:flex;gap:8px;flex-wrap:wrap">
+      <input type="text" name="username" value="Klassenlehrer 9a" autocomplete="username" hidden>
+      <input type="password" id="schluessel" placeholder="Zugangsschlüssel" autocomplete="current-password" required style="flex:1 1 220px">
+      <button class="btn" type="submit">Öffnen</button>
+    </form>
+    <div id="torMsg" class="msg hidden" role="alert"></div>
+  </section>
+  <div id="hinweis" class="msg gut hidden" role="status"></div>
+  <div id="inhalt"></div>
+</main>
+<footer>Standortgespräche der PAGS Külsheim · Klasse 9a · nur für den Klassenlehrer · <a href="lehrer.html">Familienzugänge und Codes</a></footer>
+<dialog id="dlg"><form method="dialog" id="dlgForm"></form></dialog>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id), esc = VB.esc, SK = 'pags-vb-lehrer';
+let KEY = '', DATEN = null, TERMINE = [], AKT = null, SCHRITT = 0, L = {}, LID = null, timer = null, offen = false;
+const ABS = VB.LEHRER_VORLAGE;
+const fehlerText = e => e.grund ? e.message : 'Keine Verbindung zur Datenbank.';
+function merk(v) { try { if (v === null) sessionStorage.removeItem(SK); else if (v === undefined) return sessionStorage.getItem(SK); else sessionStorage.setItem(SK, v); } catch (e) { return null; } }
+function hinweis(t, fehler) { const h = $('hinweis'); h.textContent = t || ''; h.classList.toggle('hidden', !t); h.classList.toggle('gut', !fehler); }
+
+/* ---------- Zugang und Daten ---------- */
+async function laden() {
+  DATEN = VB.ok(await VB.rpc('vb_lehrer_daten', { schluessel: KEY, p_klasse: VB.KLASSE }));
+  try { const g = await VB.rpc('gespraech_lehrer_daten', { schluessel: KEY, p_klasse: VB.KLASSE }); TERMINE = g && g.ok ? g.termine.filter(t => t.buchung) : []; } catch (e) { TERMINE = []; }
+}
+async function oeffnen(s) {
+  KEY = s; $('torMsg').classList.add('hidden');
+  try {
+    await laden(); merk(KEY);
+    $('tor').classList.add('hidden'); $('abmeldenBtn').classList.remove('hidden'); zeichne();
+  } catch (e) { KEY = ''; merk(null); if (s) { $('torMsg').textContent = fehlerText(e); $('torMsg').classList.remove('hidden'); } }
+}
+$('torForm').onsubmit = e => { e.preventDefault(); oeffnen($('schluessel').value); };
+$('abmeldenBtn').onclick = async () => { if (offen) await speichern(); merk(null); location.reload(); };
+
+function termin(s) {
+  const n = x => (x || '').toLowerCase().normalize('NFC');
+  const t = TERMINE.find(t => { const k = n(t.buchung.name_kind); return k.includes(n(s.vorname)) && (!s.nachname || k.includes(n(s.nachname))); });
+  if (!t) return null; const d = new Date(t.beginn);
+  return { datum: d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Europe/Berlin' }),
+           zeit: d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }) + ' Uhr',
+           iso: new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin' }).format(d) };
+}
+const status = s => (s.lehrer || {}).l_status || 'offen';
+const schueler = () => DATEN.schueler.find(s => s.id === AKT);
+function zeichne() { if (AKT && schueler()) detail(); else { AKT = null; uebersicht(); } }
+
+/* ---------- Übersicht ---------- */
+function uebersicht() {
+  $('unter').textContent = 'Standortgespräche · Klasse 9a';
+  const S = DATEN.schueler;
+  let h = '<div class="zahlen"><div class="zahl"><b>' + S.length + '</b><span>Schülerinnen und Schüler</span></div>' +
+    '<div class="zahl"><b>' + S.filter(s => status(s) !== 'offen').length + '</b><span>vorbereitet</span></div>' +
+    '<div class="zahl"><b>' + S.filter(s => status(s) === 'geführt').length + '</b><span>Gespräche geführt</span></div>' +
+    '<div class="zahl"><b>' + S.filter(s => VB.familie(s).hatS || VB.familie(s).hatE).length + '</b><span>mit Familienbogen</span></div></div>';
+  h += '<div class="card"><h2>Meine Schülerinnen und Schüler</h2>' +
+    (S.length ? '<p class="muted">Tippen Sie auf einen Namen, füllen Sie die Vorbereitung aus und drucken Sie sie als PDF. Alles wird automatisch gespeichert.</p>'
+      : '<p>Legen Sie zuerst Ihre Klassenliste an – danach hat jede Schülerin und jeder Schüler einen eigenen Vorbereitungsbereich.</p>') +
+    '<div class="knoepfe"><button class="btn" type="button" id="anlegen">+ Schüler anlegen</button>' +
+    (S.length ? '<button class="btn sec" type="button" id="alle">⬇ Alle als PDF</button>' : '') +
+    '<button class="btn sec" type="button" id="leit">Gesprächsablauf</button><button class="btn sec" type="button" id="neu">↻</button></div></div>';
+  h += '<div class="liste">' + S.map(s => {
+    const L0 = s.lehrer || {}, t = termin(s), F = VB.familie(s), p = VB.fortschritt(ABS, L0);
+    const dat = L0.l_datum ? VB.isoDatum(L0.l_datum) + (L0.l_zeit ? ', ' + L0.l_zeit : '') : t ? t.datum + ', ' + t.zeit : '';
+    return '<button type="button" class="zeile" data-id="' + s.id + '"><span class="ring" style="--p:' + p + '">' + p + '%</span><span class="nm"><b>' + esc(VB.name(s)) + '</b>' +
+      '<small>' + (dat ? 'Termin: ' + esc(dat) : 'noch kein Termin') + '</small><br><span class="chip st-' + esc(status(s)) + '">' + esc(status(s)) + '</span>' +
+      (F.hatS ? '<span class="chip frei">Schülerbogen</span>' : '') + (F.hatE ? '<span class="chip frei">Elternbogen</span>' : '') + '</span><span aria-hidden="true">›</span></button>';
+  }).join('') + '</div>';
+  $('inhalt').innerHTML = h;
+  $('anlegen').onclick = anlegenDialog;
+  $('neu').onclick = async () => { try { await laden(); zeichne(); hinweis('Aktualisiert.'); } catch (e) { hinweis(fehlerText(e), true); } };
+  $('leit').onclick = leitfaden;
+  if ($('alle')) $('alle').onclick = allePDF;
+  $('inhalt').querySelectorAll('.zeile').forEach(b => b.onclick = () => { AKT = b.dataset.id; SCHRITT = 0; hinweis(''); zeichne(); scrollTo(0, 0); });
+}
+function leitfaden() {
+  $('dlgForm').innerHTML = '<h2>Gesprächsablauf</h2><p class="muted">Etwa 15–20 Minuten. Das Kind spricht zuerst.</p>' +
+    VB.PHASEN.map((p, i) => '<div class="phase"><b>' + (i + 1) + '. ' + esc(p.t) + '</b> <small class="muted">ca. ' + p.min + ' Min.</small><p>' + p.fragen.map(esc).join('<br>') + '</p></div>').join('') +
+    '<div class="knoepfe"><button class="btn" value="ok">Schließen</button></div>';
+  $('dlg').showModal();
+}
+function anlegenDialog() {
+  const frei = 40 - DATEN.schueler.length;
+  $('dlgForm').innerHTML = '<h2>Schüler anlegen</h2><p class="muted">Eine Person pro Zeile – „Vorname Nachname“ oder „Nachname, Vorname“ (z. B. aus Excel kopiert). Noch ' + frei + ' Plätze frei.</p>' +
+    '<label class="f"><span>Namen</span><textarea id="namen" style="min-height:220px"></textarea></label><div id="aMsg" class="msg hidden" role="alert"></div>' +
+    '<div class="knoepfe zwei"><button class="btn sec" type="button" id="aAbbr">Abbrechen</button><button class="btn" type="submit">Anlegen</button></div>';
+  $('aAbbr').onclick = () => $('dlg').close();
+  $('dlgForm').onsubmit = async e => {
+    e.preventDefault();
+    const namen = $('namen').value.split(/\r?\n/).map(z => z.replace(/\t/g, ' ').trim()).filter(Boolean).map(z => {
+      if (z.includes(',')) { const [n, v] = z.split(',').map(x => x.trim()); return { vorname: v || n, nachname: v ? n : '' }; }
+      const w = z.split(/\s+/); return w.length > 1 ? { vorname: w.slice(0, -1).join(' '), nachname: w[w.length - 1] } : { vorname: z, nachname: '' };
+    });
+    const m = $('aMsg'); if (!namen.length) { m.textContent = 'Bitte mindestens einen Namen eintragen.'; return m.classList.remove('hidden'); }
+    try { const r = VB.ok(await VB.rpc('vb_schueler_anlegen', { schluessel: KEY, p_klasse: VB.KLASSE, p_namen: namen })); $('dlg').close(); $('dlgForm').onsubmit = null; await laden(); zeichne(); hinweis(r.angelegt + ' Schüler angelegt.'); }
+    catch (x) { m.textContent = x.grund === 'voll' ? 'Höchstens 40 Schüler je Klasse.' : fehlerText(x); m.classList.remove('hidden'); }
+  };
+  $('dlg').showModal();
+}
+
+/* ---------- Bereich eines Schülers ---------- */
+function familieHTML(ab, s) {
+  if (!ab.spiegel) return '';
+  const F = VB.familie(s); if (!F.hatS && !F.hatE) return '';
+  let h = '';
+  if (ab.spiegel.includes('s_krit')) {
+    const zahl = v => v === 0 ? '?' : (VB.STUFEN.find(x => x.v === v) || {}).t || '·';
+    h += '<table class="vgl"><thead><tr><th>Arbeitsverhalten</th><th class="c">Schüler</th><th class="c">Eltern</th><th class="c">Ich</th></tr></thead><tbody>' + VB.KRITERIEN.map(k => {
+      const w = [(F.S.s_krit || {})[k.k], (F.E.e_krit || {})[k.k], (L.l_krit || {})[k.k]], z = w.filter(v => v > 0), abw = z.length > 1 && Math.max(...z) - Math.min(...z) >= 2;
+      return '<tr' + (abw ? ' class="abw"' : '') + '><td>' + esc(k.kurz) + '</td>' + w.map(v => '<td class="c">' + esc(zahl(v)) + '</td>').join('') + '</tr>'; }).join('') + '</tbody></table>';
+  }
+  if (ab.spiegel.includes('s_faecher') && F.S.s_faecher) {
+    const f = VB.FAECHER.filter(fa => (F.S.s_faecher[fa] || {}).a);
+    if (f.length) h += '<p><b>Fächer laut ' + esc(s.vorname) + ':</b> ' + f.map(fa => { const a = VB.AMPEL.find(x => x.v === F.S.s_faecher[fa].a); return '<span class="punkt" style="background:' + a.c + '"></span> ' + esc(fa); }).join(' · ') + '</p>';
+  }
+  ab.spiegel.forEach(id => {
+    const ff = VB.familienFeld(id); if (!ff || ff.typ === 'kriterien' || ff.typ === 'faecher') return;
+    const d = id.startsWith('s_') ? F.S : F.E, t = VB.klartext(ff, d[id]); if (!t) return;
+    h += '<p><b>' + (id.startsWith('s_') ? esc(s.vorname) : 'Eltern') + ' – ' + esc(ff.frage.replace(/[\s?…:]+$/, '').replace(/ \(1–3\)$/, '')) + ':</b> ' + esc(t) + '</p>';
+  });
+  return h ? '<div class="familie"><h3>Aus den Vorbereitungsbögen</h3>' + h + '</div>' : '';
+}
+function detail() {
+  const s = schueler(), i = DATEN.schueler.indexOf(s), t = termin(s);
+  if (LID !== s.id) { L = JSON.parse(JSON.stringify(s.lehrer || {})); LID = s.id; }
+  $('unter').textContent = VB.name(s) + ' · Klasse 9a';
+  const ende = SCHRITT >= ABS.length, ab = ABS[SCHRITT], F = VB.familie(s);
+  let h = '<div class="knoepfe" style="margin:0 0 10px"><button class="btn sec klein" type="button" id="zurueck">‹ Übersicht</button>' +
+    (i > 0 ? '<button class="btn sec klein" type="button" data-geh="' + (i - 1) + '">‹ ' + esc(DATEN.schueler[i - 1].vorname) + '</button>' : '') +
+    (i < DATEN.schueler.length - 1 ? '<button class="btn sec klein" type="button" data-geh="' + (i + 1) + '">' + esc(DATEN.schueler[i + 1].vorname) + ' ›</button>' : '') + '</div>';
+  h += '<div class="card hero"><h2>' + esc(VB.name(s)) + '</h2><p style="margin:4px 0 0">' +
+    (L.l_datum ? 'Termin: <b>' + esc(VB.isoDatum(L.l_datum) + (L.l_zeit ? ', ' + L.l_zeit : '')) + '</b>' : t ? 'Gebuchter Termin: <b>' + esc(t.datum + ', ' + t.zeit) + '</b>' : 'Noch kein Termin') +
+    ' · Familienbögen: ' + (F.hatS || F.hatE ? [F.hatS && 'Schüler/in', F.hatE && 'Eltern'].filter(Boolean).join(' und ') + ' freigegeben' : 'keine freigegeben') + '</p>' +
+    '<div class="balken" aria-hidden="true"><i style="width:' + VB.fortschritt(ABS, L) + '%"></i></div><p style="margin:0;font-size:.82rem">' + VB.fortschritt(ABS, L) + ' % ausgefüllt</p>' +
+    '<div class="knoepfe"><button class="btn" type="button" id="pdf">⬇ Als PDF</button></div></div>';
+  h += '<nav class="schritte" aria-label="Abschnitte">' + ABS.map((a, k) => '<button type="button" data-s="' + k + '"' + (k === SCHRITT ? ' aria-current="true"' : '') +
+    (a.felder.every(f => f.frei || VB.beantwortet(f, L[f.id])) ? ' class="fertig"' : '') + '>' + esc(a.titel) + '</button>').join('') +
+    '<button type="button" data-s="' + ABS.length + '"' + (ende ? ' aria-current="true"' : '') + '>✓ PDF</button></nav>';
+  h += '<div class="speicher" id="speicher" aria-live="polite">' + (s.lehrer_am ? 'Gespeichert ✓ ' + VB.zeitpunkt(s.lehrer_am) : '') + '</div>';
+  if (ende) h += '<div class="card"><h2>Fertig vorbereitet?</h2><p>Das PDF enthält Ihre Einschätzung, die Vergleiche mit den freigegebenen Familienbögen, den Gesprächsablauf und die Vereinbarungen zum Unterschreiben. Offene Auswahlfelder erscheinen als leere Kästchen zum Ankreuzen im Gespräch.</p>' +
+    '<div class="knoepfe"><button class="btn" type="button" id="pdf2">⬇ PDF herunterladen</button></div></div>';
+  else h += '<div class="card" id="abschnitt"><h2>' + esc(ab.titel) + '</h2>' + VB.abschnittHTML(ab, L).replace(/sie\/er/g, esc(s.vorname)) + familieHTML(ab, s) + '</div>';
+  h += '<div class="knoepfe zwei">' + (SCHRITT > 0 ? '<button class="btn sec" type="button" id="zur">‹ Zurück</button>' : '<span></span>') +
+    (!ende ? '<button class="btn" type="button" id="weiter">Weiter ›</button>' : i < DATEN.schueler.length - 1 ? '<button class="btn" type="button" data-geh="' + (i + 1) + '">Nächster: ' + esc(DATEN.schueler[i + 1].vorname) + ' ›</button>' : '') + '</div>';
+  $('inhalt').innerHTML = h;
+  const geh = async fn => { if (offen) await speichern(); fn(); zeichne(); scrollTo(0, 0); };
+  $('zurueck').onclick = () => geh(() => { AKT = null; });
+  $('inhalt').querySelectorAll('[data-geh]').forEach(b => b.onclick = () => geh(() => { AKT = DATEN.schueler[+b.dataset.geh].id; SCHRITT = 0; }));
+  $('inhalt').querySelectorAll('[data-s]').forEach(b => b.onclick = () => geh(() => { SCHRITT = +b.dataset.s; }));
+  if ($('zur')) $('zur').onclick = () => geh(() => { SCHRITT--; });
+  if ($('weiter')) $('weiter').onclick = () => geh(() => { SCHRITT++; });
+  [$('pdf'), $('pdf2')].forEach(b => b && (b.onclick = async () => { if (offen) await speichern(); einzelPDF(schueler()); }));
+  if (!ende) {
+    VB.binden($('abschnitt'), L, () => { geaendert(); if (ab.spiegel && ab.spiegel.includes('s_krit')) { const fam = $('abschnitt').querySelector('.familie'); if (fam) fam.outerHTML = familieHTML(ab, s); } });
+    if (ab.id === 'rahmen' && t && !L.l_datum) {
+      $('abschnitt').querySelector('[data-f=l_datum]').closest('label').insertAdjacentHTML('beforeend', '<small><a href="#" id="tUeb">Gebuchten Termin übernehmen (' + esc(t.datum + ', ' + t.zeit) + ')</a></small>');
+      $('tUeb').onclick = ev => { ev.preventDefault(); L.l_datum = t.iso; L.l_zeit = t.zeit; geaendert(); detail(); };
+    }
+  }
+}
+
+/* ---------- Speichern ---------- */
+function geaendert() { offen = true; const el = $('speicher'); if (el) el.textContent = 'Wird gespeichert …'; clearTimeout(timer); timer = setTimeout(speichern, 1200); }
+async function speichern() {
+  clearTimeout(timer); if (!offen || !LID) { offen = false; return; }
+  offen = false; const id = LID, daten = JSON.parse(JSON.stringify(L));
+  try {
+    const r = VB.ok(await VB.rpc('vb_lehrer_speichern', { schluessel: KEY, p_id: id, p_lehrer: daten }));
+    const s = DATEN.schueler.find(x => x.id === id); if (s) { s.lehrer = daten; s.lehrer_am = r.gespeichert_am; }
+    const el = $('speicher'); if (el && AKT === id && !offen) el.textContent = 'Gespeichert ✓ ' + VB.zeitpunkt(r.gespeichert_am);
+  } catch (e) { offen = true; const el = $('speicher'); if (el) el.textContent = '⚠ Nicht gespeichert: ' + fehlerText(e) + ' – neuer Versuch …'; timer = setTimeout(speichern, 10000); }
+}
+addEventListener('beforeunload', e => { if (offen) { speichern(); e.preventDefault(); e.returnValue = ''; } });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && offen) speichern(); });
+
+/* ---------- PDF ---------- */
+const dateiname = n => n.replace(/[^\wÄÖÜäöüß.-]+/g, '_');
+function einzelPDF(s) {
+  try { const P = VB.pdfLehrer(null, s, termin(s)); P.fuss('Vorbereitung Standortgespräch · ' + VB.name(s) + ' · Klasse ' + VB.KLASSE + ' · vertraulich'); P.doc.save(dateiname('Vorbereitung_' + VB.name(s) + '.pdf')); }
+  catch (e) { hinweis(e.message, true); scrollTo(0, 0); }
+}
+async function allePDF() {
+  try {
+    await laden(); let P = null;
+    DATEN.schueler.forEach((s, i) => { P = VB.pdfLehrer(i ? P.doc : null, s, termin(s)); });
+    P.fuss('Vorbereitung Standortgespräche · Klasse ' + VB.KLASSE + ' · PAGS Külsheim · vertraulich');
+    P.doc.save(dateiname('Vorbereitung_Standortgespraeche_Klasse_' + VB.KLASSE + '.pdf'));
+  } catch (e) { hinweis(e.message || fehlerText(e), true); }
+}
+
+(function () { const k = merk(); if (k) oeffnen(k); else $('schluessel').focus(); })();
+</script>
+</body>
+</html>

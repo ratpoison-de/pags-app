@@ -133,18 +133,31 @@
       { id: 'l_teiln', typ: 'mehr', frage: 'Teilnehmende', optionen: ['Schüler/in', 'Mutter', 'Vater', 'andere Erziehungsberechtigte', 'Schulsozialarbeit', 'Dolmetscher/in'] },
       { id: 'l_anlass', typ: 'wahl', frage: 'Anlass', optionen: ['Regelgespräch', 'Wunsch der Eltern', 'Besonderer Anlass'] }
     ] },
-    { id: 'einsch', titel: 'Meine Einschätzung', felder: [
+    { id: 'wohl', titel: 'Wohlbefinden', spiegel: ['s_schule', 's_klasse', 's_belast', 'e_stimmung', 'e_veraendert'], felder: [
+      { id: 'l_wohl', typ: 'skala5', frage: 'In der Schule wirkt sie/er …' },
+      { id: 'l_klasse', typ: 'skala5', frage: 'In der Klassengemeinschaft wirkt sie/er …' },
+      { id: 'l_belast', typ: 'mehr', frage: 'Mögliche Belastungen', optionen: ['nichts erkennbar', 'Leistungsdruck / Stress', 'Konflikte mit Mitschülern', 'Unruhe in der Klasse', 'ein bestimmtes Fach', 'Müdigkeit', 'Handy / Social Media', 'private Belastung vermutet'] }
+    ] },
+    { id: 'leistung', titel: 'Leistung und Arbeitsverhalten', spiegel: ['s_faecher', 's_hilfe', 's_krit', 'e_krit', 'e_ha', 'e_lernen', 'e_medien'], felder: [
       { id: 'l_gesamt', typ: 'wahl', frage: 'Gesamteindruck', optionen: ['sehr positiv', 'positiv', 'gemischt', 'besorgniserregend'] },
       { id: 'l_faecher', typ: 'faecher', frage: 'Leistungsstand' },
+      { id: 'l_hilfe', typ: 'mehr', frage: 'Förderbedarf', optionen: HILFE.slice(0, -1).concat(['kein besonderer']) },
       { id: 'l_krit', typ: 'kriterien', sicht: 'l', unklar: true, frage: 'Arbeits- und Sozialverhalten' },
+      { id: 'l_ha', typ: 'wahl', frage: 'Hausaufgaben', optionen: ['vollständig', 'meist vollständig', 'oft unvollständig', 'fehlen häufig'] },
       { id: 'l_fehl', typ: 'wahl', frage: 'Fehlzeiten / Verspätungen', optionen: ['unauffällig', 'gelegentlich', 'häufig'] },
-      { id: 'l_grad', typ: 'wahl', frage: 'Graduierung', optionen: ['Walker', 'Hiker', 'Climber', 'Freeclimber'] },
-      { id: 'l_prog', typ: 'wahl', frage: 'Realschulabschluss', optionen: ['sicher erreichbar', 'erreichbar mit Einsatz', 'gefährdet'] }
+      { id: 'l_grad', typ: 'wahl', frage: 'Graduierung', optionen: ['Walker', 'Hiker', 'Climber', 'Freeclimber'] }
     ] },
-    { id: 'schwer', titel: 'Schwerpunkte', felder: [
+    { id: 'zukunft', titel: 'Stärken und Zukunft', spiegel: ['s_staerken', 'e_staerken', 's_abschluss', 'e_abschluss', 's_nach10', 'e_nach10', 's_beruf', 'e_bo'], felder: [
       { id: 'l_staerken', typ: 'mehr', frage: 'Stärken (zum Einstieg)', optionen: STAERKEN },
+      { id: 'l_prog', typ: 'wahl', frage: 'Realschulabschluss', optionen: ['sicher erreichbar', 'erreichbar mit Einsatz', 'gefährdet'] },
+      { id: 'l_nach10', typ: 'mehr', frage: 'Passende Wege nach Klasse 10', optionen: NACH10 },
+      { id: 'l_beruf', typ: 'mehr', frage: 'Passende Berufsfelder', optionen: BERUFE.slice(0, -1) },
+      { id: 'l_prakt', typ: 'wahl', frage: 'Praktikum / Bewerbung', optionen: ['Platz gefunden', 'in Planung', 'noch offen'] }
+    ] },
+    { id: 'schwer', titel: 'Schwerpunkte', spiegel: ['s_ziele', 's_themen', 'e_themen', 'e_wunsch', 'e_vertr', 's_sonst', 'e_sonst'], felder: [
       { id: 'l_entw', typ: 'mehr', frage: 'Entwicklungsfelder (höchstens 2–3)', optionen: ZIELE },
-      { id: 'l_themen', typ: 'mehr', frage: 'Ansprechen', optionen: ['Lob / Bestärkung', 'Leistungsstand', 'Abschlussprognose', 'Arbeitsverhalten', 'Sozialverhalten', 'Fehlzeiten', 'Berufsorientierung', 'Wohlbefinden'] }
+      { id: 'l_themen', typ: 'mehr', frage: 'Ansprechen', optionen: ['Lob / Bestärkung', 'Leistungsstand', 'Abschlussprognose', 'Arbeitsverhalten', 'Sozialverhalten', 'Fehlzeiten', 'Berufsorientierung', 'Wohlbefinden'] },
+      { id: 'l_kern', typ: 'wahl', frage: 'Grundton des Gesprächs', optionen: ['bestärken', 'ermutigen', 'Klartext / Warnsignal', 'gemeinsam Lösung suchen'] }
     ] },
     { id: 'ergebnis', titel: 'Vereinbarungen', felder: [
       { id: 'l_v_s', typ: 'mehr', frage: 'Schüler/in', optionen: ZIELE },
@@ -154,6 +167,16 @@
       { id: 'l_notiz', typ: 'kurz', frage: 'Notiz', hilfe: '(freiwillig)', frei: true }
     ] }
   ];
+
+  // Freigegebene Familienbögen eines Schülers zusammenfassen: { S: Schülerdaten, E: Elterndaten, hatS, hatE }
+  VB.familie = function (sch) {
+    const konten = (sch.konten || []).filter(k => k.freigabe && k.daten);
+    const S = konten.filter(k => k.rolle !== 'eltern').map(k => k.daten)[0] || {};
+    const E = konten.filter(k => k.rolle !== 'schueler').map(k => k.daten).filter(d => Object.keys(d).some(x => x.startsWith('e_')))[0] || {};
+    return { S, E, hatS: konten.some(k => k.rolle !== 'eltern'), hatE: Object.keys(E).length > 0 };
+  };
+  // Familienfeld (s_… / e_…) per Id finden
+  VB.familienFeld = id => VB.SCHUELER.concat(VB.ELTERN).flatMap(a => a.felder).find(f => f.id === id);
 
   // Ablauf des Gesprächs (Leitfaden) – auch im Lehrer-PDF
   VB.PHASEN = [
@@ -456,50 +479,38 @@
   // Gesprächsvorlage des Lehrers für eine Schülerin / einen Schüler
   VB.pdfLehrer = function (doc0, sch, termin) {
     const P = VB.pdfNeu(); if (doc0) { doc0.addPage(); P.doc = doc0; }
-    const doc = P.doc, L = sch.lehrer || {}, kind = VB.name(sch);
-    const konten = (sch.konten || []).filter(k => k.freigabe && k.daten);
-    const S = konten.filter(k => k.rolle !== 'eltern').map(k => k.daten)[0] || {};
-    const E = konten.filter(k => k.rolle !== 'schueler').map(k => k.daten).filter(d => Object.keys(d).some(x => x.startsWith('e_')))[0] || {};
-    const hatS = konten.some(k => k.rolle !== 'eltern'), hatE = Object.keys(E).length > 0;
+    const doc = P.doc, L = sch.lehrer || {}, kind = VB.name(sch), F = VB.familie(sch);
     const datum = L.l_datum ? VB.isoDatum(L.l_datum) : (termin ? termin.datum : ''), zeit = L.l_zeit || (termin ? termin.zeit : '');
     const feld = id => VB.LEHRER_VORLAGE.flatMap(a => a.felder).find(f => f.id === id);
     const opt = id => { const f = feld(id); P.optionen(f.frage, f.optionen, L[id]); };
-    const kt = (abschn, id, d) => VB.klartext(abschn.flatMap(a => a.felder).find(f => f.id === id) || {}, d[id]);
-    P.kopf('Standortgespräch – Gesprächsvorlage', kind + (datum ? ' · ' + datum : '') + (zeit ? ' · ' + zeit : ''),
+    P.kopf('Standortgespräch – meine Vorbereitung', kind + (datum ? ' · ' + datum : '') + (zeit ? ' · ' + zeit : ''),
       'Klassenlehrer: ' + VB.LEHRER + (L.l_teiln && L.l_teiln.length ? ' · Teilnehmende: ' + L.l_teiln.join(', ') : ''));
-    const status = (sch.konten || []).length ? (sch.konten || []).map(k => VB.ROLLE[k.rolle] + (k.freigabe ? ' (freigegeben)' : ' (nicht freigegeben)')).join(', ') : 'noch kein Konto angelegt';
-    P.text('Vorbereitungsbögen: ' + status + (L.l_anlass ? ' · Anlass: ' + L.l_anlass : ''), 8.5, 'normal', GRAU, 0, 2);
+    const status = (sch.konten || []).length ? (sch.konten || []).map(k => VB.ROLLE[k.rolle] + (k.freigabe ? ' (freigegeben)' : ' (nicht freigegeben)')).join(', ') : 'keine';
+    P.text('Vorbereitungsbögen der Familie: ' + status + (L.l_anlass ? ' · Anlass: ' + L.l_anlass : '') + (L.l_kern ? ' · Grundton: ' + L.l_kern : ''), 8.5, 'normal', GRAU, 0, 2);
 
-    P.h2('Meine Einschätzung');
-    ['l_gesamt', 'l_prog', 'l_fehl', 'l_grad'].forEach(opt);
-    P.h2('Leistungsstand nach Fächern');
-    VB.pdfFaecher(P, [{ titel: 'Lehrer', werte: L.l_faecher }].concat(hatS ? [{ titel: 'Schüler/in', werte: S.s_faecher }] : []));
-    P.h2('Arbeits- und Sozialverhalten im Vergleich');
-    VB.pdfKriterien(P, [{ titel: 'Schüler/in', werte: S.s_krit, leer: !hatS }, { titel: 'Eltern', werte: E.e_krit, leer: !hatE }, { titel: 'Lehrer', werte: L.l_krit }], null);
-
-    P.h2('Schwerpunkte');
-    opt('l_staerken');
-    const st = [hatS && (S.s_staerken || []).length && sch.vorname + ': ' + S.s_staerken.join(', '), hatE && (E.e_staerken || []).length && 'Eltern: ' + E.e_staerken.join(', ')].filter(Boolean);
-    if (st.length) P.text('Stärken laut Bögen – ' + st.join(' · '), 8.8, 'normal', [70, 70, 70], 2, 2.4);
-    opt('l_entw'); opt('l_themen');
-
-    if (hatS || hatE) {
-      P.h2('Aus den Vorbereitungsbögen');
-      const zeile = (t, w) => { if (w) { P.platz(6); P.text(t.replace(/[\s?…:]+$/, '') + ': ' + w, 9.2, 'normal', [30, 30, 30], 0, 1.2); } };
-      if (hatS) {
-        P.text(sch.vorname, 9.5, 'bold', ROT, 0, 0.8);
-        zeile('Wohlbefinden Schule / Klasse', [kt(VB.SCHUELER, 's_schule', S), kt(VB.SCHUELER, 's_klasse', S)].filter(Boolean).join(' / '));
-        ['s_belast', 's_hilfe', 's_abschluss', 's_nach10', 's_beruf', 's_ziele', 's_themen', 's_sonst'].forEach(id => zeile(VB.SCHUELER.flatMap(a => a.felder).find(f => f.id === id).frage.replace(/ \(1–3\)$/, ''), kt(VB.SCHUELER, id, S)));
-        P.y += 1.5;
+    VB.LEHRER_VORLAGE.filter(a => a.spiegel).forEach(ab => {
+      P.h2(ab.titel);
+      ab.felder.forEach(f => {
+        if (f.id === 'l_kern') return;
+        if (f.typ === 'faecher') return VB.pdfFaecher(P, [{ titel: 'Lehrer', werte: L[f.id] }].concat(F.hatS ? [{ titel: 'Schüler/in', werte: F.S.s_faecher }] : []));
+        if (f.typ === 'kriterien') { P.text(f.frage + ' im Vergleich', 9.5, 'bold', [60, 60, 60], 0, 0.5); return VB.pdfKriterien(P, [{ titel: 'Schüler/in', werte: F.S.s_krit, leer: !F.hatS }, { titel: 'Eltern', werte: F.E.e_krit, leer: !F.hatE }, { titel: 'Lehrer', werte: L[f.id] }], null); }
+        if (f.typ === 'skala5') { const s = VB.SMILEY.find(x => x.v === L[f.id]); return P.optionen(f.frage.replace('sie/er', sch.vorname), VB.SMILEY.map(x => x.l), s ? s.l : null); }
+        if (f.typ === 'wahl' || f.typ === 'mehr') return opt(f.id);
+      });
+      // Was die Familie dazu geschrieben hat
+      const zeilen = ab.spiegel.map(id => {
+        const ff = VB.familienFeld(id); if (!ff || ff.typ === 'faecher' || ff.typ === 'kriterien') return null;
+        const d = id.startsWith('s_') ? F.S : F.E, t = VB.klartext(ff, d[id]); if (!t) return null;
+        return (id.startsWith('s_') ? sch.vorname : 'Eltern') + ' – ' + ff.frage.replace(/[\s?…:]+$/, '').replace(/ \(1–3\)$/, '') + ': ' + t;
+      }).filter(Boolean);
+      if (zeilen.length) {
+        P.platz(10); P.text('Aus den Vorbereitungsbögen', 8.5, 'bold', ROT, 2, 0.6);
+        zeilen.forEach(z => P.text('•  ' + z, 8.8, 'normal', [55, 55, 55], 2, 0.6)); P.y += 2;
       }
-      if (hatE) {
-        P.text('Eltern', 9.5, 'bold', ROT, 0, 0.8);
-        ['e_stimmung', 'e_veraendert', 'e_ha', 'e_lernen', 'e_medien', 'e_abschluss', 'e_nach10', 'e_bo', 'e_themen', 'e_wunsch', 'e_vertr', 'e_sonst'].forEach(id => zeile(VB.ELTERN.flatMap(a => a.felder).find(f => f.id === id).frage.replace(/ …$/, ''), kt(VB.ELTERN, id, E)));
-      }
-    }
+    });
 
-    // Ablauf und Vereinbarungen
-    doc.addPage(); P.y = 18;
+    // Ablauf und Vereinbarungen (neue Seite, außer die aktuelle ist noch fast leer)
+    if (P.y > 70) { doc.addPage(); P.y = 18; } else P.y += 8;
     P.text('Gesprächsablauf – ' + kind, 14, 'bold', [40, 40, 40], 0, 2);
     VB.PHASEN.forEach((ph, i) => {
       P.platz(14);
