@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EU-Check – Fit für die Klassenarbeit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#0b2a6f; --blue2:#16409e; --gold:#ffcc00; --ink:#14182b; --muted:#5d6480;
+  --bg:#f4f5fa; --card:#fff; --line:#e1e4ef; --ok:#1d8f5a; --okbg:#e3f6ec; --bad:#c23a3a; --badbg:#fbe7e7;
+  --r:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif}
+button{font:inherit;cursor:pointer}
+h1,h2,h3{font-family:"Bricolage Grotesque",Inter,sans-serif;line-height:1.15;margin:0}
+.top{background:var(--blue);color:#fff;padding:18px 18px 22px;position:relative;overflow:hidden}
+.top .stars{position:absolute;right:-40px;top:-40px;width:160px;height:160px;opacity:.45}
+.top h1{font-size:28px;font-weight:800}
+.top p{margin:4px 0 0;opacity:.85;font-size:14px}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.back{background:none;border:0;color:#fff;opacity:.9;padding:0;margin-bottom:8px;font-size:14px;display:none}
+.back.show{display:inline-block}
+.prog{margin-top:14px;background:rgba(255,255,255,.18);border-radius:99px;height:8px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--gold);width:0;transition:width .4s}
+.progtxt{font-size:12px;margin-top:6px;opacity:.85}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:left;display:flex;gap:12px;align-items:flex-start;transition:transform .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(11,42,111,.08)}
+.tile .ic{font-size:26px;line-height:1}
+.tile b{display:block;font-family:"Bricolage Grotesque";font-size:17px}
+.tile span{color:var(--muted);font-size:13px}
+.tile .done{font-size:12px;color:var(--ok);font-weight:600;margin-top:4px}
+.tile.big{grid-column:1/-1;background:var(--blue2);color:#fff;border:0}
+.tile.big span{color:#dfe6ff}
+.sec{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 2px 10px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:12px}
+.q{font-size:18px;font-weight:600;margin-bottom:12px}
+.opts{display:grid;gap:8px}
+.opt{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;text-align:left}
+.opt:hover{border-color:var(--blue2)}
+.opt.sel{border-color:var(--blue2);background:#eef2ff}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:12px;padding:12px 18px;font-weight:600}
+.btn.alt{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+.btn.gold{background:var(--gold);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+.fb{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:15px}
+.fb.ok{background:var(--okbg);color:#0f5a37}
+.fb.bad{background:var(--badbg);color:#7c1f1f}
+.meta{font-size:13px;color:var(--muted)}
+.chip{display:inline-block;font-size:12px;padding:3px 9px;border-radius:99px;background:#eef2ff;color:var(--blue2);font-weight:600}
+/* flashcards */
+.flip{perspective:1200px;cursor:pointer;user-select:none}
+.flip .in{position:relative;min-height:230px;transition:transform .5s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:24px;font-size:20px;font-weight:600}
+.front{background:var(--blue);color:#fff}
+.backf{background:#fff;border:2px solid var(--blue);transform:rotateY(180deg);font-weight:500;font-size:17px}
+.face small{position:absolute;top:12px;left:16px;font-size:12px;opacity:.7;font-weight:500}
+/* inputs */
+input.t,textarea.t,select.t{font:inherit;border:2px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;color:var(--ink)}
+input.t:focus,textarea.t:focus,select.t:focus{outline:none;border-color:var(--blue2)}
+input.t.ok,select.t.ok{border-color:var(--ok);background:var(--okbg)}
+input.t.bad,select.t.bad{border-color:var(--bad);background:var(--badbg)}
+textarea.t{width:100%;min-height:90px;resize:vertical}
+.gap{display:inline-block;min-width:140px;margin:2px 2px}
+.cloze{line-height:2.4;font-size:17px}
+/* matching */
+.mrow{display:grid;grid-template-columns:1fr;gap:6px;padding:12px 0;border-bottom:1px solid var(--line)}
+.mrow:last-child{border-bottom:0}
+@media(min-width:620px){.mrow{grid-template-columns:1.3fr 1fr;align-items:center}}
+/* sort */
+.sortitem{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.sortitem:last-child{border-bottom:0}
+.sortitem .txt{flex:1}
+.vn{border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font-weight:600;font-size:14px}
+.vn.sel{border-color:var(--blue2);background:#eef2ff}
+.vn.ok{border-color:var(--ok);background:var(--okbg)}
+.vn.bad{border-color:var(--bad);background:var(--badbg)}
+/* order */
+.ord{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.ord .n{font-weight:700;color:var(--blue2);width:22px}
+.ord .txt{flex:1}
+.ord button{background:#eef2ff;border:0;border-radius:8px;width:34px;height:34px;font-size:16px}
+.ord.ok{border-color:var(--ok);background:var(--okbg)}
+.ord.bad{border-color:var(--bad);background:var(--badbg)}
+/* countries */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin-top:12px}
+.cg{border:2px dashed var(--line);border-radius:10px;padding:7px 9px;font-size:14px;color:var(--muted);min-height:38px}
+.cg.found{border-style:solid;border-color:var(--ok);background:var(--okbg);color:#0f5a37;font-weight:600}
+.cg.miss{border-style:solid;border-color:var(--bad);background:var(--badbg);color:#7c1f1f}
+.score{font-family:"Bricolage Grotesque";font-size:44px;font-weight:800;color:var(--blue)}
+.note{font-size:14px;background:#fff8d6;border:1px solid #f1df8a;border-radius:12px;padding:10px 12px}
+.self{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.self button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;font-size:14px}
+.self button.on{border-color:var(--blue2);background:#eef2ff}
+.ml{background:#f4f7ff;border-left:4px solid var(--blue2);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:15px}
+.hidden{display:none!important}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:24px 0 40px}
+</style>
+</head>
+<body>
+<header class="top">
+  <svg class="stars" viewBox="0 0 100 100" aria-hidden="true"><g fill="#ffcc00" id="starsg"></g></svg>
+  <div class="wrap" style="padding:0">
+    <button class="back" id="back">← Übersicht</button>
+    <h1 id="title">EU-Check</h1>
+    <p id="sub">Alles für die Klassenarbeit „Europäische Union“ – Klasse 10</p>
+    <div class="prog"><i id="progbar"></i></div>
+    <div class="progtxt" id="progtxt"></div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<div class="foot">Inhalte nach den Arbeitsblättern „Europa“ (Lösungen). Fortschritt bleibt nur in diesem Browser gespeichert.</div>
+
+<script>
+/* ---------- Sterne im Header ---------- */
+(function(){const g=document.getElementById('starsg');let s='';for(let i=0;i<12;i++){const a=i/12*Math.PI*2,x=50+36*Math.cos(a),y=50+36*Math.sin(a);s+=`<polygon transform="translate(${x},${y}) scale(.55)" points="0,-9 2.6,-3 9,-2.8 4,1.6 5.6,8 0,4.5 -5.6,8 -4,1.6 -9,-2.8 -2.6,-3"/>`}g.innerHTML=s})();
+
+/* ---------- Speicher ---------- */
+const store={get(k,d){try{const v=localStorage.getItem('euc_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('euc_'+k,JSON.stringify(v))}catch(e){}}};
+let done=store.get('done',{});
+function markDone(id,pct){done[id]=Math.max(done[id]||0,pct);store.set('done',done);}
+
+/* ---------- Inhalte ---------- */
+const CARDS=[
+ ["Was ist die EU?","Ein Zusammenschluss von derzeit 27 europäischen Staaten."],
+ ["Ziele der EU","Frieden sichern, Wirtschaft stärken, Umwelt schützen, Rechte der Bürger stärken, Sicherheit, Freiheit und Demokratie erhalten."],
+ ["Motto der EU","„In Vielfalt geeint“ – verschiedene Länder arbeiten trotz Unterschieden zusammen."],
+ ["Wie viele Menschen leben in der EU?","Ca. 452 Millionen Bürgerinnen und Bürger."],
+ ["Ursprung der EU","1951 – die Montanunion."],
+ ["Montanunion","Zusammenarbeit bei Kohle und Stahl, um Frieden zu sichern (Kriegsrohstoffe gemeinsam verwalten)."],
+ ["Gründungsländer (1951)","Deutschland, Frankreich, Italien, Belgien, Luxemburg, Niederlande."],
+ ["Robert Schuman","Französischer Außenminister (1886–1963), gilt als „Vater Europas“. Sein Vorschlag vom 9. Mai 1950 gilt als Geburtsstunde der EU."],
+ ["Europatag","9. Mai – Feiertag zur Erinnerung an den Beginn der EU (Schuman-Erklärung 1950)."],
+ ["Weitere Unterstützer der Idee","Konrad Adenauer (Deutschland) und Jean Monnet (Frankreich)."],
+ ["Warum wurde die EU gegründet?","Nach dem Zweiten Weltkrieg: nie wieder Krieg – Frieden durch Zusammenarbeit statt Konkurrenz."],
+ ["Römische Verträge (1957)","Ziel: gemeinsamer Markt und enge wirtschaftliche Zusammenarbeit."],
+ ["Vertrag von Maastricht","Die EU wurde gegründet – mit mehr Bereichen wie Außenpolitik, Bildung, Sicherheit."],
+ ["1973","Dänemark, Irland und Großbritannien treten bei."],
+ ["2004","Größte Erweiterung: zehn neue Länder treten bei."],
+ ["2007","Bulgarien und Rumänien werden Mitglieder."],
+ ["Europäische Kommission","Hat das alleinige Vorschlagsrecht für Gesetze, vertritt das gemeinsame Interesse, überwacht die Einhaltung der Regeln und führt EU-Recht aus."],
+ ["Europäisches Parlament","Wird direkt von den Bürgern gewählt, entscheidet mit dem Ministerrat über Gesetze, kontrolliert die Kommission, beschließt den Haushalt."],
+ ["Rat der EU (Ministerrat)","Fachminister der Mitgliedstaaten; beschließt Gesetze mit dem Parlament, vertritt die nationalen Regierungen."],
+ ["Europäischer Rat","Staats- und Regierungschefs; legt die grundlegenden politischen Ziele fest – beschließt aber keine Gesetze."],
+ ["Europäischer Gerichtshof (EuGH)","Achtet darauf, dass EU-Recht eingehalten wird; entscheidet bei Streitigkeiten."],
+ ["Wo sitzen viele EU-Institutionen?","In Brüssel, dem politischen Zentrum der EU."],
+ ["Euro","Gemeinsame Währung in 21 von 27 EU-Ländern; seit 2002 als Bargeld."],
+ ["Neuestes Euro-Land","Bulgarien – seit 2026 in der Eurozone."],
+ ["Europäische Zentralbank","Steuert die Geldpolitik – Sitz in Frankfurt."],
+ ["Kopenhagener Kriterien","Beitrittsbedingungen: stabile Demokratie, Rechtsstaatlichkeit, Achtung der Menschenrechte, funktionierende Marktwirtschaft."],
+ ["Rechtsstaatlichkeit","Gesetze gelten für alle – auch für Politiker. Gerichte sind unabhängig."],
+ ["Beitrittskandidaten","z. B. Türkei (Verhandlungen stocken), Ukraine (seit 2022), Serbien (Reformen nötig)."],
+ ["Norwegen","Kein EU-Mitglied, aber Teil des Binnenmarkts."],
+ ["Schengen-Raum","Gebiet ohne Grenzkontrollen zwischen vielen europäischen Ländern."],
+ ["Binnenmarkt","Gemeinsamer Markt: Waren, Dienstleistungen, Menschen und Kapital dürfen sich frei bewegen."],
+ ["Fördermittel","Geld, das Länder oder Regionen von der EU für bestimmte Projekte bekommen."],
+ ["Bürokratieaufwand","Viele Regeln, Formulare und Abstimmungen machen Entscheidungen langsamer."],
+ ["Erasmus+","Förderprogramm der EU: Schüler, Studierende und Azubis können im Ausland lernen, studieren oder arbeiten."],
+ ["Roaming-Verordnung","Der Handy-Tarif gilt im EU-Ausland ohne Zusatzkosten."],
+ ["Brexit","Kunstwort aus „Britain“ und „Exit“. Abstimmung: 23. Juni 2016; Austritt: 31. Januar 2020. Einziges Land, das die EU verlassen hat."],
+ ["Gründe für den Brexit","Mehr Kontrolle über eigene Gesetze, Gefühl der Bevormundung durch Brüssel, Einwanderung selbst regeln."],
+ ["Folgen des Brexit","Handel schwieriger (mehr Zölle, mehr Bürokratie), Arbeiten/Studieren in GB schwieriger, Reisen komplizierter."],
+ ["Klimaziel der EU","Bis 2050 klimaneutral."]
+];
+
+const MC=[
+ {q:"Wie viele Mitgliedstaaten hat die EU derzeit?",o:["25","27","28","21"],a:1},
+ {q:"Wie lautet das Motto der EU?",o:["Einigkeit und Recht und Freiheit","In Vielfalt geeint","Gemeinsam stark","Ein Europa, eine Sprache"],a:1},
+ {q:"Wer schlägt neue Gesetze in der EU vor?",o:["Ministerrat","Europäischer Rat","Europäische Kommission","Europäisches Parlament"],a:2},
+ {q:"Wer wird direkt von den Bürgern gewählt?",o:["Europäische Kommission","Europäischer Rat","Europäisches Parlament","Europäischer Gerichtshof"],a:2},
+ {q:"Welche beiden Organe beschließen gemeinsam neue EU-Gesetze?",o:["Kommission und Gerichtshof","Parlament und Ministerrat","Europäischer Rat und Kommission","Parlament und Europäischer Rat"],a:1},
+ {q:"Wer kontrolliert die Arbeit der Europäischen Kommission?",o:["Gerichtshof","Ministerrat","Europäisches Parlament","Zentralbank"],a:2},
+ {q:"Wer legt die grundlegenden politischen Ziele der EU fest?",o:["Ministerrat","Kommission","Europäischer Rat","Parlament"],a:2},
+ {q:"Wer ist zuständig für die Überwachung der Einhaltung von EU-Recht?",o:["Europäischer Gerichtshof","Europäisches Parlament","Europäischer Rat","Ministerrat"],a:0},
+ {q:"Wer vertritt die Interessen der Mitgliedstaaten in fachpolitischen Fragen?",o:["Europäischer Rat","Europäisches Parlament","Rat der EU (Ministerrat)","Kommission"],a:2},
+ {q:"Welche Institution führt EU-Recht aus und kontrolliert seine Umsetzung?",o:["Europäische Kommission","Gerichtshof","Ministerrat","Europäischer Rat"],a:0},
+ {q:"Wann wurde die Montanunion gegründet?",o:["1945","1951","1957","1973"],a:1},
+ {q:"Was wollten die Politiker mit der Montanunion erreichen? (beste Antwort)",o:["Wirtschaftliche Konkurrenz stärken","Waffen gemeinsam herstellen","Krieg zwischen Frankreich und Deutschland verhindern","Alle Sprachen vereinheitlichen"],a:2},
+ {q:"Wer gilt als „Vater Europas“?",o:["Konrad Adenauer","Robert Schuman","Jean Monnet","Winston Churchill"],a:1},
+ {q:"Wann ist Europatag?",o:["1. Mai","9. Mai","3. Oktober","9. November"],a:1},
+ {q:"Welches Land gehörte NICHT zu den Gründungsländern 1951?",o:["Italien","Luxemburg","Großbritannien","Niederlande"],a:2},
+ {q:"Was war das Ziel der Römischen Verträge?",o:["Gemeinsame Armee","Gemeinsamer Markt und enge wirtschaftliche Zusammenarbeit","Einführung des Euro","Abschaffung der Grenzen"],a:1},
+ {q:"Was veränderte sich mit dem Vertrag von Maastricht?",o:["Der Euro wurde Bargeld","Die EU wurde gegründet – mit mehr Bereichen wie Außenpolitik, Bildung, Sicherheit","Großbritannien trat aus","Die Montanunion entstand"],a:1},
+ {q:"Welche Länder traten 2007 bei?",o:["Polen und Ungarn","Bulgarien und Rumänien","Kroatien und Slowenien","Dänemark und Irland"],a:1},
+ {q:"Seit wann gibt es den Euro als Bargeld?",o:["1999","2002","2004","2010"],a:1},
+ {q:"In wie vielen EU-Ländern kann man mit dem Euro bezahlen?",o:["19","20","21","27"],a:2},
+ {q:"Welches Land gehört seit 2026 zur Eurozone?",o:["Polen","Dänemark","Bulgarien","Schweden"],a:2},
+ {q:"Wo sitzt die Europäische Zentralbank?",o:["Brüssel","Straßburg","Frankfurt","Luxemburg"],a:2},
+ {q:"Welches Land ist EU-Mitglied, hat aber NICHT den Euro?",o:["Kroatien","Polen","Estland","Slowakei"],a:1},
+ {q:"Was gehört NICHT zu den Kopenhagener Kriterien?",o:["Stabile Demokratie","Rechtsstaatlichkeit","Gemeinsame Sprache","Funktionierende Marktwirtschaft"],a:2},
+ {q:"Welchen Status hat Norwegen?",o:["EU-Mitglied","Beitrittskandidat","Kein Mitglied, aber Teil des Binnenmarkts","Ausgetreten"],a:2},
+ {q:"Seit wann ist die Ukraine Beitrittskandidat?",o:["2014","2020","2022","2025"],a:2},
+ {q:"Wann stimmten die Briten für den Austritt?",o:["23. Juni 2016","31. Januar 2020","9. Mai 2016","1. Januar 2021"],a:0},
+ {q:"Wann trat Großbritannien offiziell aus?",o:["2016","2019","31. Januar 2020","2022"],a:2},
+ {q:"„Mein Handy-Tarif gilt auch im Urlaub.“ – Welche EU-Regel steckt dahinter?",o:["Verbraucherschutz","Roaming-Verordnung","Personenfreizügigkeit","Freizügigkeit im Arbeitsmarkt"],a:1},
+ {q:"„Ich mache eine Ausbildung in Österreich.“ – Welcher Begriff passt?",o:["Roaming-Verordnung","Verbraucherschutz","Freizügigkeit im Arbeitsmarkt","Schengen-Raum"],a:2},
+ {q:"„Produkte müssen sicher sein.“ – Welcher Begriff passt?",o:["Verbraucherschutz","Binnenmarkt","Roaming","Erasmus+"],a:0},
+ {q:"Was ist Erasmus+?",o:["Ein Gericht der EU","Ein Förderprogramm für Lernen und Arbeiten im Ausland","Eine Währung","Ein Beitrittskriterium"],a:1},
+ {q:"Bis wann will die EU klimaneutral sein?",o:["2030","2040","2050","2070"],a:2},
+ {q:"Welches Problem zeigte die Energieversorgung der EU?",o:["Zu viel Solarstrom","Abhängigkeit von Energieimporten, z. B. Gas aus Russland","Zu hohe Exporte","Fehlende Kohle"],a:1},
+ {q:"Was ist der Schengen-Raum?",o:["Ein Gebiet ohne Grenzkontrollen","Die Eurozone","Ein Industriegebiet","Ein Gerichtsbezirk"],a:0}
+];
+
+const ORGANE=["Europäische Kommission","Europäisches Parlament","Rat der EU (Ministerrat)","Europäischer Rat","Europäischer Gerichtshof"];
+const MATCH=[
+ ["Hat das alleinige Vorschlagsrecht für neue Gesetze.",0],
+ ["Wird direkt von den Menschen in der EU gewählt.",1],
+ ["Besteht aus den Fachministern der Mitgliedstaaten.",2],
+ ["Bringt die Staats- und Regierungschefs zusammen.",3],
+ ["Entscheidet bei Streitigkeiten zwischen Staaten, Institutionen oder Personen.",4],
+ ["Beschließt den Haushalt der EU und kontrolliert die Kommission.",1],
+ ["Legt die grundlegenden Ziele fest, beschließt aber keine Gesetze.",3],
+ ["Überwacht, ob bestehende Regeln eingehalten werden, und vertritt das gemeinsame Interesse.",0],
+ ["Vertritt die Interessen der nationalen Regierungen beim Gesetzgeben.",2],
+ ["Achtet darauf, dass EU-Recht eingehalten wird.",4]
+];
+
+const CLOZES=[
+ {t:"Wie entsteht ein Gesetz?",
+  s:"Ein neues Gesetz in der EU wird zuerst von der [Europäischen Kommission] vorgeschlagen. Anschließend beraten [Parlament] und [Ministerrat] darüber. Wenn beide zustimmen, erfolgt die [Umsetzung] in den Mitgliedstaaten. Bei Streitigkeiten entscheidet der [Europäische Gerichtshof].",
+  alt:{"Europäischen Kommission":["kommission","europäische kommission","eu-kommission"],"Parlament":["europäisches parlament","eu-parlament"],"Ministerrat":["rat","rat der eu","rat der europäischen union"],"Europäische Gerichtshof":["eugh","gerichtshof","europäischer gerichtshof"]}},
+ {t:"Der Euro",
+  s:"Der [Euro] ist die gemeinsame Währung von mittlerweile [21] EU-Ländern. Er wurde im Jahr [2002] als Bargeld eingeführt. Seit 2026 gehört auch [Bulgarien] zur Eurozone. Geldpolitik wird von der Europäischen [Zentralbank] in Frankfurt gesteuert. Mit dem Euro ist ein [Preisvergleich] zwischen Ländern leichter. Nicht alle [EU]-Mitgliedsstaaten haben die gemeinsame Währung.",
+  alt:{"21":["einundzwanzig"],"EU":["eu"]}},
+ {t:"Gründung der EU",
+  s:"Am [9. Mai] [1950] machte der französische Außenminister Robert [Schuman] einen historischen Vorschlag: Frankreich und Deutschland sollten ihre [Kohle]- und [Stahl]produktion zusammenlegen. Daraus entstand [1951] die [Montanunion]. Unterstützt wurde der Plan auch von Konrad [Adenauer] und Jean Monnet.",
+  alt:{"9. Mai":["9.mai","9. mai","09. mai","9 mai","neunter mai"],"Schuman":["schumann"]}}
+];
+
+const VN=[
+ ["Reisefreiheit im Schengen-Raum","V"],["Komplizierte Entscheidungswege","N"],["Gemeinsame Währung (Euro)","V"],
+ ["Fördermittel für Regionen und Landwirtschaft","V"],["Hoher Bürokratieaufwand","N"],["Weniger nationale Entscheidungsmacht","N"],
+ ["Schutz der Verbraucherrechte","V"],["Unterschiedliche Interessen der Mitgliedsstaaten","N"],["Spannungen zwischen Nord- und Südländern","N"],
+ ["Friedenssicherung in Europa","V"],["Größerer Binnenmarkt und mehr Handel","V"],["Kritische Stimmen gegen „zu viel EU“","N"]
+];
+
+const KRITISCH=[
+ ["„Die EU sorgt für offene Grenzen und Reisefreiheit.“",false],
+ ["„Die EU mischt sich zu sehr in nationale Entscheidungen ein.“",true],
+ ["„Ohne die EU gäbe es keine gemeinsame Klimapolitik.“",false],
+ ["„Nicht alle Länder halten sich an demokratische Grundwerte.“",true],
+ ["„Die EU hilft in vielen Krisen mit Geld und Solidarität.“",false]
+];
+
+const TIMELINE=[
+ ["1950","Schuman-Erklärung (9. Mai) – Vorschlag für gemeinsame Kohle- und Stahlproduktion"],
+ ["1951","Montanunion: 6 Gründungsländer"],
+ ["1957","Römische Verträge: gemeinsamer Markt"],
+ ["1973","Dänemark, Irland und Großbritannien treten bei"],
+ ["1992","Vertrag von Maastricht: Gründung der EU"],
+ ["2002","Euro wird Bargeld"],
+ ["2004","Zehn neue Länder treten bei"],
+ ["2007","Bulgarien und Rumänien treten bei"],
+ ["2016","Briten stimmen für den Brexit"],
+ ["2020","Großbritannien tritt aus"],
+ ["2026","Bulgarien führt den Euro ein"]
+];
+
+const STEPS=[
+ "Bedarf oder Problem – es besteht Handlungsbedarf",
+ "Vorschlag durch die Kommission",
+ "Beratung im Parlament und Ministerrat",
+ "Beschluss durch Parlament & Ministerrat",
+ "Umsetzung in den Mitgliedstaaten (nationales Recht)",
+ "Kontrolle durch die Kommission",
+ "Streitfälle vor dem Europäischen Gerichtshof"
+];
+
+const MEMBERS=["Belgien","Bulgarien","Dänemark","Deutschland","Estland","Finnland","Frankreich","Griechenland","Irland","Italien","Kroatien","Lettland","Litauen","Luxemburg","Malta","Niederlande","Österreich","Polen","Portugal","Rumänien","Schweden","Slowakei","Slowenien","Spanien","Tschechien","Ungarn","Zypern"];
+const EURO=["Belgien","Bulgarien","Deutschland","Estland","Finnland","Frankreich","Griechenland","Irland","Italien","Kroatien","Lettland","Litauen","Luxemburg","Malta","Niederlande","Österreich","Portugal","Slowakei","Slowenien","Spanien","Zypern"];
+const SYN={"tschechische republik":"Tschechien","holland":"Niederlande","slowakische republik":"Slowakei","oesterreich":"Österreich","daenemark":"Dänemark","rumaenien":"Rumänien"};
+
+const OPEN=[
+ {q:"Stell dir vor, die EU gäbe es nicht. Welche drei Veränderungen würdest du in deinem Alltag spüren?",m:"Reisen schwerer (Passkontrollen, Wartezeiten an der Grenze) · Einkaufen teurer (keine gemeinsame Währung, Geld umtauschen) · Weniger Sicherheit (Länder arbeiten weniger zusammen) · evtl. teureres Roaming, Studium/Ausbildung im Ausland schwieriger."},
+ {q:"Das Motto lautet „In Vielfalt geeint“. Was bedeutet es für die Zusammenarbeit – und was ist daran schwierig?",m:"Verschiedene Länder arbeiten zusammen, obwohl sie unterschiedlich sind. Schwierig: unterschiedliche Sprachen, eigene Interessen (z. B. bei Geld, Umwelt, Migration), verschiedene Gesetze und Kulturen; manche Länder wollen mehr mitentscheiden als andere."},
+ {q:"Erkläre die Begriffe: Montanunion, „Vater Europas“, Europatag.",m:"Montanunion: Zusammenarbeit bei Kohle und Stahl (1951), um Frieden zu sichern. „Vater Europas“: Robert Schuman – er hatte die Idee für die EU. Europatag: Feiertag am 9. Mai zur Erinnerung an den Beginn der EU."},
+ {q:"Warum wurde die Montanunion gegründet?",m:"Um Krieg zu verhindern und gemeinsam über Kohle und Stahl (Rohstoffe für Waffen) zu bestimmen – kein Land sollte heimlich aufrüsten können."},
+ {q:"Erkläre, warum es besser ist, wenn mehrere Organe gemeinsam über Gesetze entscheiden.",m:"Es ist gerechter: Viele Interessen werden beachtet (Bürger über das Parlament, Regierungen über den Ministerrat), und keine Institution hat zu viel Macht (Gewaltenteilung, gegenseitige Kontrolle)."},
+ {q:"Wähle zwei Herausforderungen der EU und beschreibe, warum sie schwierig sind.",m:"Klimakrise: betrifft alle Länder, die EU muss gemeinsam handeln – schwer, sich auf Regeln zu einigen. Migration: viele Menschen fliehen nach Europa, die Länder sind sich oft nicht einig über Aufnahme und Verteilung. (Auch möglich: Ungleichheit Nord/Süd, Rechtsstaat, Krieg in Europa, Bürokratie, Digitalisierung, Energie.)"},
+ {q:"Können sich alle EU-Länder immer einig sein? Begründe.",m:"Nein – jedes Land hat eigene Interessen (manche wollen strengere Regeln, andere nicht). Trotzdem ist es wichtig, Kompromisse zu finden. Wichtig ist eine Begründung!"},
+ {q:"Nenne zwei Vorteile des Euro.",m:"In vielen Ländern mit derselben Währung bezahlen (Urlaub, Online-Shopping) · kein Geldwechseln, spart Zeit und Geld · Preise lassen sich leichter vergleichen · Handel wird einfacher."},
+ {q:"Sollte die EU weiter wachsen? Begründe deine Meinung.",m:"Pro: Mehr Länder können gemeinsam Probleme lösen (Klima, Krieg); neue Mitglieder profitieren von Frieden, Wirtschaft, Austausch. Aber: nur, wenn sie die Regeln (Kopenhagener Kriterien: Demokratie, Rechtsstaat, Menschenrechte, Marktwirtschaft) erfüllen. Contra: Entscheidungen werden noch komplizierter, mehr Unterschiede."},
+ {q:"Nenne drei Gründe, warum viele Briten für den Brexit gestimmt haben.",m:"1. Mehr Kontrolle über Gesetze und Entscheidungen in GB. 2. Sie fühlten sich durch die EU / Brüssel bevormundet. 3. Sie wollten die Einwanderung selbst regeln. (Auch: eigene Handelsbeziehungen.)"},
+ {q:"Welche Folgen hat der Brexit für die EU? Nenne zwei.",m:"Der Handel mit Großbritannien ist schwieriger geworden (mehr Zölle, mehr Bürokratie). Arbeiten oder Studieren in GB ist schwieriger (z. B. Erasmus). Die EU verlor ein großes Mitglied."},
+ {q:"„Viele Menschen merken gar nicht, wie viel EU in ihrem Alltag steckt.“ Stimmst du zu? Zwei Beispiele.",m:"Ja: Viele wissen nicht, dass z. B. die Roaming-Regel von der EU kommt. Auch dass man einfach in ein anderes EU-Land reisen oder arbeiten kann, ist nicht selbstverständlich. Weitere Beispiele: Euro, Verbraucherrechte beim Online-Shopping, Sonnencreme-Regeln, Trinkwasser, Förderung (Radweg), Erasmus+."},
+ {q:"Bringt die EU Deutschland eher Vorteile oder Nachteile? Begründe.",m:"Z. B.: Eher Vorteile – Deutschland kann gut mit anderen Ländern handeln (Binnenmarkt, Exporte) und gemeinsam Probleme lösen, etwa beim Klima oder in Krisen. Nachteile nennen und abwägen (Bürokratie, weniger nationale Entscheidungsmacht) gibt Extrapunkte."}
+];
+
+/* ---------- Helfer ---------- */
+const $=s=>document.querySelector(s);
+const app=$('#app');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>s.toLowerCase().trim().replace(/\s+/g,' ').replace(/[„“"'.]/g,'').replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const MODES=[
+ {id:'karten',ic:'🃏',t:'Lernkarten',d:`${CARDS.length} Begriffe zum Umdrehen`,f:viewCards,grp:'Lernen'},
+ {id:'quiz',ic:'❓',t:'Quiz',d:'Multiple Choice, 10 Fragen pro Runde',f:viewQuiz,grp:'Üben'},
+ {id:'organe',ic:'🏛️',t:'Organe zuordnen',d:'Wer macht was?',f:viewMatch,grp:'Üben'},
+ {id:'gesetz',ic:'📜',t:'Gesetzgebung ordnen',d:'7 Schritte in die richtige Reihenfolge',f:()=>viewOrder('gesetz','Wie entsteht ein Gesetz?',STEPS.map(s=>[null,s])),grp:'Üben'},
+ {id:'zeit',ic:'⏳',t:'Zeitleiste',d:'Ereignisse von 1950 bis 2026 ordnen',f:()=>viewOrder('zeit','Bringe die Ereignisse in die richtige Reihenfolge',TIMELINE),grp:'Üben'},
+ {id:'luecke',ic:'✏️',t:'Lückentexte',d:'Gesetz, Euro, Gründung',f:viewCloze,grp:'Üben'},
+ {id:'vn',ic:'⚖️',t:'Vorteil oder Nachteil?',d:'12 Aussagen zur Mitgliedschaft',f:viewVN,grp:'Üben'},
+ {id:'laender',ic:'🗺️',t:'Länder-Check',d:'Alle 27 EU-Länder und 21 Euro-Länder',f:viewCountries,grp:'Üben'},
+ {id:'offen',ic:'💬',t:'Offene Fragen',d:'Antwort schreiben, mit Musterlösung vergleichen',f:viewOpen,grp:'Üben'},
+ {id:'probe',ic:'🎯',t:'Probe-Klassenarbeit',d:'Gemischte Aufgaben aus allen Bereichen, mit Punkten und Note',f:viewExam,grp:'Test',big:true}
+];
+
+function setHead(t,s,showBack){$('#title').textContent=t;$('#sub').textContent=s;$('#back').classList.toggle('show',!!showBack);window.scrollTo(0,0)}
+function updateProg(){const ids=MODES.map(m=>m.id);const v=ids.reduce((a,id)=>a+(done[id]||0),0)/ids.length;$('#progbar').style.width=v+'%';$('#progtxt').textContent=`Lernstand: ${Math.round(v)} % · ${ids.filter(id=>(done[id]||0)>=80).length} von ${ids.length} Bereichen sicher`}
+$('#back').onclick=()=>{location.hash='';home()};
+
+function home(){
+  setHead('EU-Check','Alles für die Klassenarbeit „Europäische Union“ – Klasse 10',false);updateProg();
+  let h='';let g='';
+  const order=['Test','Lernen','Üben'];
+  for(const grp of order){
+    const ms=MODES.filter(m=>m.grp===grp);
+    h+=`<div class="sec">${grp==='Test'?'Abschluss':grp}</div><div class="grid">`;
+    for(const m of ms){const d=done[m.id];h+=`<button class="tile ${m.big?'big':''}" data-m="${m.id}"><div class="ic">${m.ic}</div><div><b>${m.t}</b><span>${m.d}</span>${d!=null?`<div class="done" style="${m.big?'color:var(--gold)':''}">Bestwert: ${Math.round(d)} %</div>`:''}</div></button>`}
+    h+='</div>';
+  }
+  h+=`<div class="sec">Tipp</div><div class="note">Reihenfolge für heute: <b>Lernkarten</b> durchgehen → <b>Quiz</b> und <b>Organe</b> üben → <b>Offene Fragen</b> laut beantworten → zum Schluss die <b>Probe-Klassenarbeit</b>. Was du falsch hattest, nochmal in den Lernkarten nachschauen.</div>`;
+  app.innerHTML=h;
+  app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{location.hash=b.dataset.m});
+}
+function route(){const id=location.hash.slice(1);const m=MODES.find(x=>x.id===id);if(m){setHead(m.t,m.d,true);m.f()}else home()}
+window.addEventListener('hashchange',route);
+
+/* ---------- Lernkarten ---------- */
+function viewCards(){
+  let deck=shuffle(CARDS.map((c,i)=>i)),pos=0,known=new Set(store.get('known',[]));
+  const render=()=>{
+    if(pos>=deck.length){const pct=known.size/CARDS.length*100;markDone('karten',pct);
+      app.innerHTML=`<div class="card" style="text-align:center"><div class="score">${known.size}/${CARDS.length}</div><p>Karten als „gewusst“ markiert.</p><div class="row" style="justify-content:center"><button class="btn" id="again">Nur ungewusste wiederholen</button><button class="btn alt" id="all">Alle neu mischen</button></div></div>`;
+      $('#again').onclick=()=>{deck=shuffle(CARDS.map((c,i)=>i).filter(i=>!known.has(i)));if(!deck.length){deck=shuffle(CARDS.map((c,i)=>i))}pos=0;render()};
+      $('#all').onclick=()=>{deck=shuffle(CARDS.map((c,i)=>i));pos=0;render()};return}
+    const i=deck[pos],c=CARDS[i];
+    app.innerHTML=`<div class="meta" style="margin-bottom:8px">Karte ${pos+1} von ${deck.length} · tippen zum Umdrehen</div>
+    <div class="flip" id="fl"><div class="in"><div class="face front"><small>Begriff</small>${esc(c[0])}</div><div class="face backf"><small>Erklärung</small>${esc(c[1])}</div></div></div>
+    <div class="row" style="margin-top:14px"><button class="btn alt" id="no">✗ Noch nicht</button><span class="sp"></span><button class="btn" id="yes">✓ Gewusst</button></div>`;
+    $('#fl').onclick=()=>$('#fl').classList.toggle('on');
+    $('#yes').onclick=()=>{known.add(i);store.set('known',[...known]);pos++;render()};
+    $('#no').onclick=()=>{known.delete(i);store.set('known',[...known]);pos++;render()};
+  };render();
+}
+
+/* ---------- Quiz ---------- */
+function mcBlock(item,idx,onAnswer){
+  const ord=shuffle(item.o.map((t,i)=>i));
+  const el=document.createElement('div');el.className='card';
+  el.innerHTML=`<div class="q">${idx?idx+'. ':''}${esc(item.q)}</div><div class="opts">${ord.map(i=>`<button class="opt" data-i="${i}">${esc(item.o[i])}</button>`).join('')}</div><div class="fbx"></div>`;
+  el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(el.dataset.done)return;el.dataset.done=1;const i=+b.dataset.i,ok=i===item.a;
+    b.classList.add(ok?'ok':'bad');el.querySelector(`[data-i="${item.a}"]`).classList.add('ok');
+    el.querySelector('.fbx').innerHTML=`<div class="fb ${ok?'ok':'bad'}">${ok?'Richtig!':'Leider falsch. Richtig: <b>'+esc(item.o[item.a])+'</b>'}</div>`;
+    onAnswer(ok);
+  });return el;
+}
+function viewQuiz(){
+  const qs=shuffle(MC).slice(0,10);let n=0,right=0;
+  const next=()=>{
+    if(n>=qs.length){const pct=right/qs.length*100;markDone('quiz',pct);
+      app.innerHTML=`<div class="card" style="text-align:center"><div class="score">${right}/${qs.length}</div><p>${pct>=80?'Stark! 💪':pct>=50?'Ganz ordentlich – noch eine Runde?':'Schau nochmal in die Lernkarten.'}</p><button class="btn" id="re">Neue Runde</button></div>`;$('#re').onclick=viewQuiz;return}
+    app.innerHTML=`<div class="meta" style="margin-bottom:8px">Frage ${n+1} von ${qs.length} · ${right} richtig</div>`;
+    const b=mcBlock(qs[n],0,ok=>{if(ok)right++;const nb=document.createElement('div');nb.className='row';nb.style.marginTop='12px';nb.innerHTML='<span class="sp"></span><button class="btn">Weiter →</button>';nb.querySelector('button').onclick=()=>{n++;next()};b.appendChild(nb)});
+    app.appendChild(b);
+  };next();
+}
+
+/* ---------- Organe zuordnen ---------- */
+function viewMatch(){
+  const items=shuffle(MATCH);
+  app.innerHTML=`<div class="card"><div class="meta" style="margin-bottom:6px">Wähle zu jeder Beschreibung das passende Organ.</div>${items.map((m,i)=>`<div class="mrow"><div>${esc(m[0])}</div><select class="t" data-i="${i}"><option value="">– Organ wählen –</option>${ORGANE.map((o,j)=>`<option value="${j}">${o}</option>`).join('')}</select></div>`).join('')}</div>
+  <div class="row"><button class="btn" id="chk">Prüfen</button><button class="btn alt" id="re">Neu mischen</button><span class="sp"></span><span id="res" class="meta"></span></div>`;
+  $('#re').onclick=viewMatch;
+  $('#chk').onclick=()=>{let r=0;app.querySelectorAll('select').forEach(s=>{const ok=+s.value===items[+s.dataset.i][1]&&s.value!=='';s.classList.remove('ok','bad');s.classList.add(ok?'ok':'bad');if(ok)r++});
+    $('#res').innerHTML=`<b>${r}/${items.length}</b> richtig`;markDone('organe',r/items.length*100)};
+}
+
+/* ---------- Reihenfolge ---------- */
+function viewOrder(id,title,items){
+  let cur=shuffle(items.map((x,i)=>i));let checked=false;
+  const render=()=>{
+    app.innerHTML=`<div class="meta" style="margin-bottom:8px">${title} – mit den Pfeilen verschieben.</div><div id="ol">${cur.map((i,p)=>`<div class="ord" data-p="${p}"><span class="n">${p+1}</span><span class="txt">${checked&&items[i][0]?'<b>'+items[i][0]+':</b> ':''}${esc(items[i][1])}</span><button data-up="${p}" aria-label="nach oben">▲</button><button data-dn="${p}" aria-label="nach unten">▼</button></div>`).join('')}</div>
+    <div class="row" style="margin-top:6px"><button class="btn" id="chk">Prüfen</button><button class="btn alt" id="re">Neu mischen</button><span class="sp"></span><span id="res" class="meta"></span></div>`;
+    app.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const p=+b.dataset.up;if(p>0){[cur[p-1],cur[p]]=[cur[p],cur[p-1]];checked=false;render()}});
+    app.querySelectorAll('[data-dn]').forEach(b=>b.onclick=()=>{const p=+b.dataset.dn;if(p<cur.length-1){[cur[p+1],cur[p]]=[cur[p],cur[p+1]];checked=false;render()}});
+    $('#re').onclick=()=>{cur=shuffle(items.map((x,i)=>i));checked=false;render()};
+    $('#chk').onclick=()=>{checked=true;render();let r=0;app.querySelectorAll('.ord').forEach((el,p)=>{const ok=cur[p]===p;el.classList.add(ok?'ok':'bad');if(ok)r++});
+      $('#res').innerHTML=r===items.length?'<b>Alles richtig! 🎉</b>':`<b>${r}/${items.length}</b> an der richtigen Stelle`;markDone(id,r/items.length*100)};
+  };render();
+}
+
+/* ---------- Lückentexte ---------- */
+function clozeHTML(c,ci){let k=0;return c.s.replace(/\[([^\]]+)\]/g,(m,w)=>`<input class="t gap" data-c="${ci}" data-k="${k++}" data-w="${esc(w)}" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:${Math.max(90,w.length*11)}px">`)}
+function checkGap(inp,c){const w=inp.dataset.w,v=norm(inp.value),al=[w,...((c.alt||{})[w]||[])].map(norm);const ok=al.includes(v)||(w==='Europäischen Kommission'&&v.includes('kommission'))||(w==='Europäische Gerichtshof'&&v.includes('gerichtshof'));inp.classList.remove('ok','bad');inp.classList.add(ok?'ok':'bad');return ok}
+function viewCloze(){
+  app.innerHTML=CLOZES.map((c,ci)=>`<div class="card"><h3 style="margin-bottom:8px">${c.t}</h3><div class="cloze">${clozeHTML(c,ci)}</div><div class="row" style="margin-top:10px"><button class="btn" data-chk="${ci}">Prüfen</button><button class="btn alt" data-sol="${ci}">Lösung zeigen</button><span class="sp"></span><span class="meta" id="r${ci}"></span></div></div>`).join('');
+  const scores={};
+  app.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>{const ci=+b.dataset.chk;const ins=[...app.querySelectorAll(`input[data-c="${ci}"]`)];const r=ins.filter(i=>checkGap(i,CLOZES[ci])).length;$('#r'+ci).innerHTML=`<b>${r}/${ins.length}</b> richtig`;scores[ci]=r/ins.length;
+    const vals=CLOZES.map((c,i)=>scores[i]||0);markDone('luecke',vals.reduce((a,b)=>a+b,0)/CLOZES.length*100)});
+  app.querySelectorAll('[data-sol]').forEach(b=>b.onclick=()=>{const ci=+b.dataset.sol;app.querySelectorAll(`input[data-c="${ci}"]`).forEach(i=>{if(!i.classList.contains('ok')){i.value=i.dataset.w;i.classList.remove('bad')}})});
+}
+
+/* ---------- Vorteil / Nachteil ---------- */
+function viewVN(){
+  const it=shuffle(VN);const sel={};
+  app.innerHTML=`<div class="card"><div class="meta">Vorteil (V) oder Nachteil (N) der EU-Mitgliedschaft?</div>${it.map((x,i)=>`<div class="sortitem"><span class="txt">${esc(x[0])}</span><button class="vn" data-i="${i}" data-v="V">✓ Vorteil</button><button class="vn" data-i="${i}" data-v="N">✗ Nachteil</button></div>`).join('')}</div>
+  <div class="card"><h3 style="margin-bottom:8px">Bonus: Welche Aussagen sind <u>kritisch</u> gegenüber der EU gemeint?</h3>${KRITISCH.map((k,i)=>`<label class="sortitem" style="cursor:pointer"><input type="checkbox" data-k="${i}" style="width:20px;height:20px"><span class="txt">${esc(k[0])}</span><span class="kres" data-kr="${i}"></span></label>`).join('')}</div>
+  <div class="row"><button class="btn" id="chk">Prüfen</button><button class="btn alt" id="re">Neu mischen</button><span class="sp"></span><span id="res" class="meta"></span></div>`;
+  app.querySelectorAll('.vn').forEach(b=>b.onclick=()=>{const i=b.dataset.i;sel[i]=b.dataset.v;app.querySelectorAll(`.vn[data-i="${i}"]`).forEach(x=>x.className='vn'+(x.dataset.v===sel[i]?' sel':''))});
+  $('#re').onclick=viewVN;
+  $('#chk').onclick=()=>{let r=0;it.forEach((x,i)=>{app.querySelectorAll(`.vn[data-i="${i}"]`).forEach(b=>{b.className='vn';if(b.dataset.v===x[1])b.classList.add('ok');else if(sel[i]===b.dataset.v)b.classList.add('bad')});if(sel[i]===x[1])r++});
+    let kr=0;KRITISCH.forEach((k,i)=>{const c=app.querySelector(`[data-k="${i}"]`).checked,ok=c===k[1];if(ok)kr++;app.querySelector(`[data-kr="${i}"]`).innerHTML=ok?'✅':(k[1]?'❗ kritisch':'❌ nicht kritisch')});
+    $('#res').innerHTML=`<b>${r}/${it.length}</b> · Bonus <b>${kr}/${KRITISCH.length}</b>`;markDone('vn',(r+kr)/(it.length+KRITISCH.length)*100)};
+}
+
+/* ---------- Länder ---------- */
+function viewCountries(){
+  let mode='eu';
+  const render=()=>{
+    const list=mode==='eu'?MEMBERS:EURO;const found=new Set();
+    app.innerHTML=`<div class="row" style="margin-bottom:12px"><button class="btn ${mode==='eu'?'':'alt'}" data-mode="eu">27 EU-Länder</button><button class="btn ${mode==='euro'?'':'alt'}" data-mode="euro">21 Euro-Länder</button></div>
+    <div class="card"><div class="meta" style="margin-bottom:8px">${mode==='eu'?'Nenne alle EU-Mitgliedstaaten.':'Nenne alle Länder, die den Euro haben (Stand 2026).'} Tippe ein Land und drücke Enter.</div>
+    <div class="row"><input class="t" id="cin" placeholder="Land eingeben…" style="flex:1;min-width:180px" autocomplete="off"><button class="btn" id="cadd">OK</button></div>
+    <div class="row" style="margin-top:10px"><span class="chip" id="ccount">0/${list.length}</span><span class="meta" id="cmsg"></span><span class="sp"></span><button class="btn alt" id="cgive" style="padding:8px 12px">Auflösen</button></div>
+    <div class="cgrid">${list.map((c,i)=>`<div class="cg" data-c="${i}">${c[0]}…</div>`).join('')}</div></div>
+    ${mode==='euro'?'<div class="note">Merke: EU-Länder <b>ohne</b> Euro sind Dänemark, Polen, Rumänien, Schweden, Tschechien und Ungarn.</div>':''}`;
+    app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;render()});
+    const add=()=>{const raw=$('#cin').value;let v=norm(raw);if(!v)return;const syn=SYN[v];const idx=list.findIndex(c=>norm(c)===v||c===syn);
+      if(idx>=0&&!found.has(idx)){found.add(idx);const el=app.querySelector(`[data-c="${idx}"]`);el.textContent=list[idx];el.className='cg found';$('#cmsg').textContent='✓ '+list[idx]}
+      else if(idx>=0){$('#cmsg').textContent='Hast du schon.'}
+      else{$('#cmsg').textContent=(mode==='euro'&&MEMBERS.some(c=>norm(c)===v))?'EU-Land, aber kein Euro!':'Nicht in der Liste.'}
+      $('#cin').value='';$('#ccount').textContent=`${found.size}/${list.length}`;markDone('laender',found.size/list.length*100*(mode==='eu'?1:1))};
+    $('#cadd').onclick=add;$('#cin').onkeydown=e=>{if(e.key==='Enter')add()};
+    $('#cgive').onclick=()=>{list.forEach((c,i)=>{if(!found.has(i)){const el=app.querySelector(`[data-c="${i}"]`);el.textContent=c;el.className='cg miss'}})};
+    $('#cin').focus();
+  };render();
+}
+
+/* ---------- Offene Fragen ---------- */
+function viewOpen(){
+  const self=store.get('self',{});
+  app.innerHTML=`<div class="note" style="margin-bottom:12px">Schreib deine Antwort (oder sag sie laut), dann vergleiche mit der Musterlösung und bewerte dich selbst. In der Arbeit zählt: Behauptung + Begründung + Beispiel.</div>`+
+  OPEN.map((o,i)=>`<div class="card"><div class="q">${i+1}. ${esc(o.q)}</div><textarea class="t" data-i="${i}" placeholder="Deine Antwort…">${esc(store.get('ans'+i,''))}</textarea>
+  <div class="row" style="margin-top:8px"><button class="btn alt" data-show="${i}">Musterlösung zeigen</button></div><div class="ml hidden" id="ml${i}">${esc(o.m)}</div>
+  <div class="self hidden" id="sf${i}">${[['2','Konnte ich 💪'],['1','Teilweise'],['0','Nochmal üben']].map(x=>`<button data-sf="${i}" data-v="${x[0]}" class="${self[i]===x[0]?'on':''}">${x[1]}</button>`).join('')}</div></div>`).join('');
+  app.querySelectorAll('textarea').forEach(t=>t.oninput=()=>store.set('ans'+t.dataset.i,t.value));
+  app.querySelectorAll('[data-show]').forEach(b=>b.onclick=()=>{const i=b.dataset.show;$('#ml'+i).classList.remove('hidden');$('#sf'+i).classList.remove('hidden')});
+  app.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{const i=b.dataset.sf;self[i]=b.dataset.v;store.set('self',self);app.querySelectorAll(`[data-sf="${i}"]`).forEach(x=>x.classList.toggle('on',x===b));
+    const pts=Object.values(self).reduce((a,v)=>a+ +v,0);markDone('offen',pts/(OPEN.length*2)*100)});
+}
+
+/* ---------- Probe-Klassenarbeit ---------- */
+function note(p){return p>=92?'1':p>=81?'2':p>=67?'3':p>=50?'4':p>=30?'5':'6'}
+function viewExam(){
+  const mc=shuffle(MC).slice(0,10);
+  const mt=shuffle(MATCH).slice(0,4);
+  const vn=shuffle(VN).slice(0,4);
+  const cz=CLOZES[Math.floor(Math.random()*CLOZES.length)];
+  const op=shuffle(OPEN).slice(0,2);
+  let h=`<div class="note" style="margin-bottom:12px">Wie in der echten Arbeit: erst alles bearbeiten, dann unten auf <b>Abgeben</b>. Keine Hilfen! Zeit-Tipp: 30 Minuten.</div>`;
+  h+=`<h2 style="margin:8px 0 10px">Teil A – Wissen (10 P.)</h2><div id="mcA"></div>`;
+  h+=`<h2 style="margin:18px 0 10px">Teil B – Organe (4 P.)</h2><div class="card">${mt.map((m,i)=>`<div class="mrow"><div>${esc(m[0])}</div><select class="t" data-mt="${i}"><option value="">– wählen –</option>${ORGANE.map((o,j)=>`<option value="${j}">${o}</option>`).join('')}</select></div>`).join('')}</div>`;
+  h+=`<h2 style="margin:18px 0 10px">Teil C – Vorteil oder Nachteil? (4 P.)</h2><div class="card">${vn.map((x,i)=>`<div class="sortitem"><span class="txt">${esc(x[0])}</span><button class="vn" data-ei="${i}" data-v="V">Vorteil</button><button class="vn" data-ei="${i}" data-v="N">Nachteil</button></div>`).join('')}</div>`;
+  h+=`<h2 style="margin:18px 0 10px">Teil D – Lückentext: ${cz.t}</h2><div class="card"><div class="cloze">${clozeHTML(cz,9)}</div></div>`;
+  h+=`<h2 style="margin:18px 0 10px">Teil E – Erklären & Begründen (je 2 P.)</h2>${op.map((o,i)=>`<div class="card"><div class="q">${esc(o.q)}</div><textarea class="t" data-op="${i}" placeholder="Deine Antwort…"></textarea><div class="ml hidden" data-ml="${i}"><b>Musterlösung:</b> ${esc(o.m)}</div><div class="self hidden" data-ss="${i}"><span class="meta" style="align-self:center">Deine Punkte:</span>${[2,1,0].map(v=>`<button data-sp="${i}" data-v="${v}">${v} P.</button>`).join('')}</div></div>`).join('')}`;
+  h+=`<div class="row" style="margin:14px 0"><button class="btn gold" id="sub">Abgeben</button><span class="sp"></span></div><div id="result"></div>`;
+  app.innerHTML=h;
+  const mcAns=[];const mcBox=$('#mcA');
+  mc.forEach((it,i)=>{const ord=shuffle(it.o.map((t,j)=>j));const el=document.createElement('div');el.className='card';
+    el.innerHTML=`<div class="q">${i+1}. ${esc(it.q)}</div><div class="opts">${ord.map(j=>`<button class="opt" data-j="${j}">${esc(it.o[j])}</button>`).join('')}</div>`;
+    el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(mcBox.dataset.locked)return;mcAns[i]=+b.dataset.j;el.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b))});
+    mcBox.appendChild(el)});
+  const vnSel={};
+  app.querySelectorAll('[data-ei]').forEach(b=>b.onclick=()=>{if(mcBox.dataset.locked)return;const i=b.dataset.ei;vnSel[i]=b.dataset.v;app.querySelectorAll(`[data-ei="${i}"]`).forEach(x=>x.className='vn'+(x.dataset.v===vnSel[i]?' sel':''))});
+  const opPts={};
+  $('#sub').onclick=()=>{
+    if(mcBox.dataset.locked)return;mcBox.dataset.locked=1;$('#sub').disabled=true;
+    let pA=0;mcBox.querySelectorAll('.card').forEach((el,i)=>{const it=mc[i];el.querySelectorAll('.opt').forEach(b=>{const j=+b.dataset.j;b.classList.remove('sel');if(j===it.a)b.classList.add('ok');else if(j===mcAns[i])b.classList.add('bad')});if(mcAns[i]===it.a)pA++});
+    let pB=0;app.querySelectorAll('[data-mt]').forEach(s=>{const ok=s.value!==''&&+s.value===mt[+s.dataset.mt][1];s.classList.add(ok?'ok':'bad');if(ok)pB++;s.disabled=true});
+    let pC=0;vn.forEach((x,i)=>{app.querySelectorAll(`[data-ei="${i}"]`).forEach(b=>{b.className='vn';if(b.dataset.v===x[1])b.classList.add('ok');else if(vnSel[i]===b.dataset.v)b.classList.add('bad')});if(vnSel[i]===x[1])pC++});
+    const gaps=[...app.querySelectorAll('input[data-c="9"]')];let pD=0;gaps.forEach(g=>{if(checkGap(g,cz))pD++;else g.value+=g.value?'  → '+g.dataset.w:g.dataset.w;g.disabled=true});
+    app.querySelectorAll('[data-ml]').forEach(e=>e.classList.remove('hidden'));app.querySelectorAll('[data-ss]').forEach(e=>e.classList.remove('hidden'));
+    const maxAuto=mc.length+mt.length+vn.length+gaps.length,max=maxAuto+op.length*2;
+    const show=()=>{const pE=Object.values(opPts).reduce((a,b)=>a+b,0);const tot=pA+pB+pC+pD+pE,pct=tot/max*100;const missing=op.length-Object.keys(opPts).length;
+      $('#result').innerHTML=`<div class="card" style="text-align:center"><div class="meta">Ergebnis</div><div class="score">${tot} / ${max} P.</div><p style="margin:4px 0 10px">${Math.round(pct)} % · voraussichtlich Note <b style="font-size:22px">${note(pct)}</b>${missing?`<br><span class="meta">Bewerte noch ${missing} offene Aufgabe${missing>1?'n':''} in Teil E selbst.</span>`:''}</p>
+      <div class="meta">A ${pA}/${mc.length} · B ${pB}/${mt.length} · C ${pC}/${vn.length} · D ${pD}/${gaps.length} · E ${pE}/${op.length*2}</div>
+      <div class="row" style="justify-content:center;margin-top:12px"><button class="btn" id="newex">Neue Probearbeit</button></div></div>`;
+      $('#newex').onclick=viewExam;markDone('probe',pct)};
+    app.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>{const i=b.dataset.sp;opPts[i]=+b.dataset.v;app.querySelectorAll(`[data-sp="${i}"]`).forEach(x=>x.classList.toggle('on',x===b));show()});
+    show();$('#result').scrollIntoView({behavior:'smooth'});
+  };
+}
+
+route();
+</script>
+</body>
+</html>
