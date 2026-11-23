@@ -181,3 +181,8 @@ Begleit-App für Auszubildende – aufgebaut wie die Praktikums-App, mit Ausbild
   - *Bericht:* Rückblick mit Berichtszeitraum, Ausbildungsbericht (aus Einträgen und Wochennachweisen erzeugt, überarbeitbar, abgebbar, PDF) und Berichtsheft als PDF mit Unterschriftsfeldern für Azubi und Ausbilder.
 - **Betreuer** (`azubi/lehrer.html`): Zugang mit dem Hauptschlüssel der Graduierung (nur `klasse is null`). Übersicht (Betrieb, Stand, Wochen offen, Bericht), Lesen in der Seitenleiste (Berichtsheft, abgegebener Bericht, Bericht aus Einträgen), PDF und Drucken (einzeln, alle Berichte, alle Berichtshefte), CSV-Übersicht, Kennwort zurücksetzen, Löschen.
 - Technik: Tabelle `public.azubi` und Funktionen `azubi_*` in `supabase/azubi.sql`; Logik und PDF-Layout in `azubi/azubi.js` (nutzt `praktikum/bericht.js` und die lokale jsPDF-Kopie des Praktikums).
+
+## ePub-Finder (`epub-finder/`)
+
+Suche nach gemeinfreien Büchern mit direktem ePub-Download. Quellen: Project Gutenberg (über die Schnittstelle gutendex.com) und Internet Archive (nur gemeinfreie Bibliotheks-Scans, z. B. Sammlungen americana, toronto, europeanlibraries). Filter nach Quelle und Sprache, „Mehr laden“, Merkliste (bleibt im Browser des Geräts). Ohne Suchbegriff zeigt die Startseite die beliebtesten Gutenberg-Bücher der gewählten Sprache.
+Link: `https://ratpoison-de.github.io/pags-app/epub-finder/` · QR-Code: `epub-finder/qr-epub-finder.png`

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ePub-Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: ruhig, bibliothekarisch, schnell zu bedienen
+   IDEA: ein Bücherregal – jede Fundstelle ist ein Buch mit Einband
+   PICTURE: die Trefferliste selbst, Cover in Regalreihen; Platzhalter-Einbände in Leinenfarben
+   COLOUR and TYPE: Papierweiß, Tinte, Buchleinen-Rot, Goldprägung; Literata + Source Sans 3
+   LAYOUT: Suchleiste oben, Filter darunter, Raster der Bücher, Merkliste als Ausklapper */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#16161a);--paper:light-dark(#f4f2ee,#202027);--ink:light-dark(#1b1b22,#ecebe6);
+--muted:light-dark(#5d5c66,#a9a8b2);--line:light-dark(#dedbd4,#34343d);
+--cloth:light-dark(#8f1d2c,#c4485a);--gold:#c99a2e;--onCloth:#fff}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Source Sans 3",system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3.5vw,48px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.band{background:var(--cloth);color:var(--onCloth);padding-bottom:clamp(24px,3vw,40px)}
+h1{font:700 clamp(32px,5vw,48px)/1.05 Literata,Georgia,serif;margin:0 0 6px;text-wrap:balance}
+h1 span{color:var(--gold)}
+.sub{margin:0 0 20px;opacity:.9;max-width:62ch}
+form{display:flex;gap:10px;flex-wrap:wrap}
+input[type=search]{flex:1 1 260px;font:inherit;font-size:17px;padding:12px 16px;min-height:50px;border-radius:10px;border:2px solid transparent;background:#fff;color:#1b1b22}
+input[type=search]:focus{outline:none;border-color:var(--gold)}
+button,.btn,select{font:600 16px/1 "Source Sans 3",sans-serif;min-height:44px;border-radius:10px;cursor:pointer}
+.go{background:var(--gold);color:#1b1b22;border:0;padding:0 22px;min-height:50px}
+.go:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.filters{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:16px}
+.filters label{display:flex;gap:8px;align-items:center;font-size:15px}
+select{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.4);padding:0 12px}
+select option{color:#1b1b22}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 16px;margin-bottom:18px}
+.bar h2{font:500 22px/1.2 Literata,Georgia,serif;margin:0}
+.status{color:var(--muted);font-size:15px}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);padding:0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:26px 22px}
+.book{display:flex;flex-direction:column;gap:10px}
+.cover{position:relative;aspect-ratio:2/3;border-radius:3px 8px 8px 3px;overflow:hidden;background:var(--paper);
+box-shadow:0 1px 0 var(--line),0 10px 22px -12px rgba(0,0,0,.45);transition:transform .2s}
+.cover::before{content:"";position:absolute;inset:0 auto 0 0;width:7px;background:linear-gradient(90deg,rgba(0,0,0,.25),rgba(255,255,255,.08));z-index:1}
+.book:hover .cover{transform:translateY(-3px)}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.blank{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:18px 14px 16px 20px;color:#fff}
+.blank b{font:700 17px/1.15 Literata,Georgia,serif;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+.blank i{font-style:normal;font-size:13px;border-top:1px solid var(--gold);padding-top:8px;color:#f3e6c4}
+.src{position:absolute;right:8px;top:8px;z-index:2;font-size:12px;font-weight:600;background:rgba(20,20,25,.78);color:#fff;padding:3px 8px;border-radius:20px}
+.meta h3{font:600 16px/1.25 Literata,Georgia,serif;margin:0 0 2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta p{margin:0;color:var(--muted);font-size:14px}
+.acts{display:flex;gap:8px;margin-top:auto}
+.dl{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--cloth);color:#fff;text-decoration:none;border:0;padding:0 12px}
+.dl svg{width:18px;height:18px}
+.star{width:44px;background:transparent;border:1px solid var(--line);color:var(--muted);font-size:20px;line-height:1}
+.star[aria-pressed=true]{color:var(--gold);border-color:var(--gold)}
+.more{display:flex;justify-content:center;margin-top:30px}
+.empty{padding:40px 0;color:var(--muted);max-width:60ch}
+.skel .cover{animation:pulse 1.2s infinite alternate}
+@keyframes pulse{to{opacity:.45}}
+@media(prefers-reduced-motion:reduce){.skel .cover{animation:none}.cover{transition:none}}
+details.saved{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:26px}
+details.saved summary{cursor:pointer;padding:12px 0;font-weight:600;min-height:44px}
+.saved ul{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
+.saved li{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.saved li span{flex:1 1 220px}
+.saved a{color:var(--cloth);font-weight:600}
+footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<header class="band"><div class="wrap">
+  <h1>ePub-<span>Finder</span></h1>
+  <p class="sub">Gemeinfreie Bücher suchen und als ePub direkt herunterladen – kostenlos und legal aus Project Gutenberg und den Bibliotheks-Scans des Internet Archive.</p>
+  <form id="f" role="search">
+    <input id="q" type="search" placeholder="Titel oder Autor, z. B. Kafka, Effi Briest, Grimm" aria-label="Suchbegriff" autocomplete="off">
+    <button class="go" type="submit">Suchen</button>
+  </form>
+  <div class="filters">
+    <label>Quelle
+      <select id="src"><option value="all">Beide</option><option value="gb">Project Gutenberg</option><option value="ia">Internet Archive</option></select></label>
+    <label>Sprache
+      <select id="lang"><option value="de">Deutsch</option><option value="en">Englisch</option><option value="fr">Französisch</option><option value="es">Spanisch</option><option value="it">Italienisch</option><option value="">Alle</option></select></label>
+  </div>
+</div></header>
+
+<main class="band"><div class="wrap">
+  <details class="saved" id="saved"><summary>Merkliste (<span id="savedN">0</span>)</summary><ul id="savedList"></ul></details>
+  <div class="bar"><h2 id="head">Beliebt auf Deutsch</h2><span class="status" id="status" aria-live="polite"></span></div>
+  <div class="grid" id="grid"></div>
+  <div class="more"><button class="ghost" id="more" hidden>Mehr laden</button></div>
+</div></main>
+
+<footer class="band"><div class="wrap">
+  Quellen: <a href="https://www.gutenberg.org" target="_blank" rel="noopener">Project Gutenberg</a> über die freie Schnittstelle <a href="https://gutendex.com" target="_blank" rel="noopener">Gutendex</a> sowie <a href="https://archive.org" target="_blank" rel="noopener">Internet Archive</a> (nur gemeinfreie Bibliotheks-Scans, ePub automatisch aus Texterkennung erzeugt – Qualität schwankt). Gemeinfrei heißt in der Regel: Autor seit über 70 Jahren tot.
+</div></footer>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const grid=$('grid'),status=$('status'),more=$('more'),head=$('head');
+const LANG={de:'Deutsch',en:'Englisch',fr:'Französisch',es:'Spanisch',it:'Italienisch'};
+const IA_LANG={de:'ger OR German OR deu',en:'eng OR English',fr:'fre OR French OR fra',es:'spa OR Spanish',it:'ita OR Italian'};
+const IA_COLL='collection:(americana OR toronto OR europeanlibraries OR gutenberg OR cdl OR library_of_congress OR wellcomelibrary)';
+const CLOTH=['#8f1d2c','#23395b','#2f4f4f','#5b3a29','#4a2c5e','#7a5a12','#1f4d5a'];
+const DL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let state={q:'',gbNext:null,iaPage:0,iaTotal:0,busy:false,books:new Map()};
+let saved=[];try{saved=JSON.parse(localStorage.getItem('epubSaved')||'[]')}catch(e){}
+
+async function getJSON(url,ms=25000){
+  const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}
+  finally{clearTimeout(t)}
+}
+function name(n){ // "Kafka, Franz" -> "Franz Kafka"
+  n=String(n||'').replace(/,?\s*\d{4}\s*-\s*\d{0,4}.*$/,'').trim();
+  const p=n.split(', ');return p.length===2?p[1]+' '+p[0]:n;
+}
+function gbMap(b){
+  const f=b.formats||{};
+  const epub=f['application/epub+zip'];
+  if(!epub)return null;
+  const a=(b.authors||[]).map(x=>name(x.name)).join(', ');
+  const life=b.authors?.[0]?.death_year?`† ${b.authors[0].death_year}`:'';
+  return{id:'gb'+b.id,src:'Gutenberg',title:b.title,author:a||'Unbekannt',info:[life,(b.languages||[]).map(l=>LANG[l]||l).join(', ')].filter(Boolean).join(' · '),
+    cover:f['image/jpeg']||'',epub,page:`https://www.gutenberg.org/ebooks/${b.id}`};
+}
+function iaMap(d){
+  const cr=[].concat(d.creator||[]);const lang=[].concat(d.language||[]).join(', ');
+  return{id:'ia'+d.identifier,ia:d.identifier,src:'Archive',title:[].concat(d.title)[0],author:cr.length?cr.slice(0,2).map(name).join(', '):'Unbekannt',
+    info:[d.year,lang].filter(Boolean).join(' · '),cover:`https://archive.org/services/img/${encodeURIComponent(d.identifier)}`,
+    epub:`https://archive.org/download/${encodeURIComponent(d.identifier)}/${encodeURIComponent(d.identifier)}.epub`,page:`https://archive.org/details/${encodeURIComponent(d.identifier)}`};
+}
+async function fetchGB(url){
+  const d=await getJSON(url);state.gbNext=d.next;return(d.results||[]).map(gbMap).filter(Boolean);
+}
+async function fetchIA(q,lang,page){
+  let query=`(${q}) AND mediatype:texts AND format:EPUB AND NOT access-restricted-item:true AND ${IA_COLL}`;
+  if(lang)query+=` AND language:(${IA_LANG[lang]})`;
+  const p=new URLSearchParams({q:query,rows:'24',page:String(page),output:'json'});
+  ['identifier','title','creator','year','language'].forEach(f=>p.append('fl[]',f));
+  p.append('sort[]','downloads desc');
+  const d=await getJSON('https://archive.org/advancedsearch.php?'+p);
+  state.iaTotal=d.response?.numFound||0;
+  return(d.response?.docs||[]).map(iaMap);
+}
+function cover(b){
+  const col=CLOTH[[...b.id].reduce((s,c)=>s+c.charCodeAt(0),0)%CLOTH.length];
+  const blank=`<div class="blank" style="background:${col}"><b>${esc(b.title)}</b><i>${esc(b.author)}</i></div>`;
+  return`<div class="cover">${blank}${b.cover?`<img loading="lazy" alt="" src="${esc(b.cover)}" onerror="this.remove()">`:''}<span class="src">${b.src}</span></div>`;
+}
+function card(b){
+  const on=saved.some(s=>s.id===b.id);
+  return`<article class="book">${cover(b)}<div class="meta"><h3><a href="${esc(b.page)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(b.title)}</a></h3><p>${esc(b.author)}</p><p>${esc(b.info)}</p></div>
+  <div class="acts"><a class="btn dl" href="${esc(b.epub)}" data-id="${esc(b.id)}" rel="noopener">${DL} ePub laden</a>
+  <button class="star" data-star="${esc(b.id)}" aria-pressed="${on}" aria-label="Merken" title="Merken">★</button></div></article>`;
+}
+function skeleton(n=8){return Array.from({length:n},()=>'<article class="book skel"><div class="cover"></div></article>').join('')}
+function interleave(a,b){const o=[];for(let i=0;i<Math.max(a.length,b.length);i++){if(a[i])o.push(a[i]);if(b[i])o.push(b[i])}return o}
+
+async function run(append){
+  if(state.busy)return;state.busy=true;
+  const src=$('src').value,lang=$('lang').value,q=state.q;
+  if(!append){grid.innerHTML=skeleton();state.books.clear();state.gbNext=null;state.iaPage=0}
+  else grid.insertAdjacentHTML('beforeend',skeleton(4));
+  more.hidden=true;status.textContent='Suche läuft …';
+  const jobs=[],errs=[];
+  const wantGB=src!=='ia'&&(!append||state.gbNext);
+  const wantIA=src!=='gb'&&q&&(!append||state.iaPage*24<state.iaTotal);
+  if(wantGB){
+    const url=append?state.gbNext:'https://gutendex.com/books/?'+new URLSearchParams(Object.assign(q?{search:q}:{sort:'popular'},lang?{languages:lang}:{}));
+    jobs.push(fetchGB(url).catch(e=>{errs.push('Project Gutenberg');state.gbNext=null;return[]}));
+  }else jobs.push(Promise.resolve([]));
+  if(wantIA){state.iaPage++;jobs.push(fetchIA(q,lang,state.iaPage).catch(e=>{errs.push('Internet Archive');state.iaTotal=0;return[]}))}
+  else jobs.push(Promise.resolve([]));
+  const [gb,ia]=await Promise.all(jobs);
+  grid.querySelectorAll('.skel').forEach(e=>e.remove());
+  const list=interleave(gb,ia).filter(b=>!state.books.has(b.id));
+  list.forEach(b=>state.books.set(b.id,b));
+  grid.insertAdjacentHTML('beforeend',list.map(card).join(''));
+  const n=state.books.size;
+  if(!n)grid.innerHTML=`<p class="empty">${!q&&src==='ia'?'Gib oben einen Titel oder Autor ein, um im Internet Archive zu suchen.':errs.length?'Die Quelle antwortet gerade nicht. Bitte in einem Moment erneut versuchen.':'Keine ePubs gefunden. Tipp: Nur den Nachnamen des Autors oder ein Stichwort aus dem Titel eingeben, oder die Sprache auf „Alle“ stellen.'}</p>`;
+  status.textContent=(n?`${n} Bücher`:'')+(errs.length?` · ${errs.join(' und ')} nicht erreichbar`:'');
+  more.hidden=!(state.gbNext||(src!=='gb'&&q&&state.iaPage*24<state.iaTotal));
+  state.busy=false;
+}
+
+function renderSaved(){
+  $('savedN').textContent=saved.length;
+  $('savedList').innerHTML=saved.length?saved.map(b=>`<li><span><strong>${esc(b.title)}</strong> – ${esc(b.author)}</span><a href="${esc(b.epub)}" data-id="${esc(b.id)}">ePub laden</a><button class="ghost" data-unsave="${esc(b.id)}">Entfernen</button></li>`).join(''):'<li>Noch nichts gemerkt – tippe bei einem Buch auf ★.</li>';
+  try{localStorage.setItem('epubSaved',JSON.stringify(saved))}catch(e){}
+}
+
+$('f').addEventListener('submit',e=>{
+  e.preventDefault();state.q=$('q').value.trim();
+  const l=$('lang').value;
+  head.textContent=state.q?`Ergebnisse für „${state.q}“`:`Beliebt${l?' auf '+LANG[l]:''}`;
+  run(false);$('q').blur();
+});
+['src','lang'].forEach(id=>$(id).addEventListener('change',()=>$('f').requestSubmit()));
+more.addEventListener('click',()=>run(true));
+
+document.addEventListener('click',async e=>{
+  const st=e.target.closest('[data-star]');
+  if(st){const b=state.books.get(st.dataset.star);const i=saved.findIndex(s=>s.id===st.dataset.star);
+    if(i>=0)saved.splice(i,1);else if(b)saved.unshift({id:b.id,ia:b.ia,title:b.title,author:b.author,epub:b.epub});
+    st.setAttribute('aria-pressed',i<0);renderSaved();return}
+  const un=e.target.closest('[data-unsave]');
+  if(un){saved=saved.filter(s=>s.id!==un.dataset.unsave);document.querySelectorAll(`[data-star="${CSS.escape(un.dataset.unsave)}"]`).forEach(b=>b.setAttribute('aria-pressed','false'));renderSaved();return}
+  const dl=e.target.closest('a[data-id^="ia"]');
+  if(dl){ // Internet Archive: tatsächlichen ePub-Dateinamen nachschlagen
+    e.preventDefault();const id=dl.dataset.id.slice(2);const old=dl.innerHTML;dl.textContent='Suche Datei …';
+    try{const m=await getJSON(`https://archive.org/metadata/${encodeURIComponent(id)}/files`,15000);
+      const f=(m.result||[]).find(x=>/\.epub$/i.test(x.name));
+      location.href=f?`https://archive.org/download/${encodeURIComponent(id)}/${f.name.split('/').map(encodeURIComponent).join('/')}`:dl.href;
+    }catch(err){location.href=dl.href}
+    finally{setTimeout(()=>dl.innerHTML=old,1500)}
+  }
+});
+
+renderSaved();
+run(false);
+}
+</script>
+</body>
+</html>
