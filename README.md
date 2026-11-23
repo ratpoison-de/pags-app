@@ -11,6 +11,7 @@ Entwickelt von **Thorsten von Plotho-Kettner** (t.von.plotho-kettner@pagskuelshe
 | `PAGS-App_Leitfaden.pdf` | Kurzleitfaden für Eltern, Schüler und Kollegium (5 Seiten) |
 | `alltag.html` | Tagesbegleiter: Sekretariat offen/geschlossen, Krankmeldung, Mensa, Ferien 2026/27, Kontakte, Schulordnung, Links – plus **eigene Termine, Notizen und Links** |
 | `bildungswege/` | Klasse 9a: interaktive Übersicht „Wie geht’s weiter nach dem Realschulabschluss?“ – Schaubild, Wegfinder, Abschlüsse, Fahrplan (lokal gespeichert), Quiz, PDF zum Download; Assistent-Figur (Klementine, Bit, Olli aus der Assistent-App) in `bildungswege/buddy.js` |
+| `religion/jesus-quiz/` | Religion Klasse 4a/b: Quizshow „Das große Jesus-Quiz“ für 6 Teams (ca. 60 Min.) zur Klassenarbeit – Runden nach „1, 2 oder 3“, „Wer wird Millionär?“, „Der große Preis“, „Familien-Duell“ und Finale mit Einsatz; Punkte, Joker, Lösungen, Ranking, Siegerehrung, Urkunden; PowerPoint-Version zum Download |
 
 Veröffentlicht über GitHub Pages: `https://ratpoison-de.github.io/pags-app/`
 
