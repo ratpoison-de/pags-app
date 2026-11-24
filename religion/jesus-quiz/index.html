@@ -277,6 +277,67 @@ main{padding:12px max(18px,env(safe-area-inset-right)) max(14px,env(safe-area-in
   .winwrap .card{margin:0 0 0 0!important}
 }
 
+
+/* ===== Splitscreen mit Punkte-Logger ===== */
+:root{--sidew:330px;--toph:58px}
+#side{display:none}
+body.split #side{display:flex;flex-direction:column;gap:10px;position:fixed;right:0;top:var(--toph);bottom:0;width:var(--sidew);overflow:auto;
+  padding:12px 12px max(12px,env(safe-area-inset-bottom));background:rgba(5,9,38,.88);border-left:1px solid rgba(255,255,255,.12);z-index:15}
+body.split main{max-width:none;margin:0 var(--sidew) 0 0}
+body.split .mini{display:none}
+body.split #bSplit{background:var(--gold);color:var(--ink)}
+.sd h4{margin:0 0 6px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold2);display:flex;align-items:center;gap:6px}
+.sd h4 span{margin-left:auto;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400}
+.ss{display:grid;grid-template-columns:22px 34px 1fr auto auto;gap:7px;align-items:center;background:var(--panel);border-radius:11px;padding:5px 7px;margin-bottom:5px;border:2px solid transparent}
+.ss.turn{border-color:var(--gold)}
+.ss .pl{font-weight:800;color:var(--gold2);text-align:center;font-size:15px}
+.ss .tb{width:34px;height:34px;font-size:19px}
+.ss .nm{font-weight:800;font-size:15px;line-height:1.1}.ss .br{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ss .pt{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;min-width:44px;text-align:right}
+.ss .pt.bump{animation:sbump .6s}
+@keyframes sbump{50%{transform:scale(1.35);color:var(--gold2)}}
+.ss .cr{display:flex;flex-direction:column;gap:2px}
+.ss .cr button{background:rgba(255,255,255,.12);border-radius:6px;font-size:11px;font-weight:800;width:36px;height:22px}
+.prog{display:flex;flex-wrap:wrap;gap:5px}
+.pd{min-width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;gap:2px;font-size:12px;font-weight:800;padding:0 4px;border:2px solid transparent}
+.pd.cur{border-color:var(--gold)}
+.pd .tb{width:20px;height:20px;font-size:11px;border-width:1px}
+.mb{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.mb .h{font-size:10px;font-weight:800;color:var(--navy);background:var(--gold);border-radius:5px;text-align:center;padding:3px 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mb .c{height:34px;border-radius:7px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold2);font-size:14px;border:1px solid #8e9bd6}
+.mb .c.u{background:rgba(255,255,255,.04);border-style:dashed;border-color:rgba(255,255,255,.2)}
+.mb .c .tb{width:24px;height:24px;font-size:13px;border-width:1px}
+.mb .c .no{color:rgba(231,76,60,.8);font-size:18px}
+.md{display:grid;grid-template-columns:auto repeat(6,1fr);gap:4px;align-items:center;font-size:11px}
+.md .c{height:28px;border-radius:7px;background:#101a55;border:1px solid #6f7bb8;display:flex;align-items:center;justify-content:center;font-weight:800;color:#6f7bb8}
+.md .c.o{background:#1e3fa8;color:#fff}
+.md .c .tb{width:20px;height:20px;font-size:11px;border-width:1px}
+.lg{display:flex;flex-direction:column;gap:4px}
+.lg div{display:flex;align-items:center;gap:7px;font-size:13px;background:rgba(255,255,255,.05);border-radius:8px;padding:4px 7px}
+.lg .tb{width:22px;height:22px;font-size:12px;border-width:1px}
+.lg b{min-width:38px}.lg b.m{color:#ff8a80}.lg b.p{color:#7ff0b4}
+.lg span{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1180px){:root{--sidew:290px}}
+@media (orientation:landscape) and (min-width:900px){
+  body.split .mill{grid-template-columns:1fr 200px}
+  body.split .ladder div{font-size:min(13px,1.7vh);padding:min(4px,.45vh) 8px}
+  body.split .stakes.two{grid-template-columns:1fr}
+  body.split .stakes.two:not(.sel){grid-template-columns:1fr 1fr}
+  body.split .ans .hex>div{padding:min(16px,1.7vh) 30px;font-size:min(20px,2.6vh)}
+  body.split .fp .o{font-size:min(22px,3vh)}
+  body.split .bar{font-size:min(20px,2.6vh)}
+  body.split .code{gap:18px}body.split .code .w{gap:5px}
+}
+@media (orientation:landscape) and (max-width:1250px){
+  body.split .mill{grid-template-columns:1fr}body.split .ladder{display:none}
+  body.split .stk{gap:8px;padding:6px 8px}body.split .stk .nm{width:auto;flex:1;font-size:17px}body.split .stk .sc{width:auto;font-size:14px}
+  body.split .stk .seg button{padding:6px 9px;font-size:15px;min-width:44px}
+  body.split .stk .tb{width:34px;height:34px;font-size:19px}
+  body.split .tl .m{width:min(60px,7vh);height:min(60px,7vh);font-size:min(22px,2.8vh)}
+  body.split .code .c div{width:min(46px,6vh);height:min(56px,7vh);font-size:min(30px,4vh)}
+  body.split .answers{gap:1.2vh 10px}
+}
+
 /* Urkunden */
 #print{display:none}
 @media print{
@@ -304,6 +365,7 @@ main{padding:12px max(18px,env(safe-area-inset-right)) max(14px,env(safe-area-in
   <div class="rname" id="rname"></div>
   <div class="mini" id="mini"></div>
   <div class="tools">
+    <button class="iconbtn" id="bSplit" title="Splitscreen mit Punkte-Logger an/aus">◫</button>
     <button class="iconbtn" id="bScore" title="Punktestand">🏆</button>
     <button class="iconbtn" id="bSound" title="Ton an/aus">🔊</button>
     <button class="iconbtn" id="bFull" title="Vollbild">⛶</button>
@@ -312,6 +374,7 @@ main{padding:12px max(18px,env(safe-area-inset-right)) max(14px,env(safe-area-in
 </header>
 <div class="portrait">Tipp: Das Quiz ist fürs Querformat gemacht – bitte das iPad drehen.</div>
 <main id="app"></main>
+<aside id="side" aria-label="Punkte-Logger"></aside>
 <div class="overlay" id="ov"><div class="card" id="ovc"></div></div>
 <canvas id="confetti"></canvas>
 <div id="print"></div>
@@ -336,10 +399,14 @@ function fresh() {
     r4: { b: 0, open: [], turn: 0, by: {} },
     r5: { stakes: {}, rev: false, res: {}, applied: false, tie: {} },
     rank: { shown: 0 },
+    log: [], r1h: {}, r2h: {}, split: window.innerWidth >= 1000,
   };
 }
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || fresh(); } catch (e) { S = fresh(); }
+// ältere Spielstände ergänzen
+(function () { const f = fresh(); ["log", "r1h", "r2h", "split"].forEach((k) => { if (S[k] === undefined) S[k] = f[k]; });
+  Object.keys(S.r3.played || {}).forEach((k) => { if (S.r3.played[k] === true) S.r3.played[k] = -1; }); })();
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 const total = (t) => t.pts.reduce((a, b) => a + b, 0);
 
@@ -369,9 +436,10 @@ const SND = {
 };
 
 // ---------- Punkte ----------
-function award(ti, pts, round) {
+function award(ti, pts, round, txt) {
   S.teams[ti].pts[round] += pts;
-  save(); renderMini(ti);
+  if (pts) { S.log.push({ t: ti, p: pts, x: txt || "" }); if (S.log.length > 80) S.log.shift(); }
+  save(); renderMini(ti); renderSide(ti);
 }
 
 // ---------- Timer ----------
@@ -491,11 +559,12 @@ V.r1.bind = () => {
   const rv = $("#rv"); if (rv) rv.onclick = () => { st.rev = true; clearInterval(TM); SND.reveal(); go("r1"); };
   document.querySelectorAll(".tchip").forEach((b) => b.onclick = () => {
     const i = +b.dataset.i, on = st.right.includes(i);
-    if (on) { st.right = st.right.filter((x) => x !== i); award(i, -R1.points, 0); }
-    else { st.right.push(i); award(i, R1.points, 0); SND.ok(); }
+    if (on) { st.right = st.right.filter((x) => x !== i); award(i, -R1.points, 0, "R1 · Frage " + (st.i + 1) + " (zurückgenommen)"); }
+    else { st.right.push(i); award(i, R1.points, 0, "R1 · Frage " + (st.i + 1)); SND.ok(); }
     b.classList.toggle("on", !on);
   });
   const nx = $("#nx"); if (nx) nx.onclick = () => {
+    S.r1h[st.i] = st.right.slice();
     if (st.i + 1 < R1.questions.length) { st.i++; st.rev = false; st.right = []; go("r1"); }
     else go("score", { after: 1 });
   };
@@ -530,7 +599,7 @@ V.r2.bind = () => {
   document.querySelectorAll(".ans").forEach((b) => b.onclick = () => { st.sel = +b.dataset.k; go("r2"); });
   const lock = $("#lock"); if (lock) lock.onclick = () => {
     SND.drum(); lock.disabled = true;
-    setTimeout(() => { st.rev = true; if (st.sel === q.a) { award(ti, q.pts, 1); SND.ok(); } else SND.bad(); go("r2"); }, 900);
+    setTimeout(() => { st.rev = true; S.r2h[st.i] = { ok: st.sel === q.a, steal: null }; if (st.sel === q.a) { award(ti, q.pts, 1, "R2 · Frage " + (st.i + 1)); SND.ok(); } else SND.bad(); go("r2"); }, 900);
   };
   const j50 = $("#j50"); if (j50) j50.onclick = () => {
     const wrong = [0, 1, 2, 3].filter((k) => k !== q.a); wrong.sort(() => Math.random() - .5);
@@ -541,7 +610,7 @@ V.r2.bind = () => {
     $("#tw").innerHTML = timerHTML(30, "th"); startTimer($("#th"), 30);
   };
   document.querySelectorAll("[data-steal]").forEach((b) => b.onclick = () => {
-    const i = +b.dataset.steal; st.steal = i; st.stealDone = true; if (i >= 0) { award(i, q.pts / 2, 1); SND.ok(); } go("r2");
+    const i = +b.dataset.steal; st.steal = i; st.stealDone = true; S.r2h[st.i] = { ok: false, steal: i }; if (i >= 0) { award(i, q.pts / 2, 1, "R2 · Frage " + (st.i + 1) + " (geklaut)"); SND.ok(); } go("r2");
   });
   const nx = $("#nx"); if (nx) nx.onclick = () => {
     if (st.i + 1 < 12) { Object.assign(st, { i: st.i + 1, sel: null, rev: false, hidden: [], steal: null, stealDone: false }); go("r2"); }
@@ -554,11 +623,11 @@ function fieldPts(f) { return f.risk ? f.pts * 2 : f.pts; }
 V.r3 = () => {
   const st = S.r3;
   if (!st.open) {
-    const left = R3.categories.reduce((a, c, ci) => a + c.fields.filter((f, fi) => !st.played[ci + "-" + fi]).length, 0);
+    const left = R3.categories.reduce((a, c, ci) => a + c.fields.filter((f, fi) => st.played[ci + "-" + fi] === undefined).length, 0);
     return `<div class="qhead"><div class="turnbox">${badge(st.turn)}<div><h2>Team ${esc(S.teams[st.turn].name)} wählt ein Feld</h2><div class="sub">„${esc(R3.callout)}“ · noch ${left} Felder</div></div></div><span class="spacer"></span>
     <button class="btn alt small" id="skip">Team überspringen</button><button class="btn alt small" id="end">Runde beenden</button></div>
     <div class="board">${R3.categories.map((c) => `<div class="cat">${esc(c.name)}</div>`).join("")}
-    ${[0, 1, 2].map((fi) => R3.categories.map((c, ci) => `<button class="field" data-f="${ci}-${fi}" ${st.played[ci + "-" + fi] ? "disabled" : ""}>${c.fields[fi].pts}</button>`).join("")).join("")}</div>`;
+    ${[0, 1, 2].map((fi) => R3.categories.map((c, ci) => `<button class="field" data-f="${ci}-${fi}" ${st.played[ci + "-" + fi] !== undefined ? "disabled" : ""}>${c.fields[fi].pts}</button>`).join("")).join("")}</div>`;
   }
   const [ci, fi] = st.open, c = R3.categories[ci], f = c.fields[fi], t = S.teams[st.turn];
   return `<div class="qhead"><div class="turnbox">${badge(st.turn)}<div><h2>${esc(c.name)} für ${f.pts}</h2><div class="sub">Team ${esc(t.name)} ist dran</div></div></div><span class="spacer"></span>
@@ -581,9 +650,9 @@ V.r3.bind = () => {
   const jh = $("#jh"); if (jh) jh.onclick = () => { S.teams[st.turn].heft = false; save(); jh.disabled = true; const tw = $("#tw"); tw.innerHTML = timerHTML(30, "th"); startTimer($("#th"), 30); };
   document.querySelectorAll("[data-w]").forEach((b) => b.onclick = () => {
     const w = +b.dataset.w, [ci, fi] = st.open, f = R3.categories[ci].fields[fi];
-    if (w >= 0) { award(w, fieldPts(f), 2); SND.ok(); } else SND.bad();
-    st.played[ci + "-" + fi] = true; st.open = null; st.rev = false; st.turn = (st.turn + 1) % 6;
-    const left = R3.categories.reduce((a, c, cj) => a + c.fields.filter((ff, fj) => !st.played[cj + "-" + fj]).length, 0);
+    if (w >= 0) { award(w, fieldPts(f), 2, "R3 · " + R3.categories[ci].name + " " + f.pts); SND.ok(); } else SND.bad();
+    st.played[ci + "-" + fi] = w; st.open = null; st.rev = false; st.turn = (st.turn + 1) % 6;
+    const left = R3.categories.reduce((a, c, cj) => a + c.fields.filter((ff, fj) => st.played[cj + "-" + fj] === undefined).length, 0);
     if (!left) go("score", { after: 3 }); else go("r3");
   });
 };
@@ -603,7 +672,7 @@ V.r4 = () => {
 V.r4.bind = () => {
   const st = S.r4; bindTimer();
   document.querySelectorAll(".bar").forEach((b) => b.onclick = () => {
-    const k = +b.dataset.k; st.open.push(k); st.by[st.b + "-" + k] = st.turn; award(st.turn, R4.points, 3); SND.ok();
+    const k = +b.dataset.k; st.open.push(k); st.by[st.b + "-" + k] = st.turn; award(st.turn, R4.points, 3, "R4 · Tafel " + (st.b + 1)); SND.ok();
     st.turn = (st.turn + 1) % 6; go("r4");
   });
   const m = $("#miss"); if (m) m.onclick = () => { SND.bad(); st.turn = (st.turn + 1) % 6; go("r4"); };
@@ -626,7 +695,7 @@ V.r5.bind = () => {
 V.r5c = () => {
   const st = S.r5, words = R5.code.msg.split(" ");
   return `<div class="qhead"><h2>Knackt den Geheimcode!</h2><span class="spacer"></span>${st.rev ? "" : timerHTML(120)}</div>
-  <div class="abc">${Array.from({ length: 26 }, (_, k) => `<div><b>${String.fromCharCode(65 + k)}</b> = ${k + 1}</div>`).join("")}</div>
+  ${st.rev ? "" : `<div class="abc">${Array.from({ length: 26 }, (_, k) => `<div><b>${String.fromCharCode(65 + k)}</b> = ${k + 1}</div>`).join("")}</div>`}
   <div class="code${st.rev ? " sol" : ""}">${words.map((w) => `<div class="w">${w.split("").map((ch, k) => `<div class="c"><i>${ch.charCodeAt(0) - 64}</i><div style="animation-delay:${k * .12}s">${st.rev ? ch : ""}</div></div>`).join("")}</div>`).join("")}</div>
   ${!st.rev ? `<p class="center sub">${esc(R5.code.hint)}</p><div class="row c"><button class="btn" id="rv">Auflösen</button></div>` : `
   <div class="expl">${esc(R5.code.x)}</div>
@@ -639,7 +708,7 @@ V.r5c.bind = () => {
   const rv = $("#rv"); if (rv) rv.onclick = () => { st.rev = true; clearInterval(TM); SND.fanfare(); go("r5c"); };
   document.querySelectorAll("[data-r]").forEach((b) => b.onclick = () => { st.res[+b.dataset.i] = b.dataset.r === "1"; go("r5c"); });
   const ap = $("#apply"); if (ap) ap.onclick = () => {
-    S.teams.forEach((t, i) => award(i, (st.res[i] ? 1 : -1) * (st.stakes[i] || 0), 4)); st.applied = true; SND.ok(); go("r5c");
+    S.teams.forEach((t, i) => award(i, (st.res[i] ? 1 : -1) * (st.stakes[i] || 0), 4, "Finale · Einsatz " + (st.stakes[i] || 0))); st.applied = true; SND.ok(); go("r5c");
   };
   const fn = $("#fin"); if (fn) fn.onclick = () => go("score", { after: 5 });
 };
@@ -685,7 +754,7 @@ V.score = () => {
 V.score.bind = () => {
   document.querySelectorAll(".adj button").forEach((b) => b.onclick = () => {
     const i = +b.dataset.i, d = +b.dataset.d, rIdx = Math.max(0, Math.min(4, (S.after || 1) - 1));
-    award(i, d, rIdx); render();
+    award(i, d, rIdx, "Korrektur"); render();
   });
 };
 
@@ -783,6 +852,58 @@ document.addEventListener("visibilitychange", keepAwake);
 document.addEventListener("click", keepAwake);
 $("#brand").onclick = () => go("home");
 
+
+// ---------- Splitscreen: Punkte-Logger rechts ----------
+const SIDE_SCREENS = ["intro", "d1", "r1", "d2", "r2", "d3", "r3", "d4", "r4", "d5", "r5", "r5c", "tie", "score", "rank"];
+function sideOn() { return S.split && SIDE_SCREENS.includes(S.screen); }
+function roundOf(sc) { return { d1: 1, r1: 1, d2: 2, r2: 2, d3: 3, r3: 3, d4: 4, r4: 4, d5: 5, r5: 5, r5c: 5, tie: 5 }[sc] || 0; }
+function renderSide(bump) {
+  document.body.classList.toggle("split", sideOn());
+  const top = document.querySelector(".top"); if (top) document.documentElement.style.setProperty("--toph", top.offsetHeight + "px");
+  if (!sideOn()) return;
+  const tt = turnTeam(), r = ranking(), rdx = roundOf(S.screen); const place = {}; let pl = 0, prev = null;
+  r.forEach((x, k) => { if (x.p !== prev) pl = k + 1; prev = x.p; place[x.i] = pl; });
+  const rows = S.teams.map((t, i) => `<div class="ss${i === tt ? " turn" : ""}"><span class="pl">${place[i]}.</span>${badge(i)}
+    <div><div class="nm">${esc(t.name)}</div>${rdx ? `<div class="br">${rdx === 5 ? "Finale" : "Runde " + rdx}: ${t.pts[rdx - 1] > 0 ? "+" : ""}${t.pts[rdx - 1]}</div>` : ""}</div>
+    <span class="pt${i === bump ? " bump" : ""}">${total(t)}</span>
+    <span class="cr"><button data-sc="${i}" data-d="5" title="5 Punkte dazu">+5</button><button data-sc="${i}" data-d="-5" title="5 Punkte abziehen">−5</button></span></div>`).join("");
+  const rd = roundOf(S.screen); let prog = "", ptitle = "";
+  if (rd === 1) {
+    ptitle = "Runde 1 · Fragen";
+    prog = `<div class="prog">${R1.questions.map((q, i) => { const h = S.r1h[i], cur = i === S.r1.i && S.screen === "r1";
+      const n = h ? h.length : cur ? S.r1.right.length : null;
+      return `<span class="pd${cur ? " cur" : ""}" title="Frage ${i + 1}">${i + 1}${n !== null && (h || S.r1.rev) ? `<small style="color:#7ff0b4">·${n}✓</small>` : ""}</span>`; }).join("")}</div>`;
+  } else if (rd === 2) {
+    ptitle = "Runde 2 · Gewinnleiter";
+    prog = `<div class="prog">${R2.questions.map((q, i) => { const h = S.r2h[i], cur = i === S.r2.i && S.screen === "r2";
+      const res = h ? (h.ok ? `${badge(i % 6)}<span style="color:#7ff0b4">✓</span>` : h.steal !== null && h.steal >= 0 ? `<span style="color:#ff8a80">✗</span>${badge(h.steal)}` : `<span style="color:#ff8a80">✗</span>`) : badge(i % 6);
+      return `<span class="pd${cur ? " cur" : ""}" title="Frage ${i + 1}">${res}</span>`; }).join("")}</div>`;
+  } else if (rd === 3) {
+    const left = R3.categories.reduce((a, c, ci) => a + c.fields.filter((f, fi) => S.r3.played[ci + "-" + fi] === undefined).length, 0);
+    ptitle = `Runde 3 · Spielbrett <span>noch ${left} Felder</span>`;
+    prog = `<div class="mb">${R3.categories.map((c) => `<div class="h">${esc(c.name)}</div>`).join("")}${[0, 1, 2].map((fi) => R3.categories.map((c, ci) => {
+      const w = S.r3.played[ci + "-" + fi]; return w === undefined ? `<div class="c">${c.fields[fi].pts}</div>` : `<div class="c u">${w >= 0 ? badge(w) : '<span class="no">✗</span>'}</div>`; }).join("")).join("")}</div>`;
+  } else if (rd === 4) {
+    ptitle = "Runde 4 · Gefundene Antworten";
+    prog = `<div class="md">${R4.boards.map((b, bi) => `<span>Tafel ${bi + 1}</span>${b.a.map((a, k) => { const w = S.r4.by[bi + "-" + k];
+      return `<div class="c${w !== undefined ? " o" : ""}">${w !== undefined && w >= 0 ? badge(w) : w === -1 ? "–" : k + 1}</div>`; }).join("")}`).join("")}</div>`;
+  } else if (rd === 5) {
+    ptitle = "Finale · Einsätze";
+    prog = `<div class="prog">${S.teams.map((t, i) => { const v = S.r5.stakes[i], r5 = S.r5.res[i];
+      return `<span class="pd">${badge(i)}${v === undefined ? "?" : v}${r5 === true ? '<span style="color:#7ff0b4">✓</span>' : r5 === false ? '<span style="color:#ff8a80">✗</span>' : ""}</span>`; }).join("")}</div>`;
+  }
+  const log = S.log.slice(-7).reverse().map((e) => `<div>${badge(e.t)}<b class="${e.p < 0 ? "m" : "p"}">${e.p > 0 ? "+" : ""}${e.p}</b><span>${esc(e.x)}</span></div>`).join("") || '<div><span>Noch keine Punkte vergeben.</span></div>';
+  $("#side").innerHTML = `<div class="sd"><h4>Punkte-Logger <span>läuft automatisch mit</span></h4>${rows}</div>
+    ${prog ? `<div class="sd"><h4>${ptitle}</h4>${prog}</div>` : ""}
+    <div class="sd"><h4>Verlauf</h4><div class="lg">${log}</div></div>`;
+  document.querySelectorAll("[data-sc]").forEach((b) => b.onclick = () => {
+    const i = +b.dataset.sc, d = +b.dataset.d, rd2 = Math.max(1, roundOf(S.screen) || 1) - 1;
+    award(i, d, rd2, "Korrektur"); if (S.screen === "score") render();
+  });
+}
+$("#bSplit").onclick = () => { S.split = !S.split; save(); renderSide(); };
+window.addEventListener("resize", () => renderSide());
+
 // ---------- Render ----------
 function render() {
   if (!V[S.screen]) S.screen = "home";
@@ -791,6 +912,7 @@ function render() {
   $("#rname").textContent = RN[S.screen] || "";
   renderMini();
   V[S.screen].bind && V[S.screen].bind();
+  renderSide();
   save();
 }
 render();
