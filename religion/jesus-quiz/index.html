@@ -428,7 +428,7 @@ V.home = () => `
     ${hasProgress() ? `<button class="btn alt" id="cont">Weiterspielen</button>` : ""}
   </div>
   <p class="sub" style="margin-top:18px">6 Teams · 5 Runden · ca. 60 Minuten · Teamnamen könnt ihr oben ändern.</p>
-  <p style="margin-top:6px"><a href="Jesus-Quiz_Religion_Kl4_iPad.pptx" download style="color:var(--gold2);font-weight:600">PowerPoint-Version herunterladen</a></p>
+  <p style="margin-top:6px"><a href="Jesus-Quiz_Religion_Kl4_iPad.pptx" download style="color:var(--gold2);font-weight:600">PowerPoint-Version herunterladen</a> &nbsp;·&nbsp; <a href="logger.html" style="color:var(--gold2);font-weight:600">Punkte-Logger zur PowerPoint</a></p>
 </section>`;
 function hasProgress() { return S.teams.some((t) => total(t) !== 0) || S.r1.i > 0 || S.lastScreen; }
 V.home.bind = () => {
