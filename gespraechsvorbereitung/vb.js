@@ -65,7 +65,7 @@
   const NACH10 = ['Ausbildung', 'Berufliches Gymnasium', 'Berufskolleg', 'Berufsfachschule', 'Noch offen'];
   const STAERKEN = ['hilfsbereit', 'zuverlässig', 'kreativ', 'sportlich', 'handwerklich geschickt', 'technisch / digital fit', 'sprachlich stark', 'gut in Mathe / Logik', 'organisiert', 'teamfähig', 'humorvoll', 'ausdauernd'];
   const BERUFE = ['Handwerk / Technik', 'Büro / Verwaltung', 'Handel / Verkauf', 'Gesundheit / Pflege', 'Soziales / Erziehung', 'IT / Medien', 'Gastronomie / Hotel', 'Natur / Landwirtschaft', 'Gestaltung / Kreatives', 'Noch keine Idee'];
-  const ZIELE = ['Hausaufgaben vollständig machen', 'Pünktlich sein, Material dabeihaben', 'Früher für Arbeiten lernen', 'Mehr im Unterricht mitarbeiten', 'In der IL selbstständiger arbeiten', 'Konzentrierter arbeiten', 'Eine Note verbessern', 'Praktikum / Bewerbung angehen', 'Konflikte fair lösen'];
+  const ZIELE = ['Hausaufgaben vollständig machen', 'Lerntagebuch zuverlässig führen', 'Sich Ziele setzen und dranbleiben', 'Pünktlich sein, Material dabeihaben', 'Früher für Arbeiten lernen', 'Mehr im Unterricht mitarbeiten', 'In der IL selbstständiger arbeiten', 'Konzentrierter arbeiten', 'Eine Note verbessern', 'Praktikum / Bewerbung angehen', 'Konflikte fair lösen'];
   const HILFE = ['Deutsch', 'Mathematik', 'Englisch', 'Lernen planen', 'Für Arbeiten lernen', 'Konzentration', 'Hausaufgaben', 'Brauche gerade keine'];
   const THEMEN = ['Noten', 'Abschluss', 'Beruf / Praktikum', 'Klasse / Mitschüler', 'Lernen / Hausaufgaben', 'Stress', 'Nichts Bestimmtes'];
   const ABSCHLUSS = ['Realschulabschluss (Kl. 10)', 'Hauptschulabschluss', 'Noch unsicher'];
