@@ -141,6 +141,7 @@
     { id: 'leistung', titel: 'Leistung und Arbeitsverhalten', spiegel: ['s_faecher', 's_hilfe', 's_krit', 'e_krit', 'e_ha', 'e_lernen', 'e_medien'], felder: [
       { id: 'l_gesamt', typ: 'wahl', frage: 'Gesamteindruck', optionen: ['sehr positiv', 'positiv', 'gemischt', 'besorgniserregend'] },
       { id: 'l_faecher', typ: 'faecher', frage: 'Leistungsstand' },
+      { id: 'l_fachlk', typ: 'text', frage: 'Rückmeldungen der Fachlehrkräfte', hilfe: '(Noten, Mitarbeit, Beobachtungen)', frei: true },
       { id: 'l_hilfe', typ: 'mehr', frage: 'Förderbedarf', optionen: HILFE.slice(0, -1).concat(['kein besonderer']) },
       { id: 'l_krit', typ: 'kriterien', sicht: 'l', unklar: true, frage: 'Arbeits- und Sozialverhalten' },
       { id: 'l_ha', typ: 'wahl', frage: 'Hausaufgaben', optionen: ['vollständig', 'meist vollständig', 'oft unvollständig', 'fehlen häufig'] },
@@ -515,6 +516,7 @@
         if (f.typ === 'kriterien') { P.text(f.frage + ' im Vergleich', 9.5, 'bold', [60, 60, 60], 0, 0.5); return VB.pdfKriterien(P, [{ titel: 'Schüler/in', werte: F.S.s_krit, leer: !F.hatS }, { titel: 'Eltern', werte: F.E.e_krit, leer: !F.hatE }, { titel: 'Lehrer', werte: L[f.id] }], null); }
         if (f.typ === 'skala5') { const s = VB.SMILEY.find(x => x.v === L[f.id]); return P.optionen(f.frage.replace('sie/er', sch.vorname), VB.SMILEY.map(x => x.l), s ? s.l : null); }
         if (f.typ === 'wahl' || f.typ === 'mehr') return opt(f.id);
+        if (f.typ === 'text' && (L[f.id] || '').trim()) { P.platz(10); P.text(f.frage, 9.5, 'bold', [60, 60, 60], 0, 0.5); String(L[f.id]).split('\n').filter(z => z.trim()).forEach(z => P.text(z, 8.8, 'normal', [40, 40, 40], 2, 0.6)); P.y += 2; }
       });
       // Was die Familie dazu geschrieben hat
       const zeilen = ab.spiegel.map(id => {
